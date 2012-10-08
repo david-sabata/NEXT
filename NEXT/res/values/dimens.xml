@@ -2,4 +2,5 @@
 <resources>
     <dimen name="FanItemTextSize">25dp</dimen>
     <dimen name="FanTitleSize">17dp</dimen>
+    <dimen name="FanItemDrawablePadding">5dp</dimen>
 </resources>

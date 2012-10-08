@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ public class MainActivity extends FragmentActivity {
 	private FanView fan;
 
 
+	@Override
 	@TargetApi(14)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
@@ -65,15 +68,21 @@ public class MainActivity extends FragmentActivity {
 	 * On menu item clicked It can be either classic menu item or app icon in
 	 * action bar
 	 */
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if (item.getItemId() == android.R.id.home) {
+		int id = item.getItemId();
+		if (id == android.R.id.home) {
+			System.out.println("Click on Home icon");
 			if (fan.isOpen()) {
 				unclick(null);
 			} else {
 				click(null);
 			}
+		} else {
+			Log.i("item ID : ", "onOptionsItemSelected Item ID" + id);
+			System.out.println("Click on Item");
 		}
 
 		return false;

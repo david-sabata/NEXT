@@ -3,5 +3,6 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light" />
     <color name="FanBackgroundDark">#616161</color>
     <color name="FanItemsText">#FFFFFF</color>
+    <color name="FanItemsBackgroundColor">#8FB5D0</color>
 
 </resources>
