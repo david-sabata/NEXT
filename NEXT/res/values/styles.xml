@@ -1,5 +1,7 @@
 <resources>
 
     <style name="AppTheme" parent="android:Theme.Holo.Light" />
+    <color name="FanBackgroundDark">#616161</color>
+    <color name="FanItemsText">#FFFFFF</color>
 
 </resources>
