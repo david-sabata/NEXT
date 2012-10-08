@@ -1,6 +1,8 @@
 package cz.fit.next;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -12,6 +14,7 @@ import com.google.api.client.http.json.JsonHttpRequest;
 import com.google.api.client.http.json.JsonHttpRequestInitializer;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -34,7 +37,7 @@ import android.content.SharedPreferences;
 public class MainActivity extends Activity {
 
 	
-public String TAG = "DriveTest";
+public String TAG = "NEXT - Drive Comm";
 	
 	// IPC identifiers
 	private int CHOOSE_ACCOUNT = 0;
@@ -150,28 +153,78 @@ public String TAG = "DriveTest";
             Log.e(TAG, "Connection initiated.");
             mAuthorized = true;
             
+            // GET ID OF FOLDER NEXT
             FileList flist = null;
-    		try {
-    			flist = mDriveService.files().list().execute();
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-        	if (flist != null)
+            Files.List request = null;
+            String nextDirId = new String();
+            
+            try {
+				request = mDriveService.files().list();
+				String q = "mimeType = 'application/vnd.google-apps.folder' and title = 'NEXT'";
+				request = request.setQ(q);
+				
+				flist = request.execute();
+				if (flist.size() > 0)
+				{
+					nextDirId = flist.getItems().get(0).getId();
+					Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+				}
+				else // Create new NEXT folder
+				{
+					Log.e(TAG, "NEXT folder not found.");
+					
+					// TODO: Create new directory
+				}
+				
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+            
+            
+            
+            
+            
+            // DOWNLOAD FILELIST IN FOLDER "NEXT"
+            flist = null;
+            request = null;
+            List<File> res = new ArrayList<File>();
+            try {
+				request = mDriveService.files().list();
+				request = request.setMaxResults(50);
+				String q = "'" + nextDirId + "' in parents";
+				request = request.setQ(q);
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+            do
+            {
+	    		try {
+	    			flist = request.execute();
+	    			res.addAll(flist.getItems());
+	    			request = request.setPageToken(flist.getNextPageToken());
+	    			Log.e(TAG, "New page token: " + flist.getNextPageToken());
+	    		} catch (IOException e) {
+	    			e.printStackTrace();
+	    			break;
+	    		}
+            } while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
+            
+    		Log.e(TAG,"Pocet souboru: " + res.size());
+        	String filelist = new String();
+        	for (int i = 0; i < res.size(); i++)
         	{
-	    		Log.e(TAG,"Pocet souboru: " + flist.size());
-	        	String filelist = new String();
-	        	for (int i = 0; i < flist.size(); i++)
-	        	{
-	        		File f = flist.getItems().get(i);
-	        		Log.e(TAG,"Filename: " + f.getTitle() + ", mime: " + f.getMimeType());
-	        		filelist = filelist + "\n" + f.getTitle();
-	        	}
-	        	
-	        	TextView tv = (TextView)findViewById(R.id.tv1);
-	            tv.setText(filelist);
+        		File f = res.get(i);
+        		Log.e(TAG,"Filename: " + f.getTitle() + ", mime: " + f.getMimeType());
+        		filelist = filelist + "\n" + f.getTitle();
         	}
-    	}
+        	
+        	TextView tv = (TextView)findViewById(R.id.tv1);
+            tv.setText(filelist);
+        		
+    	}	
     	
     }	
     
