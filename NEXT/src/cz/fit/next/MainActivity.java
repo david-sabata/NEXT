@@ -10,6 +10,7 @@ import android.view.View;
 public class MainActivity extends Activity {
 
 	private FanView fan; 
+	private View mainView;
 	
 	
     @Override
@@ -23,6 +24,10 @@ public class MainActivity extends Activity {
         fan = (FanView) findViewById(R.id.fan_view);
         fan.setViews(R.layout.main, R.layout.fan);
         
+        //get handle to main view
+        mainView = (View) findViewById(R.id.mainLayout) ;
+        
+     	
         /*
          * fan.setFadeOnMenuToggle(true);
          * fan.setAnimationDuration(500);
@@ -39,12 +44,16 @@ public class MainActivity extends Activity {
     
     public void unclick(View v) {
     	System.out.println("CLOSE");
-    	fan.showMenu();
+    	if(v == mainView) {
+    		fan.showMenu();
+    	}
     }
     
     public void click(View v) {
     	System.out.println("OPEN");
-    	fan.showMenu();
+    	if(v == mainView) {
+    		fan.showMenu();
+    	}
     } 
 }
 
