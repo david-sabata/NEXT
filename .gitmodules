@@ -1,0 +1,3 @@
+[submodule "android-fly-in-app-navigation"]
+	path = android-fly-in-app-navigation
+	url = git://github.com/Gregadeaux/android-fly-in-app-navigation.git
