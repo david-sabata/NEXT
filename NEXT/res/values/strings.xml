@@ -14,5 +14,8 @@
     <string name="TitleByContext_Home">Home</string>
     <string name="TitleByContext_Work">Work</string>
     <string name="TitleByContext_Freetime">Freetime</string>
+    <string name="TitleByProject">Projects</string>
+    <string name="TitleByProject_ShowProjects">Show Projects</string>
+    <string name="SettingsConnectToDrive">Drive login</string>
 
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="FanItemTextSize">25dp</dimen>
-    <dimen name="FanTitleSize">17dp</dimen>
+    <dimen name="FanTitleSize">20dp</dimen>
     <dimen name="FanItemDrawablePadding">5dp</dimen>
+    <dimen name="FanTitleLineSpacing">5dp</dimen>
 </resources>

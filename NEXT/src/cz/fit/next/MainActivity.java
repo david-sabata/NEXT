@@ -60,6 +60,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+
 		return true;
 	}
 
@@ -80,6 +81,9 @@ public class MainActivity extends FragmentActivity {
 			} else {
 				click(null);
 			}
+		} else if (id == R.id.setting_connect_drive) {
+			Log.i("Setting", "Google Login");
+
 		} else {
 			Log.i("item ID : ", "onOptionsItemSelected Item ID" + id);
 			System.out.println("Click on Item");

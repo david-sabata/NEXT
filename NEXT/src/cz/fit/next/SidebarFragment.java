@@ -14,7 +14,7 @@ public class SidebarFragment extends Fragment {
 
 	// Fixed menu items - theirs IDs
 	int fixMenuTimeItems[] = { R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes,
-			R.id.Time_Blocked, R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime };
+			R.id.Time_Blocked, R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects };
 
 	// Hash map for item of menu
 	Map<Integer, View> menuItemViews = new HashMap<Integer, View>();
@@ -30,7 +30,7 @@ public class SidebarFragment extends Fragment {
 		 */
 		for (final int id : fixMenuTimeItems) {
 			// getView() return root view for fragment
-			final View item = (View) sideBarView.findViewById(id);
+			final View item = sideBarView.findViewById(id);
 
 			// set padding of item
 			item.setPadding(15, 0, 0, 0);
