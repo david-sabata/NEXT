@@ -1,6 +1,9 @@
 package cz.fit.next;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,10 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.deaux.fan.FanView;
+import com.google.android.gms.common.AccountPicker;
 
 public class MainActivity extends FragmentActivity {
 
 	private FanView fan;
+
+	/* Constants to identify activities called by startActivityForResult */
+	private int CHOOSE_ACCOUNT = 100;
 
 
 	@Override
@@ -82,7 +89,9 @@ public class MainActivity extends FragmentActivity {
 				click(null);
 			}
 		} else if (id == R.id.setting_connect_drive) {
-			Log.i("Setting", "Google Login");
+			// Log.i("Setting", "Google Login");
+			// TODO: If some account is stored in perm storage, enable it here
+			chooseGoogleAccount(null);
 
 		} else {
 			Log.i("item ID : ", "onOptionsItemSelected Item ID" + id);
@@ -91,5 +100,55 @@ public class MainActivity extends FragmentActivity {
 
 		return false;
 	}
+
+
+	/**
+	 * Opens activity for choose Google account
+	 * 
+	 * @param username
+	 *            Stored username, will not display account chooser if specified
+	 */
+	void chooseGoogleAccount(String username) {
+
+		Account account = null;
+		if (username != null) // Logged on
+		{
+			account = new Account(username, "com.google");
+		} else {
+			account = null;
+		}
+
+		String accList[] = new String[1];
+		accList[0] = "com.google";
+
+		startActivityForResult(
+				AccountPicker.newChooseAccountIntent(account, null, accList, false, null, null, null, null),
+				CHOOSE_ACCOUNT);
+	}
+
+
+	/**
+	 * Process result from called activity
+	 * 
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
+			String accountName = new String();
+			accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+			Log.i("NEXT Drive", "Selected account: " + accountName);
+			// TODO: Store account name to permanent storage
+
+
+			// Execute asynctask with Google Drive Authorizing
+			// AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
+			// auth.execute((Void)null);
+
+		}
+
+
+	}
+
+
 
 }
