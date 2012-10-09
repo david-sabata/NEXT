@@ -1,2 +1,0 @@
-AccountPicker.newChooseAccountIntent - https://developers.google.com/android/google-play-services/reference/com/google/android/gms/common/AccountPicker
-GoogleAuthUtil.getToken(context,acc,scope)
