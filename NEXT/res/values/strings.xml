@@ -4,5 +4,18 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">NEXT</string>
+    <string name="TitleByTime">Time</string>
+    <string name="TitleByTime_Today">Today</string>
+    
+    <string name="TitleByTime_Next">Next</string>
+    <string name="TitleByTime_InPlan">In plan</string>
+    <string name="TitleByTime_Sometimes">Sometimes</string>
+    <string name="TityleByTime_Blocked">Blocked</string><string name="TitleByContext">Contexts</string>
+    <string name="TitleByContext_Home">Home</string>
+    <string name="TitleByContext_Work">Work</string>
+    <string name="TitleByContext_Freetime">Freetime</string>
+    <string name="TitleByProject">Projects</string>
+    <string name="TitleByProject_ShowProjects">Show Projects</string>
+    <string name="SettingsConnectToDrive">Drive login</string>
 
 </resources>
