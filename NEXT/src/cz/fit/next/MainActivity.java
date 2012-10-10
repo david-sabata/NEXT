@@ -24,6 +24,8 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.test);
 		fan = (FanView) findViewById(R.id.fan_view);
 
+		fan.setAnimationDuration(200); // 200ms
+
 		Fragment fanFrag = new SidebarFragment();
 		Fragment contentFrag = new ListFragment();
 		fan.setFragments(contentFrag, fanFrag);
@@ -74,13 +76,15 @@ public class MainActivity extends FragmentActivity {
 		super.onOptionsItemSelected(item);
 
 		int id = item.getItemId();
+
+		// Home in action bar
 		if (id == android.R.id.home) {
 			System.out.println("Click on Home icon");
 			if (fan.isOpen()) {
 				unclick(null);
 			} else {
 				click(null);
-			}
+			} // Settings in settings menu
 		} else if (id == R.id.setting_connect_drive) {
 			Log.i("Setting", "Google Login");
 
