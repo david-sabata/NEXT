@@ -29,8 +29,14 @@ public class MainActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
-			ContentListFragment contentFrag = new ContentListFragment();
-			fan.setFragments(contentFrag, fanFrag);
+
+			// TODO this is valid code!! Delete comments after debug tasks
+			// ContentListFragment contentFrag = new ContentListFragment();
+			// fan.setFragments(contentFrag, fanFrag);
+
+			TaskDetailFragment taskFrag = new TaskDetailFragment();
+			fan.setFragments(taskFrag, fanFrag);
+
 		} else {
 			fan.setViews(-1, -1);
 		}

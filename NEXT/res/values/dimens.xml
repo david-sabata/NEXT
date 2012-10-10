@@ -5,4 +5,5 @@
     <dimen name="FanItemDrawablePadding">5dp</dimen>
     <dimen name="FanTitleLineSpacing">5dp</dimen>
     <dimen name="FainItemHeight">40dp</dimen>
+    <dimen name="TaskTitleSize">30dp</dimen>
 </resources>
