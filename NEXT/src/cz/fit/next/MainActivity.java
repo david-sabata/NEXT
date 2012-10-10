@@ -1,5 +1,8 @@
 package cz.fit.next;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.deaux.fan.FanView;
+
+import cz.fit.next.tasks.Task;
 
 public class MainActivity extends FragmentActivity {
 
@@ -37,10 +42,9 @@ public class MainActivity extends FragmentActivity {
 
 
 		// always enabled on SDK < 14
-		if (android.os.Build.VERSION.SDK_INT >= 14) {
+		if (android.os.Build.VERSION.SDK_INT >= 14 && getActionBar() != null) {
 			getActionBar().setHomeButtonEnabled(true);
 		}
-
 	}
 
 
@@ -49,8 +53,12 @@ public class MainActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 
-		String items[] = new String[] { "položka 1", "položka 2", "položka 3", "položka 4", "položka 5", "položka 6",
-				"položka 7", "položka 8", "položka 9", "položka 10" };
+		List<Task> items = new ArrayList<Task>();
+		for (int i = 0; i < 15; i++) {
+			Task task = new Task();
+			task.setTitle("polozka " + i);
+			items.add(task);
+		}
 
 		/**
 		 * Fragment is stored by FragmentManager even after its parent activity
@@ -67,7 +75,6 @@ public class MainActivity extends FragmentActivity {
 		}
 
 	}
-
 
 
 	/**
