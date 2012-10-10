@@ -1,11 +1,13 @@
 package cz.fit.next;
 
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import cz.fit.next.tasks.Task;
 
 public class ContentListFragment extends ListFragment {
 
@@ -21,8 +23,8 @@ public class ContentListFragment extends ListFragment {
 
 
 
-	public void setItems(String[] items) {
-		setListAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, items));
+	public void setItems(List<Task> items) {
+		setListAdapter(new ContentListAdapter(getActivity(), android.R.layout.simple_list_item_1, items));
 	}
 
 
