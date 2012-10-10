@@ -1,10 +1,14 @@
 package cz.fit.next;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -14,11 +18,19 @@ import android.view.View;
 
 import com.deaux.fan.FanView;
 
+import cz.fit.next.services.TasksModelService;
+import cz.fit.next.services.TasksModelService.ModelServiceBinder;
 import cz.fit.next.tasks.Task;
 
 public class MainActivity extends FragmentActivity {
 
 	private static final String LOG_TAG = "FragmentActivity";
+
+
+	protected TasksModelService mModelService;
+
+	protected boolean mIsServiceBound = false;
+
 
 
 	@Override
@@ -51,6 +63,13 @@ public class MainActivity extends FragmentActivity {
 		if (android.os.Build.VERSION.SDK_INT >= 14 && getActionBar() != null) {
 			getActionBar().setHomeButtonEnabled(true);
 		}
+
+		// start service if it's not started yet
+		if (mModelService == null) {
+			Intent intent = new Intent(this, TasksModelService.class);
+			getApplicationContext().bindService(intent, modelServiceConnection, Context.BIND_AUTO_CREATE);
+			Log.d(LOG_TAG, "binding service to app context");
+		}
 	}
 
 
@@ -59,11 +78,19 @@ public class MainActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 
-		List<Task> items = new ArrayList<Task>();
-		for (int i = 0; i < 15; i++) {
-			Task task = new Task();
-			task.setTitle("polozka " + i);
-			items.add(task);
+		// restore singleton service reference
+		if (mModelService == null && TasksModelService.getInstance() != null)
+			mModelService = TasksModelService.getInstance();
+	}
+
+
+	protected void reloadContentItems() {
+		List<Task> items = null;
+
+		if (mIsServiceBound) {
+			items = mModelService.getAllItems();
+		} else {
+			Log.e(LOG_TAG, "cannot reload items, service is not ready yet");
 		}
 
 		/**
@@ -79,8 +106,8 @@ public class MainActivity extends FragmentActivity {
 		} else {
 			Log.e(LOG_TAG, "onResume: content fragment is null");
 		}
-
 	}
+
 
 
 	/**
@@ -148,5 +175,26 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
+
+	private ServiceConnection modelServiceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			ModelServiceBinder binder = (ModelServiceBinder) service;
+			mModelService = binder.getService();
+			mIsServiceBound = true;
+
+			Log.d(LOG_TAG, "Model service connected");
+
+			// reload content items
+			reloadContentItems();
+		}
+
+
+		public void onServiceDisconnected(ComponentName arg0) {
+			mIsServiceBound = false;
+
+			Log.d(LOG_TAG, "Model service disconnected");
+		}
+	};
 
 }
