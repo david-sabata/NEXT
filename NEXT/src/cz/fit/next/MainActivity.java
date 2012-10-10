@@ -19,9 +19,10 @@ import com.google.android.gms.common.AccountPicker;
 public class MainActivity extends FragmentActivity {
 
 	private FanView fan;
+	private DriveComm drive;
 
 	/* Constants to identify activities called by startActivityForResult */
-	private int CHOOSE_ACCOUNT = 100;
+	public int CHOOSE_ACCOUNT = 100;
 
 
 	@Override
@@ -30,6 +31,7 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test);
 		fan = (FanView) findViewById(R.id.fan_view);
+		drive = new DriveComm();
 
 		Fragment fanFrag = new SidebarFragment();
 		Fragment contentFrag = new ListFragment();
@@ -131,7 +133,6 @@ public class MainActivity extends FragmentActivity {
 	 * Process result from called activity
 	 * 
 	 */
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
 			String accountName = new String();
@@ -139,12 +140,13 @@ public class MainActivity extends FragmentActivity {
 			Log.i("NEXT Drive", "Selected account: " + accountName);
 			// TODO: Store account name to permanent storage
 
-
 			// Execute asynctask with Google Drive Authorizing
-			// AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
-			// auth.execute((Void)null);
+			drive.authorize(accountName, MainActivity.this);
 
+		} else {
+			Log.e("NEXT Drive", "Unexpected result.");
 		}
+
 
 
 	}
