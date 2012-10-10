@@ -16,6 +16,7 @@ public class MainActivity extends FragmentActivity {
 	private static final String LOG_TAG = "FragmentActivity";
 
 
+	@Override
 	@TargetApi(14)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,8 +92,10 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+
 		return true;
 	}
 
@@ -101,16 +104,27 @@ public class MainActivity extends FragmentActivity {
 	 * On menu item clicked It can be either classic menu item or app icon in
 	 * action bar
 	 */
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if (item.getItemId() == android.R.id.home) {
-			FanView fan = (FanView) findViewById(R.id.fan_view);
-			if (fan.isOpen()) {
-				unclick(null);
-			} else {
-				click(null);
-			}
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				FanView fan = (FanView) findViewById(R.id.fan_view);
+				if (fan.isOpen()) {
+					unclick(null);
+				} else {
+					click(null);
+				}
+				break;
+
+			case R.id.setting_connect_drive:
+				Log.i(LOG_TAG, "Google Login");
+				break;
+
+			default:
+				Log.i(LOG_TAG, "onOptionsItemSelected Item " + item.getTitle());
+				System.out.println("Click on Item");
 		}
 
 		return false;
