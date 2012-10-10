@@ -17,5 +17,8 @@
          @android:color/primary_text_light
       </item>
    </style>
+    <color name="TaskSubtitleColor">#FFFFFF</color>
+    <color name="TaskSubtitleBackground">#33b6ea</color>
+    <color name="TaskRuller">#33b6ea</color>
    
 </resources>
