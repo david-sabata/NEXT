@@ -4,7 +4,7 @@ import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,24 +13,56 @@ import com.deaux.fan.FanView;
 
 public class MainActivity extends FragmentActivity {
 
-	private FanView fan;
+	private static final String LOG_TAG = "FragmentActivity";
 
 
 	@TargetApi(14)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.test);
-		fan = (FanView) findViewById(R.id.fan_view);
 
-		Fragment fanFrag = new SidebarFragment();
-		Fragment contentFrag = new ListFragment();
-		fan.setFragments(contentFrag, fanFrag);
+		setContentView(R.layout.test);
+		FanView fan = (FanView) findViewById(R.id.fan_view);
+
+		if (savedInstanceState == null) {
+			Fragment fanFrag = new SidebarFragment();
+			ContentListFragment contentFrag = new ContentListFragment();
+			fan.setFragments(contentFrag, fanFrag);
+		} else {
+			fan.setViews(-1, -1);
+		}
 
 		// always enabled on SDK < 14
 		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			getActionBar().setHomeButtonEnabled(true);
 		}
+
 	}
+
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		String items[] = new String[] { "položka 1", "položka 2", "položka 3", "položka 4", "položka 5", "položka 6",
+				"položka 7", "položka 8", "položka 9", "položka 10" };
+
+		/**
+		 * Fragment is stored by FragmentManager even after its parent activity
+		 * is destroyed and recreated. The fragment is reattached, but its data
+		 * have to be reinitialized (fragment loses its adapter) which is done
+		 * in setItems
+		 */
+		Fragment content = getSupportFragmentManager().findFragmentById(R.id.appView);
+		if (content != null && content instanceof ContentListFragment) {
+			ContentListFragment contentFragment = (ContentListFragment) content;
+			contentFragment.setItems(items);
+		} else {
+			Log.e(LOG_TAG, "onResume: content fragment is null");
+		}
+
+	}
+
 
 
 	/**
@@ -40,6 +72,8 @@ public class MainActivity extends FragmentActivity {
 	 */
 	public void unclick(View v) {
 		System.out.println("CLOSE");
+
+		FanView fan = (FanView) findViewById(R.id.fan_view);
 		fan.showMenu();
 	}
 
@@ -51,6 +85,8 @@ public class MainActivity extends FragmentActivity {
 	 */
 	public void click(View v) {
 		System.out.println("OPEN");
+
+		FanView fan = (FanView) findViewById(R.id.fan_view);
 		fan.showMenu();
 	}
 
@@ -69,6 +105,7 @@ public class MainActivity extends FragmentActivity {
 		super.onOptionsItemSelected(item);
 
 		if (item.getItemId() == android.R.id.home) {
+			FanView fan = (FanView) findViewById(R.id.fan_view);
 			if (fan.isOpen()) {
 				unclick(null);
 			} else {
@@ -78,5 +115,7 @@ public class MainActivity extends FragmentActivity {
 
 		return false;
 	}
+
+
 
 }
