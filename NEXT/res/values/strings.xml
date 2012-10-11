@@ -25,5 +25,8 @@
     <string name="TaskDescriptionTitle">Description</string>
     <string name="TaskProjectTextAutoComplete">Fill name of project</string>
     <string name="TaskContextTextAutoComplete">Fill name of context</string>
+    <string name="TaskDone">Done</string>
+    <string name="TaskSwitch">Yes!</string>
+    <string name="TaskSwitchWaiting">No</string>
 
 </resources>

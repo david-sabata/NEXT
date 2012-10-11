@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LinearLayout1"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -8,103 +7,111 @@
     android:background="@color/FanItemsText"
     android:orientation="vertical"
     android:paddingRight="5dp"
-    tools:context=".TaskDetailFragment" >
-
-    <LinearLayout
-        android:id="@+id/titleLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_weight="0"
-        android:background="@color/TaskTitleBackground"
-        android:focusable="true"
-        android:gravity="top"
-        android:orientation="horizontal"
-        android:padding="@dimen/TaskTittlePadding" >
-
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="252dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left|center_vertical"
-            android:layout_marginLeft="@dimen/TaskTitleMarginLeft"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center_vertical"
-            android:text="@string/TaskTitle"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/TaskTitleColor"
-            android:textSize="@dimen/TaskTitleSize"
-            android:textStyle="bold" />
-
-        <CheckBox
-            android:id="@+id/titleCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/descriptionLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/FanBackgroundDark"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/TextView01"
-            style="@color/TaskTitleBackground"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/TaskTitleBackground"
-            android:paddingLeft="@dimen/TaskSubTitlePaddingLeft"
-            android:text="@string/TaskDescriptionTitle"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/TaskTitleColor"
-            android:textSize="@dimen/TaskSubtitleSize"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="296dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="@dimen/TaskDescriptionEditTextMarginLeft"
-            android:ems="10"
-            android:inputType="textMultiLine"
-            android:textColor="@color/TaskSubtitleColor" >
-
-            <requestFocus />
-        </EditText>
-
-    </LinearLayout>
-
+    tools:context=".TaskDetailFragment" xmlns:android="http://schemas.android.com/apk/res/android">
+
     <ScrollView
         android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/background_light" >
-
+
         <LinearLayout
             android:id="@+id/taskBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
+
+            <LinearLayout
+                android:id="@+id/titleLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="@color/TaskTitleBackground"
+                android:focusable="true"
+                android:gravity="top|right"
+                android:orientation="horizontal"
+                android:padding="@dimen/TaskTittlePadding" >
+
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/TaskTitleMarginLeft"
+                    android:layout_weight="1.83"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/TaskTitle"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/TaskTitleColor"
+                    android:textSize="@dimen/TaskTitleSize"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right" >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/TaskTitleBackground"
+                        android:gravity="right"
+                        android:hint="@string/TaskDone"
+                        android:paddingRight="5dp"
+                        android:text="@string/TaskDone"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/TaskTitleColor" />
+
+                    <Switch
+                        android:id="@+id/switch1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.70"
+                        android:textColor="@color/TaskCheckBoxBackground"
+                        android:textColorHint="@color/TaskCheckBoxBackground"
+                        android:textOff="@string/TaskSwitchWaiting"
+                        android:textOn="@string/TaskSwitch" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/descriptionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/FanBackgroundDark"
+                android:orientation="vertical" >
+
+                <EditText
+                    android:id="@+id/editText2"
+                    android:layout_width="296dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="@dimen/TaskDescriptionEditTextMarginLeft"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:text="Description"
+                    android:textColor="@color/TaskTitleColor" >
+
+                    <requestFocus />
+                </EditText>
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/taskDateLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/TaskSubtitleMarginRight"
                 android:orientation="vertical" >
-
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
-
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/taskDateTitle"
                     android:layout_width="wrap_content"
@@ -119,16 +126,15 @@
                     android:textColor="@color/TaskSubtitleColor"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <EditText
                     android:id="@+id/editText1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="date" />
-
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskProjectLayout"
                 android:layout_width="fill_parent"
@@ -143,7 +149,7 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/taskProjectTitle"
                     android:layout_width="wrap_content"
@@ -166,7 +172,7 @@
                     android:inputType="textMultiLine"
                     android:text="@string/TaskProjectTextAutoComplete" />
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskContextLayout"
                 android:layout_width="fill_parent"
@@ -181,7 +187,7 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textContextTitle"
                     android:layout_width="wrap_content"
@@ -205,7 +211,7 @@
                     android:text="@string/TaskContextTextAutoComplete" >
                 </AutoCompleteTextView>
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskImportantLayout"
                 android:layout_width="fill_parent"
@@ -220,7 +226,7 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textImportantTitle"
                     android:layout_width="wrap_content"
@@ -234,21 +240,21 @@
                     android:textColor="@color/TaskSubtitleColor"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <RadioGroup
                     android:id="@+id/radioGroup1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:orientation="horizontal" >
-
+
                     <RadioButton
                         android:id="@+id/radio0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="1" />
-
+
                     <RadioButton
                         android:id="@+id/radio1"
                         android:layout_width="wrap_content"
@@ -260,10 +266,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3" />
-
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>
