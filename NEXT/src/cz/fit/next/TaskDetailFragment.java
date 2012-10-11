@@ -23,4 +23,6 @@ public class TaskDetailFragment extends Fragment {
 		return inflater.inflate(R.layout.task_detail_fragment, container, false);
 	}
 
+
+
 }
