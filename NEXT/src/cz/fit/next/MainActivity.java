@@ -3,7 +3,6 @@ package cz.fit.next;
 
 import java.util.List;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
@@ -20,27 +19,24 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.deaux.fan.FanView;
-import com.google.android.gms.common.AccountPicker;
 
-import cz.fit.next.drivers.DriveComm;
+import cz.fit.next.services.SyncService;
+import cz.fit.next.services.SyncService.SyncServiceBinder;
 import cz.fit.next.services.TasksModelService;
 import cz.fit.next.services.TasksModelService.ModelServiceBinder;
 import cz.fit.next.tasks.Task;
 
+
 public class MainActivity extends FragmentActivity {
 
-
-
-	private DriveComm drive;
-
-	/* Constants to identify activities called by startActivityForResult */
-	public int CHOOSE_ACCOUNT = 100;
 	private static final String LOG_TAG = "FragmentActivity";
 
 
 	protected TasksModelService mModelService;
+	protected SyncService mSyncService;
 
 	protected boolean mIsServiceBound = false;
+	protected boolean mSyncServiceBound = false;
 
 
 
@@ -51,7 +47,7 @@ public class MainActivity extends FragmentActivity {
 
 		setContentView(R.layout.test);
 
-		drive = new DriveComm();
+
 		FanView fan = (FanView) findViewById(R.id.fan_view);
 
 
@@ -84,6 +80,11 @@ public class MainActivity extends FragmentActivity {
 			getApplicationContext().bindService(intent, modelServiceConnection, Context.BIND_AUTO_CREATE);
 			Log.d(LOG_TAG, "binding service to app context");
 		}
+
+		if (mSyncService == null) {
+			Intent intent = new Intent(this, SyncService.class);
+			getApplicationContext().bindService(intent, syncServiceConnection, Context.BIND_AUTO_CREATE);
+		}
 	}
 
 
@@ -95,6 +96,9 @@ public class MainActivity extends FragmentActivity {
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
 			mModelService = TasksModelService.getInstance();
+
+		if (mSyncService == null && SyncService.getInstance() != null)
+			mSyncService = SyncService.getInstance();
 	}
 
 
@@ -178,13 +182,9 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
-				if (!drive.isAuthorized()) {
-					// TODO: If some account is stored in perm storage, enable
-					// it
-					// here
-					chooseGoogleAccount(null);
-				} else {
-					// TODO: Disconnect
+				if (mSyncServiceBound) {
+
+					mSyncService.chooseGoogleAccount(this);
 				}
 				break;
 
@@ -197,44 +197,21 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-	/**
-	 * Opens activity for choose Google account
-	 * 
-	 * @param username
-	 *            Stored username, will not display account chooser if specified
-	 */
-	void chooseGoogleAccount(String username) {
-
-		Account account = null;
-		if (username != null) // Logged on
-		{
-			account = new Account(username, "com.google");
-		} else {
-			account = null;
-		}
-
-		String accList[] = new String[1];
-		accList[0] = "com.google";
-
-		startActivityForResult(
-				AccountPicker.newChooseAccountIntent(account, null, accList, false, null, null, null, null),
-				CHOOSE_ACCOUNT);
-	}
+	/* Constants to identify activities called by startActivityForResult */
+	public int CHOOSE_ACCOUNT = 100;
 
 
 	/**
 	 * Process result from called activity
-	 * 
 	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
 			String accountName = new String();
 			accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-			Log.i("NEXT Drive", "Selected account: " + accountName);
 			// TODO: Store account name to permanent storage
 
 			// Execute asynctask with Google Drive Authorizing
-			drive.authorize(accountName, MainActivity.this);
+			mSyncService.authorize(accountName, MainActivity.this);
 
 
 
@@ -266,6 +243,22 @@ public class MainActivity extends FragmentActivity {
 			mIsServiceBound = false;
 
 			Log.d(LOG_TAG, "Model service disconnected");
+		}
+	};
+
+	private ServiceConnection syncServiceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			SyncServiceBinder binder = (SyncServiceBinder) service;
+			mSyncService = binder.getService();
+			mSyncServiceBound = true;
+
+		}
+
+
+		public void onServiceDisconnected(ComponentName arg0) {
+			mSyncServiceBound = false;
+
 		}
 	};
 

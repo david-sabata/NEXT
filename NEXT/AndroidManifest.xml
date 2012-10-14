@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <service android:name=".services.TasksModelService"></service>
+        <service android:name=".services.SyncService"></service>
     </application>
     
     

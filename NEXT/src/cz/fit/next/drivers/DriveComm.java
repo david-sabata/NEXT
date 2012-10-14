@@ -22,6 +22,8 @@ import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.FileList;
 
+import cz.fit.next.services.SyncServiceCallback;
+
 public class DriveComm {
 
 	private String AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/drive";
@@ -31,47 +33,30 @@ public class DriveComm {
 	/* Constants to identify activities called by startActivityForResult */
 	public int CHOOSE_ACCOUNT = 100;
 
-	private boolean mAuthorized = false;
 	private String mAccountName = null;
 	private String mAuthToken = null;
 	private Drive mService = null;
-	private Activity mParent = null;
 
 
 	// private Activity mMainActivity = null;
 
 
-	/*
-	 * Returns true if drive authorization process is done
-	 */
-	public boolean isAuthorized() {
-		return mAuthorized;
-	}
-
 
 	/*
 	 * Performs Google Drive authorization, starts asynctask for this
 	 */
-	public void authorize(String username, Activity main) {
-		Object[] params = new Object[2]; // 0 = main, 1 = parent
+	public void authorize(String username, Activity main, SyncServiceCallback cb) {
+		Object[] params = new Object[2];
 		params[0] = main;
-		params[1] = this;
+		params[1] = cb;
 
 		mAccountName = username;
-		mParent = main;
 
 		Log.e("NEXT Drive", "zde");
 		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
 		auth.execute(params);
-		try {
-			auth.get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		// TODO: Callback
 	}
 
 
@@ -87,29 +72,29 @@ public class DriveComm {
 	/*
 	 * Asynctask provides authorization.
 	 */
-	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, DriveComm> {
+	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, SyncServiceCallback> {
 		@Override
-		protected DriveComm doInBackground(Object... params) {
+		protected SyncServiceCallback doInBackground(Object... params) {
 			Log.e("NEXT Drive", "Starting async");
 			Account account = new Account(mAccountName, "com.google");
 			mAuthToken = getGoogleAccessToken((Activity) params[0], account);
 			Log.e("NEXT Drive", "Token is: " + mAuthToken);
 
-			return null;
+			return (SyncServiceCallback) params[1];
 
 		}
 
 
 		@Override
-		protected void onPostExecute(DriveComm param) {
+		protected void onPostExecute(SyncServiceCallback param) {
 			super.onPostExecute(param);
 
 			// Build the service object
 			mService = buildService(mAuthToken, API_KEY);
 			Log.e("NEXT Drive", "Connection initiated.");
-			if (mAuthToken != null)
-				mAuthorized = true;
-
+			if (mAuthToken != null) {
+				param.authorizeDone();
+			}
 		}
 	}
 
