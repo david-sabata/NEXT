@@ -1,9 +1,24 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light" />
+    <!-- <style name="AppTheme" parent="@android:Theme.Holo.Light" /> -->
+    
+    <style name="AppTheme" parent="@style/Theme.Holo.Light.Hack" />
     <color name="FanBackgroundDark">#2c2c2c</color>
     <color name="FanItemsText">#FFFFFF</color>
     <color name="FanItemsBackgroundColor">#8FB5D0</color>
     <color name="FanTitleColor">#33b6ea</color>
+    <color name="TaskTitleColor">#33b6ea</color>
+    <color name="TaskTitleBackground">#2c2c2c</color>
+    <color name="TaskCheckBoxBackground">#FFFFFF</color>
 
+    <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
+    <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">
+      <item name="android:textColorPrimaryInverse">
+         @android:color/primary_text_light
+      </item>
+   </style>
+    <color name="TaskSubtitleColor">#FFFFFF</color>
+    <color name="TaskSubtitleBackground">#33b6ea</color>
+    <color name="TaskRuller">#33b6ea</color>
+   
 </resources>
