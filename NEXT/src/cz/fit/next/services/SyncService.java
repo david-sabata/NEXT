@@ -3,10 +3,12 @@ package cz.fit.next.services;
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.AccountPicker;
 
@@ -22,6 +24,7 @@ public class SyncService extends Service implements SyncServiceCallback {
 	private DriveComm drive;
 
 	private boolean mAuthorized = false;
+	private String mAccountName;
 
 
 	/*
@@ -119,6 +122,7 @@ public class SyncService extends Service implements SyncServiceCallback {
 
 
 	public void authorize(String accountName, Activity act) {
+		mAccountName = accountName;
 		drive.authorize(accountName, act, this);
 	}
 
@@ -126,6 +130,14 @@ public class SyncService extends Service implements SyncServiceCallback {
 	public void authorizeDone() {
 		mAuthorized = true;
 		Log.e(TAG, "Authorized");
+
+		// TODO: Toast notification for only first login
+		Context context = getApplicationContext();
+		CharSequence text = "Logged in as " + mAccountName;
+		int duration = Toast.LENGTH_SHORT;
+
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
 
