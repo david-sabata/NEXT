@@ -16,6 +16,9 @@ import android.view.View;
 import com.deaux.fan.FanView;
 import com.google.android.gms.common.AccountPicker;
 
+import cz.fit.next.drivers.DriveComm;
+
+
 public class MainActivity extends FragmentActivity {
 
 	private FanView fan;
@@ -92,8 +95,14 @@ public class MainActivity extends FragmentActivity {
 			}
 		} else if (id == R.id.setting_connect_drive) {
 			// Log.i("Setting", "Google Login");
-			// TODO: If some account is stored in perm storage, enable it here
-			chooseGoogleAccount(null);
+			if (!drive.isAuthorized()) {
+				// TODO: If some account is stored in perm storage, enable it
+				// here
+				chooseGoogleAccount(null);
+			} else {
+				// TODO: Disconnect
+			}
+
 
 		} else {
 			Log.i("item ID : ", "onOptionsItemSelected Item ID" + id);
@@ -142,6 +151,8 @@ public class MainActivity extends FragmentActivity {
 
 			// Execute asynctask with Google Drive Authorizing
 			drive.authorize(accountName, MainActivity.this);
+
+
 
 		} else {
 			Log.e("NEXT Drive", "Unexpected result.");
