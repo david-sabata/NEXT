@@ -2,17 +2,24 @@ package cz.fit.next.services;
 
 import android.accounts.Account;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.AccountPicker;
 
+import cz.fit.next.MainActivity;
+import cz.fit.next.R;
 import cz.fit.next.drivers.DriveComm;
 
 
@@ -22,6 +29,10 @@ public class SyncService extends Service implements SyncServiceCallback {
 	private String TAG = "SyncService";
 	private static final String PREF_FILE_NAME = "SyncServicePref";
 	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
+
+	// Notification types
+	private static final int NOTIFICATION_NEW_SHARED = 100;
+
 
 	// GDrive Driver
 	private DriveComm drive;
@@ -154,15 +165,62 @@ public class SyncService extends Service implements SyncServiceCallback {
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
 
-
 		synchronize();
+		// intervalSynchronize();
 	}
 
 
 	public void synchronize() {
-		drive.synchronize();
+		drive.synchronize(this);
 	}
 
 
+	public void displaySharedNotification() {
+		displayStatusbarNotification(NOTIFICATION_NEW_SHARED);
+	}
+
+
+	private void intervalSynchronize() {
+		class Async extends AsyncTask<Void, Void, Void> {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+
+				return null;
+			}
+
+
+			@Override
+			protected void onPostExecute(Void param) {
+				super.onPostExecute(param);
+
+			}
+		}
+
+		Async task = new Async();
+		task.execute();
+	}
+
+
+
+	private void displayStatusbarNotification(int type) {
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.menu_next)
+				.setContentTitle("NEXT Sharing").setContentText("New shared file found on your Drive")
+				.setAutoCancel(true);
+
+		Intent resultIntent = new Intent(this, MainActivity.class);
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(MainActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		int notid = 0;
+		mNotificationManager.notify(notid, mBuilder.build());
+
+	}
 
 }

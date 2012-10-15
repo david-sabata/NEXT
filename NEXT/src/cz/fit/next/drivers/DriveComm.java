@@ -70,7 +70,8 @@ public class DriveComm {
 	/*
 	 * Starts synchronization
 	 */
-	public void synchronize() {
+	public void synchronize(SyncService srv) {
+		mSyncService = srv;
 		synchronizeMainFolder();
 		checkSharedFiles();
 	}
@@ -277,7 +278,6 @@ public class DriveComm {
 
 				FileList flist = null;
 				Files.List request = null;
-				String nextDirId = new String();
 				List<File> res = new ArrayList<File>();
 
 				try {
@@ -331,8 +331,10 @@ public class DriveComm {
 			File f = list.get(i);
 			Log.e(TAG, "Filename: " + f.getTitle() + ", mime: " + f.getMimeType());
 		}
+
+		if (list.size() > 0)
+			mSyncService.displaySharedNotification();
+
 	}
-
-
 
 }
