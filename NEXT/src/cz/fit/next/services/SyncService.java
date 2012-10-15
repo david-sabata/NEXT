@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -19,6 +20,8 @@ import cz.fit.next.drivers.DriveComm;
 public class SyncService extends Service implements SyncServiceCallback {
 
 	private String TAG = "SyncService";
+	private static final String PREF_FILE_NAME = "SyncServicePref";
+	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
 
 	// GDrive Driver
 	private DriveComm drive;
@@ -63,6 +66,15 @@ public class SyncService extends Service implements SyncServiceCallback {
 		mInstance = this;
 		// Log.e(TAG, "onCreate");
 		drive = new DriveComm();
+
+		// Reload stored preferences
+		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+		mAccountName = settings.getString(PREF_ACCOUNT_NAME, null);
+
+		if (mAccountName != null) {
+			Log.e(TAG, "Auth");
+			authorize(mAccountName, null);
+		}
 	}
 
 
@@ -80,7 +92,6 @@ public class SyncService extends Service implements SyncServiceCallback {
 	 */
 	public void chooseGoogleAccount(Activity act) {
 
-		// TODO: perm storage
 		String username = null;
 
 		Account account = null;
@@ -122,23 +133,36 @@ public class SyncService extends Service implements SyncServiceCallback {
 
 
 	public void authorize(String accountName, Activity act) {
-		mAccountName = accountName;
-		drive.authorize(accountName, act, this);
+		drive.authorize(accountName, act, getApplicationContext(), this);
 	}
 
 
-	public void authorizeDone() {
+	public void authorizeDone(String username) {
 		mAuthorized = true;
+		mAccountName = username;
 		Log.e(TAG, "Authorized");
 
-		// TODO: Toast notification for only first login
-		Context context = getApplicationContext();
-		CharSequence text = "Logged in as " + mAccountName;
-		int duration = Toast.LENGTH_SHORT;
+		// save username into permanent storage
+		SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString(PREF_ACCOUNT_NAME, mAccountName);
+		editor.commit();
 
+		Context context = getApplicationContext();
+		CharSequence text = "Logged into GDrive as " + mAccountName;
+		int duration = Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
+
+
+		synchronize();
 	}
+
+
+	public void synchronize() {
+		drive.synchronize();
+	}
+
 
 
 }

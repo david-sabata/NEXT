@@ -1,6 +1,6 @@
 package cz.fit.next.services;
 
 public interface SyncServiceCallback {
-	public void authorizeDone();
+	public void authorizeDone(String username);
 
 }
