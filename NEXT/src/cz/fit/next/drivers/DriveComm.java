@@ -23,6 +23,7 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -82,8 +83,10 @@ public class DriveComm {
 
 
 	private void synchronizeAfterReauth() {
-		getDriveFolderFileList(FOLDER_NAME);
+		// getDriveFolderFileList(FOLDER_NAME);
 		// getSharedFileList(FOLDER_NAME);
+
+		uploadFile("battery_history.txt");
 	}
 
 
@@ -474,6 +477,77 @@ public class DriveComm {
 		Async task = new Async();
 		String[] params = new String[1];
 		params[0] = id;
+		task.execute(params);
+
+	}
+
+
+
+	private void uploadFile(String name) {
+
+		class Async extends AsyncTask<String, Void, Void> {
+
+			@Override
+			protected Void doInBackground(String... params) {
+				FileList flist = null;
+				Files.List request = null;
+				String nextDirId = new String();
+				List<File> res = new ArrayList<File>();
+
+				try {
+					request = mService.files().list();
+
+					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+					request = request.setQ(q);
+
+					flist = request.execute();
+					if (flist.size() > 0) {
+						nextDirId = flist.getItems().get(0).getId();
+						Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+					} else // Create new NEXT folder
+					{
+						Log.e(TAG, "NEXT folder not found.");
+
+						// TODO: Create new directory
+					}
+
+
+					// Upload file
+
+					// File's metadata.
+					File body = new File();
+					body.setTitle(params[0]);
+					// body.setDescription("");
+					body.setMimeType("text/plain");
+
+					// File's content.
+					java.io.File fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + params[0]);
+					FileContent mediaContent = new FileContent("text/plain", fileContent);
+
+					mService.files().insert(body, mediaContent).execute();
+
+
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				return null;
+
+			}
+
+
+			@Override
+			protected void onPostExecute(Void param) {
+				super.onPostExecute(param);
+				Log.e(TAG, "File uploaded.");
+			}
+		}
+
+		Async task = new Async();
+		String[] params = new String[1];
+		params[0] = name;
 		task.execute(params);
 
 	}
