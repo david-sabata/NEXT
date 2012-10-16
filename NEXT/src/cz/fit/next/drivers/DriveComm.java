@@ -1,10 +1,17 @@
 package cz.fit.next.drivers;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +21,9 @@ import android.util.Log;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpRequest;
@@ -26,7 +36,6 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import cz.fit.next.services.SyncService;
-import cz.fit.next.services.SyncServiceCallback;
 
 public class DriveComm {
 
@@ -52,18 +61,12 @@ public class DriveComm {
 	/*
 	 * Performs Google Drive authorization, starts asynctask for this
 	 */
-	public void authorize(String username, Activity main, Context appcontext, SyncServiceCallback cb) {
-		Object[] params = new Object[3];
-		params[0] = main;
-		params[1] = appcontext;
-		params[2] = cb;
+	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv) {
 
 		mAccountName = username;
+		mSyncService = syncserv;
 
-		// Log.e(TAG, "zde");
-		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
-		auth.execute(params);
-
+		auth(main, appcontext);
 	}
 
 
@@ -72,46 +75,100 @@ public class DriveComm {
 	 */
 	public void synchronize(SyncService srv) {
 		mSyncService = srv;
-		synchronizeMainFolder();
-		checkSharedFiles();
+
+		// Auth token may be expired, lets renew it
+		reauth();
 	}
 
 
-	private void synchronizeMainFolder() {
+	private void synchronizeAfterReauth() {
 		getDriveFolderFileList(FOLDER_NAME);
-	}
-
-
-	private void checkSharedFiles() {
-		getSharedFileList(FOLDER_NAME);
+		// getSharedFileList(FOLDER_NAME);
 	}
 
 
 	/*
+	 * Starts reauthorization
+	 */
+	private void reauth() {
+		AccountManager am = AccountManager.get(mSyncService.getApplicationContext());
+		am.invalidateAuthToken("com.google", null);
+
+		ReauthCallbackClass cls = new ReauthCallbackClass();
+
+		Object[] params = new Object[3];
+		params[0] = null;
+		params[1] = mSyncService.getApplicationContext();
+		params[2] = cls;
+
+		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
+		auth.execute(params);
+
+
+	}
+
+
+	private void auth(Activity main, Context appcontext) {
+
+		AuthorizationCallbackClass cls = new AuthorizationCallbackClass();
+
+		Object[] params = new Object[3];
+		params[0] = main;
+		params[1] = appcontext;
+		params[2] = cls;
+
+		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
+		auth.execute(params);
+	}
+
+	/*
+	 * Authorization callback classes
+	 */
+
+	interface AuthorizationCallback {
+		public void authorized();
+	}
+
+	private class AuthorizationCallbackClass implements AuthorizationCallback {
+		public void authorized() {
+			Log.i(TAG, "Authorized Callback");
+			mSyncService.authorizeDone(mAccountName);
+		}
+	}
+
+	private class ReauthCallbackClass implements AuthorizationCallback {
+		public void authorized() {
+			Log.i(TAG, "Reauthorized Callback");
+
+			synchronizeAfterReauth();
+		}
+	}
+
+	/*
 	 * Asynctask provides authorization.
 	 */
-	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, SyncServiceCallback> {
+	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, AuthorizationCallback> {
 		@Override
-		protected SyncServiceCallback doInBackground(Object... params) {
+		protected AuthorizationCallback doInBackground(Object... params) {
 			Log.e(TAG, "Starting async");
 			Account account = new Account(mAccountName, "com.google");
 			mAuthToken = getGoogleAccessToken((Activity) params[0], (Context) params[1], account);
 			Log.e(TAG, "Token is: " + mAuthToken);
 
-			return (SyncServiceCallback) params[2];
+			return (AuthorizationCallback) params[2];
 
 		}
 
 
 		@Override
-		protected void onPostExecute(SyncServiceCallback param) {
+		protected void onPostExecute(AuthorizationCallback param) {
 			super.onPostExecute(param);
 
 			// Build the service object
 			mService = buildService(mAuthToken, API_KEY);
 			Log.e(TAG, "Connection initiated.");
 			if (mAuthToken != null) {
-				param.authorizeDone(mAccountName);
+				param.authorized();
 			}
 		}
 	}
@@ -261,7 +318,11 @@ public class DriveComm {
 
 
 	private void getDriveFolderFileListDone(List<File> list) {
-
+		for (int i = 0; i < list.size(); i++) {
+			File f = list.get(i);
+			Log.i(TAG, "Downloading " + f.getId());
+			downloadFile(f.getId());
+		}
 	}
 
 
@@ -334,6 +395,86 @@ public class DriveComm {
 
 		if (list.size() > 0)
 			mSyncService.displaySharedNotification(list.size());
+
+	}
+
+
+
+	private void downloadFile(String id) {
+
+		class Async extends AsyncTask<String, Void, Void> {
+
+			@Override
+			protected Void doInBackground(String... params) {
+
+				File dfile;
+				try {
+					dfile = mService.files().get(params[0]).execute();
+					String token = mService.files().get(params[0]).getOauthToken();
+					String name = dfile.getTitle();
+
+					Log.i(TAG, "URL: " + dfile.getDownloadUrl());
+
+					if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
+						OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);
+
+						// HttpResponse resp = mService.getRequestFactory()
+						// .buildGetRequest(new
+						// GenericUrl(dfile.getDownloadUrl())).execute();
+
+						HttpClient client = new DefaultHttpClient();
+						HttpGet get = new HttpGet(dfile.getDownloadUrl());
+						get.setHeader("Authorization", "Bearer " + token);
+						org.apache.http.HttpResponse response = client.execute(get);
+
+
+						InputStream is = response.getEntity().getContent();
+
+						byte[] buffer = new byte[1024];
+						int bytesRead;
+						while ((bytesRead = is.read(buffer)) != -1) {
+							os.write(buffer, 0, bytesRead);
+						}
+
+						os.close();
+
+					}
+
+
+
+				} catch (GoogleJsonResponseException e) {
+					GoogleJsonError error = e.getDetails();
+
+					Log.e(TAG, "Error code" + error.getCode());
+					Log.e(TAG, "Error message: " + error.getMessage());
+					// More error information can be retrieved with
+					// error.getErrors().
+				} catch (HttpResponseException e) {
+					// No Json body was returned by the API.
+					Log.e(TAG, "HTTP Status code: " + e.getStatusCode());
+					Log.e(TAG, "HTTP Reason: " + e.getLocalizedMessage());
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				return null;
+
+			}
+
+
+			@Override
+			protected void onPostExecute(Void param) {
+				super.onPostExecute(param);
+				Log.e(TAG, "File downloaded.");
+			}
+		}
+
+		Async task = new Async();
+		String[] params = new String[1];
+		params[0] = id;
+		task.execute(params);
 
 	}
 
