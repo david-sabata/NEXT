@@ -333,7 +333,7 @@ public class DriveComm {
 		}
 
 		if (list.size() > 0)
-			mSyncService.displaySharedNotification();
+			mSyncService.displaySharedNotification(list.size());
 
 	}
 

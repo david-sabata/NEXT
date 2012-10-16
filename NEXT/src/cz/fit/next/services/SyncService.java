@@ -175,8 +175,8 @@ public class SyncService extends Service implements SyncServiceCallback {
 	}
 
 
-	public void displaySharedNotification() {
-		displayStatusbarNotification(NOTIFICATION_NEW_SHARED);
+	public void displaySharedNotification(int count) {
+		displayStatusbarNotification(NOTIFICATION_NEW_SHARED, count);
 	}
 
 
@@ -203,10 +203,10 @@ public class SyncService extends Service implements SyncServiceCallback {
 
 
 
-	private void displayStatusbarNotification(int type) {
+	private void displayStatusbarNotification(int type, int count) {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.menu_next)
-				.setContentTitle("NEXT Sharing").setContentText("New shared file found on your Drive")
-				.setAutoCancel(true);
+				.setContentTitle("NEXT Sharing").setContentText("New shared files found on your Drive.")
+				.setNumber(count).setTicker("New shared files found.").setAutoCancel(true);
 
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
