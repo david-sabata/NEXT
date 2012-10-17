@@ -35,9 +35,9 @@
                     android:gravity="top|left"
                     android:orientation="horizontal"
                     android:padding="@dimen/TaskTittlePadding" >
-
+
                     <TextView
-                        android:id="@+id/titleText"
+                        android:id="@+id/titleTask"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="left|center_vertical"

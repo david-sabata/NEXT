@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +42,14 @@ public class ContentListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// TODO Auto-generated method stub
 		super.onListItemClick(l, v, position, id);
-		Log.i("Position", "" + position);
 
-		TaskDetailFragment fTask = new TaskDetailFragment();
+		// get Task
+		Task item = (Task) getListAdapter().getItem(position);
+
+		// crate fragment with task detail
+		TaskDetailFragment fTask = new TaskDetailFragment(item);
+
+		// replace main fragment with task detail fragment
 		mFan.replaceMainFragment(fTask);
 	}
 

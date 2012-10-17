@@ -50,10 +50,6 @@ public class MainActivity extends FragmentActivity {
 			// TODO this is valid code!! Delete comments after debug tasks
 			ContentListFragment contentFrag = new ContentListFragment(fan);
 			fan.setFragments(contentFrag, fanFrag);
-
-			// TaskDetailFragment taskFrag = new TaskDetailFragment();
-			// fan.setFragments(taskFrag, fanFrag);
-
 		} else {
 			fan.setViews(-1, -1);
 		}
