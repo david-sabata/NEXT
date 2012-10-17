@@ -35,10 +35,10 @@
                     android:gravity="top|left"
                     android:orientation="horizontal"
                     android:padding="@dimen/TaskTittlePadding" >
-
+
                     <TextView
                         android:id="@+id/titleText"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="left|center_vertical"
                         android:layout_marginLeft="@dimen/TaskTitleMarginLeft"
@@ -49,6 +49,7 @@
                         android:textColor="@color/TaskTitleColor"
                         android:textSize="@dimen/TaskTitleSize"
                         android:textStyle="bold" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -86,10 +87,10 @@
                             android:textOff="@string/TaskSwitchWaiting"
                             android:textOn="@string/TaskSwitch" />
                     </LinearLayout>
-
+
                     <EditText
                         android:id="@+id/editText2"
-                        android:layout_width="248dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginLeft="@dimen/TaskDescriptionEditTextMarginLeft"
