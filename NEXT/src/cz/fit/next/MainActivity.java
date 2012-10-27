@@ -1,7 +1,9 @@
 package cz.fit.next;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -109,6 +111,27 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				Log.i(LOG_TAG, "Google Login");
+				break;
+
+			case R.id.menu_wipe_db:
+				// TODO: temporary, hardcoded
+				new AlertDialog.Builder(this)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle("Wipe database")
+						.setMessage("Do you really want to erase all stored data?")
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								TasksModelService.getInstance().wipeDatabaseData();
+								ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(
+										R.id.appView);
+								if (currentFragment != null) {
+									currentFragment.reloadContent();
+								}
+							}
+						})
+						.setNegativeButton("No", null)
+						.show();
 				break;
 
 			default:

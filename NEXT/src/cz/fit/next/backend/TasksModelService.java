@@ -98,9 +98,21 @@ public class TasksModelService extends Service {
 	}
 
 
+	/**
+	 * Erases all database data by calling its onUpgrade method
+	 */
+	public void wipeDatabaseData() {
+		mProjectsDataSource.wipeDatabaseData();
+	}
 
 
 
+	/**
+	 * Returns list of dummy items
+	 * 
+	 * TODO: use Cursor
+	 * TODO: get data from db
+	 */
 	public List<Task> getAllItems() {
 		List<Task> items = new ArrayList<Task>();
 
@@ -114,7 +126,9 @@ public class TasksModelService extends Service {
 	}
 
 
-
+	/**
+	 * Returns cursor to all projects
+	 */
 	public Cursor getAllProjectsCursor() {
 		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
 		return cursor;

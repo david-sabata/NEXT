@@ -52,6 +52,13 @@ public class ProjectsDataSource {
 	}
 
 
+	/**
+	 * Erases all database data calling its onUpgrade method
+	 */
+	public void wipeDatabaseData() {
+		dbHelper.onUpgrade(database, 0, 1);
+	}
+
 
 	//	public Comment createComment(String comment) {
 	//		ContentValues values = new ContentValues();

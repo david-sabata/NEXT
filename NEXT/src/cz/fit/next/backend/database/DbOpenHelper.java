@@ -21,15 +21,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 
 
-	@Override
-	public void onOpen(SQLiteDatabase db) {
-		super.onOpen(db);
-
-		// FIXME: debug only - always regenerate db
-		onUpgrade(db, 0, 1);
-	}
-
-
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
