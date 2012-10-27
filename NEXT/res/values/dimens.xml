@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="FanItemTextSize">21dp</dimen>
+    <dimen name="FanTitleSize">20dp</dimen>
+    <dimen name="FanItemDrawablePadding">5dp</dimen>
+    <dimen name="FanTitleLineSpacing">5dp</dimen>
+    <dimen name="FainItemHeight">40dp</dimen>
+    <dimen name="TaskTitleSize">35dp</dimen>
+    <dimen name="TaskTitleMarginLeft">5dp</dimen>
+    <dimen name="TaskSubtitleSize">20dp</dimen>
+    <dimen name="TaskTitlePaddingTop">5dp</dimen>
+    <dimen name="TaskTittlePadding">5dp</dimen>
+    <dimen name="TaskBodySubLayout">10dp</dimen>
+    <dimen name="TaskBodyPadding">10dp</dimen>
+    <dimen name="TaskSubTitlePaddingLeft">15dp</dimen>
+    <dimen name="TaskSubBodyTitlePaddingLeft">5dp</dimen>
+    <dimen name="TaskDescriptionEditTextMarginLeft">10dp</dimen>
+    <dimen name="TaskSubtitleMarginRight">12dp</dimen>
+</resources>
