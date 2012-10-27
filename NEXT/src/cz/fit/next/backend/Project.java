@@ -1,4 +1,4 @@
-package cz.fit.next.tasks;
+package cz.fit.next.backend;
 
 public class Project {
 

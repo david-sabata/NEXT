@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cz.fit.next;
+package cz.fit.next.taskdetail;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import cz.fit.next.tasks.Task;
+import cz.fit.next.R;
+import cz.fit.next.R.id;
+import cz.fit.next.R.layout;
+import cz.fit.next.backend.Task;
 
 /**
  * @author Tomas Sychra

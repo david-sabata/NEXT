@@ -1,4 +1,4 @@
-package cz.fit.next.database;
+package cz.fit.next.backend.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import cz.fit.next.tasks.Project;
+import cz.fit.next.backend.Project;
 
 public class ProjectsDataSource {
 

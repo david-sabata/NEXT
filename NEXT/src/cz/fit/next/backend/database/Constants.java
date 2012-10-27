@@ -1,4 +1,4 @@
-package cz.fit.next.database;
+package cz.fit.next.backend.database;
 
 
 public interface Constants {

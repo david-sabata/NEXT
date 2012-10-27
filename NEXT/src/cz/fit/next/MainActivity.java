@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -17,13 +16,16 @@ import android.view.View;
 
 import com.deaux.fan.FanView;
 
-import cz.fit.next.services.TasksModelService;
-import cz.fit.next.services.TasksModelService.ModelServiceBinder;
+import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
+import cz.fit.next.sidebar.SidebarFragment;
+import cz.fit.next.tasklist.ContentListFragment;
 
 public class MainActivity extends FragmentActivity {
 
 	private static final String LOG_TAG = "FragmentActivity";
 
+	private final MainActivity self = this;
 
 	protected TasksModelService mModelService;
 
@@ -44,9 +46,7 @@ public class MainActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
-
-			//			ContentListFragment contentFrag = new ContentListFragment(fan);
-			ProjectListFragment contentFrag = new ProjectListFragment(fan);
+			ContentListFragment contentFrag = new ContentListFragment();
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);
@@ -77,28 +77,13 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-	protected void reloadContentItems() {
-		Cursor projectsCursor = null;
 
-		if (mIsServiceBound) {
-			projectsCursor = mModelService.getAllProjectsCursor(this);
-		} else {
-			Log.e(LOG_TAG, "cannot reload items, service is not ready yet");
-		}
 
-		/**
-		 * Fragment is stored by FragmentManager even after its parent activity
-		 * is destroyed and recreated. The fragment is reattached, but its data
-		 * have to be reinitialized (fragment loses its adapter) which is done
-		 * in setItems
-		 */
-		Fragment content = getSupportFragmentManager().findFragmentById(R.id.appView);
-		if (content != null && content instanceof ProjectListFragment) {
-			ProjectListFragment contentFragment = (ProjectListFragment) content;
-			contentFragment.setItems(projectsCursor);
-		} else {
-			Log.e(LOG_TAG, "onResume: content fragment is null");
-		}
+	/**
+	 * Public FanView getter so the fragments can switch main fragment
+	 */
+	public FanView getFanView() {
+		return (FanView) findViewById(R.id.fan_view);
 	}
 
 
@@ -178,8 +163,17 @@ public class MainActivity extends FragmentActivity {
 
 			Log.d(LOG_TAG, "Model service connected");
 
-			// reload content items
-			reloadContentItems();
+			// init service objects
+			mModelService.initDataSources(self);
+
+			// reload content fragment (all fragments must implement ContentReloadable)
+			ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(R.id.appView);
+			if (currentFragment != null) {
+				currentFragment.reloadContent();
+			}
+			else {
+				Log.d(LOG_TAG, "No current fragment upon ModelService bind. Reload cancelled");
+			}
 		}
 
 

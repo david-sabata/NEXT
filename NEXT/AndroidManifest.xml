@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.TasksModelService"></service>
+        <service android:name=".backend.TasksModelService"></service>
     </application>
     
     <uses-permission android:name="android.permission.INTERNET" />

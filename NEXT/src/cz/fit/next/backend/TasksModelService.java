@@ -1,4 +1,4 @@
-package cz.fit.next.services;
+package cz.fit.next.backend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,7 @@ import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import cz.fit.next.database.ProjectsDataSource;
-import cz.fit.next.tasks.Task;
+import cz.fit.next.backend.database.ProjectsDataSource;
 
 /**
  * @author David Sabata
@@ -72,7 +71,10 @@ public class TasksModelService extends Service {
 
 
 
-
+	/**
+	 * Initialize projects datasource
+	 * @param context
+	 */
 	private void initProjectsDataSource(Context context) {
 		if (mProjectsDataSource == null) {
 			mProjectsDataSource = new ProjectsDataSource(context);
@@ -81,7 +83,19 @@ public class TasksModelService extends Service {
 	}
 
 
+	// ---------------------------------------------------------------------------------
+	// All public calls assumes that initDataSources has been 
+	// called when activity was bound to the service
 	// --------------------------------------------------------
+
+
+	/**
+	 * Called from activity upon binding to prepare dataSource
+	 * @param context
+	 */
+	public void initDataSources(Context context) {
+		initProjectsDataSource(context);
+	}
 
 
 
@@ -101,10 +115,7 @@ public class TasksModelService extends Service {
 
 
 
-	public Cursor getAllProjectsCursor(Context context) {
-		if (mProjectsDataSource == null)
-			initProjectsDataSource(context);
-
+	public Cursor getAllProjectsCursor() {
 		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
 		return cursor;
 	}
