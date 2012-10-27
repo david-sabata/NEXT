@@ -37,8 +37,7 @@ public class SidebarFragment extends Fragment {
 	/**
 	 * Generate menu layout
 	 * 
-	 * @param sideBarView
-	 *            View of sidebar
+	 * @param sideBarView View of sidebar
 	 * @return sideBar - laout changed with new items and seetings
 	 */
 	protected View setItemsSidebar(View pSideBarView) {

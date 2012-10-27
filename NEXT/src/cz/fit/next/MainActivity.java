@@ -1,12 +1,11 @@
 package cz.fit.next;
 
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -20,7 +19,6 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.services.TasksModelService;
 import cz.fit.next.services.TasksModelService.ModelServiceBinder;
-import cz.fit.next.tasks.Task;
 
 public class MainActivity extends FragmentActivity {
 
@@ -47,8 +45,8 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
 
-			// TODO this is valid code!! Delete comments after debug tasks
-			ContentListFragment contentFrag = new ContentListFragment(fan);
+			//			ContentListFragment contentFrag = new ContentListFragment(fan);
+			ProjectListFragment contentFrag = new ProjectListFragment(fan);
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);
@@ -69,7 +67,6 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -81,10 +78,10 @@ public class MainActivity extends FragmentActivity {
 
 
 	protected void reloadContentItems() {
-		List<Task> items = null;
+		Cursor projectsCursor = null;
 
 		if (mIsServiceBound) {
-			items = mModelService.getAllItems();
+			projectsCursor = mModelService.getAllProjectsCursor(this);
 		} else {
 			Log.e(LOG_TAG, "cannot reload items, service is not ready yet");
 		}
@@ -96,9 +93,9 @@ public class MainActivity extends FragmentActivity {
 		 * in setItems
 		 */
 		Fragment content = getSupportFragmentManager().findFragmentById(R.id.appView);
-		if (content != null && content instanceof ContentListFragment) {
-			ContentListFragment contentFragment = (ContentListFragment) content;
-			contentFragment.setItems(items);
+		if (content != null && content instanceof ProjectListFragment) {
+			ProjectListFragment contentFragment = (ProjectListFragment) content;
+			contentFragment.setItems(projectsCursor);
 		} else {
 			Log.e(LOG_TAG, "onResume: content fragment is null");
 		}

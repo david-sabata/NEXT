@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import cz.fit.next.database.ProjectsDataSource;
 import cz.fit.next.tasks.Task;
 
 /**
@@ -21,6 +24,9 @@ public class TasksModelService extends Service {
 	/** Instance of self */
 	private static TasksModelService mInstance;
 
+
+
+	private ProjectsDataSource mProjectsDataSource = null;
 
 
 	// ---------------------------------------------------------------------------------
@@ -49,9 +55,12 @@ public class TasksModelService extends Service {
 	public void onDestroy() {
 		mInstance = null;
 
+		// close database connection
+		if (mProjectsDataSource != null)
+			mProjectsDataSource.close();
+
 		Log.d(LOG_TAG, "service destroyed");
 	}
-
 
 	public boolean onUnbind(Intent intent) {
 		mInstance = null;
@@ -63,7 +72,18 @@ public class TasksModelService extends Service {
 
 
 
+
+	private void initProjectsDataSource(Context context) {
+		if (mProjectsDataSource == null) {
+			mProjectsDataSource = new ProjectsDataSource(context);
+			mProjectsDataSource.open();
+		}
+	}
+
+
 	// --------------------------------------------------------
+
+
 
 
 
@@ -78,6 +98,17 @@ public class TasksModelService extends Service {
 
 		return items;
 	}
+
+
+
+	public Cursor getAllProjectsCursor(Context context) {
+		if (mProjectsDataSource == null)
+			initProjectsDataSource(context);
+
+		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
+		return cursor;
+	}
+
 
 
 	// ---------------------------------------------------------------------------------

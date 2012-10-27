@@ -1,9 +1,9 @@
 package cz.fit.next;
 
-import java.util.List;
-
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +11,21 @@ import android.widget.ListView;
 
 import com.deaux.fan.FanView;
 
-import cz.fit.next.tasks.Task;
+public class ProjectListFragment extends ListFragment {
 
-public class ContentListFragment extends ListFragment {
-
-	private final static String LOG_TAG = "ContentFragment";
+	private final static String LOG_TAG = "ProjectListFragment";
 
 	private FanView mFan;
 
 
-	public ContentListFragment(FanView pFan) {
+	public ProjectListFragment() {
+		super();
+	}
+
+
+	public ProjectListFragment(FanView pFan) {
+		super();
+
 		mFan = pFan;
 	}
 
@@ -34,22 +39,14 @@ public class ContentListFragment extends ListFragment {
 
 
 
-	public void setItems(List<Task> items) {
-		setListAdapter(new ContentListAdapter(getActivity(), android.R.layout.simple_list_item_1, items));
+	public void setItems(Cursor cursor) {
+		setListAdapter(new ProjectListAdapter(getActivity(), cursor));
 	}
 
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-
-		// get Task
-		Task item = (Task) getListAdapter().getItem(position);
-
-		// crate fragment with task detail
-		TaskDetailFragment fTask = new TaskDetailFragment(item);
-
-		// replace main fragment with task detail fragment
-		mFan.replaceMainFragment(fTask);
+		Log.v(LOG_TAG, "item click");
 	}
 
 
