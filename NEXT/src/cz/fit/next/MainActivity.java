@@ -159,6 +159,7 @@ public class MainActivity extends FragmentActivity {
 
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
+		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			ModelServiceBinder binder = (ModelServiceBinder) service;
 
@@ -178,6 +179,7 @@ public class MainActivity extends FragmentActivity {
 		}
 
 
+		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			Log.d(LOG_TAG, "Model service disconnected");
 		}

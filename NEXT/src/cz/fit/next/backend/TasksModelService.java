@@ -41,6 +41,7 @@ public class TasksModelService extends Service {
 	/**
 	 * Service has just been created
 	 */
+	@Override
 	public void onCreate() {
 		Log.d(LOG_TAG, "service created");
 
@@ -51,6 +52,7 @@ public class TasksModelService extends Service {
 	/**
 	 * Service is shutting down
 	 */
+	@Override
 	public void onDestroy() {
 		mInstance = null;
 
@@ -61,6 +63,7 @@ public class TasksModelService extends Service {
 		Log.d(LOG_TAG, "service destroyed");
 	}
 
+	@Override
 	public boolean onUnbind(Intent intent) {
 		mInstance = null;
 

@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import cz.fit.next.R;
-import cz.fit.next.R.id;
-import cz.fit.next.R.layout;
 import cz.fit.next.backend.Task;
 
 /**

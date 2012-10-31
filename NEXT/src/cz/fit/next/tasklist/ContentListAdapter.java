@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import cz.fit.next.R;
-import cz.fit.next.R.id;
-import cz.fit.next.R.layout;
 import cz.fit.next.backend.Task;
 
 public class ContentListAdapter extends ArrayAdapter<Task> {
@@ -35,6 +33,7 @@ public class ContentListAdapter extends ArrayAdapter<Task> {
 	}
 
 
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		ViewHolder holder;
