@@ -1,14 +1,14 @@
 package cz.fit.next;
 
-
+<<<<<<< HEAD
 
 import java.util.List;
 
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
-
+=======
 import android.app.AlertDialog;
-
+>>>>>>> master
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +27,9 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.services.SyncService;
 import cz.fit.next.services.SyncService.SyncServiceBinder;
+import cz.fit.next.services.TasksModelService;
+import cz.fit.next.services.TasksModelService.ModelServiceBinder;
+import cz.fit.next.tasks.Task;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
@@ -58,6 +61,10 @@ public class MainActivity extends FragmentActivity {
 
 
 
+		FanView fan = (FanView) findViewById(R.id.fan_view);
+
+
+
 		// setup fan sidebar
 		FanView fan = (FanView) findViewById(R.id.fan_view);
 		fan.setAnimationDuration(200); // 200ms
@@ -69,6 +76,9 @@ public class MainActivity extends FragmentActivity {
 			// TODO this is valid code!! Delete comments after debug tasks
 			// ContentListFragment contentFrag = new ContentListFragment();
 			// fan.setFragments(contentFrag, fanFrag);
+
+			TaskDetailFragment taskFrag = new TaskDetailFragment();
+			fan.setFragments(taskFrag, fanFrag);
 
 			ContentListFragment contentFrag = new ContentListFragment();
 			fan.setFragments(contentFrag, fanFrag);

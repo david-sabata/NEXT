@@ -28,5 +28,6 @@
     <string name="TaskDone">Done</string>
     <string name="TaskSwitch">Yes!</string>
     <string name="TaskSwitchWaiting">No</string>
+    <string name="WipeDatabase">Wipe database</string>
 
 </resources>

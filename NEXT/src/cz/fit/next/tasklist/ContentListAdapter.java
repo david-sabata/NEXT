@@ -1,4 +1,4 @@
-package cz.fit.next;
+package cz.fit.next.tasklist;
 
 import java.util.List;
 
@@ -8,7 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import cz.fit.next.tasks.Task;
+import cz.fit.next.R;
+import cz.fit.next.R.id;
+import cz.fit.next.R.layout;
+import cz.fit.next.backend.Task;
 
 public class ContentListAdapter extends ArrayAdapter<Task> {
 

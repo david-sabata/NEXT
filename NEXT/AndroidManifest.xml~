@@ -24,10 +24,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service android:name=".backend.TasksModelService"></service>
+<<<<<<< HEAD
+        <service android:name=".services.TasksModelService"></service>
         <service android:name=".services.SyncService"></service>
-
+=======
+        <service android:name=".backend.TasksModelService"></service>
+>>>>>>> master
     </application>
     
     

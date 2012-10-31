@@ -1,10 +1,8 @@
-package cz.fit.next;
-
-import java.util.HashMap;
-import java.util.Map;
+package cz.fit.next.sidebar;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,22 +10,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.deaux.fan.FanView;
+
+import cz.fit.next.MainActivity;
+import cz.fit.next.R;
+import cz.fit.next.R.color;
+import cz.fit.next.R.id;
+import cz.fit.next.R.layout;
+import cz.fit.next.projectlist.ProjectListFragment;
+import cz.fit.next.tasklist.ContentListFragment;
+
 public class SidebarFragment extends Fragment {
 
-	// Fixed menu items - theirs IDs
-	int menuItemsId[] = { R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes, R.id.Time_Blocked,
-			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects };
+	private final static String LOG_TAG = "SidebarFragment";
 
-	// Hash map for item of menu
-	Map<Integer, View> menuItemViews = new HashMap<Integer, View>();
+
+	/**
+	 * IDs of fixed menu items
+	 */
+	int menuItemsId[] = {
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes, R.id.Time_Blocked,
+			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
+	};
+
+
 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
-
-		// set items of sidebar
 		sideBarView = setItemsSidebar(sideBarView);
 
 		return sideBarView;
@@ -37,14 +49,11 @@ public class SidebarFragment extends Fragment {
 	/**
 	 * Generate menu layout
 	 * 
-	 * @param sideBarView
-	 *            View of sidebar
+	 * @param sideBarView View of sidebar
 	 * @return sideBar - laout changed with new items and seetings
 	 */
 	protected View setItemsSidebar(View pSideBarView) {
-		/*
-		 * find view by id in sideBarView initialize TitleByTime items
-		 */
+
 		for (final int id : menuItemsId) {
 			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
@@ -54,19 +63,15 @@ public class SidebarFragment extends Fragment {
 
 			// set on click event
 			item.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) { // TODO Auto-generated method stub
+				public void onClick(View v) {
 					resetAllActiveClicks();
 					item.setBackgroundResource(R.color.FanItemsBackgroundColor);
 					areaOfInterestSelector(id);
 				}
 			});
-
-			// remember new item settings
-			menuItemViews.put(id, item);
 		}
 
 		return pSideBarView;
-
 	}
 
 
@@ -77,29 +82,51 @@ public class SidebarFragment extends Fragment {
 	 * @param id
 	 */
 	protected void areaOfInterestSelector(int id) {
+		FanView fan = ((MainActivity) getActivity()).getFanView();
+
+		FragmentManager fragmentMgr = getActivity().getSupportFragmentManager();
+		Fragment currentFragment = fragmentMgr.findFragmentById(R.id.appView);
+
 		switch (id) {
-		// fixed item of menu
 			case R.id.Time_Next:
-				Log.i("FixedMenu - Time", "Next");
+				Log.i(LOG_TAG, "selection: Next");
+
+				// create new fragment only if needed
+				if (!(currentFragment instanceof ContentListFragment)) {
+					fan.replaceMainFragment(new ContentListFragment());
+				}
+				else {
+					((ContentListFragment) currentFragment).reloadContent();
+				}
+
 				break;
 			case R.id.Time_Today:
-				Log.i("FixedMenu - Time", "Today");
+				Log.i(LOG_TAG, "selection: Today");
 				break;
 			case R.id.Time_InPlan:
-				Log.i("FixedMenu - Time", "In plan");
+				Log.i(LOG_TAG, "selection: In plan");
 				break;
 			case R.id.Time_Sometimes:
-				Log.i("FixedMenu - Time", "Sometimes");
+				Log.i(LOG_TAG, "selection: Sometimes");
 				break;
 			case R.id.Time_Blocked:
-				Log.i("FixedMenu - Time", "Blocked");
+				Log.i(LOG_TAG, "selection: Blocked");
 				break;
 			case R.id.Projects_ShowProjects:
-				Log.i("FixedMenu - Projects", "Show Projects");
+				Log.i(LOG_TAG, "selection: Show Projects");
+
+				// create new fragment only if needed
+				if (!(currentFragment instanceof ProjectListFragment)) {
+					fan.replaceMainFragment(new ProjectListFragment());
+				}
+				else {
+					((ProjectListFragment) currentFragment).reloadContent();
+				}
+
 				break;
 			default:
 				// user defined items of menu
-				Log.i("Flow menu - Context", "User defined");
+				Log.i(LOG_TAG, "selection: User defined");
 				/*
 				 * TODO send id of TextView - area interest -> we have to have
 				 * some global variable (maybe HashMap) to stored context
@@ -109,8 +136,9 @@ public class SidebarFragment extends Fragment {
 				break;
 		}
 
+		// always toggle sidebar
+		fan.showMenu();
 	}
-
 
 	protected void setItemProperties(TextView item) {
 
@@ -129,11 +157,14 @@ public class SidebarFragment extends Fragment {
 
 
 	/**
-	 * Set background of all items in menu to transparent
+	 * Reset background of all items in menu to transparent
 	 */
 	protected void resetAllActiveClicks() {
-		for (View item : menuItemViews.values()) {
-			item.setBackgroundResource(android.R.color.transparent);
+		for (int viewId : menuItemsId) {
+			getView().findViewById(viewId).setBackgroundResource(android.R.color.transparent);
 		}
 	}
+
+
+
 }

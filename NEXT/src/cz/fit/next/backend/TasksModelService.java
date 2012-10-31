@@ -1,14 +1,16 @@
-package cz.fit.next.services;
+package cz.fit.next.backend;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import cz.fit.next.tasks.Task;
+import cz.fit.next.backend.database.ProjectsDataSource;
 
 /**
  * @author David Sabata
@@ -21,6 +23,9 @@ public class TasksModelService extends Service {
 	/** Instance of self */
 	private static TasksModelService mInstance;
 
+
+
+	private ProjectsDataSource mProjectsDataSource = null;
 
 
 	// ---------------------------------------------------------------------------------
@@ -49,9 +54,12 @@ public class TasksModelService extends Service {
 	public void onDestroy() {
 		mInstance = null;
 
+		// close database connection
+		if (mProjectsDataSource != null)
+			mProjectsDataSource.close();
+
 		Log.d(LOG_TAG, "service destroyed");
 	}
-
 
 	public boolean onUnbind(Intent intent) {
 		mInstance = null;
@@ -63,10 +71,48 @@ public class TasksModelService extends Service {
 
 
 
+	/**
+	 * Initialize projects datasource
+	 * @param context
+	 */
+	private void initProjectsDataSource(Context context) {
+		if (mProjectsDataSource == null) {
+			mProjectsDataSource = new ProjectsDataSource(context);
+			mProjectsDataSource.open();
+		}
+	}
+
+
+	// ---------------------------------------------------------------------------------
+	// All public calls assumes that initDataSources has been 
+	// called when activity was bound to the service
 	// --------------------------------------------------------
 
 
+	/**
+	 * Called from activity upon binding to prepare dataSource
+	 * @param context
+	 */
+	public void initDataSources(Context context) {
+		initProjectsDataSource(context);
+	}
 
+
+	/**
+	 * Erases all database data by calling its onUpgrade method
+	 */
+	public void wipeDatabaseData() {
+		mProjectsDataSource.wipeDatabaseData();
+	}
+
+
+
+	/**
+	 * Returns list of dummy items
+	 * 
+	 * TODO: use Cursor
+	 * TODO: get data from db
+	 */
 	public List<Task> getAllItems() {
 		List<Task> items = new ArrayList<Task>();
 
@@ -78,6 +124,16 @@ public class TasksModelService extends Service {
 
 		return items;
 	}
+
+
+	/**
+	 * Returns cursor to all projects
+	 */
+	public Cursor getAllProjectsCursor() {
+		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
+		return cursor;
+	}
+
 
 
 	// ---------------------------------------------------------------------------------
