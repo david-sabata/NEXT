@@ -13,7 +13,7 @@ public class Task {
 	protected String partContexts[] = {}; // one task can be part of many
 											// contexts
 	protected Integer important; // important of the task (1,2,3)
-
+    protected Boolean status; // status of task (Done or not)
 
 	public String getTitle() {
 		return title;
@@ -72,6 +72,15 @@ public class Task {
 
 	public void setImportant(Integer important) {
 		this.important = important;
+	}
+	
+	public Boolean getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(Boolean important) {
+		this.status = important;
 	}
 
 
