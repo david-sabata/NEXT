@@ -50,11 +50,12 @@
                 }
 
                     #sideBar {
-                        width:200px;
+                        width:15%;
                         height:100%;
                         float:left;
                         background:#2c2c2c;
-                       box-shadow: 3px 3px 5px black;
+                        box-shadow: 3px 3px 5px black;
+                      
                     }
                         .sideBarUl {
                             margin-bottom:30px;
@@ -99,12 +100,31 @@
                     */
                     #taskListDiv {
                         height:100%;
-                        float:left;                    
+                        float:left;           
+                        width:85%;
+                        
+                                 
                     }
 
                         #taskList {
                             margin:auto;    
+                            border-collapse:collapse;
+                            margin-left:3px;
+                            width:100%;
+                          
                         }
+
+                            .tableCell {
+                                padding:3px;
+                            }
+
+                            .statusCell {
+                                text-align:center;
+                            }
+
+                            .tableHeader {
+                                  padding:3px;
+                            }
         </style>
 
 
@@ -343,17 +363,18 @@
                 /**
                 * Generate content of cell and setting style of the cell
                 */
-                function createCell(pText, pBgColor, pTextColor, pBorders, pBold, pClass) {
+                function createCell(pText, pBgColor, pTextColor, pBorders, pBold, pClass, pBorderColor) {
                     // Create a new TD element
                     var newTD = document.createElement('td');
                     newTD.innerHTML = pText;
                     newTD.setAttribute("style","background:" + pBgColor + ";" + 
                                                "color:" + pTextColor + ";" +
-                                               "border-left:" + pBorders[0] + "px " + "solid black;" +
-                                               "border-right:" + pBorders[1] + "px " + "solid black;" +
-                                               "border-bottom:" + pBorders[2] + "px " + "solid black;" +
-                                               "border-top:" + pBorders[2] + "px " + "solid black;" +
+                                               "border-left:" + pBorders[0] + "px " + pBorderColor+ ";" +
+                                               "border-right:" + pBorders[1] + "px " + pBorderColor + ";" +
+                                               "border-bottom:" + pBorders[2] + "px " + pBorderColor+ ";" +
+                                                "border-top:" + pBorders[2] + "px " + pBorderColor+ ";" +
                                                "font-weight:" + pBold);
+                    newTD.setAttribute("class", pClass);
                     return newTD;
                 }
 
@@ -372,7 +393,7 @@
                         var task = data[0];
                         for (item in task) {
                             // Create a new TD element
-                            var newTD = createCell((languagesTexts[lang])[item], 'white', 'black', [1, 1, 1, 1], 'bold'); // left, right, bottom, top
+                            var newTD = createCell((languagesTexts[lang])[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
                             newTR.appendChild(newTD);
                         }                
                     }
@@ -390,41 +411,42 @@
                     for (item in task) {
                         // Create a new TD element
                         var newTD;
-
+                        var borderColor = "solid grey";
+                        var classCells = "tableCell";
                         switch (item) {
                             case 'title':
                                                    // text,    bgColor, textColor, borderOn, fontWeight
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal'); // left, right, bottom, top
+                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor); // left, right, bottom, top
                                 break;
 
                             case 'description':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal',classCells, borderColor);
                                 break;
 
                             case 'date':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
                                 break;
 
                             case 'partProject':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
                                 break;
 
                             case 'partContexts':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
                                 break;
 
                             case 'important':
                                 var bgColor;
                                 var value = task[item];
                                 if(value == 1) {
-                                    bgColor = 'green';
+                                    bgColor = '#2f9b3e';
                                 } else if(value == 2) {
-                                    bgColor = 'yellow';
+                                    bgColor = '#ceef4a';
                                 } else {
-                                    bgColor = 'red';
+                                    bgColor = '#ff3333';
                                 }
 
-                                newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
                                 break;
                             case 'status':
                                 var value = task[item];
@@ -437,7 +459,7 @@
                                 } else {
                                     el = '<input type="checkbox"  />';
                                 }
-                                newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal');
+                                newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal', "statusCell", borderColor);
                                 break;
 
                             default:
