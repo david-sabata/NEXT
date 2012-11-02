@@ -24,7 +24,7 @@ import cz.fit.next.drivers.DriveComm;
 
 
 
-public class SyncService extends Service implements SyncServiceCallback {
+public class SyncService extends Service {
 
 	private String TAG = "SyncService";
 	private static final String PREF_FILE_NAME = "SyncServicePref";
@@ -144,34 +144,40 @@ public class SyncService extends Service implements SyncServiceCallback {
 
 
 	public void authorize(String accountName, Activity act) {
-		drive.authorize(accountName, act, getApplicationContext(), this);
+		authorizeDoneHandler ad = new authorizeDoneHandler();
+		drive.authorize(accountName, act, getApplicationContext(), this, ad);
 	}
 
 
-	public void authorizeDone(String username) {
-		mAuthorized = true;
-		mAccountName = username;
-		Log.e(TAG, "Authorized");
+	public class authorizeDoneHandler implements SyncServiceCallback { 
+	
+		public void Done(Object param) {
+			mAuthorized = true;
+			mAccountName = (String) param;
+			Log.e(TAG, "Authorized");
+	
+			// save username into permanent storage
+			SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString(PREF_ACCOUNT_NAME, mAccountName);
+			editor.commit();
+	
+			Context context = getApplicationContext();
+			CharSequence text = "Logged into GDrive as " + mAccountName;
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+	
+			synchronize();
+			// intervalSynchronize();
+		}
 
-		// save username into permanent storage
-		SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString(PREF_ACCOUNT_NAME, mAccountName);
-		editor.commit();
-
-		Context context = getApplicationContext();
-		CharSequence text = "Logged into GDrive as " + mAccountName;
-		int duration = Toast.LENGTH_SHORT;
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-
-		synchronize();
-		// intervalSynchronize();
+		
 	}
 
 
 	public void synchronize() {
-		drive.synchronize(this);
+		//drive.synchronize(this);
 	}
 
 

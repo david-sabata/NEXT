@@ -37,6 +37,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 import cz.fit.next.services.SyncService;
+import cz.fit.next.services.SyncServiceCallback;
 
 public class DriveComm {
 
@@ -53,127 +54,145 @@ public class DriveComm {
 	private String mAuthToken = null;
 	private Drive mService = null;
 	private SyncService mSyncService = null;
+	private SyncServiceCallback mCallback = null;
 
 
 	// private Activity mMainActivity = null;
 
-
-
-	/*
-	 * Performs Google Drive authorization, starts asynctask for this
-	 */
-	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv) {
-
+	// PUBLIC METHODS: authorize, list, listShared, lock, download, upload, unlock
+	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		mAccountName = username;
 		mSyncService = syncserv;
-
-		auth(main, appcontext);
-	}
-
-
-	/*
-	 * Starts synchronization
-	 */
-	public void synchronize(SyncService srv) {
-		mSyncService = srv;
-
-		// Auth token may be expired, lets renew it
-		reauth();
-	}
-
-
-	private void synchronizeAfterReauth() {
-		// getDriveFolderFileList(FOLDER_NAME);
-		// getSharedFileList(FOLDER_NAME);
-
-		uploadFile("battery_history.txt");
-	}
-
-
-	/*
-	 * Starts reauthorization
-	 */
-	private void reauth() {
-		AccountManager am = AccountManager.get(mSyncService.getApplicationContext());
-		am.invalidateAuthToken("com.google", null);
-
-		ReauthCallbackClass cls = new ReauthCallbackClass();
-
-		Object[] params = new Object[3];
-		params[0] = null;
-		params[1] = mSyncService.getApplicationContext();
-		params[2] = cls;
-
-		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
-		auth.execute(params);
-
-
-	}
-
-
-	private void auth(Activity main, Context appcontext) {
-
-		AuthorizationCallbackClass cls = new AuthorizationCallbackClass();
-
+		//mCallback = cb;
+		
 		Object[] params = new Object[3];
 		params[0] = main;
 		params[1] = appcontext;
-		params[2] = cls;
+		params[2] = cb;
 
 		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
 		auth.execute(params);
 	}
-
-	/*
-	 * Authorization callback classes
-	 */
-
-	interface AuthorizationCallback {
-		public void authorized();
+	
+	public void list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
+		mSyncService = syncserv;
+		//mCallback = cb;
+		
+		Object[] params = new Object[0];
+		params[0] = appcontext;
+		params[1] = cb;
+		params[2] = FOLDER_NAME;
+		
+		ListGoogleDriveClass auth = new ListGoogleDriveClass();
+		auth.execute(params);
+		
+		
 	}
-
-	private class AuthorizationCallbackClass implements AuthorizationCallback {
-		public void authorized() {
-			Log.i(TAG, "Authorized Callback");
-			mSyncService.authorizeDone(mAccountName);
-		}
+	
+	public void listShared(Context appcontext, SyncServiceCallback cb) {
+		
 	}
-
-	private class ReauthCallbackClass implements AuthorizationCallback {
-		public void authorized() {
-			Log.i(TAG, "Reauthorized Callback");
-
-			synchronizeAfterReauth();
-		}
+	
+	public void lock() {
+		
 	}
+	
+	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
+		
+	}
+	
+	public void upload(Context appcontext, SyncServiceCallback cb, String filename) {
+		
+	}
+	
+	public void unlock() {
+		
+	}
+	
+
+	
+	
+	
+	/**************************************************/
+	/*              ASYNCTASK CLASSES                 */
+	/**************************************************/
 
 	/*
 	 * Asynctask provides authorization.
 	 */
-	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, AuthorizationCallback> {
+	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
 		@Override
-		protected AuthorizationCallback doInBackground(Object... params) {
+		protected Object doInBackground(Object... params) {
 			Log.e(TAG, "Starting async");
 			Account account = new Account(mAccountName, "com.google");
 			mAuthToken = getGoogleAccessToken((Activity) params[0], (Context) params[1], account);
 			Log.e(TAG, "Token is: " + mAuthToken);
 
-			return (AuthorizationCallback) params[2];
+			return params[2];
 
 		}
 
 
 		@Override
-		protected void onPostExecute(AuthorizationCallback param) {
+		protected void onPostExecute(Object param) {
 			super.onPostExecute(param);
 
 			// Build the service object
 			mService = buildService(mAuthToken, API_KEY);
 			Log.e(TAG, "Connection initiated.");
 			if (mAuthToken != null) {
-				param.authorized();
+				((SyncServiceCallback)param).Done(mAccountName);
 			}
 		}
+	}
+	
+	/*
+	 * Asynctask provides listing.
+	 */
+	private class ListGoogleDriveClass extends AsyncTask<Object, Void, List<File>> {
+		
+		private SyncServiceCallback cb;
+		
+		@Override
+		protected List<File> doInBackground(Object... params) {
+			Log.e(TAG, "Starting list");
+			this.cb = ((SyncServiceCallback)params[1]);
+			reauth((Context)params[0]);
+			
+			List<File> filelist;
+			filelist = getFileList((String) params[2]);
+			
+			return filelist;
+
+		}
+
+
+		@Override
+		protected void onPostExecute(List<File> filelist) {
+			super.onPostExecute(filelist);
+
+			
+			cb.Done(filelist);
+			
+		}
+	}
+	
+	
+	
+	/***************************************/
+	/*          HELPER FUNCTIONS           */
+	/***************************************/
+	
+	/*
+	 * Invalidates token and makes new one
+	 */
+	private void reauth(Context appcontext) {
+		AccountManager am = AccountManager.get(mSyncService.getApplicationContext());
+		am.invalidateAuthToken("com.google", null);
+
+		Account account = new Account(mAccountName, "com.google");
+		mAuthToken = getGoogleAccessToken(null, appcontext, account);
+		Log.e(TAG, "Token is: " + mAuthToken);
 	}
 
 
@@ -219,6 +238,10 @@ public class DriveComm {
 
 		return retval;
 	}
+	
+	
+	
+	
 
 
 	/*
@@ -246,12 +269,7 @@ public class DriveComm {
 	/*
 	 * Returns filelist of application folder
 	 */
-	private void getDriveFolderFileList(String folderName) {
-
-		class Async extends AsyncTask<String, Void, List<File>> {
-
-			@Override
-			protected List<File> doInBackground(String... params) {
+	private List<File> getFileList(String folderName) {
 
 				FileList flist = null;
 				Files.List request = null;
@@ -261,7 +279,7 @@ public class DriveComm {
 				try {
 					// Determine the folder id
 					request = mService.files().list();
-					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + folderName + "'";
 					request = request.setQ(q);
 
 					flist = request.execute();
@@ -301,94 +319,50 @@ public class DriveComm {
 
 				return res;
 
-			}
-
-
-			@Override
-			protected void onPostExecute(List<File> param) {
-				super.onPostExecute(param);
-
-				getDriveFolderFileListDone(param);
-			}
-		}
-
-		Async task = new Async();
-		String[] params = new String[1];
-		params[0] = folderName;
-		task.execute(params);
 
 	}
-
-
-	private void getDriveFolderFileListDone(List<File> list) {
-		for (int i = 0; i < list.size(); i++) {
-			File f = list.get(i);
-			Log.i(TAG, "Downloading " + f.getId());
-			downloadFile(f.getId());
-		}
-	}
-
 
 
 	/*
 	 * Returns list of shared files, which are not in folder
 	 */
-	private void getSharedFileList(String folderName) {
+	private List<File> getSharedFileList(String filename) {
 
-		class Async extends AsyncTask<String, Void, List<File>> {
+		FileList flist = null;
+		Files.List request = null;
+		List<File> res = new ArrayList<File>();
 
-			@Override
-			protected List<File> doInBackground(String... params) {
+		try {
 
-				FileList flist = null;
-				Files.List request = null;
-				List<File> res = new ArrayList<File>();
+			// Download filelist
+			flist = null;
+			request = null;
 
-				try {
+			request = mService.files().list();
+			String q = "not 'me' in owners and not '" + filename + "' in parents";
+			// Log.i(TAG, q);
+			request = request.setQ(q);
 
-					// Download filelist
-					flist = null;
-					request = null;
+			do {
+				flist = request.execute();
+				res.addAll(flist.getItems());
+				request = request.setPageToken(flist.getNextPageToken());
+				Log.e(TAG, "New page token: " + flist.getNextPageToken());
+			} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-					request = mService.files().list();
-					String q = "not 'me' in owners and not '" + params[0] + "' in parents";
-					// Log.i(TAG, q);
-					request = request.setQ(q);
+			Log.e(TAG, "Pocet souboru: " + res.size());
 
-					do {
-						flist = request.execute();
-						res.addAll(flist.getItems());
-						request = request.setPageToken(flist.getNextPageToken());
-						Log.e(TAG, "New page token: " + flist.getNextPageToken());
-					} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
-
-					Log.e(TAG, "Pocet souboru: " + res.size());
-
-				} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
-
-				return res;
-
-			}
-
-
-			@Override
-			protected void onPostExecute(List<File> param) {
-				super.onPostExecute(param);
-
-				inspectSharedFiles(param);
-			}
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 
-		Async task = new Async();
-		String[] params = new String[1];
-		params[0] = folderName;
-		task.execute(params);
+		return res;
 
 	}
 
+
+		
 
 	private void inspectSharedFiles(List<File> list) {
 		for (int i = 0; i < list.size(); i++) {
@@ -405,79 +379,58 @@ public class DriveComm {
 
 	private void downloadFile(String id) {
 
-		class Async extends AsyncTask<String, Void, Void> {
+		File dfile;
+		try {
+			dfile = mService.files().get(id).execute();
+			String token = mService.files().get(id).getOauthToken();
+			String name = dfile.getTitle();
 
-			@Override
-			protected Void doInBackground(String... params) {
+			Log.i(TAG, "URL: " + dfile.getDownloadUrl());
 
-				File dfile;
-				try {
-					dfile = mService.files().get(params[0]).execute();
-					String token = mService.files().get(params[0]).getOauthToken();
-					String name = dfile.getTitle();
+			if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
+				OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);
 
-					Log.i(TAG, "URL: " + dfile.getDownloadUrl());
+				// HttpResponse resp = mService.getRequestFactory()
+				// .buildGetRequest(new
+				// GenericUrl(dfile.getDownloadUrl())).execute();
 
-					if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
-						OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);
-
-						// HttpResponse resp = mService.getRequestFactory()
-						// .buildGetRequest(new
-						// GenericUrl(dfile.getDownloadUrl())).execute();
-
-						HttpClient client = new DefaultHttpClient();
-						HttpGet get = new HttpGet(dfile.getDownloadUrl());
-						get.setHeader("Authorization", "Bearer " + token);
-						org.apache.http.HttpResponse response = client.execute(get);
+				HttpClient client = new DefaultHttpClient();
+				HttpGet get = new HttpGet(dfile.getDownloadUrl());
+				get.setHeader("Authorization", "Bearer " + token);
+				org.apache.http.HttpResponse response = client.execute(get);
 
 
-						InputStream is = response.getEntity().getContent();
+				InputStream is = response.getEntity().getContent();
 
-						byte[] buffer = new byte[1024];
-						int bytesRead;
-						while ((bytesRead = is.read(buffer)) != -1) {
-							os.write(buffer, 0, bytesRead);
-						}
-
-						os.close();
-
-					}
-
-
-
-				} catch (GoogleJsonResponseException e) {
-					GoogleJsonError error = e.getDetails();
-
-					Log.e(TAG, "Error code" + error.getCode());
-					Log.e(TAG, "Error message: " + error.getMessage());
-					// More error information can be retrieved with
-					// error.getErrors().
-				} catch (HttpResponseException e) {
-					// No Json body was returned by the API.
-					Log.e(TAG, "HTTP Status code: " + e.getStatusCode());
-					Log.e(TAG, "HTTP Reason: " + e.getLocalizedMessage());
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+				while ((bytesRead = is.read(buffer)) != -1) {
+					os.write(buffer, 0, bytesRead);
 				}
 
-				return null;
+				os.close();
 
 			}
 
 
-			@Override
-			protected void onPostExecute(Void param) {
-				super.onPostExecute(param);
-				Log.e(TAG, "File downloaded.");
-			}
+
+		} catch (GoogleJsonResponseException e) {
+			GoogleJsonError error = e.getDetails();
+
+			Log.e(TAG, "Error code" + error.getCode());
+			Log.e(TAG, "Error message: " + error.getMessage());
+			// More error information can be retrieved with
+			// error.getErrors().
+		} catch (HttpResponseException e) {
+			// No Json body was returned by the API.
+			Log.e(TAG, "HTTP Status code: " + e.getStatusCode());
+			Log.e(TAG, "HTTP Reason: " + e.getLocalizedMessage());
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		Async task = new Async();
-		String[] params = new String[1];
-		params[0] = id;
-		task.execute(params);
 
 	}
 
@@ -485,70 +438,49 @@ public class DriveComm {
 
 	private void uploadFile(String name) {
 
-		class Async extends AsyncTask<String, Void, Void> {
+		FileList flist = null;
+		Files.List request = null;
+		String nextDirId = new String();
+		List<File> res = new ArrayList<File>();
 
-			@Override
-			protected Void doInBackground(String... params) {
-				FileList flist = null;
-				Files.List request = null;
-				String nextDirId = new String();
-				List<File> res = new ArrayList<File>();
+		try {
+			request = mService.files().list();
 
-				try {
-					request = mService.files().list();
+			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+			request = request.setQ(q);
 
-					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
-					request = request.setQ(q);
+			flist = request.execute();
+			if (flist.size() > 0) {
+				nextDirId = flist.getItems().get(0).getId();
+				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+			} else // Create new NEXT folder
+			{
+				Log.e(TAG, "NEXT folder not found.");
 
-					flist = request.execute();
-					if (flist.size() > 0) {
-						nextDirId = flist.getItems().get(0).getId();
-						Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
-					} else // Create new NEXT folder
-					{
-						Log.e(TAG, "NEXT folder not found.");
-
-						// TODO: Create new directory
-					}
-
-
-					// Upload file
-
-					// File's metadata.
-					File body = new File();
-					body.setTitle(params[0]);
-					// body.setDescription("");
-					body.setMimeType("text/plain");
-
-					// File's content.
-					java.io.File fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + params[0]);
-					FileContent mediaContent = new FileContent("text/plain", fileContent);
-
-					mService.files().insert(body, mediaContent).execute();
-
-
-
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				return null;
-
+				// TODO: Create new directory
 			}
 
 
-			@Override
-			protected void onPostExecute(Void param) {
-				super.onPostExecute(param);
-				Log.e(TAG, "File uploaded.");
-			}
+			// Upload file
+
+			// File's metadata.
+			File body = new File();
+			body.setTitle(name);
+			// body.setDescription("");
+			body.setMimeType("text/plain");
+
+			// File's content.
+			java.io.File fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + name);
+			FileContent mediaContent = new FileContent("text/plain", fileContent);
+
+			mService.files().insert(body, mediaContent).execute();
+
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		Async task = new Async();
-		String[] params = new String[1];
-		params[0] = name;
-		task.execute(params);
 
 	}
 
