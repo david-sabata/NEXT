@@ -24,9 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".synchro.LoginActivity"
+            android:label="@string/title_activity_main" >
+        </activity>
 
         <service android:name=".backend.TasksModelService"></service>
-        <service android:name=".services.SyncService"></service>
+        <service android:name=".synchro.SyncService"></service>
 
     </application>
     

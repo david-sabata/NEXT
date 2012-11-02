@@ -36,8 +36,8 @@ import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
-import cz.fit.next.services.SyncService;
-import cz.fit.next.services.SyncServiceCallback;
+import cz.fit.next.synchro.SyncService;
+import cz.fit.next.synchro.SyncServiceCallback;
 
 public class DriveComm {
 
@@ -349,6 +349,9 @@ public class DriveComm {
 		} catch (GoogleAuthException e) {
 			e.printStackTrace();
 		}
+		
+		// Finish login activity, if exists
+		if (main != null) main.finish();
 
 		return retval;
 	}

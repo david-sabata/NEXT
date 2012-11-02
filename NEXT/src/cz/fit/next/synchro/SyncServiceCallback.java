@@ -1,4 +1,4 @@
-package cz.fit.next.services;
+package cz.fit.next.synchro;
 
 public interface SyncServiceCallback {
 	public void Done(Object param);

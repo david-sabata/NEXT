@@ -25,11 +25,10 @@ import android.view.MenuItem;
 import com.deaux.fan.FanView;
 
 
-import cz.fit.next.services.SyncService;
-import cz.fit.next.services.SyncService.SyncServiceBinder;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
+import cz.fit.next.synchro.SyncService;
 import cz.fit.next.tasklist.ContentListFragment;
 
 
@@ -42,10 +41,9 @@ public class MainActivity extends FragmentActivity {
 
 
 	protected TasksModelService mModelService;
-	protected SyncService mSyncService;
-
+	
 	protected boolean mIsServiceBound = false;
-	protected boolean mSyncServiceBound = false;
+	
 
 
 
@@ -83,14 +81,14 @@ public class MainActivity extends FragmentActivity {
 			getActionBar().setHomeButtonEnabled(true);
 		}
 
-		// start service if it's not started yet
-		
-		if (mSyncService == null) {
-			Intent intent = new Intent(this, SyncService.class);
-			getApplicationContext().bindService(intent, syncServiceConnection, Context.BIND_AUTO_CREATE);
-		}
-
 		bindModelService();
+		
+		// start synchronization service
+		Intent i = new Intent(this,SyncService.class);
+		Bundle b = new Bundle();
+		b.putInt("buttonPressed",0);
+		i.putExtras(b);
+		this.startService(i);
 
 	}
 
@@ -103,9 +101,6 @@ public class MainActivity extends FragmentActivity {
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
 			mModelService = TasksModelService.getInstance();
-
-		if (mSyncService == null && SyncService.getInstance() != null)
-			mSyncService = SyncService.getInstance();
 
 		// restore service if needed
 		bindModelService();
@@ -155,10 +150,15 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
-				if (mSyncServiceBound) {
-
-					mSyncService.chooseGoogleAccount(this);
-				}
+				
+				// tell synchronization service to choose user account
+				Intent i = new Intent(this,SyncService.class);
+				Bundle b = new Bundle();
+				b.putInt("buttonPressed",1);
+				i.putExtras(b);
+				this.startService(i);
+				
+								
 				break;
 
 			case R.id.menu_wipe_db:
@@ -191,33 +191,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-	/* Constants to identify activities called by startActivityForResult */
-	public int CHOOSE_ACCOUNT = 100;
-
-
-	/**
-	 * Process result from called activity
-	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
-			String accountName = new String();
-			accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-			
-			// Execute asynctask with Google Drive Authorizing
-			mSyncService.authorize(accountName, MainActivity.this);
-
-		} else {
-			Log.e("NEXT", "Unexpected result.");
-		}
-
-
-
-	}
-
-
-
-
-
+	
 	/**
 	 * Public FanView getter so the fragments can switch main fragment
 	 */
@@ -255,21 +229,5 @@ public class MainActivity extends FragmentActivity {
 		}
 	};
 
-	private ServiceConnection syncServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			SyncServiceBinder binder = (SyncServiceBinder) service;
-			mSyncService = binder.getService();
-			mSyncServiceBound = true;
-
-		}
-
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			mSyncServiceBound = false;
-
-		}
-	};
-
-
+	
 }
