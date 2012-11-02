@@ -84,13 +84,7 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		// start service if it's not started yet
-
-		if (mModelService == null) {
-			Intent intent = new Intent(this, TasksModelService.class);
-			getApplicationContext().bindService(intent, modelServiceConnection, Context.BIND_AUTO_CREATE);
-			Log.d(LOG_TAG, "binding service to app context");
-		}
-
+		
 		if (mSyncService == null) {
 			Intent intent = new Intent(this, SyncService.class);
 			getApplicationContext().bindService(intent, syncServiceConnection, Context.BIND_AUTO_CREATE);
@@ -208,15 +202,12 @@ public class MainActivity extends FragmentActivity {
 		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
 			String accountName = new String();
 			accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-			// TODO: Store account name to permanent storage
-
+			
 			// Execute asynctask with Google Drive Authorizing
 			mSyncService.authorize(accountName, MainActivity.this);
 
-
-
 		} else {
-			Log.e("NEXT Drive", "Unexpected result.");
+			Log.e("NEXT", "Unexpected result.");
 		}
 
 

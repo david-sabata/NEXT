@@ -54,7 +54,7 @@ public class DriveComm {
 	private String mAuthToken = null;
 	private Drive mService = null;
 	private SyncService mSyncService = null;
-	private SyncServiceCallback mCallback = null;
+	//private SyncServiceCallback mCallback = null;
 
 
 	// private Activity mMainActivity = null;
@@ -75,10 +75,10 @@ public class DriveComm {
 	}
 	
 	public void list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
-		mSyncService = syncserv;
+		//mSyncService = syncserv;
 		//mCallback = cb;
 		
-		Object[] params = new Object[0];
+		Object[] params = new Object[3];
 		params[0] = appcontext;
 		params[1] = cb;
 		params[2] = FOLDER_NAME;
@@ -90,7 +90,16 @@ public class DriveComm {
 	}
 	
 	public void listShared(Context appcontext, SyncServiceCallback cb) {
+		//mSyncService = syncserv;
+		//mCallback = cb;
 		
+		Object[] params = new Object[3];
+		params[0] = appcontext;
+		params[1] = cb;
+		params[2] = FOLDER_NAME;
+		
+		SharedListGoogleDriveClass auth = new SharedListGoogleDriveClass();
+		auth.execute(params);
 	}
 	
 	public void lock() {
@@ -98,11 +107,25 @@ public class DriveComm {
 	}
 	
 	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
+				
+		Object[] params = new Object[3];
+		params[0] = appcontext;
+		params[1] = cb;
+		params[2] = filename;
 		
+		DownloadGoogleDriveClass auth = new DownloadGoogleDriveClass();
+		auth.execute(params);
 	}
 	
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename) {
 		
+		Object[] params = new Object[3];
+		params[0] = appcontext;
+		params[1] = cb;
+		params[2] = filename;
+		
+		UploadGoogleDriveClass auth = new UploadGoogleDriveClass();
+		auth.execute(params);
 	}
 	
 	public void unlock() {
@@ -177,6 +200,96 @@ public class DriveComm {
 		}
 	}
 	
+	/*
+	 * Asynctask provides listing of shared folder.
+	 */
+	private class SharedListGoogleDriveClass extends AsyncTask<Object, Void, List<File>> {
+		
+		private SyncServiceCallback cb;
+		
+		@Override
+		protected List<File> doInBackground(Object... params) {
+			Log.e(TAG, "Starting list");
+			this.cb = ((SyncServiceCallback)params[1]);
+			reauth((Context)params[0]);
+			
+			List<File> filelist;
+			filelist = getSharedFileList((String) params[2]);
+			
+			return filelist;
+
+		}
+
+
+		@Override
+		protected void onPostExecute(List<File> filelist) {
+			super.onPostExecute(filelist);
+
+			
+			cb.Done(filelist);
+			
+		}
+	}
+	
+	/*
+	 * Asynctask provides download.
+	 */
+	private class DownloadGoogleDriveClass extends AsyncTask<Object, Void, Void> {
+		
+		private SyncServiceCallback cb;
+		
+		@Override
+		protected Void doInBackground(Object... params) {
+			Log.e(TAG, "Starting dl");
+			this.cb = ((SyncServiceCallback)params[1]);
+			reauth((Context)params[0]);
+			
+			downloadFile((String) params[2]);
+
+			return null;
+		}
+
+
+		@Override
+		protected void onPostExecute(Void param) {
+			super.onPostExecute(param);
+
+			
+			cb.Done(null);
+			
+		}
+	}
+	
+	/*
+	 * Asynctask provides upload.
+	 */
+	private class UploadGoogleDriveClass extends AsyncTask<Object, Void, Void> {
+		
+		private SyncServiceCallback cb;
+		
+		@Override
+		protected Void doInBackground(Object... params) {
+			Log.e(TAG, "Starting ul");
+			this.cb = ((SyncServiceCallback)params[1]);
+			reauth((Context)params[0]);
+			
+			uploadFile((String) params[2]);
+			
+			return null;
+
+		}
+
+
+		@Override
+		protected void onPostExecute(Void param) {
+			super.onPostExecute(param);
+
+			
+			cb.Done(null);
+			
+		}
+	}
+	
 	
 	
 	/***************************************/
@@ -193,6 +306,7 @@ public class DriveComm {
 		Account account = new Account(mAccountName, "com.google");
 		mAuthToken = getGoogleAccessToken(null, appcontext, account);
 		Log.e(TAG, "Token is: " + mAuthToken);
+		mService = buildService(mAuthToken, API_KEY);
 	}
 
 
@@ -441,8 +555,7 @@ public class DriveComm {
 		FileList flist = null;
 		Files.List request = null;
 		String nextDirId = new String();
-		List<File> res = new ArrayList<File>();
-
+		
 		try {
 			request = mService.files().list();
 

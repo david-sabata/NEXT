@@ -210,9 +210,23 @@ public class SyncService extends Service {
 
 
 	private void displayStatusbarNotification(int type, int count) {
+		
+		String title = "";
+		String content = "";
+		String ticker = "";
+		
+		// TODO: More languages
+		
+		if (type == NOTIFICATION_NEW_SHARED) {
+			title = "NEXT Sharing";
+			content = "New shared files found on your Drive.";
+			ticker = "New shared files found.";
+		}
+		
+		
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.menu_next)
-				.setContentTitle("NEXT Sharing").setContentText("New shared files found on your Drive.")
-				.setNumber(count).setTicker("New shared files found.").setAutoCancel(true);
+				.setContentTitle(title).setContentText(content)
+				.setNumber(count).setTicker(ticker).setAutoCancel(true);
 
 		Intent resultIntent = new Intent(this, MainActivity.class);
 
