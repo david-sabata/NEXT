@@ -1,8 +1,9 @@
 package cz.fit.next.synchro;
 
-import android.accounts.Account;
+import java.util.List;
+
+
 import android.app.Activity;
-import android.app.LocalActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,7 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Binder;
+
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -18,11 +19,13 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.AccountPicker;
+
+import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.drivers.DriveComm;
+import cz.fit.next.drivers.GDrive;
+
 
 
 
@@ -43,9 +46,9 @@ public class SyncService extends Service {
 	int ActivityPresent = 1;
 
 	// GDrive Driver
-	private DriveComm drive;
+	private GDrive drive;
 
-	private boolean mAuthorized = false;
+	//private boolean mAuthorized = false;
 	private String mAccountName;
 
 
@@ -82,7 +85,8 @@ public class SyncService extends Service {
 			
 		}
 		
-		return START_STICKY;
+		//return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 
@@ -91,7 +95,7 @@ public class SyncService extends Service {
 		
 		sInstance = this;
 		// Log.e(TAG, "onCreate");
-		drive = new DriveComm();
+		drive = new GDrive();
 
 		
 	}
@@ -114,62 +118,110 @@ public class SyncService extends Service {
 
 	public class authorizeDoneHandler implements SyncServiceCallback { 
 	
-		public void Done(Object param) {
-			mAuthorized = true;
-			mAccountName = (String) param;
-			Log.e(TAG, "Authorized");
-	
-			// save username into permanent storage
-			SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putString(PREF_ACCOUNT_NAME, mAccountName);
-			editor.commit();
-	
-			Context context = getApplicationContext();
-			CharSequence text = "Logged into GDrive as " + mAccountName;
-			int duration = Toast.LENGTH_SHORT;
-			Toast toast = Toast.makeText(context, text, duration);
-			toast.show();
-	
-			synchronize();
-			// intervalSynchronize();
+		public void Done(Object param, Boolean status) {
+			if (status == true) {
+				//mAuthorized = true;
+				mAccountName = (String) param;
+				Log.e(TAG, "Authorized");
+		
+				// save username into permanent storage
+				SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putString(PREF_ACCOUNT_NAME, mAccountName);
+				editor.commit();
+		
+				Context context = getApplicationContext();
+				CharSequence text = "Logged into GDrive as " + mAccountName;
+				int duration = Toast.LENGTH_SHORT;
+				Toast toast = Toast.makeText(context, text, duration);
+				toast.show();
+				
+				synchronize();
+			} else {
+				Context context = getApplicationContext();
+				CharSequence text = "Synchronization not available";
+				int duration = Toast.LENGTH_SHORT;
+				Toast toast = Toast.makeText(context, text, duration);
+				toast.show();
+			}
 		}
 
 		
 	}
+	
+	/*
+	 * Asynctask provides synchronization.
+	 */
+	private class SynchronizeClass extends AsyncTask<Void, Void, Object> {
+		
+		class returnObject {
+			public int sharedCount;
+			
+			returnObject(int shared) {
+				sharedCount = shared;
+			}
+		}
+		
+		@Override
+		protected Object doInBackground(Void... params) {
+			
+			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
+			for (int i = 0; i < lf.size(); i++) {
+				Log.i(TAG,"File: " + lf.get(i).getTitle());
+			}
+			
+			drive.lock(lf.get(0).getId());
+			Log.i(TAG,"locked");
+			
+			// DO SOME SYNCHRONIZATION STUFF
+			
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			drive.unlock(lf.get(0).getId());
+			
+			
+			
+			List<File> lsf = drive.listShared(getApplicationContext(), null);
+			
+			for (int i = 0; i < lsf.size(); i++) {
+				Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
+			}
+			
+			
+			
+			returnObject ret = new returnObject(lsf.size());
+			return ret;
+
+		}
+
+
+		@Override
+		protected void onPostExecute(Object param) {
+			super.onPostExecute(param);
+
+			if (((returnObject)param).sharedCount > 0) {
+				displaySharedNotification(((returnObject)param).sharedCount);
+			}
+		}
+	}
 
 
 	public void synchronize() {
-		//drive.synchronize(this);
+		
+		SynchronizeClass cls = new SynchronizeClass();
+		cls.execute();
 	}
+	
+	
 
 
 	public void displaySharedNotification(int count) {
 		displayStatusbarNotification(NOTIFICATION_NEW_SHARED, count);
 	}
-
-
-	private void intervalSynchronize() {
-		class Async extends AsyncTask<Void, Void, Void> {
-
-			@Override
-			protected Void doInBackground(Void... params) {
-
-				return null;
-			}
-
-
-			@Override
-			protected void onPostExecute(Void param) {
-				super.onPostExecute(param);
-
-			}
-		}
-
-		Async task = new Async();
-		task.execute();
-	}
-
 
 
 	private void displayStatusbarNotification(int type, int count) {

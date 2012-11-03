@@ -39,13 +39,14 @@ import com.google.api.services.drive.model.FileList;
 import cz.fit.next.synchro.SyncService;
 import cz.fit.next.synchro.SyncServiceCallback;
 
-public class DriveComm {
+public class GDrive {
 
 	private String TAG = "GDrive Driver";
 
 	private String AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/drive";
 	private String API_KEY = "457762972644.apps.googleusercontent.com";
 	private String FOLDER_NAME = "NEXT";
+	private String LOCK_PREFIX = "nextlock-";
 
 	/* Constants to identify activities called by startActivityForResult */
 	public int CHOOSE_ACCOUNT = 100;
@@ -74,62 +75,44 @@ public class DriveComm {
 		auth.execute(params);
 	}
 	
-	public void list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
+	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
-		
-		Object[] params = new Object[3];
-		params[0] = appcontext;
-		params[1] = cb;
-		params[2] = FOLDER_NAME;
-		
-		ListGoogleDriveClass auth = new ListGoogleDriveClass();
-		auth.execute(params);
-		
+		reauth(appcontext);
+		List<File> res = getFileList();
+		return res;		
 		
 	}
 	
-	public void listShared(Context appcontext, SyncServiceCallback cb) {
+	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
+		//reauth(appcontext);
+		List<File> res = getSharedFileList();
+		return res;
 		
-		Object[] params = new Object[3];
-		params[0] = appcontext;
-		params[1] = cb;
-		params[2] = FOLDER_NAME;
-		
-		SharedListGoogleDriveClass auth = new SharedListGoogleDriveClass();
-		auth.execute(params);
 	}
 	
-	public void lock() {
+	public Boolean lock(String ident) {
+		uploadFile(LOCK_PREFIX + ident,null);
 		
+		// TODO: Wait some time and check older locks
+		return true;
 	}
 	
 	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
-				
-		Object[] params = new Object[3];
-		params[0] = appcontext;
-		params[1] = cb;
-		params[2] = filename;
+		downloadFile(filename);		
 		
-		DownloadGoogleDriveClass auth = new DownloadGoogleDriveClass();
-		auth.execute(params);
 	}
 	
-	public void upload(Context appcontext, SyncServiceCallback cb, String filename) {
+	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
+		uploadFile(filename, localname);
 		
-		Object[] params = new Object[3];
-		params[0] = appcontext;
-		params[1] = cb;
-		params[2] = filename;
-		
-		UploadGoogleDriveClass auth = new UploadGoogleDriveClass();
-		auth.execute(params);
 	}
 	
-	public void unlock() {
-		
+	public void unlock(String ident) {
+		String id = getFileIdByName(LOCK_PREFIX + ident);
+		deleteFile(id);
 	}
 	
 
@@ -164,131 +147,14 @@ public class DriveComm {
 			mService = buildService(mAuthToken, API_KEY);
 			Log.e(TAG, "Connection initiated.");
 			if (mAuthToken != null) {
-				((SyncServiceCallback)param).Done(mAccountName);
+				((SyncServiceCallback)param).Done(mAccountName, true);
+			} else {
+				((SyncServiceCallback)param).Done(mAccountName, false);
 			}
 		}
 	}
 	
-	/*
-	 * Asynctask provides listing.
-	 */
-	private class ListGoogleDriveClass extends AsyncTask<Object, Void, List<File>> {
-		
-		private SyncServiceCallback cb;
-		
-		@Override
-		protected List<File> doInBackground(Object... params) {
-			Log.e(TAG, "Starting list");
-			this.cb = ((SyncServiceCallback)params[1]);
-			reauth((Context)params[0]);
-			
-			List<File> filelist;
-			filelist = getFileList((String) params[2]);
-			
-			return filelist;
-
-		}
-
-
-		@Override
-		protected void onPostExecute(List<File> filelist) {
-			super.onPostExecute(filelist);
-
-			
-			cb.Done(filelist);
-			
-		}
-	}
 	
-	/*
-	 * Asynctask provides listing of shared folder.
-	 */
-	private class SharedListGoogleDriveClass extends AsyncTask<Object, Void, List<File>> {
-		
-		private SyncServiceCallback cb;
-		
-		@Override
-		protected List<File> doInBackground(Object... params) {
-			Log.e(TAG, "Starting list");
-			this.cb = ((SyncServiceCallback)params[1]);
-			reauth((Context)params[0]);
-			
-			List<File> filelist;
-			filelist = getSharedFileList((String) params[2]);
-			
-			return filelist;
-
-		}
-
-
-		@Override
-		protected void onPostExecute(List<File> filelist) {
-			super.onPostExecute(filelist);
-
-			
-			cb.Done(filelist);
-			
-		}
-	}
-	
-	/*
-	 * Asynctask provides download.
-	 */
-	private class DownloadGoogleDriveClass extends AsyncTask<Object, Void, Void> {
-		
-		private SyncServiceCallback cb;
-		
-		@Override
-		protected Void doInBackground(Object... params) {
-			Log.e(TAG, "Starting dl");
-			this.cb = ((SyncServiceCallback)params[1]);
-			reauth((Context)params[0]);
-			
-			downloadFile((String) params[2]);
-
-			return null;
-		}
-
-
-		@Override
-		protected void onPostExecute(Void param) {
-			super.onPostExecute(param);
-
-			
-			cb.Done(null);
-			
-		}
-	}
-	
-	/*
-	 * Asynctask provides upload.
-	 */
-	private class UploadGoogleDriveClass extends AsyncTask<Object, Void, Void> {
-		
-		private SyncServiceCallback cb;
-		
-		@Override
-		protected Void doInBackground(Object... params) {
-			Log.e(TAG, "Starting ul");
-			this.cb = ((SyncServiceCallback)params[1]);
-			reauth((Context)params[0]);
-			
-			uploadFile((String) params[2]);
-			
-			return null;
-
-		}
-
-
-		@Override
-		protected void onPostExecute(Void param) {
-			super.onPostExecute(param);
-
-			
-			cb.Done(null);
-			
-		}
-	}
 	
 	
 	
@@ -318,6 +184,7 @@ public class DriveComm {
 
 		try {
 			retval = GoogleAuthUtil.getToken(appcontext, account.name, AUTH_TOKEN_TYPE);
+			// TODO: Catch network error
 		} catch (UserRecoverableAuthException e) {
 			Log.e(TAG, "ERROR in authentication");
 			Log.e(TAG, e.toString());
@@ -382,11 +249,61 @@ public class DriveComm {
 		return b.build();
 	}
 
+	/*
+	 * Returns file id by its name
+	 */
+	private String getFileIdByName(String name) {
+		
+		String res = null;
+		
+		FileList flist = null;
+		Files.List request = null;
+		String nextDirId = new String();
+		
+		try {
+			// Determine the folder id
+			request = mService.files().list();
+			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+			request = request.setQ(q);
+
+			flist = request.execute();
+			if (flist.size() > 0) {
+				nextDirId = flist.getItems().get(0).getId();
+				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+			} else // Create new NEXT folder
+			{
+				Log.e(TAG, "NEXT folder not found.");
+
+				// TODO: Create new directory
+			}
+
+
+			// Get File By Name
+			request = mService.files().list();
+			q = "title = '" + name + "'";
+			request = request.setQ(q);
+
+			flist = request.execute();
+		
+			if (flist.getItems().size() > 0) {
+				res = flist.getItems().get(0).getId();
+			} else {
+				res = null;
+			}
+			
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+
+		return res;
+	}
+	
 
 	/*
 	 * Returns filelist of application folder
 	 */
-	private List<File> getFileList(String folderName) {
+	private List<File> getFileList() {
 
 				FileList flist = null;
 				Files.List request = null;
@@ -396,7 +313,7 @@ public class DriveComm {
 				try {
 					// Determine the folder id
 					request = mService.files().list();
-					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + folderName + "'";
+					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
 					request = request.setQ(q);
 
 					flist = request.execute();
@@ -443,7 +360,7 @@ public class DriveComm {
 	/*
 	 * Returns list of shared files, which are not in folder
 	 */
-	private List<File> getSharedFileList(String filename) {
+	private List<File> getSharedFileList() {
 
 		FileList flist = null;
 		Files.List request = null;
@@ -456,7 +373,7 @@ public class DriveComm {
 			request = null;
 
 			request = mService.files().list();
-			String q = "not 'me' in owners and not '" + filename + "' in parents";
+			String q = "not 'me' in owners and not '" + FOLDER_NAME + "' in parents";
 			// Log.i(TAG, q);
 			request = request.setQ(q);
 
@@ -468,6 +385,12 @@ public class DriveComm {
 			} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
 			Log.e(TAG, "Pocet souboru: " + res.size());
+			
+			// Exclude files with bad names
+			for (int i = 0; i < res.size(); i++) {
+				String title = res.get(i).getTitle();
+				if (!(title.contains(".nextproj.html"))) res.remove(i);
+			}
 
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
@@ -480,19 +403,6 @@ public class DriveComm {
 
 
 		
-
-	private void inspectSharedFiles(List<File> list) {
-		for (int i = 0; i < list.size(); i++) {
-			File f = list.get(i);
-			Log.e(TAG, "Filename: " + f.getTitle() + ", mime: " + f.getMimeType());
-		}
-
-		if (list.size() > 0)
-			mSyncService.displaySharedNotification(list.size());
-
-	}
-
-
 
 	private void downloadFile(String id) {
 
@@ -553,7 +463,7 @@ public class DriveComm {
 
 
 
-	private void uploadFile(String name) {
+	private void uploadFile(String name, String localname) {
 
 		FileList flist = null;
 		Files.List request = null;
@@ -585,11 +495,18 @@ public class DriveComm {
 			// body.setDescription("");
 			body.setMimeType("text/plain");
 
+			java.io.File fileContent = null;
+			FileContent mediaContent = null;
+			
 			// File's content.
-			java.io.File fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + name);
-			FileContent mediaContent = new FileContent("text/plain", fileContent);
+			if (localname != null) {
+				fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+				mediaContent = new FileContent("text/plain", fileContent);
+				mService.files().insert(body,mediaContent).execute();
+			} else {			
 
-			mService.files().insert(body, mediaContent).execute();
+				mService.files().insert(body).execute();
+			}
 
 
 
@@ -599,5 +516,45 @@ public class DriveComm {
 		}
 
 	}
+	
+	
+	private void deleteFile(String id) {
+
+		FileList flist = null;
+		Files.List request = null;
+		String nextDirId = new String();
+		
+		try {
+			request = mService.files().list();
+
+			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+			request = request.setQ(q);
+
+			flist = request.execute();
+			if (flist.size() > 0) {
+				nextDirId = flist.getItems().get(0).getId();
+				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+			} else // Create new NEXT folder
+			{
+				Log.e(TAG, "NEXT folder not found.");
+
+				// TODO: Create new directory
+			}
+
+
+			// Delete file
+			mService.files().delete(id).execute();
+			
+			Log.i(TAG, "Deleted");
+
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 
 }
