@@ -34,7 +34,7 @@ public class TaskDetailFragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		taskDetailView = inflater.inflate(R.layout.task_detail_fragment, container, false);
+		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
 
 		// set new item info to our task
 		setTaskSetting();
