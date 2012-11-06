@@ -1,5 +1,6 @@
 package cz.fit.next.backend.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -87,14 +88,49 @@ public class ProjectsDataSource {
 
 
 
-	private Project getProjectById(String id) {
+	/**
+	 * Returns Project object of specified ID or null 
+	 * if there is no such Project ID
+	 */
+	public Project getProjectById(String id) {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
 		q.setTables(Constants.TABLE_PROJECTS);
 
 		Cursor cursor = q.query(database, null, Constants.COLUMN_ID + " = ?", new String[] { id }, null, null, null);
 		cursor.moveToFirst();
 
-		return new Project(cursor);
+		if (cursor.getCount() > 0)
+			return new Project(cursor);
+		else
+			return null;
+	}
+
+
+
+	/**
+	 * Saves project to db. If the project already exists
+	 * (ID test), it will be updated. Otherwise a new record
+	 * will be created.
+	 */
+	public void saveProject(Project project) {
+		ContentValues vals = new ContentValues();
+		Project existing = getProjectById(project.getId());
+
+		// update
+		if (existing != null) {
+			vals.put(Constants.COLUMN_TITLE, project.getTitle());
+			String where = Constants.COLUMN_ID + " = ?";
+			String[] args = new String[] { project.getId() };
+
+			database.update(Constants.TABLE_PROJECTS, vals, where, args);
+
+			return;
+		}
+
+		// add
+		vals.put(Constants.COLUMN_ID, project.getId());
+		vals.put(Constants.COLUMN_TITLE, project.getTitle());
+		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}
 
 }
