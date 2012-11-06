@@ -18,6 +18,7 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
+import cz.fit.next.backend.sync.JavaParser;
 import cz.fit.next.sidebar.SidebarFragment;
 import cz.fit.next.tasklist.ContentListFragment;
 
@@ -142,6 +143,14 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				Log.i(LOG_TAG, "Google Login");
+				break;
+				
+			case R.id.setting_read_file:
+				Log.i(LOG_TAG, "JSON Read File");
+			
+				// Just for debugging
+				JavaParser parser = new JavaParser();
+				parser.getTasksFromHTML("file.html"); 
 				break;
 
 			default:

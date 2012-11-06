@@ -1,5 +1,8 @@
 package cz.fit.next.backend;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @author Tomas Sychra
  * @brief Class for storing data in one task
@@ -14,6 +17,25 @@ public class Task {
 											// contexts
 	protected Integer important; // important of the task (1,2,3)
     protected Boolean status; // status of task (Done or not)
+
+    public Task() {
+    	// default constructor
+    }
+    
+    /**
+     * Constructor to construct Task from JSONObject
+     * @param taskJson
+     * @throws JSONException 
+     */
+	public Task(JSONObject taskJson) throws JSONException {
+		this.title = taskJson.getString("title");
+		this.description = taskJson.getString("description");
+		this.important = taskJson.getInt("important");
+		this.partProject = taskJson.getString("partProject");
+		this.status = taskJson.getBoolean("status");
+		this.date = taskJson.getString("date");
+	}
+
 
 	public String getTitle() {
 		return title;
