@@ -8,6 +8,12 @@ import cz.fit.next.backend.database.Constants;
  * @brief Class for storing data in one task
  */
 public class Task {
+
+	/**
+	 * Unique ID
+	 */
+	protected String mId;
+
 	/**
 	 * Task title, mandatory
 	 */
@@ -47,6 +53,7 @@ public class Task {
 	 * Construct task from DB row
 	 */
 	public Task(Cursor cursor) {
+		mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 		mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_TASKS_TITLE));
 		mDescription = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DESCRIPTION));
 		mDate = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
@@ -59,6 +66,9 @@ public class Task {
 
 
 
+	public String getId() {
+		return mId;
+	}
 
 	public Project getProject() {
 		return mProject;
@@ -95,11 +105,14 @@ public class Task {
 		result = prime * result + ((mContext == null) ? 0 : mContext.hashCode());
 		result = prime * result + ((mDate == null) ? 0 : mDate.hashCode());
 		result = prime * result + ((mDescription == null) ? 0 : mDescription.hashCode());
+		result = prime * result + ((mId == null) ? 0 : mId.hashCode());
 		result = prime * result + mPriority;
 		result = prime * result + ((mProject == null) ? 0 : mProject.hashCode());
 		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
 		return result;
 	}
+
+
 
 
 	@Override
@@ -126,6 +139,11 @@ public class Task {
 				return false;
 		} else if (!mDescription.equals(other.mDescription))
 			return false;
+		if (mId == null) {
+			if (other.mId != null)
+				return false;
+		} else if (!mId.equals(other.mId))
+			return false;
 		if (mPriority != other.mPriority)
 			return false;
 		if (mProject == null) {
@@ -140,6 +158,5 @@ public class Task {
 			return false;
 		return true;
 	}
-
 
 }
