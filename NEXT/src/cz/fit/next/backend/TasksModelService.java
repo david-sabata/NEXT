@@ -143,6 +143,15 @@ public class TasksModelService extends Service {
 	}
 
 
+	/**
+	 * Returns single project object
+	 */
+	public Project getProjectById(String id) {
+		return mProjectsDataSource.getProjectById(id);
+	}
+
+
+
 
 	/**
 	 * Saves task to db. If there is already saved a task
