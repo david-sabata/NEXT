@@ -126,7 +126,7 @@ public class TasksModelService extends Service {
 	 * Returns single task with all data inicialized
 	 */
 	public Task getTaskById(String id) {
-		Cursor cursor = mTasksDataSource.getSingleTaskFull(id);
+		Cursor cursor = mTasksDataSource.getSingleTaskCursor(id);
 		Task task = new Task(cursor);
 		return task;
 	}
@@ -141,6 +141,31 @@ public class TasksModelService extends Service {
 	}
 
 
+	/**
+	 * Returns single project object
+	 */
+	public Project getProjectById(String id) {
+		return mProjectsDataSource.getProjectById(id);
+	}
+
+
+
+
+	/**
+	 * Saves task to db. If there is already saved a task
+	 * with same ID, it will be updated.
+	 * If the associated Project object doesn't exist in db, it will
+	 * be created.
+	 */
+	public void saveTask(Task task) {
+		// save project first
+		if (task.getProject() != null) {
+			mProjectsDataSource.saveProject(task.getProject());
+		}
+
+		// save task
+		mTasksDataSource.saveTask(task);
+	}
 
 	// ---------------------------------------------------------------------------------
 
