@@ -1,58 +1,20 @@
 package cz.fit.next.tasklist;
 
-import java.util.List;
-
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.database.Cursor;
+import android.widget.SimpleCursorAdapter;
 import cz.fit.next.R;
-import cz.fit.next.backend.Task;
+import cz.fit.next.backend.database.Constants;
 
-public class ContentListAdapter extends ArrayAdapter<Task> {
-
-	private Context context;
-
-	private List<Task> items;
+public class ContentListAdapter extends SimpleCursorAdapter {
 
 
-	public ContentListAdapter(Context context, int textViewResourceId, List<Task> objects) {
-		super(context, textViewResourceId, objects);
-
-		this.context = context;
-		this.items = objects;
+	public ContentListAdapter(Context context, Cursor cursor) {
+		super(context, R.layout.content_list_item, cursor,
+				new String[] { Constants.COLUMN_TITLE, Constants.COLUMN_ALIAS_PROJECTS_TITLE },
+				new int[] { R.id.text1, R.id.text2 },
+				0);
 	}
 
-
-
-	private static class ViewHolder {
-		public TextView item1;
-		public TextView item2;
-	}
-
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View v = convertView;
-		ViewHolder holder;
-		if (v == null) {
-			LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.content_list_item, null);
-			holder = new ViewHolder();
-			holder.item1 = (TextView) v.findViewById(R.id.text1);
-			holder.item2 = (TextView) v.findViewById(R.id.text2);
-			v.setTag(holder);
-		} else
-			holder = (ViewHolder) v.getTag();
-
-		final Task task = items.get(position);
-		if (task != null) {
-			holder.item1.setText(task.getTitle());
-			holder.item2.setText(task.getDescription());
-		}
-		return v;
-	}
 
 }

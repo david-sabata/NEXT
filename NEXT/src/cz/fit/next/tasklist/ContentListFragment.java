@@ -1,7 +1,6 @@
 package cz.fit.next.tasklist;
 
-import java.util.List;
-
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -10,11 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import cz.fit.next.ContentReloadable;
-import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.taskdetail.TaskDetailFragment;
 
 public class ContentListFragment extends ListFragment implements ContentReloadable {
 
@@ -54,30 +50,31 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 		if (modelService == null)
 			throw new RuntimeException("TasksModelService is not running");
 
-		setItems(modelService.getAllItems());
+		setItems(modelService.getAllTasksCursor());
 	}
 
 
-	public void setItems(List<Task> items) {
+	public void setItems(Cursor cursor) {
 		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new ContentListAdapter(getActivity(), android.R.layout.simple_list_item_1, items));
+		setListAdapter(new ContentListAdapter(getActivity(), cursor));
 	}
 
 
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-
-		// get Task
-		Task item = (Task) getListAdapter().getItem(position);
-
-		// crate fragment with task detail
-		TaskDetailFragment fTask = new TaskDetailFragment(item);
-
-		// replace main fragment with task detail fragment
-		MainActivity activity = (MainActivity) getActivity();
-		activity.getFanView().replaceMainFragment(fTask);
+		//		
+		//
+		//		// get Task
+		//		Task item = (Task) getListAdapter().getItem(position);
+		//
+		//		// crate fragment with task detail
+		//		TaskDetailFragment fTask = new TaskDetailFragment(item);
+		//
+		//		// replace main fragment with task detail fragment
+		//		MainActivity activity = (MainActivity) getActivity();
+		//		activity.getFanView().replaceMainFragment(fTask);
 	}
 
 

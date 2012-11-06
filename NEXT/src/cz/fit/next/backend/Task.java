@@ -15,6 +15,11 @@ public class Task {
 	protected Integer important; // important of the task (1,2,3)
 
 
+
+	protected Project mProject;
+
+
+
 	public String getTitle() {
 		return title;
 	}

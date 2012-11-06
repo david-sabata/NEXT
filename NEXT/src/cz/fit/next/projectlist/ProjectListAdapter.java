@@ -15,5 +15,4 @@ public class ProjectListAdapter extends SimpleCursorAdapter {
 				new int[] { R.id.text1, R.id.text2 },
 				0);
 	}
-
 }
