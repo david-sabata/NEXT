@@ -60,6 +60,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
 		otherValues.put(Constants.COLUMN_TITLE, "Dummy task");
 		otherValues.put(Constants.COLUMN_PROJECTS_ID, tmpUUID);
+		otherValues.put(Constants.COLUMN_DESCRIPTION, "Prevelice dlouhy popis projektu. Budeme se modlit aby se nam " +
+				"do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.");
+		otherValues.put(Constants.COLUMN_CONTEXT, "Škola");
+		otherValues.put(Constants.COLUMN_PRIORITY, 1);
+		otherValues.put(Constants.COLUMN_DATETIME, "21. 12. 2012");
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues);
 	}
 
