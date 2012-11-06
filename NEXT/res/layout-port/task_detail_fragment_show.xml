@@ -51,17 +51,17 @@
                 android:background="@color/TaskRuller"
                 android:orientation="vertical" >
             </LinearLayout>
-
+
             <LinearLayout
-                android:id="@+id/LinearLayout01"
+                android:id="@+id/taskDescriptionLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
-                    android:id="@+id/TextView02"
+                    android:id="@+id/taskDescriptionTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
@@ -83,9 +83,9 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <TextView
-                    android:id="@+id/TextView01"
+                    android:id="@+id/textDescriptionShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
@@ -93,6 +93,7 @@
                     android:inputType="date"
                     android:text="TextView"
                     android:textSize="@dimen/TaskSubTextSize" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -128,9 +129,9 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
-                    android:id="@+id/TextView1"
+                    android:id="@+id/textDateShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
@@ -173,9 +174,9 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
-                    android:id="@+id/TextView1"
+                    android:id="@+id/textProjectShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
@@ -218,9 +219,9 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
-                    android:id="@+id/TextView1"
+                    android:id="@+id/textContextShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"

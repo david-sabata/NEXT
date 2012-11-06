@@ -1,110 +1,179 @@
 package cz.fit.next.backend;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.database.Cursor;
+import cz.fit.next.backend.database.Constants;
+
 
 /**
  * @author Tomas Sychra
  * @brief Class for storing data in one task
  */
 public class Task {
-	protected String title; // title of the task
-	protected String description; // it could be long description of task
-	protected String date; // contain time too -> TODO create class for object
-							// Date
-	protected String partProject; // parent project of the task
-	protected String partContexts[] = {}; // one task can be part of many
-											// contexts
-	protected Integer important; // important of the task (1,2,3)
-    protected Boolean status; // status of task (Done or not)
+	/**
+	 * Unique ID
+	 */
+	protected String mId;
 
-    public Task() {
-    	// default constructor
-    }
-    
+	/**
+	 * Task title, mandatory
+	 */
+	protected String mTitle;
+
+	/**
+	 * Long description, optional
+	 */
+	protected String mDescription;
+
+	/**
+	 * Date/time info
+	 * 
+	 * TODO: create specialized object
+	 */
+	protected String mDate;
+
+	/**
+	 * Priority, 0 = normal
+	 */
+	protected int mPriority = 0;
+
+	/**
+	 * Parent project reference, optional
+	 */
+	protected Project mProject;
+
+	/**
+	 * Project context, optional
+	 */
+	protected String mContext;
+
+
+
+
+	/**
+	 * Construct task from DB row
+	 */
+	public Task(Cursor cursor) {
+		mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_TASKS_TITLE));
+		mDescription = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DESCRIPTION));
+		mDate = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
+		mPriority = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_PRIORITY));
+		mContext = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+
+		mProject = new Project(cursor);
+	}
+
     /**
      * Constructor to construct Task from JSONObject
      * @param taskJson
      * @throws JSONException 
      */
-	public Task(JSONObject taskJson) throws JSONException {
-		this.title = taskJson.getString("title");
-		this.description = taskJson.getString("description");
-		this.important = taskJson.getInt("important");
-		this.partProject = taskJson.getString("partProject");
-		this.status = taskJson.getBoolean("status");
-		this.date = taskJson.getString("date");
+	public Task(JSONObject taskJson, Project project) throws JSONException {
+		this.mTitle = taskJson.getString("title");
+		this.mDescription = taskJson.getString("description");
+		this.mPriority = taskJson.getInt("important");
+		this.mProject = project;
+		//this.mStatus = taskJson.getBoolean("status");
+		this.mDate = taskJson.getString("date");
 	}
 
+
+	public String getId() {
+		return mId;
+	}
+
+	public Project getProject() {
+		return mProject;
+	}
 
 	public String getTitle() {
-		return title;
+		return mTitle;
 	}
-
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 
 	public String getDescription() {
-		return description;
+		return mDescription;
 	}
-
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 
 	public String getDate() {
-		return date;
+		return mDate;
+	}
+
+	public int getPriority() {
+		return mPriority;
+	}
+
+	public String getContext() {
+		return mContext;
 	}
 
 
-	public void setDate(String date) {
-		this.date = date;
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((mContext == null) ? 0 : mContext.hashCode());
+		result = prime * result + ((mDate == null) ? 0 : mDate.hashCode());
+		result = prime * result + ((mDescription == null) ? 0 : mDescription.hashCode());
+		result = prime * result + ((mId == null) ? 0 : mId.hashCode());
+		result = prime * result + mPriority;
+		result = prime * result + ((mProject == null) ? 0 : mProject.hashCode());
+		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
+		return result;
 	}
 
 
-	public String getPartProject() {
-		return partProject;
-	}
 
 
-	public void setPartProject(String partProject) {
-		this.partProject = partProject;
-	}
-
-
-	public String[] getPartContexts() {
-		return partContexts;
-	}
-
-
-	public void setPartContexts(String[] partContexts) {
-		this.partContexts = partContexts;
-	}
-
-
-	public Integer getImportant() {
-		return important;
-	}
-
-
-	public void setImportant(Integer important) {
-		this.important = important;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Task other = (Task) obj;
+		if (mContext == null) {
+			if (other.mContext != null)
+				return false;
+		} else if (!mContext.equals(other.mContext))
+			return false;
+		if (mDate == null) {
+			if (other.mDate != null)
+				return false;
+		} else if (!mDate.equals(other.mDate))
+			return false;
+		if (mDescription == null) {
+			if (other.mDescription != null)
+				return false;
+		} else if (!mDescription.equals(other.mDescription))
+			return false;
+		if (mId == null) {
+			if (other.mId != null)
+				return false;
+		} else if (!mId.equals(other.mId))
+			return false;
+		if (mPriority != other.mPriority)
+			return false;
+		if (mProject == null) {
+			if (other.mProject != null)
+				return false;
+		} else if (!mProject.equals(other.mProject))
+			return false;
+		if (mTitle == null) {
+			if (other.mTitle != null)
+				return false;
+		} else if (!mTitle.equals(other.mTitle))
+			return false;
+		return true;
 	}
 	
-	public Boolean getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(Boolean important) {
-		this.status = important;
-	}
-
-
+	
 
 }

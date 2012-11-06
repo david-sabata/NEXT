@@ -17,9 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
- 
-import android.util.Log;
 
 /**
  * @author xsych_000
@@ -42,7 +41,7 @@ public class JavaParser {
 	private String projectName;
 	private String fileName;
 	
-	public ArrayList<Task> getTasksFromHTML(String filePath) {
+	public ArrayList<Task> getTasksFromHTML(String filePath, Project project) {
 		try {
 			BufferedReader reader;
 			if(!READ_FROM_STRING)  {
@@ -59,7 +58,7 @@ public class JavaParser {
 			JSONArray projectsArray  = parseJsonData(reader);
 			
 			// Create Tasks from JSON Objects
-			addTaskToTaskList(projectsArray);
+			addTaskToTaskList(projectsArray, project);
 			
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
@@ -103,11 +102,11 @@ public class JavaParser {
 	 * @param jsonArrayTask
 	 * @throws JSONException 
 	 */
-	private void addTaskToTaskList(JSONArray jsonArrayTask) throws JSONException {
+	private void addTaskToTaskList(JSONArray jsonArrayTask, Project project) throws JSONException {
 		
 		for (int i = 0; i < jsonArrayTask.length(); i++) {
 			JSONObject taskJson = jsonArrayTask.getJSONObject(i);
-			Task newTask = new Task(taskJson);
+			Task newTask = new Task(taskJson, project);
 			tasksList.add(newTask);
 		}	
 	}

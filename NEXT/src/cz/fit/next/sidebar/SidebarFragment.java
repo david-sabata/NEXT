@@ -14,9 +14,6 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.R.color;
-import cz.fit.next.R.id;
-import cz.fit.next.R.layout;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.ContentListFragment;
 
@@ -63,6 +60,7 @@ public class SidebarFragment extends Fragment {
 
 			// set on click event
 			item.setOnClickListener(new View.OnClickListener() {
+				@Override
 				public void onClick(View v) {
 					resetAllActiveClicks();
 					item.setBackgroundResource(R.color.FanItemsBackgroundColor);

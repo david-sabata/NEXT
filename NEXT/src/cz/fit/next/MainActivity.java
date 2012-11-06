@@ -1,8 +1,9 @@
 package cz.fit.next;
 
-import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -12,13 +13,11 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.deaux.fan.FanView;
 
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
-import cz.fit.next.backend.sync.JavaParser;
 import cz.fit.next.sidebar.SidebarFragment;
 import cz.fit.next.tasklist.ContentListFragment;
 
@@ -28,21 +27,17 @@ public class MainActivity extends FragmentActivity {
 
 	private final MainActivity self = this;
 
-	protected TasksModelService mModelService;
-
-	protected boolean mIsServiceBound = false;
 
 
 
 	@Override
-	@TargetApi(14)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.test);
+
+		// setup fan sidebar
 		FanView fan = (FanView) findViewById(R.id.fan_view);
-
-
 		fan.setAnimationDuration(200); // 200ms
 
 		if (savedInstanceState == null) {
@@ -55,12 +50,31 @@ public class MainActivity extends FragmentActivity {
 
 
 		// always enabled on SDK < 14
-		if (android.os.Build.VERSION.SDK_INT >= 14 && getActionBar() != null) {
+		if (getActionBar() != null) {
 			getActionBar().setHomeButtonEnabled(true);
 		}
 
 		// start service if it's not started yet
-		if (mModelService == null) {
+		bindModelService();
+	}
+
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// restore service if needed
+		bindModelService();
+	}
+
+
+
+	/**
+	 * Binds ModelService to Application context if needed
+	 */
+	private void bindModelService() {
+		if (TasksModelService.getInstance() == null) {
 			Intent intent = new Intent(this, TasksModelService.class);
 			getApplicationContext().bindService(intent, modelServiceConnection, Context.BIND_AUTO_CREATE);
 			Log.d(LOG_TAG, "binding service to app context");
@@ -68,53 +82,11 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		// restore singleton service reference
-		if (mModelService == null && TasksModelService.getInstance() != null)
-			mModelService = TasksModelService.getInstance();
-	}
-
-
 
 
 	/**
-	 * Public FanView getter so the fragments can switch main fragment
+	 * Inflate menu from XML
 	 */
-	public FanView getFanView() {
-		return (FanView) findViewById(R.id.fan_view);
-	}
-
-
-
-	/**
-	 * Closes sidebar
-	 * 
-	 * @param v
-	 */
-	public void unclick(View v) {
-		System.out.println("CLOSE");
-
-		FanView fan = (FanView) findViewById(R.id.fan_view);
-		fan.showMenu();
-	}
-
-
-	/**
-	 * Opens sidebar
-	 * 
-	 * @param v
-	 */
-	public void click(View v) {
-		System.out.println("OPEN");
-
-		FanView fan = (FanView) findViewById(R.id.fan_view);
-		fan.showMenu();
-	}
-
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -134,11 +106,7 @@ public class MainActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				FanView fan = (FanView) findViewById(R.id.fan_view);
-				if (fan.isOpen()) {
-					unclick(null);
-				} else {
-					click(null);
-				}
+				fan.showMenu();
 				break;
 
 			case R.id.setting_connect_drive:
@@ -149,8 +117,29 @@ public class MainActivity extends FragmentActivity {
 				Log.i(LOG_TAG, "JSON Read File");
 			
 				// Just for debugging
-				JavaParser parser = new JavaParser();
-				parser.getTasksFromHTML("file.html"); 
+				//JavaParser parser = new JavaParser();
+				//parser.getTasksFromHTML("file.html", /* insert project*/); 
+				break;
+
+			case R.id.menu_wipe_db:
+				// TODO: temporary, hardcoded
+				new AlertDialog.Builder(this)
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle("Wipe database")
+						.setMessage("Do you really want to erase all stored data?")
+						.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								TasksModelService.getInstance().wipeDatabaseData();
+								ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(
+										R.id.appView);
+								if (currentFragment != null) {
+									currentFragment.reloadContent();
+								}
+							}
+						})
+						.setNegativeButton("No", null)
+						.show();
 				break;
 
 			default:
@@ -163,17 +152,29 @@ public class MainActivity extends FragmentActivity {
 
 
 
+
+
+	/**
+	 * Public FanView getter so the fragments can switch main fragment
+	 */
+	public FanView getFanView() {
+		return (FanView) findViewById(R.id.fan_view);
+	}
+
+
+
+
+
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
+		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			ModelServiceBinder binder = (ModelServiceBinder) service;
-			mModelService = binder.getService();
-			mIsServiceBound = true;
 
 			Log.d(LOG_TAG, "Model service connected");
 
 			// init service objects
-			mModelService.initDataSources(self);
+			binder.getService().initDataSources(self);
 
 			// reload content fragment (all fragments must implement ContentReloadable)
 			ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(R.id.appView);
@@ -186,9 +187,8 @@ public class MainActivity extends FragmentActivity {
 		}
 
 
+		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			mIsServiceBound = false;
-
 			Log.d(LOG_TAG, "Model service disconnected");
 		}
 	};
