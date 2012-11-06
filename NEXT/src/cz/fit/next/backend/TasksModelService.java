@@ -125,6 +125,16 @@ public class TasksModelService extends Service {
 
 
 	/**
+	 * Returns single task with all data inicialized
+	 */
+	public Task getTaskById(String id) {
+		Cursor cursor = mTasksDataSource.getSingleTaskFull(id);
+		Task task = new Task(cursor);
+		return task;
+	}
+
+
+	/**
 	 * Returns cursor to all projects
 	 */
 	public Cursor getAllProjectsCursor() {

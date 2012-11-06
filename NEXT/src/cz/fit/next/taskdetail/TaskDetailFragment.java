@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TasksModelService;
 
 /**
  * @author Tomas Sychra
@@ -21,6 +22,16 @@ public class TaskDetailFragment extends Fragment {
 	private Task mItem;
 	private View taskDetailView;
 
+
+	public TaskDetailFragment(String id) {
+
+		if (TasksModelService.getInstance() == null)
+			throw new RuntimeException("TaskModelService.getInstance() == null");
+
+
+		// load task
+		mItem = TasksModelService.getInstance().getTaskById(id);
+	}
 
 	public TaskDetailFragment(Task pItem) {
 		mItem = pItem;

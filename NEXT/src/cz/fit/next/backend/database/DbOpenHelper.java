@@ -41,7 +41,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_DESCRIPTION + " text, "
 				+ Constants.COLUMN_DATETIME + " text, "
 				+ Constants.COLUMN_PRIORITY + " integer, "
-				+ Constants.COLUMN_CONTEXT_ID + " text, "
+				+ Constants.COLUMN_CONTEXT + " text, "
 				+ Constants.COLUMN_PROJECTS_ID + " text, "
 				+ "FOREIGN KEY (" + Constants.COLUMN_PROJECTS_ID + ") REFERENCES " + Constants.TABLE_PROJECTS + " (" + Constants.COLUMN_ID + ")"
 				+ ");");

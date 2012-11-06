@@ -12,9 +12,9 @@ public interface Constants {
 	// column names as stored in tables	
 	public static final String COLUMN_ID = "_id"; // long, needs to be '_id'
 	public static final String COLUMN_TITLE = "title";
-	public static final String COLUMN_CONTEXT_ID = "contexts_id"; // FK -> TABLE_CONTEXTS
 	public static final String COLUMN_PROJECTS_ID = "projects_id"; // FK -> TABLE_PROJECTS
 	public static final String COLUMN_DESCRIPTION = "description"; // string
+	public static final String COLUMN_CONTEXT = "context"; // string
 	public static final String COLUMN_DATETIME = "datetime"; // serialized DateTime object
 	public static final String COLUMN_PRIORITY = "priority"; // int
 
@@ -29,5 +29,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 6;
+	public static final int DATABASE_VERSION = 7;
 }

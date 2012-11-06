@@ -1,6 +1,7 @@
 package cz.fit.next.tasklist;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -9,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import cz.fit.next.ContentReloadable;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
+import cz.fit.next.taskdetail.TaskDetailFragment;
 
 public class ContentListFragment extends ListFragment implements ContentReloadable {
 
@@ -64,17 +68,17 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		//		
-		//
-		//		// get Task
-		//		Task item = (Task) getListAdapter().getItem(position);
-		//
-		//		// crate fragment with task detail
-		//		TaskDetailFragment fTask = new TaskDetailFragment(item);
-		//
-		//		// replace main fragment with task detail fragment
-		//		MainActivity activity = (MainActivity) getActivity();
-		//		activity.getFanView().replaceMainFragment(fTask);
+
+		// get task id
+		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(position);
+		String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+
+		// crate fragment with task detail
+		TaskDetailFragment fTask = new TaskDetailFragment(taskId);
+
+		// replace main fragment with task detail fragment
+		MainActivity activity = (MainActivity) getActivity();
+		activity.getFanView().replaceMainFragment(fTask);
 	}
 
 

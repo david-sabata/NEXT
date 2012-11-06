@@ -1,12 +1,10 @@
 package cz.fit.next.backend.database;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import cz.fit.next.backend.Project;
 
 public class ProjectsDataSource {
@@ -88,31 +86,15 @@ public class ProjectsDataSource {
 	}
 
 
-	public List<Project> getAllProjects() {
-		List<Project> projects = new ArrayList<Project>();
 
-		Cursor cursor = getAllProjectsCursor();
+	private Project getProjectById(String id) {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_PROJECTS);
 
-		while (!cursor.isAfterLast()) {
-			Project comment = cursorToProject(cursor);
-			projects.add(comment);
-			cursor.moveToNext();
-		}
+		Cursor cursor = q.query(database, null, Constants.COLUMN_ID + " = ?", new String[] { id }, null, null, null);
+		cursor.moveToFirst();
 
-		cursor.close();
-		return projects;
+		return new Project(cursor);
 	}
-
-
-	private Project cursorToProject(Cursor cursor) {
-		Project project = new Project();
-		project.setId(cursor.getLong(0));
-		project.setTitle(cursor.getString(1));
-		return project;
-	}
-
-
-
-
 
 }

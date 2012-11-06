@@ -18,14 +18,6 @@ public class TasksDataSource {
 	 */
 	private SQLiteDatabase database;
 
-	/**
-	 * Columns to be fetched from the table
-	 */
-	private String[] allColumns = {
-			Constants.COLUMN_ID, Constants.COLUMN_TITLE, Constants.COLUMN_CONTEXT_ID, Constants.COLUMN_PROJECTS_ID,
-			Constants.COLUMN_PRIORITY, Constants.COLUMN_DESCRIPTION, Constants.COLUMN_DATETIME
-	};
-
 
 	/**
 	 * 
@@ -95,4 +87,34 @@ public class TasksDataSource {
 
 		return cursor;
 	}
+
+
+	/**
+	 * Fetches single task row with all joined tables data
+	 */
+	public Cursor getSingleTaskFull(String id) {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
+				+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+
+		String[] selectColumns = new String[] {
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_TASKS_TITLE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+		};
+
+		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_ID + " = ?";
+		String[] args = new String[] { id };
+
+		Cursor cursor = q.query(database, selectColumns, where, args, null, null, null, "1");
+		cursor.moveToFirst();
+
+		return cursor;
+	}
+
 }
