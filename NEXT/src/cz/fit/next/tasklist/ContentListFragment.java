@@ -1,7 +1,7 @@
 package cz.fit.next.tasklist;
 
-import java.util.List;
-
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -12,9 +12,8 @@ import android.widget.ListView;
 import cz.fit.next.ContentReloadable;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.R.layout;
-import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
 import cz.fit.next.taskdetail.TaskDetailFragment;
 
 public class ContentListFragment extends ListFragment implements ContentReloadable {
@@ -24,6 +23,7 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 
 
 
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
@@ -31,6 +31,7 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 	}
 
 
+	@Override
 	public void onResume() {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
@@ -47,30 +48,33 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 
 
 
+	@Override
 	public void reloadContent() {
 		TasksModelService modelService = TasksModelService.getInstance();
 		if (modelService == null)
 			throw new RuntimeException("TasksModelService is not running");
 
-		setItems(modelService.getAllItems());
+		setItems(modelService.getAllTasksCursor());
 	}
 
 
-	public void setItems(List<Task> items) {
+	public void setItems(Cursor cursor) {
 		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new ContentListAdapter(getActivity(), android.R.layout.simple_list_item_1, items));
+		setListAdapter(new ContentListAdapter(getActivity(), cursor));
 	}
 
 
 
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		// get Task
-		Task item = (Task) getListAdapter().getItem(position);
+		// get task id
+		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(position);
+		String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		// crate fragment with task detail
-		TaskDetailFragment fTask = new TaskDetailFragment(item);
+		TaskDetailFragment fTask = new TaskDetailFragment(taskId);
 
 		// replace main fragment with task detail fragment
 		MainActivity activity = (MainActivity) getActivity();

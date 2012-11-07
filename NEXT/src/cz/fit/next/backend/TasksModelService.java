@@ -1,8 +1,5 @@
 package cz.fit.next.backend;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +8,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import cz.fit.next.backend.database.ProjectsDataSource;
+import cz.fit.next.backend.database.TasksDataSource;
 
 /**
  * @author David Sabata
@@ -27,6 +25,8 @@ public class TasksModelService extends Service {
 
 	private ProjectsDataSource mProjectsDataSource = null;
 
+	private TasksDataSource mTasksDataSource = null;
+
 
 	// ---------------------------------------------------------------------------------
 
@@ -41,6 +41,7 @@ public class TasksModelService extends Service {
 	/**
 	 * Service has just been created
 	 */
+	@Override
 	public void onCreate() {
 		Log.d(LOG_TAG, "service created");
 
@@ -51,6 +52,7 @@ public class TasksModelService extends Service {
 	/**
 	 * Service is shutting down
 	 */
+	@Override
 	public void onDestroy() {
 		mInstance = null;
 
@@ -61,6 +63,7 @@ public class TasksModelService extends Service {
 		Log.d(LOG_TAG, "service destroyed");
 	}
 
+	@Override
 	public boolean onUnbind(Intent intent) {
 		mInstance = null;
 
@@ -79,6 +82,11 @@ public class TasksModelService extends Service {
 		if (mProjectsDataSource == null) {
 			mProjectsDataSource = new ProjectsDataSource(context);
 			mProjectsDataSource.open();
+		}
+
+		if (mTasksDataSource == null) {
+			mTasksDataSource = new TasksDataSource(context);
+			mTasksDataSource.open();
 		}
 	}
 
@@ -108,21 +116,21 @@ public class TasksModelService extends Service {
 
 
 	/**
-	 * Returns list of dummy items
-	 * 
-	 * TODO: use Cursor
-	 * TODO: get data from db
+	 * Returns cursor to all tasks
 	 */
-	public List<Task> getAllItems() {
-		List<Task> items = new ArrayList<Task>();
+	public Cursor getAllTasksCursor() {
+		Cursor cursor = mTasksDataSource.getAllTasksCursor();
+		return cursor;
+	}
 
-		for (int i = 0; i < 15; i++) {
-			Task task = new Task();
-			task.setTitle("polozka " + i);
-			items.add(task);
-		}
 
-		return items;
+	/**
+	 * Returns single task with all data inicialized
+	 */
+	public Task getTaskById(String id) {
+		Cursor cursor = mTasksDataSource.getSingleTaskCursor(id);
+		Task task = new Task(cursor);
+		return task;
 	}
 
 
@@ -135,6 +143,31 @@ public class TasksModelService extends Service {
 	}
 
 
+	/**
+	 * Returns single project object
+	 */
+	public Project getProjectById(String id) {
+		return mProjectsDataSource.getProjectById(id);
+	}
+
+
+
+
+	/**
+	 * Saves task to db. If there is already saved a task
+	 * with same ID, it will be updated.
+	 * If the associated Project object doesn't exist in db, it will
+	 * be created.
+	 */
+	public void saveTask(Task task) {
+		// save project first
+		if (task.getProject() != null) {
+			mProjectsDataSource.saveProject(task.getProject());
+		}
+
+		// save task
+		mTasksDataSource.saveTask(task);
+	}
 
 	// ---------------------------------------------------------------------------------
 

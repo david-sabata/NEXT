@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import cz.fit.next.ContentReloadable;
 import cz.fit.next.R;
-import cz.fit.next.R.layout;
 import cz.fit.next.backend.TasksModelService;
 
 public class ProjectListFragment extends ListFragment implements ContentReloadable {
@@ -20,6 +19,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 
 
 
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
@@ -27,6 +27,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 	}
 
 
+	@Override
 	public void onResume() {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
@@ -42,6 +43,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 
 
 
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.v(LOG_TAG, "item click");
 	}
@@ -50,6 +52,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 
 
 
+	@Override
 	public void reloadContent() {
 		TasksModelService modelService = TasksModelService.getInstance();
 		if (modelService == null)

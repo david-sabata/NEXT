@@ -1,5 +1,8 @@
 package cz.fit.next.backend.database;
 
+import java.util.UUID;
+
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -28,20 +31,49 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 		// create PROJECTS table
 		database.execSQL("CREATE TABLE " + Constants.TABLE_PROJECTS + "("
-				+ Constants.COLUMN_ID + " integer primary key autoincrement, "
+				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null);");
 
-		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_TITLE + ") VALUES ('Projekt 1')");
-		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_TITLE + ") VALUES ('Projekt 2')");
-		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_TITLE + ") VALUES ('Projekt 3')");
-	}
+		// create TASKS table
+		database.execSQL("CREATE TABLE " + Constants.TABLE_TASKS + "("
+				+ Constants.COLUMN_ID + " text primary key not null, "
+				+ Constants.COLUMN_TITLE + " text not null, "
+				+ Constants.COLUMN_DESCRIPTION + " text, "
+				+ Constants.COLUMN_DATETIME + " text, "
+				+ Constants.COLUMN_PRIORITY + " integer, "
+				+ Constants.COLUMN_CONTEXT + " text, "
+				+ Constants.COLUMN_PROJECTS_ID + " text, "
+				+ "FOREIGN KEY (" + Constants.COLUMN_PROJECTS_ID + ") REFERENCES " + Constants.TABLE_PROJECTS + " (" + Constants.COLUMN_ID + ")"
+				+ ");");
 
+
+		String tmpUUID = UUID.randomUUID().toString();
+
+		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
+				+ ") VALUES ('" + tmpUUID + "', 'Projekt 1')");
+		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
+				+ ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 2')");
+		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
+				+ ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 3')");
+
+		ContentValues otherValues = new ContentValues();
+		otherValues.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
+		otherValues.put(Constants.COLUMN_TITLE, "Dummy task");
+		otherValues.put(Constants.COLUMN_PROJECTS_ID, tmpUUID);
+		otherValues.put(Constants.COLUMN_DESCRIPTION, "Prevelice dlouhy popis projektu. Budeme se modlit aby se nam " +
+				"do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.");
+		otherValues.put(Constants.COLUMN_CONTEXT, "Škola");
+		otherValues.put(Constants.COLUMN_PRIORITY, 1);
+		otherValues.put(Constants.COLUMN_DATETIME, "21. 12. 2012");
+		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues);
+	}
 
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_TASKS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_PROJECTS);
 		onCreate(db);
 	}
