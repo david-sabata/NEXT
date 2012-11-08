@@ -2,11 +2,6 @@ package cz.fit.next;
 
 
 
-import java.util.List;
-
-import android.accounts.AccountManager;
-import android.annotation.TargetApi;
-
 import android.app.AlertDialog;
 
 import android.content.ComponentName;

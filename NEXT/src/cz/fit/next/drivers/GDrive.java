@@ -55,10 +55,20 @@ public class GDrive {
 	private String mAuthToken = null;
 	private Drive mService = null;
 	private SyncService mSyncService = null;
+	private String mAppFolder = null;
 	//private SyncServiceCallback mCallback = null;
 
 
 	// private Activity mMainActivity = null;
+	
+	/**
+	 * Initializes synchronization, performs reauth and 
+	 * determines id of application folder
+	 */
+	public void initSync(Context appcontext) {
+		reauth(appcontext);
+		mAppFolder = getAppFolderId();
+	}
 
 		
 	/*
@@ -84,8 +94,8 @@ public class GDrive {
 	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
-		reauth(appcontext);
-		List<File> res = getFileList();
+		
+		List<File> res = getFileList(mAppFolder);
 		return res;		
 		
 	}
@@ -97,7 +107,7 @@ public class GDrive {
 		//mSyncService = syncserv;
 		//mCallback = cb;
 		//reauth(appcontext);
-		List<File> res = getSharedFileList();
+		List<File> res = getSharedFileList(mAppFolder);
 		return res;
 		
 	}
@@ -106,7 +116,7 @@ public class GDrive {
 	 * Locks file with given id
 	 */
 	public Boolean lock(String ident) {
-		uploadFile(LOCK_PREFIX + ident,null);
+		uploadFile(LOCK_PREFIX + ident,null, mAppFolder);
 		
 		// TODO: Wait some time and check older locks
 		return true;
@@ -116,7 +126,7 @@ public class GDrive {
 	 * Download file with given filename to local storage
 	 */
 	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
-		downloadFile(filename);		
+		downloadFile(filename, mAppFolder);		
 		
 	}
 	
@@ -124,7 +134,7 @@ public class GDrive {
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
-		uploadFile(filename, localname);
+		uploadFile(filename, localname, mAppFolder);
 		
 	}
 	
@@ -270,12 +280,12 @@ public class GDrive {
 		return b.build();
 	}
 
-	/*
-	 * Returns file id by its name
+	/**
+	 * Returns id of app folder in storage 
+	 * 
 	 */
-	private String getFileIdByName(String name) {
+	private String getAppFolderId() {
 		
-		String res = null;
 		
 		FileList flist = null;
 		Files.List request = null;
@@ -297,11 +307,32 @@ public class GDrive {
 
 				// TODO: Create new directory
 			}
-
-
+			
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		return nextDirId;
+		
+	}
+	
+	
+	/*
+	 * Returns file id by its name
+	 */
+	private String getFileIdByName(String name) {
+		
+		String res = null;
+		
+		FileList flist = null;
+		Files.List request = null;
+				
+		try {
+						
 			// Get File By Name
 			request = mService.files().list();
-			q = "title = '" + name + "'";
+			String q = "title = '" + name + "'";
 			request = request.setQ(q);
 
 			flist = request.execute();
@@ -324,37 +355,21 @@ public class GDrive {
 	/*
 	 * Returns filelist of application folder
 	 */
-	private List<File> getFileList() {
+	private List<File> getFileList(String appFolder) {
 
 				FileList flist = null;
 				Files.List request = null;
-				String nextDirId = new String();
+		
 				List<File> res = new ArrayList<File>();
 
 				try {
-					// Determine the folder id
-					request = mService.files().list();
-					String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
-					request = request.setQ(q);
-
-					flist = request.execute();
-					if (flist.size() > 0) {
-						nextDirId = flist.getItems().get(0).getId();
-						Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
-					} else // Create new NEXT folder
-					{
-						Log.e(TAG, "NEXT folder not found.");
-
-						// TODO: Create new directory
-					}
-
-
+					
 					// Download filelist
 					flist = null;
 					request = null;
 					;
 					request = mService.files().list();
-					q = "'" + nextDirId + "' in parents";
+					String q = "'" + appFolder + "' in parents";
 					// q = "not 'me' in owners";
 					request = request.setQ(q);
 
@@ -362,10 +377,10 @@ public class GDrive {
 						flist = request.execute();
 						res.addAll(flist.getItems());
 						request = request.setPageToken(flist.getNextPageToken());
-						Log.e(TAG, "New page token: " + flist.getNextPageToken());
+						//Log.e(TAG, "New page token: " + flist.getNextPageToken());
 					} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-					Log.e(TAG, "Pocet souboru: " + res.size());
+					//Log.e(TAG, "Pocet souboru: " + res.size());
 
 				} catch (IOException e2) {
 					// TODO Auto-generated catch block
@@ -381,7 +396,7 @@ public class GDrive {
 	/*
 	 * Returns list of shared files, which are not in folder
 	 */
-	private List<File> getSharedFileList() {
+	private List<File> getSharedFileList(String appFolder) {
 
 		FileList flist = null;
 		Files.List request = null;
@@ -394,7 +409,7 @@ public class GDrive {
 			request = null;
 
 			request = mService.files().list();
-			String q = "not 'me' in owners and not '" + FOLDER_NAME + "' in parents";
+			String q = "not 'me' in owners and not '" + appFolder + "' in parents";
 			// Log.i(TAG, q);
 			request = request.setQ(q);
 
@@ -402,10 +417,10 @@ public class GDrive {
 				flist = request.execute();
 				res.addAll(flist.getItems());
 				request = request.setPageToken(flist.getNextPageToken());
-				Log.e(TAG, "New page token: " + flist.getNextPageToken());
+				//Log.e(TAG, "New page token: " + flist.getNextPageToken());
 			} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-			Log.e(TAG, "Pocet souboru: " + res.size());
+			//Log.e(TAG, "Pocet souboru: " + res.size());
 			
 			// Exclude files with bad names
 			for (int i = 0; i < res.size(); i++) {
@@ -427,7 +442,7 @@ public class GDrive {
 	/*
 	 * Downloads file
 	 */
-	private void downloadFile(String id) {
+	private void downloadFile(String id, String appFolder) {
 
 		File dfile;
 		try {
@@ -488,29 +503,11 @@ public class GDrive {
 	/*
 	 * Uploads file
 	 */
-	private void uploadFile(String name, String localname) {
+	private void uploadFile(String name, String localname, String appFolder) {
 
-		FileList flist = null;
-		Files.List request = null;
-		String nextDirId = new String();
-		
+				
 		try {
-			request = mService.files().list();
-
-			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
-			request = request.setQ(q);
-
-			flist = request.execute();
-			if (flist.size() > 0) {
-				nextDirId = flist.getItems().get(0).getId();
-				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
-			} else // Create new NEXT folder
-			{
-				Log.e(TAG, "NEXT folder not found.");
-
-				// TODO: Create new directory
-			}
-
+			// TODO: Move to app folder
 
 			// Upload file
 
@@ -547,28 +544,8 @@ public class GDrive {
 	 */
 	private void deleteFile(String id) {
 
-		FileList flist = null;
-		Files.List request = null;
-		String nextDirId = new String();
-		
+				
 		try {
-			request = mService.files().list();
-
-			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
-			request = request.setQ(q);
-
-			flist = request.execute();
-			if (flist.size() > 0) {
-				nextDirId = flist.getItems().get(0).getId();
-				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
-			} else // Create new NEXT folder
-			{
-				Log.e(TAG, "NEXT folder not found.");
-
-				// TODO: Create new directory
-			}
-
-
 			// Delete file
 			mService.files().delete(id).execute();
 			

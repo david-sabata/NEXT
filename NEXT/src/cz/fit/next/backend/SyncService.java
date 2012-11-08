@@ -167,23 +167,24 @@ public class SyncService extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 			
+			drive.initSync(getApplicationContext());
+			
 			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"File: " + lf.get(i).getTitle());
 			}
 			
-			drive.lock(lf.get(0).getId());
-			Log.i(TAG,"locked");
+			
+			
+			//drive.lock(lf.get(0).getId());
+			//Log.i(TAG,"locked");
 			
 			// DO SOME SYNCHRONIZATION STUFF
 			
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			//drive.upload(getApplicationContext(), null, "testovka", null);
 			
-			drive.unlock(lf.get(0).getId());
+						
+			//drive.unlock(lf.get(0).getId());
 			
 			
 			
