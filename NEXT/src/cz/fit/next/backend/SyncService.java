@@ -1,4 +1,4 @@
-package cz.fit.next.synchro;
+package cz.fit.next.backend;
 
 import java.util.List;
 
@@ -109,7 +109,9 @@ public class SyncService extends Service {
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	
-	
+	/*
+	 * Do first-time authorization after service starts
+	 */
 	public void authorize(String accountName, Activity act) {
 		authorizeDoneHandler ad = new authorizeDoneHandler();
 		drive.authorize(accountName, act, getApplicationContext(), this, ad);
@@ -209,7 +211,9 @@ public class SyncService extends Service {
 		}
 	}
 
-
+	/*
+	 * Starts synchronization
+	 */
 	public void synchronize() {
 		
 		SynchronizeClass cls = new SynchronizeClass();
@@ -218,12 +222,16 @@ public class SyncService extends Service {
 	
 	
 
-
+	/*
+	 * Display notification to notice about new shared files
+	 */
 	public void displaySharedNotification(int count) {
 		displayStatusbarNotification(NOTIFICATION_NEW_SHARED, count);
 	}
 
-
+	/*
+	 * Display statusbar notification
+	 */
 	private void displayStatusbarNotification(int type, int count) {
 		
 		String title = "";

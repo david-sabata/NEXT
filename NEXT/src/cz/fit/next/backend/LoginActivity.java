@@ -1,4 +1,4 @@
-package cz.fit.next.synchro;
+package cz.fit.next.backend;
 
 import com.google.android.gms.common.AccountPicker;
 

@@ -25,10 +25,10 @@ import android.view.MenuItem;
 import com.deaux.fan.FanView;
 
 
+import cz.fit.next.backend.SyncService;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
-import cz.fit.next.synchro.SyncService;
 import cz.fit.next.tasklist.ContentListFragment;
 
 

@@ -36,8 +36,8 @@ import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
-import cz.fit.next.synchro.SyncService;
-import cz.fit.next.synchro.SyncServiceCallback;
+import cz.fit.next.backend.SyncService;
+import cz.fit.next.backend.SyncServiceCallback;
 
 public class GDrive {
 
@@ -60,7 +60,10 @@ public class GDrive {
 
 	// private Activity mMainActivity = null;
 
-	// PUBLIC METHODS: authorize, list, listShared, lock, download, upload, unlock
+		
+	/*
+	 * Public method for first authorization after service start
+	 */
 	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		mAccountName = username;
 		mSyncService = syncserv;
@@ -75,6 +78,9 @@ public class GDrive {
 		auth.execute(params);
 	}
 	
+	/*
+	 * Gets list of files in application folder
+	 */
 	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
@@ -84,6 +90,9 @@ public class GDrive {
 		
 	}
 	
+	/*
+	 * Gets list of files in shared folder
+	 */
 	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
@@ -93,6 +102,9 @@ public class GDrive {
 		
 	}
 	
+	/*
+	 * Locks file with given id
+	 */
 	public Boolean lock(String ident) {
 		uploadFile(LOCK_PREFIX + ident,null);
 		
@@ -100,16 +112,25 @@ public class GDrive {
 		return true;
 	}
 	
+	/*
+	 * Download file with given filename to local storage
+	 */
 	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
 		downloadFile(filename);		
 		
 	}
 	
+	/*
+	 * Upload file with given local name to storage with other name
+	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
 		uploadFile(filename, localname);
 		
 	}
 	
+	/*
+	 * Unlocks file with given id
+	 */
 	public void unlock(String ident) {
 		String id = getFileIdByName(LOCK_PREFIX + ident);
 		deleteFile(id);
@@ -403,7 +424,9 @@ public class GDrive {
 
 
 		
-
+	/*
+	 * Downloads file
+	 */
 	private void downloadFile(String id) {
 
 		File dfile;
@@ -462,7 +485,9 @@ public class GDrive {
 	}
 
 
-
+	/*
+	 * Uploads file
+	 */
 	private void uploadFile(String name, String localname) {
 
 		FileList flist = null;
@@ -517,7 +542,9 @@ public class GDrive {
 
 	}
 	
-	
+	/*
+	 * Delete file in app folder
+	 */
 	private void deleteFile(String id) {
 
 		FileList flist = null;
