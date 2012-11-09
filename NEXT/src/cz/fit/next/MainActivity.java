@@ -19,7 +19,7 @@ import com.deaux.fan.FanView;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
-import cz.fit.next.tasklist.ContentListFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 public class MainActivity extends FragmentActivity {
 
@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
-			ContentListFragment contentFrag = new ContentListFragment();
+			TaskListFragment contentFrag = new TaskListFragment();
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);

@@ -16,7 +16,7 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.taskdetail.TaskDetailFragment;
 
-public class ContentListFragment extends ListFragment implements ContentReloadable {
+public class TaskListFragment extends ListFragment implements ContentReloadable {
 
 	private final static String LOG_TAG = "ContentFragment";
 
@@ -61,7 +61,7 @@ public class ContentListFragment extends ListFragment implements ContentReloadab
 	public void setItems(Cursor cursor) {
 		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new ContentListAdapter(getActivity(), cursor));
+		setListAdapter(new TaskListAdapter(getActivity(), cursor));
 	}
 
 
