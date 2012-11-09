@@ -74,7 +74,7 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 		String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		// crate fragment with task detail
-		TaskDetailFragment fTask = new TaskDetailFragment(taskId);
+		TaskDetailFragment fTask = TaskDetailFragment.newInstance(taskId);
 
 		// replace main fragment with task detail fragment
 		MainActivity activity = (MainActivity) getActivity();

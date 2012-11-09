@@ -5,6 +5,7 @@ package cz.fit.next.taskdetail;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,72 +20,120 @@ import cz.fit.next.backend.TasksModelService;
  */
 public class TaskDetailFragment extends Fragment {
 
-	private Task mItem;
-	private View taskDetailView;
+	private static final String LOG_TAG = "TaskDetailFragment";
 
 
-	public TaskDetailFragment(String id) {
+	/**
+	 * Used in Bundle to store ID of task that is being shown
+	 */
+	private static final String ARG_TASK_ID = "taskID";
 
-		if (TasksModelService.getInstance() == null)
-			throw new RuntimeException("TaskModelService.getInstance() == null");
+
+	/**
+	 * Task whose details are showing
+	 */
+	private Task mTask;
 
 
-		// load task
-		mItem = TasksModelService.getInstance().getTaskById(id);
+
+
+
+	/**
+	 * Create a new instance of TaskDetailFragment that will
+	 * be initialized with task of given ID
+	 * 
+	 * Use ONLY this method to create a new instance!
+	 */
+	public static TaskDetailFragment newInstance(String taskId) {
+		TaskDetailFragment frag = new TaskDetailFragment();
+
+		Bundle b = new Bundle();
+		b.putString(ARG_TASK_ID, taskId);
+
+		frag.setArguments(b);
+
+		return frag;
 	}
 
-	public TaskDetailFragment(Task pItem) {
-		mItem = pItem;
+
+
+	/**
+	 * Initializes fragment from the saved state 
+	 * 
+	 * Arguments of the fragment have already been restored 
+	 * so it is safe to call getArguments and get the data
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		Bundle args = getArguments();
+		if (args != null) {
+			if (TasksModelService.getInstance() == null)
+				throw new RuntimeException("TaskModelService.getInstance() == null");
+
+			String taskId = args.getString(ARG_TASK_ID);
+			mTask = TasksModelService.getInstance().getTaskById(taskId);
+		}
+		else {
+			Log.e(LOG_TAG, "onCreate with no arguments (getArguments==null)");
+		}
 	}
 
 
+
+	/**
+	 * Inflates layout and fills it with data of the loaded task
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
+		View taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
 
-		// set new item info to our task
-		setTaskSetting();
+		// load the task data into view
+		setDetailTask(taskDetailView);
 
-		// return complete fragment
 		return taskDetailView;
 	}
 
 
-	private void setTaskSetting() {
+
+	/**
+	 * Sets up the (sub)views acording to the loaded task
+	 */
+	private void setDetailTask(View baseView) {
 		// set Title
-		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
+		TextView title = (TextView) baseView.findViewById(R.id.titleTask);
 		if (title != null) {
-			title.setText(mItem.getTitle());
+			title.setText(mTask.getTitle());
 		}
 
 		// TODO implements others like title
 		// set description
-		TextView descripton = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
+		TextView descripton = (TextView) baseView.findViewById(R.id.textDescriptionShow);
 		if (descripton != null) {
-			descripton.setText(mItem.getDescription());
+			descripton.setText(mTask.getDescription());
 		}
-		
+
 		// set date
-		TextView date = (TextView) taskDetailView.findViewById(R.id.textDateShow);
+		TextView date = (TextView) baseView.findViewById(R.id.textDateShow);
 		if (date != null) {
-			date.setText(mItem.getDate());
+			date.setText(mTask.getDate());
 		}
-		
+
 		// set project
-		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
+		TextView project = (TextView) baseView.findViewById(R.id.textProjectShow);
 		if (project != null) {
-			project.setText(mItem.getProject().getTitle());
+			project.setText(mTask.getProject().getTitle());
 		}
-		
+
 		// set context
-		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
+		TextView context = (TextView) baseView.findViewById(R.id.textContextShow);
 		if (context != null) {
-			context.setText(mItem.getContext());
+			context.setText(mTask.getContext());
 		}
-		
+
 		// set priority
 		//TextView priority = (TextView) taskDetailView.findViewById(R.id.textPriorityShow);
 	}
