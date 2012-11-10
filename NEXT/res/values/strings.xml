@@ -30,5 +30,8 @@
     <string name="TaskSwitchWaiting">No</string>
     <string name="SettingsReadFile">Read JSON file</string>
     <string name="WipeDatabase">Wipe database</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
 
 </resources>
