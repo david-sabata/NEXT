@@ -24,6 +24,7 @@ import android.util.Log;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TaskHistory.HistoryTaskChange;
 
 /**
  * @author xsych_000
@@ -274,6 +275,29 @@ public class JavaParser {
 		return jsonTask;
 	}
 	
+	private JSONObject convertHistoryToJSONObject(TaskHistory taskHistory) throws JSONException {
+		JSONObject jsonHistory = new JSONObject();
+		
+		// Fill JSONObject with Task data
+		jsonHistory.put("timestamp", taskHistory.getTimeStamp());
+		jsonHistory.put("author", taskHistory.getAuthor());
+		jsonHistory.put("taskid", taskHistory.getTaskId());
+		
+		// Generate changes
+		JSONArray jsonChanges = new JSONArray();
+		for(int i = 0; i < taskHistory.getChanges().size(); i++) {
+			JSONObject jsonOneChange = new JSONObject();
+			HistoryTaskChange oneChange = taskHistory.getChanges().get(i);
+				jsonOneChange.put("name", oneChange.getName());
+				jsonOneChange.put("oldvalue", oneChange.getOldValue());
+				jsonOneChange.put("newvalue", oneChange.getNewValue());
+			jsonChanges.put(jsonOneChange);
+		}
+		jsonHistory.put("changes", jsonChanges);
+		
+		return jsonHistory;
+	}
+	
 	private String generateJSONStringProject() throws JSONException {
 		JSONObject projectData = new JSONObject();
 		
@@ -281,15 +305,19 @@ public class JavaParser {
 		projectData.put("id",mProject.getId());
 		projectData.put("projectname", mProject.getTitle());
 		
-		// Generate JSONObject for tasks
+		// Generate array of JSONObject for tasks
+		JSONArray jsonTasksArray = new JSONArray();
 		for(int i = 0; i < mTasksList.size(); i++) {
-
-			
-			
+			jsonTasksArray.put(convertTaskToJSONObject(mTasksList.get(i)));	
 		}
+		projectData.put("data", jsonTasksArray);
 		
 		// Generate JSONObject for history 
-		
+		JSONArray jsonHistoryArray = new JSONArray();
+		for(int i = 0; i < mTasksHistory.size(); i++) {
+			jsonHistoryArray.put(convertHistoryToJSONObject(mTasksHistory.get(i)));
+		}
+		projectData.put("history", jsonHistoryArray);
 		
 		return null;		
 	}
