@@ -92,6 +92,7 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
 		};
 
@@ -130,6 +131,7 @@ public class TasksDataSource {
 		vals.put(Constants.COLUMN_PROJECTS_ID, task.getProject().getId());
 		vals.put(Constants.COLUMN_DATETIME, task.getDate());
 		vals.put(Constants.COLUMN_PRIORITY, task.getPriority());
+		vals.put(Constants.COLUMN_COMPLETED, task.isCompleted() ? 1 : 0);
 
 		Task existing = getTaskById(task.getId());
 

@@ -19,7 +19,7 @@ import com.deaux.fan.FanView;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
-import cz.fit.next.tasklist.ContentListFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 public class MainActivity extends FragmentActivity {
 
@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
-			ContentListFragment contentFrag = new ContentListFragment();
+			TaskListFragment contentFrag = new TaskListFragment();
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);
@@ -112,10 +112,10 @@ public class MainActivity extends FragmentActivity {
 			case R.id.setting_connect_drive:
 				Log.i(LOG_TAG, "Google Login");
 				break;
-				
+
 			case R.id.setting_read_file:
 				Log.i(LOG_TAG, "JSON Read File");
-			
+
 				// Just for debugging
 				//JavaParser parser = new JavaParser();
 				//parser.getTasksFromHTML("file.html", /* insert project*/); 
@@ -144,7 +144,6 @@ public class MainActivity extends FragmentActivity {
 
 			default:
 				Log.i(LOG_TAG, "onOptionsItemSelected Item " + item.getTitle());
-				System.out.println("Click on Item");
 		}
 
 		return false;

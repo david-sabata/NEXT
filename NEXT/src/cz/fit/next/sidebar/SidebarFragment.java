@@ -15,7 +15,7 @@ import com.deaux.fan.FanView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.projectlist.ProjectListFragment;
-import cz.fit.next.tasklist.ContentListFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 public class SidebarFragment extends Fragment {
 
@@ -90,11 +90,11 @@ public class SidebarFragment extends Fragment {
 				Log.i(LOG_TAG, "selection: Next");
 
 				// create new fragment only if needed
-				if (!(currentFragment instanceof ContentListFragment)) {
-					fan.replaceMainFragment(new ContentListFragment());
+				if (!(currentFragment instanceof TaskListFragment)) {
+					fan.replaceMainFragment(new TaskListFragment());
 				}
 				else {
-					((ContentListFragment) currentFragment).reloadContent();
+					((TaskListFragment) currentFragment).reloadContent();
 				}
 
 				break;

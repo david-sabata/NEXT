@@ -9,6 +9,10 @@ public interface Constants {
 	public static final String TABLE_TASKS = "tasks";
 
 
+	// project name used for tasks with no project set
+	public static final String IMPLICIT_PROJECT_NAME = "default-project";
+
+
 	// column names as stored in tables	
 	public static final String COLUMN_ID = "_id"; // long, needs to be '_id'
 	public static final String COLUMN_TITLE = "title";
@@ -17,6 +21,7 @@ public interface Constants {
 	public static final String COLUMN_CONTEXT = "context"; // string
 	public static final String COLUMN_DATETIME = "datetime"; // serialized DateTime object
 	public static final String COLUMN_PRIORITY = "priority"; // int
+	public static final String COLUMN_COMPLETED = "completed"; // int
 
 
 	// unique column names to disambiguate names when using JOIN
@@ -29,5 +34,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 8;
+	public static final int DATABASE_VERSION = 9;
 }
