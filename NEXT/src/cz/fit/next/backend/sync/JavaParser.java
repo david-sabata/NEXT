@@ -258,7 +258,7 @@ public class JavaParser {
 	public void setHistory(ArrayList<TaskHistory> pTaskHistory) {
 		mTasksHistory = pTaskHistory;
 	}
-	
+		
 	private JSONObject convertTaskToJSONObject(Task task) throws JSONException {
 		JSONObject jsonTask = new JSONObject();
 
@@ -267,7 +267,7 @@ public class JavaParser {
 		jsonTask.put("title", task.getTitle());
 		jsonTask.put("description",task.getDescription());
 		jsonTask.put("date",task.getDate());
-		jsonTask.put("partProject",task.getProject());
+		jsonTask.put("partProject", task.getProject().getTitle());
 		jsonTask.put("partContexts",task.getContext());
 		jsonTask.put("important",task.getPriority());
 		jsonTask.put("status",task.isCompleted());
