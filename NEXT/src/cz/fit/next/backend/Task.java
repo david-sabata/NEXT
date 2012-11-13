@@ -97,7 +97,7 @@ public class Task {
 				String pTitle, 
 				String pDescription, 
 				String pDate,
-				int pPriority,
+				Integer pPriority,
 				Project pProject,
 				String pContext,
 				Boolean pIsCompleted) {
