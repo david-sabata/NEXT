@@ -56,10 +56,9 @@ public class GDrive {
 	private Drive mService = null;
 	private SyncService mSyncService = null;
 	private String mAppFolder = null;
-	//private SyncServiceCallback mCallback = null;
+	
 
 
-	// private Activity mMainActivity = null;
 	
 	/**
 	 * Initializes synchronization, performs reauth and 
@@ -71,7 +70,7 @@ public class GDrive {
 	}
 
 		
-	/*
+	/**
 	 * Public method for first authorization after service start
 	 */
 	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
@@ -88,7 +87,7 @@ public class GDrive {
 		auth.execute(params);
 	}
 	
-	/*
+	/**
 	 * Gets list of files in application folder
 	 */
 	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
@@ -100,7 +99,7 @@ public class GDrive {
 		
 	}
 	
-	/*
+	/**
 	 * Gets list of files in shared folder
 	 */
 	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
@@ -112,7 +111,7 @@ public class GDrive {
 		
 	}
 	
-	/*
+	/**
 	 * Locks file with given id
 	 */
 	public Boolean lock(String ident) {
@@ -122,7 +121,7 @@ public class GDrive {
 		return true;
 	}
 	
-	/*
+	/**
 	 * Download file with given filename to local storage
 	 */
 	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
@@ -130,7 +129,7 @@ public class GDrive {
 		
 	}
 	
-	/*
+	/**
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
@@ -138,7 +137,7 @@ public class GDrive {
 		
 	}
 	
-	/*
+	/**
 	 * Unlocks file with given id
 	 */
 	public void unlock(String ident) {
@@ -154,7 +153,7 @@ public class GDrive {
 	/*              ASYNCTASK CLASSES                 */
 	/**************************************************/
 
-	/*
+	/**
 	 * Asynctask provides authorization.
 	 */
 	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
@@ -193,7 +192,7 @@ public class GDrive {
 	/*          HELPER FUNCTIONS           */
 	/***************************************/
 	
-	/*
+	/**
 	 * Invalidates token and makes new one
 	 */
 	private void reauth(Context appcontext) {
@@ -207,7 +206,7 @@ public class GDrive {
 	}
 
 
-	/*
+	/**
 	 * Gets Access Token to Google Drive
 	 */
 	private String getGoogleAccessToken(Activity main, Context appcontext, Account account) {
@@ -259,7 +258,7 @@ public class GDrive {
 	
 
 
-	/*
+	/**
 	 * Creates object which represents Drive Service
 	 */
 	private Drive buildService(final String AuthToken, final String ApiKey) {
@@ -318,7 +317,7 @@ public class GDrive {
 	}
 	
 	
-	/*
+	/**
 	 * Returns file id by its name
 	 */
 	private String getFileIdByName(String name) {
@@ -352,7 +351,7 @@ public class GDrive {
 	}
 	
 
-	/*
+	/**
 	 * Returns filelist of application folder
 	 */
 	private List<File> getFileList(String appFolder) {
@@ -393,8 +392,8 @@ public class GDrive {
 	}
 
 
-	/*
-	 * Returns list of shared files, which are not in folder
+	/**
+	 * Returns list of shared files, which are not in application folder
 	 */
 	private List<File> getSharedFileList(String appFolder) {
 
@@ -500,8 +499,8 @@ public class GDrive {
 	}
 
 
-	/*
-	 * Uploads file
+	/**
+	 * Uploads file from "localname" to "appfolder"/"name" on storage
 	 */
 	private void uploadFile(String name, String localname, String appFolder) {
 
@@ -539,7 +538,7 @@ public class GDrive {
 
 	}
 	
-	/*
+	/**
 	 * Delete file in app folder
 	 */
 	private void deleteFile(String id) {
