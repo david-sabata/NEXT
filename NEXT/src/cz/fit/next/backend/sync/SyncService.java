@@ -183,6 +183,11 @@ public class SyncService extends Service {
 				return null;
 			}
 			
+			ProjectsDataSource projdatasource;
+			Cursor cursor;
+			boolean done;
+			ArrayList<Project> remoteProjects = new ArrayList<Project>();
+			
 			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
@@ -213,13 +218,16 @@ public class SyncService extends Service {
 					Log.i(TAG,"Desc: " + tasks.get(j).getDescription());
 				}
 				
-				ProjectsDataSource projdatasource = new ProjectsDataSource(getApplicationContext());
+				projdatasource = new ProjectsDataSource(getApplicationContext());
 				projdatasource.open();
 				projdatasource.saveProject(proj);
+				projdatasource.close();
+				
+				remoteProjects.add(proj);
 				
 				TasksDataSource datasource = new TasksDataSource(getApplicationContext());
 				datasource.open();
-				Cursor cursor = datasource.getProjectTasksCursor(proj.getId());
+				cursor = datasource.getProjectTasksCursor(proj.getId());
 				
 				Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
 				
@@ -229,6 +237,8 @@ public class SyncService extends Service {
 				for (int j = 0; j < tasks.size(); j++) {
 					bitmap.add(false);
 				}
+				
+				done = false;
 				
 				while (cursor.moveToNext()) {
 					
@@ -241,10 +251,17 @@ public class SyncService extends Service {
 							
 							// remote task was processed
 							bitmap.set(j, true);
+							done = true;
 							break;
 						}
 					}
 					
+					// task is only in local database, not in remote storage
+					if (!done) {
+						
+					}
+					
+					done = false;
 				} 
 				
 				
@@ -256,6 +273,27 @@ public class SyncService extends Service {
 				}
 				
 				
+				// Find projects in local database, which are not on remote storage
+				
+				projdatasource = new ProjectsDataSource(getApplicationContext());
+				cursor = projdatasource.getAllProjectsCursor();
+				done = false;
+				
+				while (cursor.moveToNext()) {
+					Project p = new Project(cursor);
+					for (int k = 0; k < remoteProjects.size(); k++) {
+						if (p.getId() == remoteProjects.get(k).getId()) {
+							done = true;
+						}
+					}
+					
+					if (!done) {
+						
+					}
+					
+					
+					done = false;
+				}
 				
 				datasource.close();
 				
@@ -265,7 +303,9 @@ public class SyncService extends Service {
 				//drive.unlock(lf.get(0).getId());
 				
 				
-			} // end of projects cycle
+			} // end of remote projects cycle
+			
+			
 			
 			
 			
