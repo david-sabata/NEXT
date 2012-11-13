@@ -83,12 +83,36 @@ public class Task {
 	 * @throws JSONException 
 	 */
 	public Task(JSONObject taskJson, Project project) throws JSONException {
+		this.mId = taskJson.getString("id");
 		this.mTitle = taskJson.getString("title");
 		this.mDescription = taskJson.getString("description");
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
 		this.mDate = new DateTime(taskJson.getString("date"));
+	}
+	
+	/**
+	 * Constructor to construct Task from parameters
+	 * @param taskJson
+	 * @throws JSONException 
+	 */
+	public Task(String pId, 
+				String pTitle, 
+				String pDescription, 
+				String pDate,
+				Integer pPriority,
+				Project pProject,
+				String pContext,
+				Boolean pIsCompleted) {
+		mId = pId;
+		mTitle = pTitle;
+		mDescription = pDescription;
+		mDate = pDate;
+		mPriority = pPriority;
+		mProject = pProject;
+		mContext = pContext;
+		mIsCompleted = pIsCompleted;
 	}
 
 
