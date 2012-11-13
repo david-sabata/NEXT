@@ -1,14 +1,18 @@
 package cz.fit.next.backend;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.database.Cursor;
 import cz.fit.next.backend.database.Constants;
+
 
 /**
  * @author Tomas Sychra
  * @brief Class for storing data in one task
  */
 public class Task {
-
 	/**
 	 * Unique ID
 	 */
@@ -46,6 +50,11 @@ public class Task {
 	 */
 	protected String mContext;
 
+	/**
+	 * Completion status
+	 */
+	protected boolean mIsCompleted;
+
 
 
 
@@ -60,10 +69,24 @@ public class Task {
 		mPriority = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_PRIORITY));
 		mContext = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
 
+		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
+
 		mProject = new Project(cursor);
 	}
 
-
+	/**
+	 * Constructor to construct Task from JSONObject
+	 * @param taskJson
+	 * @throws JSONException 
+	 */
+	public Task(JSONObject taskJson, Project project) throws JSONException {
+		this.mTitle = taskJson.getString("title");
+		this.mDescription = taskJson.getString("description");
+		this.mPriority = taskJson.getInt("important");
+		this.mProject = project;
+		this.mIsCompleted = taskJson.getBoolean("status");
+		this.mDate = taskJson.getString("date");
+	}
 
 
 	public String getId() {
@@ -94,6 +117,10 @@ public class Task {
 		return mContext;
 	}
 
+	public boolean isCompleted() {
+		return mIsCompleted;
+	}
+
 
 
 
@@ -106,13 +133,12 @@ public class Task {
 		result = prime * result + ((mDate == null) ? 0 : mDate.hashCode());
 		result = prime * result + ((mDescription == null) ? 0 : mDescription.hashCode());
 		result = prime * result + ((mId == null) ? 0 : mId.hashCode());
+		result = prime * result + (mIsCompleted ? 1231 : 1237);
 		result = prime * result + mPriority;
 		result = prime * result + ((mProject == null) ? 0 : mProject.hashCode());
 		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
 		return result;
 	}
-
-
 
 
 	@Override
@@ -144,6 +170,8 @@ public class Task {
 				return false;
 		} else if (!mId.equals(other.mId))
 			return false;
+		if (mIsCompleted != other.mIsCompleted)
+			return false;
 		if (mPriority != other.mPriority)
 			return false;
 		if (mProject == null) {
@@ -158,5 +186,7 @@ public class Task {
 			return false;
 		return true;
 	}
+
+
 
 }

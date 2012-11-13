@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cz.fit.next.taskdetail;
 
 import android.os.Bundle;
@@ -13,18 +10,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
 
-/**
- * @author Tomas Sychra
- * 
- */
-public class TaskDetailFragment extends Fragment {
 
-	private static final String LOG_TAG = "TaskDetailFragment";
+
+
+public class TaskEditFragment extends Fragment {
+
+	private static final String LOG_TAG = "TaskEditFragment";
 
 
 	/**
@@ -43,13 +38,13 @@ public class TaskDetailFragment extends Fragment {
 
 
 	/**
-	 * Create a new instance of TaskDetailFragment that will
+	 * Create a new instance of TaskEditFragment that will
 	 * be initialized with task of given ID
 	 * 
 	 * Use ONLY this method to create a new instance!
 	 */
-	public static TaskDetailFragment newInstance(String taskId) {
-		TaskDetailFragment frag = new TaskDetailFragment();
+	public static TaskEditFragment newInstance(String taskId) {
+		TaskEditFragment frag = new TaskEditFragment();
 
 		Bundle b = new Bundle();
 		b.putString(ARG_TASK_ID, taskId);
@@ -150,7 +145,7 @@ public class TaskDetailFragment extends Fragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
-		inflater.inflate(R.menu.taskdetail_actions, menu);
+		inflater.inflate(R.menu.taskedit_actions, menu);
 	}
 
 
@@ -158,23 +153,24 @@ public class TaskDetailFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		// edit
-		if (item.getItemId() == R.id.action_edit) {
+		// save
+		if (item.getItemId() == R.id.action_save) {
 
-			// crate fragment with task edit
-			TaskEditFragment fTask = TaskEditFragment.newInstance(mTask.getId());
+			// TODO: save stuff
 
-			// replace main fragment with task detail fragment
-			MainActivity activity = (MainActivity) getActivity();
-			activity.getFanView().replaceMainFragment(fTask);
+			getActivity().getSupportFragmentManager().popBackStack();
+			return true;
+		}
 
+		// cancel
+		if (item.getItemId() == R.id.action_cancel) {
+			getActivity().getSupportFragmentManager().popBackStackImmediate();
 			return true;
 		}
 
 
 		return super.onOptionsItemSelected(item);
 	}
-
 
 
 

@@ -18,16 +18,21 @@
     <string name="TitleByProject_ShowProjects">Show Projects</string>
     <string name="SettingsConnectToDrive">Drive login</string>
     <string name="TaskTitle">Title</string>
-    <string name="TaskDateTitle">Date</string>
-    <string name="TaskProjectTitle">Project</string>
-    <string name="TaskContextTitle">Context</string>
-    <string name="TaskPriorityTitle">Priority</string>
-    <string name="TaskDescriptionTitle">Description</string>
+    <string name="TaskDateTitle">DATE</string>
+    <string name="TaskProjectTitle">PROJECT</string>
+    <string name="TaskContextTitle">CONTEXT</string>
+    <string name="TaskPriorityTitle">PRIORITY</string>
+    <string name="TaskDescriptionTitle">DESCRIPTION</string>
     <string name="TaskProjectTextAutoComplete">Fill name of project</string>
     <string name="TaskContextTextAutoComplete">Fill name of context</string>
     <string name="TaskDone">Done</string>
     <string name="TaskSwitch">Yes!</string>
     <string name="TaskSwitchWaiting">No</string>
+    <string name="SettingsReadFile">Read JSON file</string>
     <string name="WipeDatabase">Wipe database</string>
+    <string name="action_edit_task">Edit task</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete_task">Delete task</string>
 
 </resources>

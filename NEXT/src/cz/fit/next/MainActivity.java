@@ -24,7 +24,7 @@ import cz.fit.next.backend.SyncService;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.sidebar.SidebarFragment;
-import cz.fit.next.tasklist.ContentListFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 
 
@@ -58,12 +58,8 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
 
+			TaskListFragment contentFrag = new TaskListFragment();
 
-			// TODO this is valid code!! Delete comments after debug tasks
-			// ContentListFragment contentFrag = new ContentListFragment();
-			// fan.setFragments(contentFrag, fanFrag);
-
-			ContentListFragment contentFrag = new ContentListFragment();
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);
@@ -156,6 +152,14 @@ public class MainActivity extends FragmentActivity {
 								
 				break;
 
+			case R.id.setting_read_file:
+				Log.i(LOG_TAG, "JSON Read File");
+
+				// Just for debugging
+				//JavaParser parser = new JavaParser();
+				//parser.getTasksFromHTML("file.html", /* insert project*/); 
+				break;
+
 			case R.id.menu_wipe_db:
 				// TODO: temporary, hardcoded
 				new AlertDialog.Builder(this)
@@ -179,7 +183,6 @@ public class MainActivity extends FragmentActivity {
 
 			default:
 				Log.i(LOG_TAG, "onOptionsItemSelected Item " + item.getTitle());
-				System.out.println("Click on Item");
 		}
 
 		return false;

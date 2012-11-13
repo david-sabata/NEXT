@@ -43,9 +43,19 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_PRIORITY + " integer, "
 				+ Constants.COLUMN_CONTEXT + " text, "
 				+ Constants.COLUMN_PROJECTS_ID + " text, "
+				+ Constants.COLUMN_COMPLETED + " integer, "
 				+ "FOREIGN KEY (" + Constants.COLUMN_PROJECTS_ID + ") REFERENCES " + Constants.TABLE_PROJECTS + " (" + Constants.COLUMN_ID + ")"
 				+ ");");
 
+		// insert implicit project record
+		String implUUID = UUID.randomUUID().toString();
+		ContentValues implProject = new ContentValues();
+		implProject.put(Constants.COLUMN_ID, implUUID);
+		implProject.put(Constants.COLUMN_TITLE, Constants.IMPLICIT_PROJECT_NAME);
+		database.insertOrThrow(Constants.TABLE_PROJECTS, null, implProject);
+
+
+		// TEMP ========================================================
 
 		String tmpUUID = UUID.randomUUID().toString();
 
@@ -65,7 +75,38 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues.put(Constants.COLUMN_CONTEXT, "Škola");
 		otherValues.put(Constants.COLUMN_PRIORITY, 1);
 		otherValues.put(Constants.COLUMN_DATETIME, "21. 12. 2012");
+		otherValues.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues);
+
+		ContentValues otherValues2 = new ContentValues();
+		otherValues2.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
+		otherValues2.put(Constants.COLUMN_TITLE, "Dummy task with veeery long title that will surely go out of the screen");
+		otherValues2.put(Constants.COLUMN_PROJECTS_ID, tmpUUID);
+		otherValues2.put(Constants.COLUMN_DESCRIPTION, "<Some description would be here>");
+		otherValues2.put(Constants.COLUMN_CONTEXT, "Doma");
+		otherValues2.put(Constants.COLUMN_PRIORITY, 0);
+		otherValues2.put(Constants.COLUMN_DATETIME, "24. 12. 2012");
+		otherValues2.put(Constants.COLUMN_COMPLETED, 0);
+		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues2);
+
+		ContentValues otherValues3 = new ContentValues();
+		otherValues3.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
+		otherValues3.put(Constants.COLUMN_TITLE, "Completed task with no description");
+		otherValues3.put(Constants.COLUMN_PROJECTS_ID, tmpUUID);
+		otherValues3.put(Constants.COLUMN_CONTEXT, "Doma");
+		otherValues3.put(Constants.COLUMN_PRIORITY, 2);
+		otherValues3.put(Constants.COLUMN_DATETIME, "10. 10. 2012");
+		otherValues3.put(Constants.COLUMN_COMPLETED, 1);
+		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues3);
+
+		ContentValues otherValues4 = new ContentValues();
+		otherValues4.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
+		otherValues4.put(Constants.COLUMN_TITLE, "No description, no context, no project (implicit)");
+		otherValues4.put(Constants.COLUMN_PROJECTS_ID, implUUID);
+		otherValues4.put(Constants.COLUMN_PRIORITY, 0);
+		otherValues4.put(Constants.COLUMN_DATETIME, "1. 1. 2013");
+		otherValues4.put(Constants.COLUMN_COMPLETED, 0);
+		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues4);
 	}
 
 

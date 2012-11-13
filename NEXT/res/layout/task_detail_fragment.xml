@@ -108,7 +108,7 @@
                 android:id="@+id/taskDateLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginRight"
+                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:orientation="vertical" >
 
                 <LinearLayout
@@ -145,7 +145,7 @@
                 android:id="@+id/taskProjectLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginRight"
+                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:orientation="vertical" >
 
@@ -183,7 +183,7 @@
                 android:id="@+id/taskContextLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginRight"
+                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:orientation="vertical" >
 
@@ -222,7 +222,7 @@
                 android:id="@+id/taskImportantLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginRight"
+                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:orientation="vertical" >
 

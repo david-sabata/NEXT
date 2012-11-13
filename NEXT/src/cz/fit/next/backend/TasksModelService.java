@@ -21,8 +21,6 @@ public class TasksModelService extends Service {
 	/** Instance of self */
 	private static TasksModelService mInstance;
 
-
-
 	private ProjectsDataSource mProjectsDataSource = null;
 
 	private TasksDataSource mTasksDataSource = null;
