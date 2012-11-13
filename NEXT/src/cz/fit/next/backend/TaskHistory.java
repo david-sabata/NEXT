@@ -50,15 +50,15 @@ public class TaskHistory {
 	 * Getter and setters
 	 * @return
 	 */
-	public String getmTimeStamp() {
+	public String getTimeStamp() {
 		return mTimeStamp;
 	}
 
-	public String getmAuthor() {
+	public String getAuthor() {
 		return mAuthor;
 	}
 
-	public String getmTaskId() {
+	public String getTaskId() {
 		return mTaskId;
 	}
 

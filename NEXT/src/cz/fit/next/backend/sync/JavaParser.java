@@ -205,7 +205,12 @@ public class JavaParser {
 	
 		for (int i = 0; i < jsonArrayHistory.length(); i++) {
 			JSONObject historyJson = jsonArrayHistory.getJSONObject(i);
-			TaskHistory newHistory = new TaskHistory(historyJson);					
+			TaskHistory newHistory = new TaskHistory(historyJson);	
+			
+			// Debug history
+			//Log.i("TaskId: ", newHistory.getTaskId());
+			//Log.i("TaskAuthor: ", newHistory.getAuthor());
+			//Log.i("Task TimeStamp: ", newHistory.getTimeStamp());
 			historyList.add(newHistory);
 		}	
 		return historyList;

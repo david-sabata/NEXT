@@ -24,6 +24,7 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.JavaParser;
@@ -165,6 +166,8 @@ public class MainActivity extends FragmentActivity {
 				parser.setFile("file.html"); 
 				Project project = parser.getProject();
 				ArrayList<Task> tasks = parser.getTasks(project);
+				
+				ArrayList<TaskHistory> histories = parser.getHistory();
 				
 				break;
 
