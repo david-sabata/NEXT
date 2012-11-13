@@ -1,6 +1,8 @@
 package cz.fit.next.backend;
 
 
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,10 +32,8 @@ public class Task {
 
 	/**
 	 * Date/time info
-	 * 
-	 * TODO: create specialized object
 	 */
-	protected String mDate;
+	protected DateTime mDate;
 
 	/**
 	 * Priority, 0 = normal
@@ -65,11 +65,14 @@ public class Task {
 		mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 		mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_TASKS_TITLE));
 		mDescription = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DESCRIPTION));
-		mDate = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		mPriority = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_PRIORITY));
 		mContext = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
 
 		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
+
+		String x = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
+		long milis = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
+		mDate = new DateTime(new Date(milis));
 
 		mProject = new Project(cursor);
 	}
@@ -86,7 +89,7 @@ public class Task {
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
-		this.mDate = taskJson.getString("date");
+		this.mDate = new DateTime(taskJson.getString("date"));
 	}
 	
 	/**
@@ -105,7 +108,7 @@ public class Task {
 		mId = pId;
 		mTitle = pTitle;
 		mDescription = pDescription;
-		mDate = pDate;
+		mDate = new DateTime(pDate);;
 		mPriority = pPriority;
 		mProject = pProject;
 		mContext = pContext;
@@ -129,7 +132,7 @@ public class Task {
 		return mDescription;
 	}
 
-	public String getDate() {
+	public DateTime getDate() {
 		return mDate;
 	}
 
@@ -163,7 +166,6 @@ public class Task {
 		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -210,7 +212,5 @@ public class Task {
 			return false;
 		return true;
 	}
-
-
 
 }

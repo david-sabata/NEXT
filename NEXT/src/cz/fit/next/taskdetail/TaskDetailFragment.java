@@ -145,7 +145,7 @@ public class TaskDetailFragment extends Fragment {
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.textDateShow);
 		if (date != null) {
-			date.setText(mTask.getDate().toString());
+			date.setText(mTask.getDate().toLocaleString());
 		}
 
 		// Set IsCompleted

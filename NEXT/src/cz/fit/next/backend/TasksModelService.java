@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.FilterQueryProvider;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 
@@ -24,6 +25,12 @@ public class TasksModelService extends Service {
 	private ProjectsDataSource mProjectsDataSource = null;
 
 	private TasksDataSource mTasksDataSource = null;
+
+
+	/**
+	 * Application context
+	 */
+	private Context mContext;
 
 
 	// ---------------------------------------------------------------------------------
@@ -100,6 +107,8 @@ public class TasksModelService extends Service {
 	 * @param context
 	 */
 	public void initDataSources(Context context) {
+		mContext = context.getApplicationContext();
+
 		initProjectsDataSource(context);
 	}
 
@@ -165,6 +174,24 @@ public class TasksModelService extends Service {
 
 		// save task
 		mTasksDataSource.saveTask(task);
+	}
+
+
+
+
+	/**
+	 * Rreturns localized date formatter
+	 */
+	public java.text.DateFormat getLocalizedDateFormat() {
+		return android.text.format.DateFormat.getDateFormat(mContext);
+	}
+
+
+	/**
+	 * Returns tasks filter query provider used to filter tasks
+	 */
+	public FilterQueryProvider getTasksFilterQueryProvider() {
+		return mTasksDataSource.getFilterQueryProvider();
 	}
 
 	// ---------------------------------------------------------------------------------

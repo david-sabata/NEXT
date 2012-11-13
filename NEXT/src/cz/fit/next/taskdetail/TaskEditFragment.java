@@ -123,7 +123,7 @@ public class TaskEditFragment extends Fragment {
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		if (date != null) {
-			date.setText(mTask.getDate());
+			date.setText(mTask.getDate().toString());
 		}
 		
 		// Set IsCompleted

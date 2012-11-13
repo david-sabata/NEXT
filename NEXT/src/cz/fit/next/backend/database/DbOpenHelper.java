@@ -1,5 +1,6 @@
 package cz.fit.next.backend.database;
 
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import android.content.ContentValues;
@@ -39,7 +40,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
 				+ Constants.COLUMN_DESCRIPTION + " text, "
-				+ Constants.COLUMN_DATETIME + " text, "
+				+ Constants.COLUMN_DATETIME + " TIMESTAMP, "
 				+ Constants.COLUMN_PRIORITY + " integer, "
 				+ Constants.COLUMN_CONTEXT + " text, "
 				+ Constants.COLUMN_PROJECTS_ID + " text, "
@@ -74,7 +75,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				"do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.");
 		otherValues.put(Constants.COLUMN_CONTEXT, "Škola");
 		otherValues.put(Constants.COLUMN_PRIORITY, 1);
-		otherValues.put(Constants.COLUMN_DATETIME, "21. 12. 2012");
+		otherValues.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 12, 21).getTimeInMillis());
 		otherValues.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues);
 
@@ -85,7 +86,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues2.put(Constants.COLUMN_DESCRIPTION, "<Some description would be here>");
 		otherValues2.put(Constants.COLUMN_CONTEXT, "Doma");
 		otherValues2.put(Constants.COLUMN_PRIORITY, 0);
-		otherValues2.put(Constants.COLUMN_DATETIME, "24. 12. 2012");
+		otherValues2.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 10, 10).getTimeInMillis());
 		otherValues2.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues2);
 
@@ -95,7 +96,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues3.put(Constants.COLUMN_PROJECTS_ID, tmpUUID);
 		otherValues3.put(Constants.COLUMN_CONTEXT, "Doma");
 		otherValues3.put(Constants.COLUMN_PRIORITY, 2);
-		otherValues3.put(Constants.COLUMN_DATETIME, "10. 10. 2012");
+		otherValues3.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2013, 2, 3).getTimeInMillis());
 		otherValues3.put(Constants.COLUMN_COMPLETED, 1);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues3);
 
@@ -104,7 +105,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues4.put(Constants.COLUMN_TITLE, "No description, no context, no project (implicit)");
 		otherValues4.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues4.put(Constants.COLUMN_PRIORITY, 0);
-		otherValues4.put(Constants.COLUMN_DATETIME, "1. 1. 2013");
+		otherValues4.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 11, 12).getTimeInMillis());
 		otherValues4.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues4);
 	}

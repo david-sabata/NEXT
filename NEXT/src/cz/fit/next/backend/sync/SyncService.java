@@ -68,8 +68,8 @@ public class SyncService extends Service {
 		mAccountName = settings.getString(PREF_ACCOUNT_NAME, null);
 
 		if (mAccountName != null) {
-			Log.e(TAG, "Auth");
-			authorize(mAccountName, null);
+			Log.e(TAG, "Connected as " + mAccountName);
+			synchronize();
 		}
 		
 		// if button pressed ask for username
@@ -85,8 +85,8 @@ public class SyncService extends Service {
 			
 		}
 		
-		//return START_STICKY;
-		return START_NOT_STICKY;
+		return START_STICKY;
+		//return START_NOT_STICKY;
 	}
 
 
@@ -116,6 +116,8 @@ public class SyncService extends Service {
 	public void authorize(String accountName, Activity act) {
 		authorizeDoneHandler ad = new authorizeDoneHandler();
 		drive.authorize(accountName, act, getApplicationContext(), this, ad);
+		
+		Log.i(TAG,"SyncService: begin authorization");
 	}
 
 
@@ -169,7 +171,10 @@ public class SyncService extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 			
-			drive.initSync(getApplicationContext());
+			boolean retval = drive.initSync(getApplicationContext(), getInstance(), mAccountName);
+			if (!retval) {
+				return null;
+			}
 			
 			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
 			for (int i = 0; i < lf.size(); i++) {
@@ -207,10 +212,19 @@ public class SyncService extends Service {
 		@Override
 		protected void onPostExecute(Object param) {
 			super.onPostExecute(param);
-
+			
+			if (param == null)  {
+				Log.i(TAG, "Bad username");
+				return;
+			}
+			
 			if (((returnObject)param).sharedCount > 0) {
 				displaySharedNotification(((returnObject)param).sharedCount);
 			}
+			
+			
+			//TODO: ALARM MANAGER
+			stopSelf();
 		}
 	}
 
