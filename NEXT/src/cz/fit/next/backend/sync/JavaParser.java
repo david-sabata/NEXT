@@ -19,9 +19,9 @@ import org.json.JSONArray;
 
 import android.util.Log;
 
-import cz.fit.next.backend.History;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TaskHistory;
 
 /**
  * @author xsych_000
@@ -200,16 +200,16 @@ public class JavaParser {
 	 * @param project
 	 * @return
 	 */
-	private ArrayList<History> createHistoryList(JSONArray jsonArrayHistory,
+	private ArrayList<TaskHistory> createHistoryList(JSONArray jsonArrayHistory,
 			Project project) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	
-	public ArrayList<History> getHistory(Project project) {
+	public ArrayList<TaskHistory> getHistory(Project project) {
 		JSONArray jsonArrayHistory = null;
-		ArrayList<History> historyList = null;
+		ArrayList<TaskHistory> historyList = null;
 		
 		try {
 			jsonArrayHistory = projectData.getJSONArray("history");
