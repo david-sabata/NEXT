@@ -26,6 +26,11 @@ public class Project {
 			this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 		}
 	}
+	
+	public Project(String pId, String pTitle) {
+		this.mId = pId;
+		this.mTitle = pTitle;
+	}
 
 
 	public String getTitle() {

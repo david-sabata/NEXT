@@ -80,6 +80,7 @@ public class Task {
 	 * @throws JSONException 
 	 */
 	public Task(JSONObject taskJson, Project project) throws JSONException {
+		this.mId = taskJson.getString("id");
 		this.mTitle = taskJson.getString("title");
 		this.mDescription = taskJson.getString("description");
 		this.mPriority = taskJson.getInt("important");
