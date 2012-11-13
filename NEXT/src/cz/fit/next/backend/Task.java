@@ -30,10 +30,8 @@ public class Task {
 
 	/**
 	 * Date/time info
-	 * 
-	 * TODO: create specialized object
 	 */
-	protected String mDate;
+	protected DateTime mDate;
 
 	/**
 	 * Priority, 0 = normal
@@ -65,11 +63,12 @@ public class Task {
 		mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 		mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_TASKS_TITLE));
 		mDescription = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DESCRIPTION));
-		mDate = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		mPriority = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_PRIORITY));
 		mContext = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
 
 		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
+
+		mDate = new DateTime(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME)));
 
 		mProject = new Project(cursor);
 	}
@@ -85,7 +84,7 @@ public class Task {
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
-		this.mDate = taskJson.getString("date");
+		this.mDate = new DateTime(taskJson.getString("date"));
 	}
 
 
@@ -105,7 +104,7 @@ public class Task {
 		return mDescription;
 	}
 
-	public String getDate() {
+	public DateTime getDate() {
 		return mDate;
 	}
 
@@ -139,7 +138,6 @@ public class Task {
 		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -186,7 +184,5 @@ public class Task {
 			return false;
 		return true;
 	}
-
-
 
 }
