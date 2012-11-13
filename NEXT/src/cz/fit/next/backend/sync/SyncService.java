@@ -1,5 +1,6 @@
 package cz.fit.next.backend.sync;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -10,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 
 import android.os.Bundle;
@@ -24,6 +26,11 @@ import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.Project;
+import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.database.ProjectsDataSource;
+import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 
 
@@ -178,34 +185,102 @@ public class SyncService extends Service {
 			
 			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
 			for (int i = 0; i < lf.size(); i++) {
-				Log.i(TAG,"File: " + lf.get(i).getTitle());
-			}
+				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
+				
+				//drive.lock(lf.get(0).getId());
+				//Log.i(TAG,"locked");
+				
+				// Download file from storage
+				drive.download(getApplicationContext(), null, lf.get(i).getId());
+				
+				// Parse it
+				JavaParser parser = new JavaParser();
+				parser.setFile(getFilesDir() + "/" + lf.get(i).getTitle());
+				
+				Project proj = parser.getProject();
+				ArrayList<Task> tasks = parser.getTasks(proj);
+				ArrayList<TaskHistory> histories = parser.getHistory();
+				
+				
+				// Get tasks of this project from database
+				
+				
+				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
+				
+				for (int j = 0; j < tasks.size(); j++)  {
+					Log.i(TAG,"ID: " + tasks.get(j).getId());
+					Log.i(TAG,"Task: " + tasks.get(j).getTitle());
+					Log.i(TAG,"Desc: " + tasks.get(j).getDescription());
+				}
+				
+				ProjectsDataSource projdatasource = new ProjectsDataSource(getApplicationContext());
+				projdatasource.open();
+				projdatasource.saveProject(proj);
+				
+				TasksDataSource datasource = new TasksDataSource(getApplicationContext());
+				datasource.open();
+				Cursor cursor = datasource.getProjectTasksCursor(proj.getId());
+				
+				Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
+				
+				// bitmap of remote tasks - for detection of non local tasks
+				// only on remote storage = true
+				ArrayList<Boolean> bitmap = new ArrayList<Boolean>();
+				for (int j = 0; j < tasks.size(); j++) {
+					bitmap.add(false);
+				}
+				
+				while (cursor.moveToNext()) {
+					
+					Task task = new Task(cursor);
+					
+					for (int j = 0; j < tasks.size(); j++) {
+						if (task.getId() == tasks.get(j).getId()) {
+							// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
+							
+							
+							// remote task was processed
+							bitmap.set(j, true);
+							break;
+						}
+					}
+					
+				} 
+				
+				
+				for (int j = 0; j < tasks.size(); j++) {
+					if (bitmap.get(j) == false) {
+						Log.i(TAG,"Creating new: " + tasks.get(j).getId());
+						datasource.saveTask(tasks.get(j));
+					}
+				}
+				
+				
+				
+				datasource.close();
+				
+				//drive.upload(getApplicationContext(), null, "editable3.nextproj.html", "editable3.nextproj.html");
+				
+				
+				//drive.unlock(lf.get(0).getId());
+				
+				
+			} // end of projects cycle
 			
-			
-			
-			//drive.lock(lf.get(0).getId());
-			//Log.i(TAG,"locked");
-			
-			// DO SOME SYNCHRONIZATION STUFF
-			
-			//drive.upload(getApplicationContext(), null, "testovka", null);
-			
-						
-			//drive.unlock(lf.get(0).getId());
 			
 			
 			
 			List<File> lsf = drive.listShared(getApplicationContext(), null);
+			if (lsf != null) {
+				for (int i = 0; i < lsf.size(); i++) {
+					Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
+				}
 			
-			for (int i = 0; i < lsf.size(); i++) {
-				Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
-			}
-			
-			
-			
-			returnObject ret = new returnObject(lsf.size());
-			return ret;
+				returnObject ret = new returnObject(lsf.size());
+				return ret;
 
+			}
+			else return null;
 		}
 
 
@@ -217,11 +292,11 @@ public class SyncService extends Service {
 				Log.i(TAG, "Bad username");
 				return;
 			}
-			
-			if (((returnObject)param).sharedCount > 0) {
-				displaySharedNotification(((returnObject)param).sharedCount);
+			if (param != null)	{
+				if (((returnObject)param).sharedCount > 0) {
+					displaySharedNotification(((returnObject)param).sharedCount);
+				}
 			}
-			
 			
 			//TODO: ALARM MANAGER
 			stopSelf();

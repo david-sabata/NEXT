@@ -109,7 +109,7 @@ public class Task {
 		mId = pId;
 		mTitle = pTitle;
 		mDescription = pDescription;
-		mDate = new DateTime(pDate);;
+		mDate = new DateTime(pDate);
 		mPriority = pPriority;
 		mProject = pProject;
 		mContext = pContext;
