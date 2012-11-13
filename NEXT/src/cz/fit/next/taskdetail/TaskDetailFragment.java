@@ -106,6 +106,23 @@ public class TaskDetailFragment extends Fragment {
 
 
 
+
+	/**
+	 * Reload Task data if data in DB has changed
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		Task task = TasksModelService.getInstance().getTaskById(mTask.getId());
+		if (!mTask.equals(task)) {
+			mTask = task;
+			setDetailTask(getView());
+		}
+	}
+
+
+
 	/**
 	 * Sets up the (sub)views acording to the loaded task
 	 */
@@ -126,7 +143,7 @@ public class TaskDetailFragment extends Fragment {
 		// set date
 		TextView date = (TextView) baseView.findViewById(R.id.textDateShow);
 		if (date != null) {
-			date.setText(mTask.getDate());
+			date.setText(mTask.getDate().toString());
 		}
 
 		// Set IsCompleted
