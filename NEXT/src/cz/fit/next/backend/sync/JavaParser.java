@@ -29,7 +29,7 @@ import cz.fit.next.backend.TaskHistory;
  */
 public class JavaParser {
 	private String mFilePath = null;
-	private String inputDataString = "<html><head><title>Test</title><!-- Here we will store our data for tasks --><script id='data' type='x-next/x-json'>{ id: '123456', filename: 'editable.html', projectname: 'Reader for NEXT', data: [{id :'23', title: 'Basic structure', description: 'Create basic layout', date: '1.11.2012', partProject : 'Reader for NEXT', partContexts : ['School','Android'],important: '3',status: true},{ id: '45', title: 'Plug-in modules', description: 'Create generator for tasks layout',date: '1.11.2012',partProject : 'Reader for NEXT',partContexts : ['School','Javascript'],important: '3', status: false}]}</script></head><body></body></html>";
+	private String inputDataString = "<html><head><title>Test</title><!-- Here we will store our data for tasks --><script id='data' type='x-next/x-json'>{ id: '123456', filename: 'editable.html', projectname: 'Reader for NEXT', data: [{id :'23', title: 'Basic structure', description: 'Create basic layout', date: '1.11.2012', partProject : 'Reader for NEXT', partContexts : ['School','Android'],important: '3',status: true},{ id: '45', title: 'Plug-in modules', description: 'Create generator for tasks layout',date: '1.11.2012',partProject : 'Reader for NEXT',partContexts : ['School','Javascript'],important: '3', status: false}], history: [{timestamp : '1223289348934934',author : 'Tomas Sychra',taskid : '2123434333343434',changes: [{name: 'title',oldvalue: 'aa', newvalue: 'bb'}]}]}</script></head><body></body></html>";
 	
 	// It is imporatnt to tell, which input will be used (Temporary String coded above or FileName )
 	private Boolean  READ_FROM_STRING = true;
@@ -184,8 +184,7 @@ public class JavaParser {
 		// Add tasks to list from HTML file
 		try {
 			jsonArrayTasks = projectData.getJSONArray("data");
-			tasksList = createTaskList(jsonArrayTasks, project);
-			
+			tasksList = createTaskList(jsonArrayTasks, project);		
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,25 +194,34 @@ public class JavaParser {
 	
 	
 	/**
-	 * This method create a History of tasks in project
+	 * This method create a History of tasks from JSON code in file
 	 * @param jsonArrayHistory
 	 * @param project
 	 * @return
+	 * @throws JSONException 
 	 */
-	private ArrayList<TaskHistory> createHistoryList(JSONArray jsonArrayHistory,
-			Project project) {
-		// TODO Auto-generated method stub
-		return null;
+	private ArrayList<TaskHistory> createHistoryList(JSONArray jsonArrayHistory) throws JSONException {
+		ArrayList<TaskHistory> historyList = new ArrayList<TaskHistory>();
+	
+		for (int i = 0; i < jsonArrayHistory.length(); i++) {
+			JSONObject historyJson = jsonArrayHistory.getJSONObject(i);
+			TaskHistory newHistory = new TaskHistory(historyJson);					
+			historyList.add(newHistory);
+		}	
+		return historyList;
 	}
 	
 	
-	public ArrayList<TaskHistory> getHistory(Project project) {
+	/**
+	 * @return
+	 */
+	public ArrayList<TaskHistory> getHistory() {
 		JSONArray jsonArrayHistory = null;
 		ArrayList<TaskHistory> historyList = null;
 		
 		try {
 			jsonArrayHistory = projectData.getJSONArray("history");
-			historyList = createHistoryList(jsonArrayHistory, project);
+			historyList = createHistoryList(jsonArrayHistory);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

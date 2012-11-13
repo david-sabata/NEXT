@@ -6,25 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 
 /**
  * @author xsych_000
  *
  */
-public class TaskHistory {
-// JSON FORMAT
-//	  timestamp
-//     author
-//     taskid
-//     changes:
-//     [
-//         {
-//             name: "title",
-//             oldvalue: "aa",
-//             newvalue: "bb"
-//         }
-//     ]
-    		 
+public class TaskHistory {    		 
 	protected String mTimeStamp;
 	protected String mAuthor;
 	protected String mTaskId;
@@ -38,20 +27,48 @@ public class TaskHistory {
 			
 			// Parse changes and store them
 			changes = parseChanges(jsonHistory.getJSONArray("changes"));
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
 
-	private ArrayList<HistoryTaskChange> parseChanges(JSONArray jsonArray) {
-		//for (int i = 0; )
-		return null;
+	private ArrayList<HistoryTaskChange> parseChanges(JSONArray jsonArrayChanges) throws JSONException {
+		ArrayList<HistoryTaskChange> changes = new ArrayList<HistoryTaskChange>();
+		
+		for(int i = 0; i < jsonArrayChanges.length(); i++) {
+			JSONObject jsonOneChange = jsonArrayChanges.getJSONObject(i);
+			HistoryTaskChange oneChange = new HistoryTaskChange(jsonOneChange);
+			changes.add(oneChange);
+		}		
+		return changes;
+	}
+	
+	
+	/**
+	 * Getter and setters
+	 * @return
+	 */
+	public String getmTimeStamp() {
+		return mTimeStamp;
 	}
 
+	public String getmAuthor() {
+		return mAuthor;
+	}
+
+	public String getmTaskId() {
+		return mTaskId;
+	}
+
+	public ArrayList<HistoryTaskChange> getChanges() {
+		return changes;
+	}
+	
+
 	/**
-	 * 
-	 *
+	 * Private class for storage "change" information
 	 */
 	private class HistoryTaskChange {
 		private String mName;
@@ -84,7 +101,6 @@ public class TaskHistory {
 		public String getNewValue() {
 			return mNewValue;
 		}
-		
 	}
 }
 
