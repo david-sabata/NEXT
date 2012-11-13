@@ -87,6 +87,29 @@ public class Task {
 		this.mIsCompleted = taskJson.getBoolean("status");
 		this.mDate = taskJson.getString("date");
 	}
+	
+	/**
+	 * Constructor to construct Task from parameters
+	 * @param taskJson
+	 * @throws JSONException 
+	 */
+	public Task(String pId, 
+				String pTitle, 
+				String pDescription, 
+				String pDate,
+				int pPriority,
+				Project pProject,
+				String pContext,
+				Boolean pIsCompleted) {
+		mId = pId;
+		mTitle = pTitle;
+		mDescription = pDescription;
+		mDate = pDate;
+		mPriority = pPriority;
+		mProject = pProject;
+		mContext = pContext;
+		mIsCompleted = pIsCompleted;
+	}
 
 
 	public String getId() {

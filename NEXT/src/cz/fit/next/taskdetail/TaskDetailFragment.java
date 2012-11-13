@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -128,6 +129,12 @@ public class TaskDetailFragment extends Fragment {
 			date.setText(mTask.getDate());
 		}
 
+		// Set IsCompleted
+		CheckBox isCompleted= (CheckBox) baseView.findViewById(R.id.editIsCompleted);
+		if(isCompleted != null) {
+			isCompleted.setChecked(mTask.isCompleted());
+		}
+		
 		// set project
 		TextView project = (TextView) baseView.findViewById(R.id.textProjectShow);
 		if (project != null) {
