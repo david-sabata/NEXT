@@ -80,10 +80,13 @@ public class DateTime {
 	}
 
 
-
-	//	public String toLocaleString() {
-	//
-	//	}
+	/**
+	 * Returns localized date string
+	 * (Uses service to get localized DateFormatter)
+	 */
+	public String toLocaleString() {
+		return TasksModelService.getInstance().getLocalizedDateFormat().format(mDate);
+	}
 
 
 

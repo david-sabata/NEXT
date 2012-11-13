@@ -142,7 +142,7 @@ public class TaskDetailFragment extends Fragment {
 		// set date
 		TextView date = (TextView) baseView.findViewById(R.id.textDateShow);
 		if (date != null) {
-			date.setText(mTask.getDate().toString());
+			date.setText(mTask.getDate().toLocaleString());
 		}
 
 		// set project

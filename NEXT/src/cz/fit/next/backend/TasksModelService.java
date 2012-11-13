@@ -26,6 +26,12 @@ public class TasksModelService extends Service {
 	private TasksDataSource mTasksDataSource = null;
 
 
+	/**
+	 * Application context
+	 */
+	private Context mContext;
+
+
 	// ---------------------------------------------------------------------------------
 
 	/**
@@ -100,6 +106,8 @@ public class TasksModelService extends Service {
 	 * @param context
 	 */
 	public void initDataSources(Context context) {
+		mContext = context.getApplicationContext();
+
 		initProjectsDataSource(context);
 	}
 
@@ -165,6 +173,16 @@ public class TasksModelService extends Service {
 
 		// save task
 		mTasksDataSource.saveTask(task);
+	}
+
+
+
+
+	/**
+	 * Rreturns localized date formatter
+	 */
+	public java.text.DateFormat getLocalizedDateFormat() {
+		return android.text.format.DateFormat.getDateFormat(mContext);
 	}
 
 	// ---------------------------------------------------------------------------------
