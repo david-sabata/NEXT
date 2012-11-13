@@ -6,9 +6,11 @@ package cz.fit.next.backend.sync;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -44,6 +46,9 @@ public class JavaParser {
 	// Reader 
 	private BufferedReader reader;
 	
+	private Project mProject = null;
+	private ArrayList<Task> mTasksList = null;
+	private ArrayList<TaskHistory> mTasksHistory = null;
 
 	/*********************************************************/
 	/************************* READING ***********************/
@@ -240,26 +245,74 @@ public class JavaParser {
 	
 	/*********************************************************/
 	/************************* WRITING ***********************/
-	/*********************************************************/
-	public void createNewFile(String pFileName) {
-	
-	}
-	
+	/*********************************************************/	
 	public void setProject(Project pProject) {
-	
+		mProject = pProject;
 	}
 	
 	public void setTasks(ArrayList<Task> pNewTask) {
-	
+	    mTasksList = pNewTask;
 	}
 
 	public void setHistory(ArrayList<TaskHistory> pTaskHistory) {
-	
+		mTasksHistory = pTaskHistory;
 	}
-
-
-
 	
+	private JSONObject convertTaskToJSONObject(Task task) throws JSONException {
+		JSONObject jsonTask = new JSONObject();
+
+		// Fill JSONObject with Task data
+		jsonTask.put("id", task.getId());
+		jsonTask.put("title", task.getTitle());
+		jsonTask.put("description",task.getDescription());
+		jsonTask.put("date",task.getDate());
+		jsonTask.put("partProject",task.getProject());
+		jsonTask.put("partContexts",task.getContext());
+		jsonTask.put("important",task.getPriority());
+		jsonTask.put("status",task.isCompleted());
+		
+		return jsonTask;
+	}
+	
+	private String generateJSONStringProject() throws JSONException {
+		JSONObject projectData = new JSONObject();
+		
+		// Fill JSON data
+		projectData.put("id",mProject.getId());
+		projectData.put("projectname", mProject.getTitle());
+		
+		// Generate JSONObject for tasks
+		for(int i = 0; i < mTasksList.size(); i++) {
+
+			
+			
+		}
+		
+		// Generate JSONObject for history 
+		
+		
+		return null;		
+	}
+	
+	public void writeFile(String pFileName) throws IOException, JSONException {		
+		try {
+			FileOutputStream fileOut = new FileOutputStream(pFileName);
+			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+			
+			String stringToWrite = generateJSONStringProject();
+			
+			//TODO create STRING to write to file
+			
+			//fileStreamWriter.write("TESTOVACI STRING");
+			
+			fileStreamWriter.flush();
+			fileStreamWriter.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}	
 }
 
 
