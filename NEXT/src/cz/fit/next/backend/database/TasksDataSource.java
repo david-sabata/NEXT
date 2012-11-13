@@ -129,7 +129,7 @@ public class TasksDataSource {
 		vals.put(Constants.COLUMN_DESCRIPTION, task.getDescription());
 		vals.put(Constants.COLUMN_CONTEXT, task.getContext());
 		vals.put(Constants.COLUMN_PROJECTS_ID, task.getProject().getId());
-		vals.put(Constants.COLUMN_DATETIME, task.getDate());
+		vals.put(Constants.COLUMN_DATETIME, task.getDate().toString());
 		vals.put(Constants.COLUMN_PRIORITY, task.getPriority());
 		vals.put(Constants.COLUMN_COMPLETED, task.isCompleted() ? 1 : 0);
 
