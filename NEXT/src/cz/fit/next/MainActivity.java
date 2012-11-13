@@ -176,7 +176,7 @@ public class MainActivity extends FragmentActivity {
 				parser.setTasks(tasks);
 				parser.setHistory(histories);
 				try {
-					parser.writeFile("neco");
+					parser.writeFile(this, "neco.txt");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
