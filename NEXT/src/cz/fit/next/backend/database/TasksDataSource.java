@@ -1,12 +1,19 @@
 package cz.fit.next.backend.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.text.format.DateFormat;
+import android.widget.FilterQueryProvider;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
+import cz.fit.next.tasklist.Filter;
 
 public class TasksDataSource {
 
@@ -52,6 +59,8 @@ public class TasksDataSource {
 	public void wipeDatabaseData() {
 		dbHelper.onUpgrade(database, 0, 1);
 	}
+
+
 
 
 
@@ -147,6 +156,43 @@ public class TasksDataSource {
 		// add
 		vals.put(Constants.COLUMN_ID, task.getId());
 		database.insert(Constants.TABLE_TASKS, null, vals);
+	}
+
+
+
+
+	public FilterQueryProvider getFilterQueryProvider() {
+
+		return new FilterQueryProvider() {
+			@Override
+			public Cursor runQuery(CharSequence constraint) {
+				Filter filter = Filter.fromString(constraint.toString());
+
+				SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+				q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
+						+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+
+				String[] selectColumns = new String[] {
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
+						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE
+				};
+
+				String where = "1=1";
+				List<String> whereArgs = new ArrayList<String>();
+
+				// date from
+				if (filter.getDateFrom() != null) {
+					where += " AND " + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= ?";
+					whereArgs.add(DateFormat.format(DateTime.UNIFIED_FORMAT, filter.getDateFrom().getTime()).toString());
+				}
+
+
+
+				return q.query(database, selectColumns, where, whereArgs.toArray(new String[0]), null, null, null);
+			}
+		};
+
 	}
 
 }

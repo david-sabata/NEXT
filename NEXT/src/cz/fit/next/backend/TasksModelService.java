@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.FilterQueryProvider;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 
@@ -183,6 +184,14 @@ public class TasksModelService extends Service {
 	 */
 	public java.text.DateFormat getLocalizedDateFormat() {
 		return android.text.format.DateFormat.getDateFormat(mContext);
+	}
+
+
+	/**
+	 * Returns tasks filter query provider used to filter tasks
+	 */
+	public FilterQueryProvider getTasksFilterQueryProvider() {
+		return mTasksDataSource.getFilterQueryProvider();
 	}
 
 	// ---------------------------------------------------------------------------------
