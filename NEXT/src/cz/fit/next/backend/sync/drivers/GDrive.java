@@ -35,6 +35,7 @@ import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.ParentReference;
 
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.backend.sync.SyncServiceCallback;
@@ -536,6 +537,9 @@ public class GDrive {
 			body.setTitle(name);
 			// body.setDescription("");
 			body.setMimeType("text/plain");
+			List<ParentReference> parents = new ArrayList<ParentReference>();
+			parents.add((new ParentReference()).setId(mAppFolder));
+			body.setParents(parents);
 
 			java.io.File fileContent = null;
 			FileContent mediaContent = null;

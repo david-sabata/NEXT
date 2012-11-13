@@ -211,7 +211,9 @@ public class SyncService extends Service {
 					Log.i(TAG,"Desc: " + tasks.get(j).getDescription());
 				}
 				
-				//drive.upload(getApplicationContext(), null, "testovka", null);
+				
+				
+				//drive.upload(getApplicationContext(), null, "editable3.nextproj.html", "editable3.nextproj.html");
 				
 				
 				//drive.unlock(lf.get(0).getId());
