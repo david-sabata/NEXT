@@ -64,9 +64,16 @@ public class GDrive {
 	 * Initializes synchronization, performs reauth and 
 	 * determines id of application folder
 	 */
-	public void initSync(Context appcontext) {
-		reauth(appcontext);
+	public boolean initSync(Context appcontext, SyncService syncserv, String account) {
+		
+		
+		mSyncService = syncserv;
+		mAccountName = account;
+		
+		if (!reauth(appcontext)) return false;
 		mAppFolder = getAppFolderId();
+		
+		return true;
 	}
 
 		
@@ -103,9 +110,7 @@ public class GDrive {
 	 * Gets list of files in shared folder
 	 */
 	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
-		//mSyncService = syncserv;
-		//mCallback = cb;
-		//reauth(appcontext);
+		
 		List<File> res = getSharedFileList(mAppFolder);
 		return res;
 		
@@ -175,7 +180,7 @@ public class GDrive {
 
 			// Build the service object
 			mService = buildService(mAuthToken, API_KEY);
-			Log.e(TAG, "Connection initiated.");
+			//Log.e(TAG, "Connection initiated.");
 			if (mAuthToken != null) {
 				((SyncServiceCallback)param).Done(mAccountName, true);
 			} else {
@@ -195,14 +200,16 @@ public class GDrive {
 	/**
 	 * Invalidates token and makes new one
 	 */
-	private void reauth(Context appcontext) {
-		AccountManager am = AccountManager.get(mSyncService.getApplicationContext());
+	private boolean reauth(Context appcontext) {
+		AccountManager am = AccountManager.get(appcontext);
 		am.invalidateAuthToken("com.google", null);
 
 		Account account = new Account(mAccountName, "com.google");
 		mAuthToken = getGoogleAccessToken(null, appcontext, account);
 		Log.e(TAG, "Token is: " + mAuthToken);
+		if (mAuthToken == null) return false;
 		mService = buildService(mAuthToken, API_KEY);
+		return true;
 	}
 
 
@@ -245,6 +252,8 @@ public class GDrive {
 			e.printStackTrace();
 		} catch (GoogleAuthException e) {
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			retval = null;
 		}
 		
 		// Finish login activity, if exists
@@ -297,14 +306,19 @@ public class GDrive {
 			request = request.setQ(q);
 
 			flist = request.execute();
-			if (flist.size() > 0) {
+			if (flist.getItems().size() > 0) {
 				nextDirId = flist.getItems().get(0).getId();
 				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
 			} else // Create new NEXT folder
 			{
-				Log.e(TAG, "NEXT folder not found.");
+				Log.e(TAG, "NEXT folder not found, creating.");
 
-				// TODO: Create new directory
+				File body = new File();
+				body.setTitle(FOLDER_NAME);
+				// body.setDescription("");
+				body.setMimeType("application/vnd.google-apps.folder");
+				mService.files().insert(body).execute();
+				
 			}
 			
 		} catch (IOException e2) {
@@ -419,7 +433,7 @@ public class GDrive {
 				//Log.e(TAG, "New page token: " + flist.getNextPageToken());
 			} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-			//Log.e(TAG, "Pocet souboru: " + res.size());
+			//Log.e(TAG, "Pocet sdilenych souboru: " + res.size());
 			
 			// Exclude files with bad names
 			for (int i = 0; i < res.size(); i++) {
