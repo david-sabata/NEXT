@@ -19,6 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import android.R;
+import android.content.Context;
 import android.util.Log;
 
 import cz.fit.next.backend.Project;
@@ -322,19 +324,38 @@ public class JavaParser {
 		return projectData.toString();		
 	}
 	
-	public void writeFile(String pFileName) throws IOException, JSONException {		
-//			FileOutputStream fileOut = new FileOutputStream(pFileName);
-//			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+	private String readFileFromResource(Context c, Integer id) throws IOException {
+		InputStream input = c.getResources().openRawResource(id);
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+	    
+	    String readLine = null;
+		String output = "";
+		while((readLine = reader.readLine()) != null){
+		    output += readLine;
+		}
+		// Close the InputStream and BufferedReader
+		input.close();
+		reader.close();
+		return output;
+	}
+	
+	public void writeFile(Context c, String pFileName) throws IOException, JSONException {		
+ 			FileOutputStream fileOut = new FileOutputStream(pFileName);
+			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
 			
-			String stringToWrite = generateJSONStringProject();
+			// Prepare data to write
+			String firstTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlfirst);
+			String secondTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlsecond);
+			String jsonStringToWrite = generateJSONStringProject();
 			
-			Log.i("Serialized string", stringToWrite);
-			//TODO create STRING to write to file
+			// Write new data to file
+			fileStreamWriter.write(firstTemplate + 
+								   jsonStringToWrite + 
+								   secondTemplate);
 			
-			//fileStreamWriter.write("TESTOVACI STRING");
 			
-//			fileStreamWriter.flush();
-//			fileStreamWriter.close();
+			fileStreamWriter.flush();
+			fileStreamWriter.close();
 	}	
 }
 
