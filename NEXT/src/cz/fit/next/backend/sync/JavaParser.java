@@ -241,7 +241,22 @@ public class JavaParser {
 	/*********************************************************/
 	/************************* WRITING ***********************/
 	/*********************************************************/
+	public void createNewFile(String pFileName) {
 	
+	}
+	
+	public void setProject(Project pProject) {
+	
+	}
+	
+	public void setTasks(ArrayList<Task> pNewTask) {
+	
+	}
+
+	public void setHistory(ArrayList<TaskHistory> pTaskHistory) {
+	
+	}
+
 
 
 	
