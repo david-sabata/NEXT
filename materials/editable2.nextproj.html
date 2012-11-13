@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Self-editing page</title>
-        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <!-- Basic style of the page -->
         <style>
             .invisible {
@@ -392,9 +392,11 @@
                     if(data) {
                         var task = data[0];
                         for (item in task) {
-                            // Create a new TD element
-                            var newTD = createCell((languagesTexts[lang])[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
-                            newTR.appendChild(newTD);
+                            if (languagesTexts[lang][item] != "ID") {
+                                // Create a new TD element
+                                var newTD = createCell((languagesTexts[lang])[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
+                                newTR.appendChild(newTD);
+                            }
                         }                
                     }
                     return newTR;
@@ -410,7 +412,7 @@
                     // Generate cells of the new row
                     for (item in task) {
                         // Create a new TD element
-                        var newTD;
+                        var newTD = null;
                         var borderColor = "solid grey";
                         var classCells = "tableCell";
                         switch (item) {
@@ -466,8 +468,9 @@
                                 console.log("Unknown properties of object");
                                 break;
                         }
-
-                        newTR.appendChild(newTD);
+                        if (newTD != null) {
+                            newTR.appendChild(newTD);
+                        }
                     }
 
                     return newTR;
@@ -581,6 +584,7 @@
         <script id="languages" type="x-next/xlanguages">
             {
               czech: {
+                        id: "ID",
                         title: "Název",
                         description: "Popis",
                         date: "Datum",
@@ -597,6 +601,7 @@
                         context: "Kontexty"
                      } ,
              english: {
+                        id: "ID",
                         title: "Title",
                         description: "Description",
                         date: "Date",
@@ -617,7 +622,7 @@
         </script>
 
         <!-- Here we will store our data for tasks -->
-        <script id="data" type="x-next/x-json">
+        <script id="data" type="text/javascript">
           var data = 
           //begin_of_data          
            {
@@ -827,7 +832,7 @@
             var images = new ImageCreator();
             var menu = new MenuCreator();
             var globalMethods = new CommonWorker();
-            var data = null;
+          //  var data = null;
             window.onload = function () {
                 ////////////////////////////////////////////
                 ////////////// PREPARE DATA ////////////////
@@ -846,7 +851,7 @@
                 // Load Data
                 var content = globalMethods.getContentOfScriptTag(document.getElementById("data"));
                 // Transfer JSON data to Object
-                data = eval('(' + content + ')');
+                //data = eval('(' + content + ')');
                 
                 // Find all contexts
                 var contexts = globalMethods.findAllContexts(data);
