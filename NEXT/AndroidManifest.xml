@@ -26,12 +26,12 @@
         </activity>
         
         <activity
-            android:name=".backend.LoginActivity"
+            android:name=".backend.sync.LoginActivity"
             android:label="@string/title_activity_main" >
         </activity>
 
         <service android:name=".backend.TasksModelService"></service>
-        <service android:name=".backend.SyncService"></service>
+        <service android:name=".backend.sync.SyncService"></service>
 
     </application>
     
