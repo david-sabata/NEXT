@@ -1,0 +1,222 @@
+<html>
+    <head>
+        <title>Self-editing page</title>
+        
+        
+
+        <!-- Languages data stored -->
+        <script id="languages" type="x-next/xlanguages">
+            {
+              czech: {
+                        title: "Název",
+                        description: "Popis",
+                        date: "Datum",
+                        partProject : "Projekt",
+                        partContexts : "Kontexty",
+                        important: "Důležitost",
+                        status: "Hotovo",
+                        next: "Další",
+                        today: "Dnes",
+                        inplan: "V plánu",
+                        sometimes: "Někdy",
+                        blocked: "Blokované",
+                        time: "Podle času",
+                        context: "Kontexty"
+                     } ,
+             english: {
+                        title: "Title",
+                        description: "Description",
+                        date: "Date",
+                        partProject : "Project",
+                        partContexts :"Contexts",
+                        important: "Important",
+                        status: "Done",
+                        next: "Next",
+                        today: "Today",
+                        inplan: "In plan",
+                        sometimes: "Sometimes",
+                        blocked: "Blocked",
+                        time: "Time",
+                        context: "Contexts"
+             }
+                
+            }
+        </script>
+
+        <!-- Here we will store our data for tasks -->
+        <script id="data" type="x-next/x-json">
+         var data = 
+         //begin_of_data
+         {
+            filename: "editable.html",
+            id: "123123", 
+            projectname: "Reader for NEXT",
+            data: [
+                    {
+                    	id: "111",
+                        title: "Basic structure",
+                        description: "Create basic layout",
+                        date: "1.11.2012",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["School","Android"],
+                        important: "3",
+                        status: true
+                    },
+                    {
+                    	id: "112",
+                        title: "Plug-in modules",
+                        description: "Create generator for tasks layout",
+                        date: "1.11.2012",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["School","Javascript"],
+                        important: "3",
+                        status: false
+                    
+                    }, 
+                    {
+                    	id: "113",
+                        title: "Future extensions - home explore",
+                        description: "Create self-editable task file",
+                        date: "25.11.2012",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["Home"],
+                        important: "2",
+                        status: true
+                    }, 
+                    {
+                    	id: "114",
+                        title: "9 Days to End",
+                        description: "Prepare for the end of the world",
+                        date: "12.12.2012",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["Businnes", "HTML5"],
+                        important: "3",
+                        status: true
+                    }, 
+                    {
+                    	id: "115",
+                        title: "End of the world",
+                        description: "Try to survive",
+                        date: "21.12.2012",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["Personal"],
+                        important: "3",
+                        status: true
+                    }, 
+                    {
+                    	id: "116",
+                        title: "I dont know",
+                        description: "What write there",
+                        date: "1.1.2014",
+                        partProject : "Reader for NEXT",
+                        partContexts : ["Android", "Bussines"],
+                        important: "1",
+                        status: true
+                    }
+
+                ],
+                history:
+                [
+                ]
+            }
+            //end_of_data
+        </script>
+
+
+    </head>
+    
+    <body>
+       
+        <div id="wholePage">
+            <!-- Top panel -->
+            <div id="topBox">
+                <div id="logoImgPlace"></div>
+                <div id="nameOfProject"></div>
+                <div id="buttonSwitchEditor"></div>
+            </div>
+            
+            <!-- Main content ( SideBar and ListView) -->
+            <div id="mainBox">
+                <!-- Sidebar on the left -->
+                <div id="sideBar">
+                </div>
+
+                <!-- WORKERSTART:TASKLIST -->
+                <div id="taskListDiv">
+                    <table id="taskList">
+                    </table>
+                </div>
+                <!-- WORKEREND:TASKLIST -->
+            </div>
+        </div>
+        
+        <!-- Sta</script>rt our APPLICATION ! YES :-) -->
+        <script>
+            var topPanel = new TopPanelCreator();
+            var editor = new EditorWorker();
+            var images = new ImageCreator();
+            var menu = new MenuCreator();
+            var globalMethods = new CommonWorker();
+            var data = null;
+            window.onload = function () {
+                ////////////////////////////////////////////
+                ////////////// PREPARE DATA ////////////////
+                ////////////////////////////////////////////
+
+                // Load images
+                var imagesIds = ["nextLogo",
+                                 "arrowImg",
+                                 "cloudImg",
+                                 "calendarImg",
+                                 "deskImg",
+                                 "lockImg"];
+                images.init(imagesIds);
+
+
+                // Load Data
+                var content = globalMethods.getContentOfScriptTag(document.getElementById("data"));
+                // Transfer JSON data to Object
+                data = eval('(' + content + ')');
+                
+                // Find all contexts
+                var contexts = globalMethods.findAllContexts(data);
+
+                ////////////////////////////////////////////
+                //////////////////// TOP ///////////////////
+                ////////////////////////////////////////////
+                topPanel.init(data.projectname, images);
+
+                ////////////////////////////////////////////
+                ////////////////// TASKS ///////////////////
+                ////////////////////////////////////////////
+                editor.setContexts(contexts); //it is very important !!
+                e</script>ditor.init(data, images);
+
+
+                
+                ////////////////////////////////////////////
+                ////////////////// MENU ////////////////////
+                ////////////////////////////////////////////
+                // Set menu settings
+                var menuSet = new Object();
+                menuSet['time'] = {
+                    'next': 'arrowImg', // text : img
+                    'today': 'deskImg',
+                    'inplan': 'calendarImg',
+                    'sometimes': 'cloudImg',
+                    'blocked': 'lockImg'
+                };
+                menuSet['context'] = contexts;
+
+                // Create menu
+                menu.init(document.getElementById("sideBar"), images);
+                menu.setMenuSettings(menuSet);
+
+                menu.regenerate();
+
+               // editor.cleanTaskList();
+                
+            };
+        </script>
+    </body>
+</html>

@@ -129,8 +129,8 @@ public class GDrive {
 	/**
 	 * Download file with given filename to local storage
 	 */
-	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
-		downloadFile(filename, mAppFolder);		
+	public void download(Context appcontext, SyncServiceCallback cb, String id) {
+		downloadFile(id, mAppFolder);		
 		
 	}
 	
@@ -416,6 +416,7 @@ public class GDrive {
 		FileList flist = null;
 		Files.List request = null;
 		List<File> res = new ArrayList<File>();
+		List<File> filtered = new ArrayList<File>();
 
 		try {
 
@@ -440,7 +441,11 @@ public class GDrive {
 			// Exclude files with bad names
 			for (int i = 0; i < res.size(); i++) {
 				String title = res.get(i).getTitle();
-				if (!(title.contains(".nextproj.html"))) res.remove(i);
+				Log.i(TAG, title);
+				if (title.contains(".nextproj.html")) 
+				{
+					filtered.add(res.get(i));
+				}
 			}
 
 		} catch (IOException e2) {
@@ -448,7 +453,7 @@ public class GDrive {
 			e2.printStackTrace();
 		}
 
-		return res;
+		return filtered;
 
 	}
 

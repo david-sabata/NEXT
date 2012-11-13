@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,11 +34,13 @@ public class JavaParser {
 	private String inputDataString = "<html><head><title>Test</title><!-- Here we will store our data for tasks --><script id='data' type='x-next/x-json'>{ id: '123456', filename: 'editable.html', projectname: 'Reader for NEXT', data: [{id :'23', title: 'Basic structure', description: 'Create basic layout', date: '1.11.2012', partProject : 'Reader for NEXT', partContexts : ['School','Android'],important: '3',status: true},{ id: '45', title: 'Plug-in modules', description: 'Create generator for tasks layout',date: '1.11.2012',partProject : 'Reader for NEXT',partContexts : ['School','Javascript'],important: '3', status: false}], history: [{timestamp : '1223289348934934',author : 'Tomas Sychra',taskid : '2123434333343434',changes: [{name: 'title',oldvalue: 'aa', newvalue: 'bb'}]}]}</script></head><body></body></html>";
 	
 	// It is imporatnt to tell, which input will be used (Temporary String coded above or FileName )
-	private Boolean  READ_FROM_STRING = true;
+	private Boolean  READ_FROM_STRING = false;
 	private InputStream input;
 	
 	// Regex pattern to mine JSON data from HTML page
-	private final String scriptPattern = "(?i)(.*?)(<script id='data' type='x-next/x-json'>)(.+?)(</script>)(.*?)";
+	private final String scriptPattern = "(?i)(^.*?)(//begin_of_data)(.+?)(//end_of_data)(.*$)";
+	//private final String scriptPattern = "(?i)(.*?)(<script id=\"data\" type=\"x-next/x-json\">)(.+?)(</script>)(.?)";
+	//private final String scriptPattern = "^.*(<script id=\"data\" type=\"x-next/x-json\">)(.*)(</script>).*$";
 	
 	// Alld information about project
 	private JSONObject projectData;
@@ -54,7 +58,7 @@ public class JavaParser {
 	 * @return
 	 * @throws Throwable
 	 */
-	@SuppressWarnings("unused")
+
 	private void openDataFile () throws Throwable {
 		// Open the file 
 		try {
@@ -92,17 +96,18 @@ public class JavaParser {
 	 */
 	private void parseJsonData(BufferedReader reader) throws IOException, JSONException {
 		// Load data to String
-		int c;
+		String line;
 		String outString = new String();
 		
-		while((c = reader.read()) != -1) {
-			char character = (char) c;
-			outString += character;
+		while ((line = reader.readLine()) != null) {
+			outString += line;
 		}
 		
-		// Parse data to JSON
+		
 		String jsonString = outString.replaceAll(scriptPattern, "$3");
+		Log.i("a", jsonString);
 		projectData = new JSONObject(jsonString);
+		
 	}
 	
 	/**
