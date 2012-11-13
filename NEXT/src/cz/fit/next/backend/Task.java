@@ -90,6 +90,7 @@ public class Task {
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
 		this.mDate = new DateTime(taskJson.getString("date"));
+		this.mContext = taskJson.getString("partContexts");
 	}
 	
 	/**

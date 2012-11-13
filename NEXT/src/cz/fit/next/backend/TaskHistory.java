@@ -70,7 +70,7 @@ public class TaskHistory {
 	/**
 	 * Private class for storage "change" information
 	 */
-	private class HistoryTaskChange {
+	public class HistoryTaskChange {
 		private String mName;
 		private String mOldValue;
 		private String mNewValue;

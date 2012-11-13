@@ -2,7 +2,10 @@ package cz.fit.next;
 
 
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.json.JSONException;
 
 import android.app.AlertDialog;
 
@@ -168,6 +171,19 @@ public class MainActivity extends FragmentActivity {
 				ArrayList<Task> tasks = parser.getTasks(project);
 				
 				ArrayList<TaskHistory> histories = parser.getHistory();
+				
+				parser.setProject(project);
+				parser.setTasks(tasks);
+				parser.setHistory(histories);
+				try {
+					parser.writeFile("neco");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				break;
 

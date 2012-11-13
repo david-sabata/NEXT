@@ -6,9 +6,11 @@ package cz.fit.next.backend.sync;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import android.util.Log;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TaskHistory.HistoryTaskChange;
 
 /**
  * @author xsych_000
@@ -48,6 +51,9 @@ public class JavaParser {
 	// Reader 
 	private BufferedReader reader;
 	
+	private Project mProject = null;
+	private ArrayList<Task> mTasksList = null;
+	private ArrayList<TaskHistory> mTasksHistory = null;
 
 	/*********************************************************/
 	/************************* READING ***********************/
@@ -245,11 +251,96 @@ public class JavaParser {
 	
 	/*********************************************************/
 	/************************* WRITING ***********************/
-	/*********************************************************/
+	/*********************************************************/	
+	public void setProject(Project pProject) {
+		mProject = pProject;
+	}
 	
+	public void setTasks(ArrayList<Task> pNewTask) {
+	    mTasksList = pNewTask;
+	}
 
+	public void setHistory(ArrayList<TaskHistory> pTaskHistory) {
+		mTasksHistory = pTaskHistory;
+	}
+		
+	private JSONObject convertTaskToJSONObject(Task task) throws JSONException {
+		JSONObject jsonTask = new JSONObject();
 
+		// Fill JSONObject with Task data
+		jsonTask.put("id", task.getId());
+		jsonTask.put("title", task.getTitle());
+		jsonTask.put("description",task.getDescription());
+		jsonTask.put("date",task.getDate());
+		jsonTask.put("partProject", task.getProject().getTitle());
+		jsonTask.put("partContexts",task.getContext());
+		jsonTask.put("important",task.getPriority());
+		jsonTask.put("status",task.isCompleted());
+		
+		return jsonTask;
+	}
 	
+	private JSONObject convertHistoryToJSONObject(TaskHistory taskHistory) throws JSONException {
+		JSONObject jsonHistory = new JSONObject();
+		
+		// Fill JSONObject with Task data
+		jsonHistory.put("timestamp", taskHistory.getTimeStamp());
+		jsonHistory.put("author", taskHistory.getAuthor());
+		jsonHistory.put("taskid", taskHistory.getTaskId());
+		
+		// Generate changes
+		JSONArray jsonChanges = new JSONArray();
+		for(int i = 0; i < taskHistory.getChanges().size(); i++) {
+			JSONObject jsonOneChange = new JSONObject();
+			HistoryTaskChange oneChange = taskHistory.getChanges().get(i);
+				jsonOneChange.put("name", oneChange.getName());
+				jsonOneChange.put("oldvalue", oneChange.getOldValue());
+				jsonOneChange.put("newvalue", oneChange.getNewValue());
+			jsonChanges.put(jsonOneChange);
+		}
+		jsonHistory.put("changes", jsonChanges);
+		
+		return jsonHistory;
+	}
+	
+	private String generateJSONStringProject() throws JSONException {
+		JSONObject projectData = new JSONObject();
+		
+		// Fill JSON data
+		projectData.put("id",mProject.getId());
+		projectData.put("projectname", mProject.getTitle());
+		
+		// Generate array of JSONObject for tasks
+		JSONArray jsonTasksArray = new JSONArray();
+		for(int i = 0; i < mTasksList.size(); i++) {
+			jsonTasksArray.put(convertTaskToJSONObject(mTasksList.get(i)));	
+		}
+		projectData.put("data", jsonTasksArray);
+		
+		// Generate JSONObject for history 
+		JSONArray jsonHistoryArray = new JSONArray();
+		for(int i = 0; i < mTasksHistory.size(); i++) {
+			jsonHistoryArray.put(convertHistoryToJSONObject(mTasksHistory.get(i)));
+		}
+		projectData.put("history", jsonHistoryArray);
+		
+		return projectData.toString();		
+	}
+	
+	public void writeFile(String pFileName) throws IOException, JSONException {		
+//			FileOutputStream fileOut = new FileOutputStream(pFileName);
+//			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+			
+			String stringToWrite = generateJSONStringProject();
+			
+			Log.i("Serialized string", stringToWrite);
+			//TODO create STRING to write to file
+			
+			//fileStreamWriter.write("TESTOVACI STRING");
+			
+//			fileStreamWriter.flush();
+//			fileStreamWriter.close();
+	}	
 }
 
 
