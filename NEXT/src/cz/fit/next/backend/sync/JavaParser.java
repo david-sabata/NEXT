@@ -319,27 +319,22 @@ public class JavaParser {
 		}
 		projectData.put("history", jsonHistoryArray);
 		
-		return null;		
+		return projectData.toString();		
 	}
 	
 	public void writeFile(String pFileName) throws IOException, JSONException {		
-		try {
-			FileOutputStream fileOut = new FileOutputStream(pFileName);
-			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+//			FileOutputStream fileOut = new FileOutputStream(pFileName);
+//			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
 			
 			String stringToWrite = generateJSONStringProject();
 			
+			Log.i("Serialized string", stringToWrite);
 			//TODO create STRING to write to file
 			
 			//fileStreamWriter.write("TESTOVACI STRING");
 			
-			fileStreamWriter.flush();
-			fileStreamWriter.close();
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+//			fileStreamWriter.flush();
+//			fileStreamWriter.close();
 	}	
 }
 
