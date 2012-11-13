@@ -97,7 +97,7 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_TASKS_TITLE,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
-				"(strftime('%s', " + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + ") * 1000) AS " + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
