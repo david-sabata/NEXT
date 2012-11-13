@@ -45,7 +45,9 @@ public class JavaParser {
 	private BufferedReader reader;
 	
 
-
+	/*********************************************************/
+	/************************* READING ***********************/
+	/*********************************************************/
 	/**
 	 * This method open file input stream and attach reader to stream
 	 * @param filePath
@@ -218,7 +220,8 @@ public class JavaParser {
 	
 	
 	/**
-	 * @return
+	 * getHistory
+	 * @return History
 	 */
 	public ArrayList<TaskHistory> getHistory() {
 		JSONArray jsonArrayHistory = null;
@@ -233,6 +236,12 @@ public class JavaParser {
 		return historyList;
 	
 	}
+	
+	
+	/*********************************************************/
+	/************************* WRITING ***********************/
+	/*********************************************************/
+	
 
 
 	
