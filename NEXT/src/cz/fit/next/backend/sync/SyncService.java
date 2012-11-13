@@ -90,6 +90,7 @@ public class SyncService extends Service {
 	}
 
 
+	@Override
 	public void onCreate() {
 		Log.i(TAG,"onCreate");
 		
@@ -120,6 +121,7 @@ public class SyncService extends Service {
 
 	public class authorizeDoneHandler implements SyncServiceCallback { 
 	
+		@Override
 		public void Done(Object param, Boolean status) {
 			if (status == true) {
 				//mAuthorized = true;
