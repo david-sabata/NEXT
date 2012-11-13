@@ -145,7 +145,23 @@ public class TaskEditFragment extends Fragment {
 		}
 
 		// set priority
-		//TextView priority = (TextView) taskDetailView.findViewById(R.id.textPriorityShow);
+		// Get value of selected RadioButton
+		RadioButton priority = null;
+		switch(mTask.getPriority()) {
+		case 0:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio0);
+			break;
+		case 1:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio1);
+			break;
+		case 2:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio2);
+			break;
+		}
+		
+		if(priority != null) {
+			priority.setChecked(true);
+		}	
 	}
 
 
@@ -209,6 +225,7 @@ public class TaskEditFragment extends Fragment {
 						context.getText().toString(),
 						isCompleted.isChecked()
 				);
+		Log.i("Priority", priority.getText().toString());
 		TasksModelService.getInstance().saveTask(editedTask);
 		
 	}

@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -39,7 +41,7 @@ public class TaskDetailFragment extends Fragment {
 	 */
 	private Task mTask;
 
-
+	private View taskDetailView;
 
 
 
@@ -96,10 +98,10 @@ public class TaskDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		View taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
+		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
 
 		// load the task data into view
-		setDetailTask(taskDetailView);
+		setDetailTask();
 
 		return taskDetailView;
 	}
@@ -117,7 +119,7 @@ public class TaskDetailFragment extends Fragment {
 		Task task = TasksModelService.getInstance().getTaskById(mTask.getId());
 		if (!mTask.equals(task)) {
 			mTask = task;
-			setDetailTask(getView());
+			setDetailTask();
 		}
 	}
 
@@ -126,46 +128,65 @@ public class TaskDetailFragment extends Fragment {
 	/**
 	 * Sets up the (sub)views acording to the loaded task
 	 */
-	private void setDetailTask(View baseView) {
+	private void setDetailTask() {
 		// set Title
-		TextView title = (TextView) baseView.findViewById(R.id.titleTask);
+		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
 		if (title != null) {
 			title.setText(mTask.getTitle());
 		}
 
 		// TODO implements others like title
 		// set description
-		TextView descripton = (TextView) baseView.findViewById(R.id.textDescriptionShow);
+		TextView descripton = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
 		if (descripton != null) {
 			descripton.setText(mTask.getDescription());
 		}
 
 		// set date
-		TextView date = (TextView) baseView.findViewById(R.id.textDateShow);
+		TextView date = (TextView) taskDetailView.findViewById(R.id.textDateShow);
 		if (date != null) {
 			date.setText(mTask.getDate().toString());
 		}
 
 		// Set IsCompleted
-		CheckBox isCompleted= (CheckBox) baseView.findViewById(R.id.editIsCompleted);
+		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
 		if(isCompleted != null) {
 			isCompleted.setChecked(mTask.isCompleted());
 		}
 		
 		// set project
-		TextView project = (TextView) baseView.findViewById(R.id.textProjectShow);
+		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
 		if (project != null) {
 			project.setText(mTask.getProject().getTitle());
 		}
 
 		// set context
-		TextView context = (TextView) baseView.findViewById(R.id.textContextShow);
+		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
 		if (context != null) {
 			context.setText(mTask.getContext());
 		}
 
 		// set priority
-		//TextView priority = (TextView) taskDetailView.findViewById(R.id.textPriorityShow);
+		// Get value of selected RadioButton
+		RadioButton priority = null;
+		switch(mTask.getPriority()) {
+		case 0:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio0);
+			break;
+		case 1:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio1);
+			break;
+		case 2:
+			priority = (RadioButton) taskDetailView.findViewById(R.id.radio2);
+			break;
+		}
+		
+		if(priority != null) {
+			priority.setChecked(true);
+		}
+		
+		
+		
 	}
 
 
