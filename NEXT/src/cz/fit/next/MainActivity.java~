@@ -1,9 +1,14 @@
 package cz.fit.next;
 
+<<<<<<< HEAD
 
+import java.util.List;
 
+import android.accounts.AccountManager;
+import android.annotation.TargetApi;
+=======
 import android.app.AlertDialog;
-
+>>>>>>> master
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,11 +25,15 @@ import android.view.MenuItem;
 import com.deaux.fan.FanView;
 
 
+import cz.fit.next.services.SyncService;
+import cz.fit.next.services.SyncService.SyncServiceBinder;
+import cz.fit.next.services.TasksModelService;
+import cz.fit.next.services.TasksModelService.ModelServiceBinder;
+import cz.fit.next.tasks.Task;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.sidebar.SidebarFragment;
-import cz.fit.next.tasklist.TaskListFragment;
+import cz.fit.next.tasklist.ContentListFragment;
 
 
 
@@ -36,9 +45,10 @@ public class MainActivity extends FragmentActivity {
 
 
 	protected TasksModelService mModelService;
-	
+	protected SyncService mSyncService;
+
 	protected boolean mIsServiceBound = false;
-	
+	protected boolean mSyncServiceBound = false;
 
 
 
@@ -51,6 +61,10 @@ public class MainActivity extends FragmentActivity {
 
 
 
+		FanView fan = (FanView) findViewById(R.id.fan_view);
+
+
+
 		// setup fan sidebar
 		FanView fan = (FanView) findViewById(R.id.fan_view);
 		fan.setAnimationDuration(200); // 200ms
@@ -58,8 +72,15 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
 
-			TaskListFragment contentFrag = new TaskListFragment();
 
+			// TODO this is valid code!! Delete comments after debug tasks
+			// ContentListFragment contentFrag = new ContentListFragment();
+			// fan.setFragments(contentFrag, fanFrag);
+
+			TaskDetailFragment taskFrag = new TaskDetailFragment();
+			fan.setFragments(taskFrag, fanFrag);
+
+			ContentListFragment contentFrag = new ContentListFragment();
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
 			fan.setViews(-1, -1);
@@ -72,14 +93,20 @@ public class MainActivity extends FragmentActivity {
 			getActionBar().setHomeButtonEnabled(true);
 		}
 
+		// start service if it's not started yet
+
+		if (mModelService == null) {
+			Intent intent = new Intent(this, TasksModelService.class);
+			getApplicationContext().bindService(intent, modelServiceConnection, Context.BIND_AUTO_CREATE);
+			Log.d(LOG_TAG, "binding service to app context");
+		}
+
+		if (mSyncService == null) {
+			Intent intent = new Intent(this, SyncService.class);
+			getApplicationContext().bindService(intent, syncServiceConnection, Context.BIND_AUTO_CREATE);
+		}
+
 		bindModelService();
-		
-		// start synchronization service
-		Intent i = new Intent(this,SyncService.class);
-		Bundle b = new Bundle();
-		b.putInt("buttonPressed",0);
-		i.putExtras(b);
-		this.startService(i);
 
 	}
 
@@ -92,6 +119,9 @@ public class MainActivity extends FragmentActivity {
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
 			mModelService = TasksModelService.getInstance();
+
+		if (mSyncService == null && SyncService.getInstance() != null)
+			mSyncService = SyncService.getInstance();
 
 		// restore service if needed
 		bindModelService();
@@ -141,23 +171,10 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
-				
-				// tell synchronization service to choose user account
-				Intent i = new Intent(this,SyncService.class);
-				Bundle b = new Bundle();
-				b.putInt("buttonPressed",1);
-				i.putExtras(b);
-				this.startService(i);
-				
-								
-				break;
+				if (mSyncServiceBound) {
 
-			case R.id.setting_read_file:
-				Log.i(LOG_TAG, "JSON Read File");
-
-				// Just for debugging
-				//JavaParser parser = new JavaParser();
-				//parser.getTasksFromHTML("file.html", /* insert project*/); 
+					mSyncService.chooseGoogleAccount(this);
+				}
 				break;
 
 			case R.id.menu_wipe_db:
@@ -183,13 +200,43 @@ public class MainActivity extends FragmentActivity {
 
 			default:
 				Log.i(LOG_TAG, "onOptionsItemSelected Item " + item.getTitle());
+				System.out.println("Click on Item");
 		}
 
 		return false;
 	}
 
 
-	
+	/* Constants to identify activities called by startActivityForResult */
+	public int CHOOSE_ACCOUNT = 100;
+
+
+	/**
+	 * Process result from called activity
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
+			String accountName = new String();
+			accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+			// TODO: Store account name to permanent storage
+
+			// Execute asynctask with Google Drive Authorizing
+			mSyncService.authorize(accountName, MainActivity.this);
+
+
+
+		} else {
+			Log.e("NEXT Drive", "Unexpected result.");
+		}
+
+
+
+	}
+
+
+
+
+
 	/**
 	 * Public FanView getter so the fragments can switch main fragment
 	 */
@@ -203,7 +250,6 @@ public class MainActivity extends FragmentActivity {
 
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
-		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			ModelServiceBinder binder = (ModelServiceBinder) service;
 
@@ -223,11 +269,26 @@ public class MainActivity extends FragmentActivity {
 		}
 
 
-		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			Log.d(LOG_TAG, "Model service disconnected");
 		}
 	};
 
-	
+	private ServiceConnection syncServiceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			SyncServiceBinder binder = (SyncServiceBinder) service;
+			mSyncService = binder.getService();
+			mSyncServiceBound = true;
+
+		}
+
+
+		public void onServiceDisconnected(ComponentName arg0) {
+			mSyncServiceBound = false;
+
+		}
+	};
+
+
 }
