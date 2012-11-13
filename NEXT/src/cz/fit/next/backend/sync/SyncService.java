@@ -11,6 +11,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 
 import android.os.Bundle;
@@ -28,6 +29,8 @@ import cz.fit.next.R;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.database.ProjectsDataSource;
+import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 
 
@@ -204,14 +207,57 @@ public class SyncService extends Service {
 				
 				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
 				
-				for (int j = 0; j < tasks.size(); j++)
-				{
+				for (int j = 0; j < tasks.size(); j++)  {
 					Log.i(TAG,"ID: " + tasks.get(j).getId());
 					Log.i(TAG,"Task: " + tasks.get(j).getTitle());
 					Log.i(TAG,"Desc: " + tasks.get(j).getDescription());
 				}
 				
+				ProjectsDataSource projdatasource = new ProjectsDataSource(getApplicationContext());
+				projdatasource.open();
+				projdatasource.saveProject(proj);
 				
+				TasksDataSource datasource = new TasksDataSource(getApplicationContext());
+				datasource.open();
+				Cursor cursor = datasource.getProjectTasksCursor(proj.getId());
+				
+				Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
+				
+				// bitmap of remote tasks - for detection of non local tasks
+				// only on remote storage = true
+				ArrayList<Boolean> bitmap = new ArrayList<Boolean>();
+				for (int j = 0; j < tasks.size(); j++) {
+					bitmap.add(false);
+				}
+				
+				while (cursor.moveToNext()) {
+					
+					Task task = new Task(cursor);
+					
+					for (int j = 0; j < tasks.size(); j++) {
+						if (task.getId() == tasks.get(j).getId()) {
+							// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
+							
+							
+							// remote task was processed
+							bitmap.set(j, true);
+							break;
+						}
+					}
+					
+				} 
+				
+				
+				for (int j = 0; j < tasks.size(); j++) {
+					if (bitmap.get(j) == false) {
+						Log.i(TAG,"Creating new: " + tasks.get(j).getId());
+						datasource.saveTask(tasks.get(j));
+					}
+				}
+				
+				
+				
+				datasource.close();
 				
 				//drive.upload(getApplicationContext(), null, "editable3.nextproj.html", "editable3.nextproj.html");
 				
@@ -219,14 +265,13 @@ public class SyncService extends Service {
 				//drive.unlock(lf.get(0).getId());
 				
 				
-			}
+			} // end of projects cycle
 			
 			
 			
 			
 			List<File> lsf = drive.listShared(getApplicationContext(), null);
-			if (lsf != null) 
-			{
+			if (lsf != null) {
 				for (int i = 0; i < lsf.size(); i++) {
 					Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
 				}
@@ -247,8 +292,7 @@ public class SyncService extends Service {
 				Log.i(TAG, "Bad username");
 				return;
 			}
-			if (param != null) 
-			{
+			if (param != null)	{
 				if (((returnObject)param).sharedCount > 0) {
 					displaySharedNotification(((returnObject)param).sharedCount);
 				}

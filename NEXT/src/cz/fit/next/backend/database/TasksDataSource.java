@@ -137,7 +137,8 @@ public class TasksDataSource {
 
 		Cursor cursor = q.query(database, selectColumns, where, args, null, null, null, "1");
 		cursor.moveToFirst();
-
+		
+		if (cursor.getCount() == 0) return null;
 		return cursor;
 	}
 
@@ -146,7 +147,12 @@ public class TasksDataSource {
 	 * Returns Task object based on ID
 	 */
 	public Task getTaskById(String id) {
-		return new Task(getSingleTaskCursor(id));
+		Cursor cursor = getSingleTaskCursor(id);
+		if (cursor == null) {
+			return null;
+		} else {
+			return new Task(cursor);
+		}
 	}
 
 
