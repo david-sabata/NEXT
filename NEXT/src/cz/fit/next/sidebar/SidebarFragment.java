@@ -1,5 +1,8 @@
 package cz.fit.next.sidebar;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,13 +11,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FilterQueryProvider;
 import android.widget.TextView;
 
 import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.projectlist.ProjectListFragment;
+import cz.fit.next.tasklist.Filter;
+import cz.fit.next.tasklist.TaskListAdapter;
 import cz.fit.next.tasklist.TaskListFragment;
 
 public class SidebarFragment extends Fragment {
@@ -100,6 +107,30 @@ public class SidebarFragment extends Fragment {
 				break;
 			case R.id.Time_Today:
 				Log.i(LOG_TAG, "selection: Today");
+
+				// create new fragment if needed
+				if (!(currentFragment instanceof TaskListFragment)) {
+					currentFragment = new TaskListFragment();
+					fan.replaceMainFragment(currentFragment);
+				}
+
+				// create filter
+				Filter filter = new Filter();
+
+				GregorianCalendar from = new GregorianCalendar();
+				from.set(Calendar.HOUR_OF_DAY, 0);
+				from.set(Calendar.MINUTE, 0);
+				from.set(Calendar.SECOND, 0);
+
+				filter.setDateFrom(from);
+
+				// do the filtering
+				FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
+				TaskListFragment frag = (TaskListFragment) currentFragment;
+				TaskListAdapter adapter = (TaskListAdapter) frag.getListAdapter();
+				adapter.setFilterQueryProvider(provider);
+				adapter.getFilter().filter(filter.toString());
+
 				break;
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");

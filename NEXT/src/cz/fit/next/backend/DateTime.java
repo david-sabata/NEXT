@@ -10,7 +10,7 @@ public class DateTime {
 	/**
 	 * Format used for saving
 	 */
-	private static final String UNIFIED_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String UNIFIED_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";
 
 	/**
 	 * Format supported for parsing
