@@ -219,6 +219,10 @@ public class SyncService extends Service {
 			if (((returnObject)param).sharedCount > 0) {
 				displaySharedNotification(((returnObject)param).sharedCount);
 			}
+			
+			
+			//TODO: ALARM MANAGER
+			stopSelf();
 		}
 	}
 
