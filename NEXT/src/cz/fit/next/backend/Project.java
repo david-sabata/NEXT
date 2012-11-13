@@ -13,12 +13,18 @@ public class Project {
 
 
 	/**
-	 * Construct Project from FULL TASK db row, which means the row
-	 * contains also all JOINed data
+	 * Construct Project from FULL TASK or PROJECTS db row
 	 */
 	public Project(Cursor cursor) {
-		this.mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID));
-		this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE));
+		try {
+			// from FULL TASK row
+			this.mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID));
+			this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE));
+		} catch (IllegalStateException e) {
+			// from PROJECTS row
+			this.mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+			this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
+		}
 	}
 
 
