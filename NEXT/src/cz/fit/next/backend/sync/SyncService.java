@@ -1,7 +1,10 @@
 package cz.fit.next.backend.sync;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONException;
 
 
 import android.app.Activity;
@@ -184,6 +187,7 @@ public class SyncService extends Service {
 			}
 			
 			ProjectsDataSource projdatasource;
+			TasksDataSource datasource;
 			Cursor cursor;
 			boolean done;
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
@@ -225,7 +229,7 @@ public class SyncService extends Service {
 				
 				remoteProjects.add(proj);
 				
-				TasksDataSource datasource = new TasksDataSource(getApplicationContext());
+				datasource = new TasksDataSource(getApplicationContext());
 				datasource.open();
 				cursor = datasource.getProjectTasksCursor(proj.getId());
 				
@@ -272,6 +276,8 @@ public class SyncService extends Service {
 					}
 				}
 				
+				datasource.close();
+				
 				
 				// Find projects in local database, which are not on remote storage
 				
@@ -289,13 +295,46 @@ public class SyncService extends Service {
 					
 					if (!done) {
 						
+						Log.i(TAG, "Only local project: " + p.getTitle());
+						
+						// write all the tasks from project to remote storage
+						datasource = new TasksDataSource(getApplicationContext());
+						datasource.open();
+						
+						Cursor cursor2 = datasource.getProjectTasksCursor(p.getId());
+						ArrayList<Task> tasklist = new ArrayList<Task>();
+						while(cursor2.moveToNext()) {
+							tasklist.add(new Task(cursor2));
+						}
+						
+						datasource.close();
+						
+						
+						// call serializer and uploader
+						ArrayList<TaskHistory> histories2 = new ArrayList<TaskHistory>();
+						
+						parser.setProject(p);
+						parser.setTasks(tasklist);
+						parser.setHistory(histories2);
+						try {
+							parser.writeFile(getApplicationContext(), getFilesDir() + "/" + p.getId() + ".nextproj.html");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						drive.upload(getApplicationContext(), null, p.getId(), p.getId());
+						
 					}
 					
 					
 					done = false;
 				}
 				
-				datasource.close();
+				projdatasource.close();
 				
 				//drive.upload(getApplicationContext(), null, "editable3.nextproj.html", "editable3.nextproj.html");
 				
