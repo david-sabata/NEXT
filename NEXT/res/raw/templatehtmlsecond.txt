@@ -1,4 +1,4 @@
-           //end_of_data
+            //end_of_data
         </script>
 
 
@@ -133,7 +133,7 @@
             var images = new ImageCreator();
             var menu = new MenuCreator();
             var globalMethods = new CommonWorker();
-            var data = null;
+          //  var data = null;
             window.onload = function () {
                 ////////////////////////////////////////////
                 ////////////// PREPARE DATA ////////////////
@@ -152,7 +152,7 @@
                 // Load Data
                 var content = globalMethods.getContentOfScriptTag(document.getElementById("data"));
                 // Transfer JSON data to Object
-                data = eval('(' + content + ')');
+                //data = eval('(' + content + ')');
                 
                 // Find all contexts
                 var contexts = globalMethods.findAllContexts(data);
