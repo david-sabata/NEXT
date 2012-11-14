@@ -105,7 +105,7 @@ public class TasksDataSource {
 		
 		};
 		
-		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = " + projectId;
+		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = '" + projectId + "'";
 
 		Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
 		return cursor;

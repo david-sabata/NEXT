@@ -139,6 +139,8 @@ public class GDrive {
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
+		String existing = getFileIdByName(filename);
+		if (existing != null) deleteFile(existing);
 		uploadFile(filename, localname, mAppFolder);
 		
 	}
@@ -385,7 +387,7 @@ public class GDrive {
 					request = null;
 					;
 					request = mService.files().list();
-					String q = "'" + appFolder + "' in parents";
+					String q = "'" + appFolder + "' in parents  and trashed = false";
 					// q = "not 'me' in owners";
 					request = request.setQ(q);
 
@@ -426,7 +428,7 @@ public class GDrive {
 			request = null;
 
 			request = mService.files().list();
-			String q = "not 'me' in owners and not '" + appFolder + "' in parents";
+			String q = "not 'me' in owners and not '" + appFolder + "' in parents and trashed = false";
 			// Log.i(TAG, q);
 			request = request.setQ(q);
 

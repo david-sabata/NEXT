@@ -282,18 +282,23 @@ public class SyncService extends Service {
 				// Find projects in local database, which are not on remote storage
 				
 				projdatasource = new ProjectsDataSource(getApplicationContext());
+				projdatasource.open();
 				cursor = projdatasource.getAllProjectsCursor();
+				cursor.moveToPrevious();
 				done = false;
+				
+				
 				
 				while (cursor.moveToNext()) {
 					Project p = new Project(cursor);
 					for (int k = 0; k < remoteProjects.size(); k++) {
-						if (p.getId() == remoteProjects.get(k).getId()) {
+						Log.i(TAG, "Porovnani " + p.getId() + " " + remoteProjects.get(k).getId());
+						if (p.getId().equals(remoteProjects.get(k).getId())) {
 							done = true;
 						}
 					}
 					
-					if (!done) {
+					if (done == false) {
 						
 						Log.i(TAG, "Only local project: " + p.getTitle());
 						
@@ -317,7 +322,7 @@ public class SyncService extends Service {
 						parser.setTasks(tasklist);
 						parser.setHistory(histories2);
 						try {
-							parser.writeFile(getApplicationContext(), getFilesDir() + "/" + p.getId() + ".nextproj.html");
+							parser.writeFile(getApplicationContext(), getFilesDir() + "/" + p.getId());
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -326,7 +331,7 @@ public class SyncService extends Service {
 							e.printStackTrace();
 						}
 						
-						drive.upload(getApplicationContext(), null, p.getId(), p.getId());
+						drive.upload(getApplicationContext(), null, p.getId() + ".nextproj.html", p.getId());
 						
 					}
 					
