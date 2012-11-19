@@ -31,6 +31,7 @@ import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
@@ -193,6 +194,7 @@ public class SyncService extends Service {
 			Cursor cursor;
 			
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
+			ArrayList<Project> dirtyProjects = new ArrayList<Project>(); 
 			
 			// SYNCHRONIZATION STAGE ONE - from remote to local
 			
@@ -246,18 +248,20 @@ public class SyncService extends Service {
 					Task task = new Task(cursor);
 					
 					for (int j = 0; j < remoteTasks.size(); j++) {
-						if (task.getId() == remoteTasks.get(j).getId()) {
+						if (task.getId().equals(remoteTasks.get(j).getId())) {
 							// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
 							Log.i(TAG,"Twoway sync: " + task.getTitle());
 							
 							// remote task was processed, delete it from array
 							remoteTasks.remove(j);
-							
+							j--;
 							// go to next local task
 							break;
 						} else {
 							if (j == remoteTasks.size() - 1) {
-								// TODO: Create tasks, that are not in remote, but only in local
+								// Tasks are not in remote, but only in local
+								// Project is dirty
+								dirtyProjects.add(task.getProject());
 							}
 						}
 					}
@@ -265,7 +269,19 @@ public class SyncService extends Service {
 					
 				} 
 				
-				//TODO: Create tasks, that are not in local, but only in remote
+				// Create tasks, that are not in local, but only in remote
+				for (int j = 0; j < remoteTasks.size(); j++) {
+					Task newtask = new Task(remoteTasks.get(i).getId(),
+							remoteTasks.get(i).getTitle(),
+							remoteTasks.get(i).getDescription(),
+							remoteTasks.get(i).getDate(),
+							remoteTasks.get(i).getPriority(),
+							remoteTasks.get(i).getProject(),
+							remoteTasks.get(i).getContext(),
+							remoteTasks.get(i).isCompleted());
+					
+					datasource.saveTask(newtask);
+				}
 				
 				
 				
@@ -302,10 +318,14 @@ public class SyncService extends Service {
 					//Log.i(TAG, "Porovnani " + p.getId() + " " + remoteProjects.get(k).getId());
 					if (localProjects.get(i).getId().equals(remoteProjects.get(j).getId())) {
 						localProjects.remove(i);
+						i--;
 						break;
 					}
 				}
 			}
+			
+			// add dirty projects
+			localProjects.addAll(dirtyProjects);
 			
 			for (int i = 0; i < localProjects.size(); i++) {	
 				

@@ -351,7 +351,7 @@ public class GDrive {
 						
 			// Get File By Name
 			request = mService.files().list();
-			String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false'";
+			String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false";
 			request = request.setQ(q);
 
 			flist = request.execute();
