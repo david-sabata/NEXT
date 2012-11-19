@@ -84,11 +84,11 @@ public class MainActivity extends FragmentActivity {
 		bindModelService();
 
 		// start synchronization service
-		//		Intent i = new Intent(this, SyncService.class);
-		//		Bundle b = new Bundle();
-		//		b.putInt("buttonPressed", 0);
-		//		i.putExtras(b);
-		//		this.startService(i);
+				Intent i = new Intent(this, SyncService.class);
+				Bundle b = new Bundle();
+				b.putInt("buttonPressed", 0);
+				i.putExtras(b);
+				this.startService(i);
 
 	}
 

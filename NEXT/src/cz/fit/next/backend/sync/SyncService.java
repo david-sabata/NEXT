@@ -2,7 +2,9 @@ package cz.fit.next.backend.sync;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 
@@ -186,12 +188,15 @@ public class SyncService extends Service {
 				return null;
 			}
 			
-			ProjectsDataSource projdatasource;
+			ProjectsDataSource projdatasource = new ProjectsDataSource(getApplicationContext());
 			TasksDataSource datasource;
 			Cursor cursor;
-			boolean done;
+			
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
 			
+			// SYNCHRONIZATION STAGE ONE - from remote to local
+			
+			// loop walking through files on storage
 			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
@@ -207,8 +212,8 @@ public class SyncService extends Service {
 				parser.setFile(getFilesDir() + "/" + lf.get(i).getTitle());
 				
 				Project proj = parser.getProject();
-				ArrayList<Task> tasks = parser.getTasks(proj);
-				ArrayList<TaskHistory> histories = parser.getHistory();
+				ArrayList<Task> remoteTasks = parser.getTasks(proj);
+				ArrayList<TaskHistory> remoteHistories = parser.getHistory();
 				
 				
 				// Get tasks of this project from database
@@ -216,17 +221,17 @@ public class SyncService extends Service {
 				
 				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
 				
-				for (int j = 0; j < tasks.size(); j++)  {
-					Log.i(TAG,"ID: " + tasks.get(j).getId());
-					Log.i(TAG,"Task: " + tasks.get(j).getTitle());
-					Log.i(TAG,"Desc: " + tasks.get(j).getDescription());
+				for (int j = 0; j < remoteTasks.size(); j++)  {
+					Log.i(TAG,"ID: " + remoteTasks.get(j).getId());
+					Log.i(TAG,"Task: " + remoteTasks.get(j).getTitle());
+					Log.i(TAG,"Desc: " + remoteTasks.get(j).getDescription());
 				}
 				
-				projdatasource = new ProjectsDataSource(getApplicationContext());
 				projdatasource.open();
 				projdatasource.saveProject(proj);
 				projdatasource.close();
 				
+				// add project to list of remote projects
 				remoteProjects.add(proj);
 				
 				datasource = new TasksDataSource(getApplicationContext());
@@ -235,119 +240,112 @@ public class SyncService extends Service {
 				
 				Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
 				
-				// bitmap of remote tasks - for detection of non local tasks
-				// only on remote storage = true
-				ArrayList<Boolean> bitmap = new ArrayList<Boolean>();
-				for (int j = 0; j < tasks.size(); j++) {
-					bitmap.add(false);
-				}
-				
-				done = false;
-				
+								
 				while (cursor.moveToNext()) {
 					
 					Task task = new Task(cursor);
 					
-					for (int j = 0; j < tasks.size(); j++) {
-						if (task.getId() == tasks.get(j).getId()) {
+					for (int j = 0; j < remoteTasks.size(); j++) {
+						if (task.getId() == remoteTasks.get(j).getId()) {
 							// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
+							Log.i(TAG,"Twoway sync: " + task.getTitle());
 							
+							// remote task was processed, delete it from array
+							remoteTasks.remove(j);
 							
-							// remote task was processed
-							bitmap.set(j, true);
-							done = true;
+							// go to next local task
 							break;
+						} else {
+							if (j == remoteTasks.size() - 1) {
+								// TODO: Create tasks, that are not in remote, but only in local
+							}
 						}
 					}
 					
-					// task is only in local database, not in remote storage
-					if (!done) {
-						
-					}
 					
-					done = false;
 				} 
 				
+				//TODO: Create tasks, that are not in local, but only in remote
 				
-				for (int j = 0; j < tasks.size(); j++) {
-					if (bitmap.get(j) == false) {
-						Log.i(TAG,"Creating new: " + tasks.get(j).getId());
-						datasource.saveTask(tasks.get(j));
-					}
-				}
+				
 				
 				datasource.close();
 				
 				
-				// Find projects in local database, which are not on remote storage
-				
-				projdatasource = new ProjectsDataSource(getApplicationContext());
-				projdatasource.open();
-				cursor = projdatasource.getAllProjectsCursor();
-				cursor.moveToPrevious();
-				done = false;
-				
-				
-				
-				while (cursor.moveToNext()) {
-					Project p = new Project(cursor);
-					for (int k = 0; k < remoteProjects.size(); k++) {
-						Log.i(TAG, "Porovnani " + p.getId() + " " + remoteProjects.get(k).getId());
-						if (p.getId().equals(remoteProjects.get(k).getId())) {
-							done = true;
-						}
-					}
-					
-					if (done == false) {
-						
-						Log.i(TAG, "Only local project: " + p.getTitle());
-						
-						// write all the tasks from project to remote storage
-						datasource = new TasksDataSource(getApplicationContext());
-						datasource.open();
-						
-						Cursor cursor2 = datasource.getProjectTasksCursor(p.getId());
-						ArrayList<Task> tasklist = new ArrayList<Task>();
-						while(cursor2.moveToNext()) {
-							tasklist.add(new Task(cursor2));
-						}
-						
-						datasource.close();
-						
-						
-						// call serializer and uploader
-						ArrayList<TaskHistory> histories2 = new ArrayList<TaskHistory>();
-						
-						parser.setProject(p);
-						parser.setTasks(tasklist);
-						parser.setHistory(histories2);
-						try {
-							parser.writeFile(getApplicationContext(), getFilesDir() + "/" + p.getId());
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-						drive.upload(getApplicationContext(), null, p.getId() + ".nextproj.html", p.getId());
-						
-					}
-					
-					
-					done = false;
-				}
-				
-				projdatasource.close();
-				
-				//drive.upload(getApplicationContext(), null, "editable3.nextproj.html", "editable3.nextproj.html");
 				
 				
 				//drive.unlock(lf.get(0).getId());
 				
 				
 			} // end of remote projects cycle
+			
+			
+			// SYNCHRONIZATION STAGE TWO - from local to remote 
+			
+			ArrayList<Project> localProjects = new ArrayList<Project>();
+			
+			// get list of local projects
+			projdatasource.open();
+			cursor = projdatasource.getAllProjectsCursor();
+			cursor.moveToPrevious();
+						
+			while (cursor.moveToNext()) {
+				Project p = new Project(cursor);
+				localProjects.add(p);
+			}
+			
+			projdatasource.close();
+			
+			// filter completed projects away (from stage 1)			
+			for (int i = 0; i < localProjects.size(); i++) {
+				for (int j = 0; j < remoteProjects.size(); j++) {
+					//Log.i(TAG, "Porovnani " + p.getId() + " " + remoteProjects.get(k).getId());
+					if (localProjects.get(i).getId().equals(remoteProjects.get(j).getId())) {
+						localProjects.remove(i);
+						break;
+					}
+				}
+			}
+			
+			for (int i = 0; i < localProjects.size(); i++) {	
+				
+					Log.i(TAG, "Only local project: " + localProjects.get(i).getTitle());
+					
+					// write all the tasks from project to remote storage
+					datasource = new TasksDataSource(getApplicationContext());
+					datasource.open();
+					
+					Cursor cursor2 = datasource.getProjectTasksCursor(localProjects.get(i).getId());
+					ArrayList<Task> tasklist = new ArrayList<Task>();
+					while(cursor2.moveToNext()) {
+						tasklist.add(new Task(cursor2));
+					}
+					
+					datasource.close();
+					
+					
+					// call serializer and uploader
+					// TODO: HISTORY
+					ArrayList<TaskHistory> histories = new ArrayList<TaskHistory>();
+					
+					JavaParser parser = new JavaParser();
+					parser.setProject(localProjects.get(i));
+					parser.setTasks(tasklist);
+					parser.setHistory(histories);
+					try {
+						parser.writeFile(getApplicationContext(), getFilesDir() + "/" + localProjects.get(i).getId());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					drive.upload(getApplicationContext(), null, localProjects.get(i).getTitle() + ".nextproj.html", localProjects.get(i).getId());
+					
+			}
+				
 			
 			
 			

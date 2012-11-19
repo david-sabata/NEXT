@@ -139,7 +139,8 @@ public class GDrive {
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
-		String existing = getFileIdByName(filename);
+		String existing = getFileIdByName(filename, mAppFolder);
+		if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) deleteFile(existing);
 		uploadFile(filename, localname, mAppFolder);
 		
@@ -149,7 +150,7 @@ public class GDrive {
 	 * Unlocks file with given id
 	 */
 	public void unlock(String ident) {
-		String id = getFileIdByName(LOCK_PREFIX + ident);
+		String id = getFileIdByName(LOCK_PREFIX + ident, mAppFolder);
 		deleteFile(id);
 	}
 	
@@ -339,7 +340,7 @@ public class GDrive {
 	/**
 	 * Returns file id by its name
 	 */
-	private String getFileIdByName(String name) {
+	private String getFileIdByName(String name, String appFolder) {
 		
 		String res = null;
 		
@@ -350,7 +351,7 @@ public class GDrive {
 						
 			// Get File By Name
 			request = mService.files().list();
-			String q = "title = '" + name + "'";
+			String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false'";
 			request = request.setQ(q);
 
 			flist = request.execute();
@@ -387,7 +388,7 @@ public class GDrive {
 					request = null;
 					;
 					request = mService.files().list();
-					String q = "'" + appFolder + "' in parents  and trashed = false";
+					String q = "'" + appFolder + "' in parents and trashed = false";
 					// q = "not 'me' in owners";
 					request = request.setQ(q);
 
