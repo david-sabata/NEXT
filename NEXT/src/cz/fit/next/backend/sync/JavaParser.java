@@ -333,10 +333,12 @@ public class JavaParser {
 		InputStream input = c.getResources().openRawResource(id);
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 	    
+	    String eol = System.getProperty("line.separator"); 
+	    
 	    String readLine = null;
 		String output = "";
 		while((readLine = reader.readLine()) != null){
-		    output += readLine;
+		    output += readLine + eol;
 		}
 		// Close the InputStream and BufferedReader
 		input.close();
@@ -347,6 +349,8 @@ public class JavaParser {
 	public void writeFile(Context c, String pFileName) throws IOException, JSONException {		
  			FileOutputStream fileOut = new FileOutputStream(pFileName);
 			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+			
+			
 			
 			// Prepare data to write
 			String firstTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlfirst);
