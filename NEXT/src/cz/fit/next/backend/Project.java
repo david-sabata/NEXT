@@ -1,5 +1,7 @@
 package cz.fit.next.backend;
 
+import java.util.UUID;
+
 import android.database.Cursor;
 import cz.fit.next.backend.database.Constants;
 
@@ -16,21 +18,47 @@ public class Project {
 	 * Construct Project from FULL TASK or PROJECTS db row
 	 */
 	public Project(Cursor cursor) {
-		try {
-			// from FULL TASK row
-			this.mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID));
-			this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE));
-		} catch (IllegalStateException e) {
-			// from PROJECTS row
-			this.mId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
-			this.mTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
+		int projIdCol = cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID);
+		int projTitleCol = cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE);
+
+		// from FULL TASK row
+		if (projIdCol > -1 && projTitleCol > -1) {
+			this.mId = cursor.getString(projIdCol);
+			this.mTitle = cursor.getString(projTitleCol);
+		}
+		// from PROJECTS row
+		else {
+			projIdCol = cursor.getColumnIndex(Constants.COLUMN_ID);
+			projTitleCol = cursor.getColumnIndex(Constants.COLUMN_TITLE);
+
+			if (projIdCol > -1 && projTitleCol > -1) {
+				this.mId = cursor.getString(projIdCol);
+				this.mTitle = cursor.getString(projTitleCol);
+			}
+			else {
+				throw new RuntimeException("Instantiating Project from invalid Cursor");
+			}
 		}
 	}
-	
+
+	/**
+	 * Create project by title; a new ID will be generated
+	 */
+	public Project(String title) {
+		mId = UUID.randomUUID().toString();
+		mTitle = title;
+	}
+
+	/**
+	 * Create project by id and title
+	 */
 	public Project(String pId, String pTitle) {
 		this.mId = pId;
 		this.mTitle = pTitle;
 	}
+
+
+
 
 
 	public String getTitle() {

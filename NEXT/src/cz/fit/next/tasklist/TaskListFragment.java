@@ -9,6 +9,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,8 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setHasOptionsMenu(true);
 
 		// create deafult adapter - all items
 		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
@@ -192,6 +195,37 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 		return true;
 	}
 
+
+
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+
+		inflater.inflate(R.menu.tasklist_actions, menu);
+	}
+
+
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		// edit
+		if (item.getItemId() == R.id.action_add) {
+
+			// crate empty edit fragment
+			TaskEditFragment fTask = TaskEditFragment.newInstance();
+
+			// replace main fragment with task detail fragment
+			MainActivity activity = (MainActivity) getActivity();
+			activity.getFanView().replaceMainFragment(fTask);
+
+			return true;
+		}
+
+
+		return super.onOptionsItemSelected(item);
+	}
 
 
 }

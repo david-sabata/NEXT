@@ -8,13 +8,13 @@
     android:background="@color/FanItemsText"
     android:orientation="vertical"
     tools:context=".TaskDetailFragment" >
-
+
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/background_light" >
-
+
         <LinearLayout
             android:id="@+id/taskBody"
             android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:orientation="vertical"
                 android:padding="@dimen/TaskTittlePadding"
                 android:paddingTop="@dimen/TaskTitlePaddingTop" >
-
+                
                 <EditText
                     android:id="@+id/titleTask"
                     android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                 android:background="@color/TaskRuller"
                 android:orientation="vertical" >
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskIsCompletedLayout"
                 android:layout_width="fill_parent"
@@ -59,7 +59,7 @@
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/TextView01"
                     android:layout_width="wrap_content"
@@ -93,7 +93,7 @@
                     android:text="Completed" />
 
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskDescriptionLayout"
                 android:layout_width="fill_parent"
@@ -101,7 +101,7 @@
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/TextView02"
                     android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <EditText
                     android:id="@+id/editDescription"
                     android:layout_width="match_parent"
@@ -137,7 +137,7 @@
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskDateLayout"
                 android:layout_width="fill_parent"
@@ -146,7 +146,7 @@
                 android:layout_marginTop="@dimen/TaskSubBodyItemMarginTop"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/taskDateTitle"
                     android:layout_width="wrap_content"
@@ -161,7 +161,7 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -171,7 +171,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <EditText
                     android:id="@+id/editDate"
                     android:layout_width="match_parent"
@@ -192,7 +192,7 @@
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/taskProjectTitle"
                     android:layout_width="wrap_content"
@@ -206,7 +206,7 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -216,7 +216,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <EditText
                     android:id="@+id/editProject"
                     android:layout_width="match_parent"
@@ -237,7 +237,7 @@
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/textContextTitle"
                     android:layout_width="wrap_content"
@@ -251,7 +251,7 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -261,7 +261,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <EditText
                     android:id="@+id/editContext"
                     android:layout_width="match_parent"
@@ -282,7 +282,7 @@
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
-
+
                 <TextView
                     android:id="@+id/textImportantTitle"
                     android:layout_width="wrap_content"
@@ -296,7 +296,7 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:textSize="@dimen/TaskSubtitleSize"
                     android:textStyle="normal" />
-
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -306,7 +306,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <RadioGroup
                     android:id="@+id/radioPriority"
                     android:layout_width="fill_parent"
