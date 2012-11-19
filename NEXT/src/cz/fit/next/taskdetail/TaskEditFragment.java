@@ -1,8 +1,9 @@
 package cz.fit.next.taskdetail;
 
+import java.util.UUID;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
 
@@ -32,12 +35,22 @@ public class TaskEditFragment extends Fragment {
 
 
 	/**
-	 * Task whose details are showing
+	 * Task whose details are showing or NULL when adding a new one
 	 */
 	private Task mTask;
 
 
 
+
+	/**
+	 * Create an empty instance of TaskEditFragment with 
+	 * no prefilled values - use this to add a new task
+	 */
+	public static TaskEditFragment newInstance() {
+		TaskEditFragment frag = new TaskEditFragment();
+
+		return frag;
+	}
 
 
 	/**
@@ -79,9 +92,6 @@ public class TaskEditFragment extends Fragment {
 			String taskId = args.getString(ARG_TASK_ID);
 			mTask = TasksModelService.getInstance().getTaskById(taskId);
 		}
-		else {
-			Log.e(LOG_TAG, "onCreate with no arguments (getArguments==null)");
-		}
 	}
 
 
@@ -96,7 +106,8 @@ public class TaskEditFragment extends Fragment {
 		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_edit, container, false);
 
 		// load the task data into view
-		setDetailTask();
+		if (mTask != null)
+			loadTaskToView(mTask);
 
 		return taskDetailView;
 	}
@@ -104,59 +115,47 @@ public class TaskEditFragment extends Fragment {
 
 
 	/**
-	 * Sets up the (sub)views acording to the loaded task
+	 * Sets up the (sub)views according to the task
 	 */
-	private void setDetailTask() {
+	private void loadTaskToView(Task task) {
 		// set Title
 		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
-		if (title != null) {
-			title.setText(mTask.getTitle());
-		}
+		title.setText(task.getTitle());
 
-		// TODO implements others like title
 		// set description
 		TextView descripton = (TextView) taskDetailView.findViewById(R.id.editDescription);
-		if (descripton != null) {
-			descripton.setText(mTask.getDescription());
-		}
+		descripton.setText(task.getDescription());
 
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
-		if (date != null) {
-			date.setText(mTask.getDate().toString());
-		}
-		
+		date.setText(task.getDate().toString());
+
 		// Set IsCompleted
-		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
-		if(isCompleted != null) {
-			isCompleted.setChecked(mTask.isCompleted());
-		}
-		
+		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
+		isCompleted.setChecked(task.isCompleted());
+
 		// set project
 		TextView project = (TextView) taskDetailView.findViewById(R.id.editProject);
-		if (project != null) {
-			project.setText(mTask.getProject().getTitle());
-		}
+		project.setText(task.getProject().getTitle());
+		project.setTag(task.getProject().getId());
 
 		// set context
 		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
-		if (context != null) {
-			context.setText(mTask.getContext());
-		}
+		context.setText(task.getContext());
 
 		// set priority
 		// Get value of selected RadioButton
 		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
-		switch(mTask.getPriority()) {
-		case 1:
-			priorityGroup.check(R.id.radio0);
-			break;
-		case 2:
-			priorityGroup.check(R.id.radio1);
-			break;
-		case 3:
-			priorityGroup.check(R.id.radio2);
-			break;
+		switch (task.getPriority()) {
+			case 1:
+				priorityGroup.check(R.id.radio0);
+				break;
+			case 2:
+				priorityGroup.check(R.id.radio1);
+				break;
+			case 3:
+				priorityGroup.check(R.id.radio2);
+				break;
 		}
 	}
 
@@ -176,8 +175,6 @@ public class TaskEditFragment extends Fragment {
 
 		// save
 		if (item.getItemId() == R.id.action_save) {
-
-			// TODO: save stuff
 			onSaveItem();
 			getActivity().getSupportFragmentManager().popBackStack();
 			return true;
@@ -195,35 +192,58 @@ public class TaskEditFragment extends Fragment {
 
 
 
+	/**
+	 * Save current task or create a new one if no task was preloaded
+	 */
 	private void onSaveItem() {
-		// TODO Auto-generated method stub
-		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
-		TextView description = (TextView) taskDetailView.findViewById(R.id.editDescription);
-		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
-		TextView project = (TextView) taskDetailView.findViewById(R.id.editProject);
-		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
-		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
+		String title = ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString();
+		String description = ((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString();
+		String projectTitle = ((TextView) taskDetailView.findViewById(R.id.editProject)).getText().toString();
+		String projectId = ((TextView) taskDetailView.findViewById(R.id.editProject)).getTag().toString();
+		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
+		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.editIsCompleted)).isChecked();
 
-		// Get value of selected RadioButton
+		// task id
+		String taskId = null;
+		if (mTask == null) {
+			taskId = UUID.randomUUID().toString();
+		}
+		else {
+			taskId = mTask.getId();
+		}
+
+		// project
+		Project project = null;
+		if (projectId == null || projectId.isEmpty()) {
+			project = new Project(projectTitle);
+		}
+		else {
+			project = new Project(projectId, projectTitle);
+		}
+
+		// priority
 		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
-		int selected =  priorityGroup.getCheckedRadioButtonId();
-		RadioButton priority = (RadioButton) taskDetailView.findViewById(selected);
-		
-		
+		int selected = priorityGroup.getCheckedRadioButtonId();
+		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
+		int priority = Integer.parseInt(priorityBtn.getText().toString());
+
+		// date time
+		String dateString = ((TextView) taskDetailView.findViewById(R.id.editDate)).getText().toString();
+		DateTime dateTime = new DateTime(dateString);
+
 		// Create new changed task
-		Task editedTask = 
-				new Task(mTask.getId(),
-						title.getText().toString(),
-						description.getText().toString(),
-						date.getText().toString(),
-						Integer.parseInt(priority.getText().toString()),
-						mTask.getProject(),
-						context.getText().toString(),
-						isCompleted.isChecked()
+		Task editedTask =
+				new Task(taskId,
+						title,
+						description,
+						dateTime,
+						priority,
+						project,
+						context,
+						isCompleted
 				);
-		Log.i("Priority", priority.getText().toString());
+
 		TasksModelService.getInstance().saveTask(editedTask);
-		
 	}
 
 

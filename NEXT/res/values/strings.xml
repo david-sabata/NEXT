@@ -35,5 +35,6 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_delete_task">Delete task</string>
     <string name="TaskIsCompletedTitle">COMPLETED</string>
+    <string name="action_add_task">Add task</string>
 
 </resources>

@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
@@ -134,7 +133,6 @@ public class TaskDetailFragment extends Fragment {
 			title.setText(mTask.getTitle());
 		}
 
-		// TODO implements others like title
 		// set description
 		TextView descripton = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
 		if (descripton != null) {
@@ -148,11 +146,11 @@ public class TaskDetailFragment extends Fragment {
 		}
 
 		// Set IsCompleted
-		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
-		if(isCompleted != null) {
+		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
+		if (isCompleted != null) {
 			isCompleted.setChecked(mTask.isCompleted());
 		}
-		
+
 		// set project
 		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
 		if (project != null) {
@@ -168,17 +166,16 @@ public class TaskDetailFragment extends Fragment {
 		// set priority
 		// Get value of selected RadioButton
 		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
-		Log.i("Priority from database", "" + mTask.getPriority());
-		switch(mTask.getPriority()) {
-		case 1:
-			priorityGroup.check(R.id.radio0);
-			break;
-		case 2:
-			priorityGroup.check(R.id.radio1);
-			break;
-		case 3:
-			priorityGroup.check(R.id.radio2);
-			break;
+		switch (mTask.getPriority()) {
+			case 1:
+				priorityGroup.check(R.id.radio0);
+				break;
+			case 2:
+				priorityGroup.check(R.id.radio1);
+				break;
+			case 3:
+				priorityGroup.check(R.id.radio2);
+				break;
 		}
 	}
 
