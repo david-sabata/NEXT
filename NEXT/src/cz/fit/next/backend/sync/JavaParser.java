@@ -57,6 +57,8 @@ public class JavaParser {
 	private ArrayList<Task> mTasksList = null;
 	private ArrayList<TaskHistory> mTasksHistory = null;
 
+	private String firstTemplate = null;
+	private String secondTemplate = null;
 	/*********************************************************/
 	/************************* READING ***********************/
 	/*********************************************************/
@@ -346,15 +348,31 @@ public class JavaParser {
 		return output;
 	}
 	
+	/**
+	 *  Load Templates from resources
+	 */
+	private void loadTemplates(Context c)  throws IOException, JSONException {
+		// Prepare data to write
+		firstTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlfirst);
+		secondTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlsecond);
+	}
+	
+	/**
+	 * Write a new File with JSON data in Template
+	 * @param c
+	 * @param pFileName
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public void writeFile(Context c, String pFileName) throws IOException, JSONException {		
  			FileOutputStream fileOut = new FileOutputStream(pFileName);
 			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
 			
+			// Load Templates if it is write firsttime
+			if(firstTemplate == null || secondTemplate == null) {
+				loadTemplates(c);
+			}
 			
-			
-			// Prepare data to write
-			String firstTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlfirst);
-			String secondTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlsecond);
 			String jsonStringToWrite = generateJSONStringProject();
 			
 			// Write new data to file
