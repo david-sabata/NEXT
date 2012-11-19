@@ -40,7 +40,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
 				+ Constants.COLUMN_DESCRIPTION + " text, "
-				+ Constants.COLUMN_DATETIME + " TIMESTAMP, "
+				+ Constants.COLUMN_DATETIME + " long, "
 				+ Constants.COLUMN_PRIORITY + " integer, "
 				+ Constants.COLUMN_CONTEXT + " text, "
 				+ Constants.COLUMN_PROJECTS_ID + " text, "
@@ -57,7 +57,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 
 		// TEMP ========================================================
-
 		String tmpUUID = UUID.randomUUID().toString();
 
 		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
@@ -109,7 +108,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues4.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues4);
 	}
-
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

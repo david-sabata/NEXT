@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
 import cz.fit.next.ContentReloadable;
@@ -23,13 +24,70 @@ import cz.fit.next.backend.database.Constants;
 import cz.fit.next.taskdetail.TaskDetailFragment;
 import cz.fit.next.taskdetail.TaskEditFragment;
 
+
+/**
+ * This fragment is guaranteed to be instantiated only after 
+ * the service has started, so all service calls should be safe
+ * 
+ * @author David
+ */
 public class TaskListFragment extends ListFragment implements ContentReloadable {
 
 	private final static String LOG_TAG = "ContentFragment";
 
+	/**
+	 * Used in Bundle to store serialized Filter state
+	 */
+	private static final String ARG_FILTER = "filter";
+
+
+	/**
+	 * Active filter or null for all items
+	 */
+	protected Filter mFilter;
 
 
 
+
+	/**
+	 * Create a new instance of TaskListFragment that will
+	 * be initialized with given filter (where null means 'show all items')
+	 * 
+	 * Use ONLY this method to create a new instance!
+	 */
+	public static TaskListFragment newInstance(Filter filter) {
+		TaskListFragment frag = new TaskListFragment();
+
+		Bundle b = new Bundle();
+		b.putString(ARG_FILTER, filter != null ? filter.toString() : null);
+
+		frag.setArguments(b);
+
+		return frag;
+	}
+
+
+	/**
+	 * Create default adapter and optionally restore fragment state from Bundle
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// create deafult adapter - all items
+		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
+		setListAdapter(new TaskListAdapter(getActivity(), cursor));
+
+		if (savedInstanceState != null) {
+			String filterStr = savedInstanceState.getString(ARG_FILTER);
+			mFilter = Filter.fromString(filterStr);
+		}
+	}
+
+
+	/**
+	 * Load custom layout
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -41,15 +99,9 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d(LOG_TAG, "onResume");
 
-		// try to reload items; if the call fails, reload will be
-		// called by the activity when the service will be running again
-		try {
-			reloadContent();
-		} catch (RuntimeException e) {
-			// ignore and wait for the next call
-		}
+		// re-apply filter
+		setFilter(mFilter);
 
 		// register long click events
 		registerForContextMenu(getListView());
@@ -60,18 +112,25 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 	@Override
 	public void reloadContent() {
-		TasksModelService modelService = TasksModelService.getInstance();
-		if (modelService == null)
-			throw new RuntimeException("TasksModelService is not running");
+		Log.d(LOG_TAG, "reloadContent");
+		//		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
 
-		setItems(modelService.getAllTasksCursor());
+		setFilter(mFilter);
 	}
 
 
-	public void setItems(Cursor cursor) {
-		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new TaskListAdapter(getActivity(), cursor));
+	/**
+	 * Set filter to the adapter and reload items; pass null for all items
+	 */
+	public void setFilter(Filter filter) {
+		mFilter = filter;
+
+		FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
+
+		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
+		adapter.setFilterQueryProvider(provider);
+		adapter.getFilter().filter(mFilter != null ? mFilter.toString() : null);
 	}
 
 

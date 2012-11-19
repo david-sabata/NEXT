@@ -34,7 +34,6 @@ public class TaskDetailFragment extends Fragment {
 	 */
 	private static final String ARG_TASK_ID = "taskID";
 
-
 	/**
 	 * Task whose details are showing
 	 */

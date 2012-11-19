@@ -11,17 +11,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FilterQueryProvider;
 import android.widget.TextView;
 
 import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
-import cz.fit.next.tasklist.TaskListAdapter;
 import cz.fit.next.tasklist.TaskListFragment;
 
 public class SidebarFragment extends Fragment {
@@ -108,12 +105,6 @@ public class SidebarFragment extends Fragment {
 			case R.id.Time_Today:
 				Log.i(LOG_TAG, "selection: Today");
 
-				// create new fragment if needed
-				if (!(currentFragment instanceof TaskListFragment)) {
-					currentFragment = new TaskListFragment();
-					fan.replaceMainFragment(currentFragment);
-				}
-
 				// create filter
 				Filter filter = new Filter();
 
@@ -124,12 +115,9 @@ public class SidebarFragment extends Fragment {
 
 				filter.setDateFrom(from);
 
-				// do the filtering
-				FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
-				TaskListFragment frag = (TaskListFragment) currentFragment;
-				TaskListAdapter adapter = (TaskListAdapter) frag.getListAdapter();
-				adapter.setFilterQueryProvider(provider);
-				adapter.getFilter().filter(filter.toString());
+				// create new fragment to add to backstack
+				TaskListFragment frag = TaskListFragment.newInstance(filter);
+				fan.replaceMainFragment(frag);
 
 				break;
 			case R.id.Time_InPlan:

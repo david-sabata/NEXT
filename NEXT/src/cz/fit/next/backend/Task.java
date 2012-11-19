@@ -70,7 +70,6 @@ public class Task {
 
 		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
 
-		String x = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		long milis = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		mDate = new DateTime(new Date(milis));
 

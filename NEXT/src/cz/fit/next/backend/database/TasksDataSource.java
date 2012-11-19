@@ -9,13 +9,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.FilterQueryProvider;
-import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.tasklist.Filter;
 
 public class TasksDataSource {
+
+	private static final String LOG_TAG = "TasksDataSource";
+
 
 	/**
 	 * Database connection helper
@@ -199,7 +201,10 @@ public class TasksDataSource {
 		return new FilterQueryProvider() {
 			@Override
 			public Cursor runQuery(CharSequence constraint) {
-				Filter filter = Filter.fromString(constraint.toString());
+				Filter filter = null;
+
+				if (constraint != null)
+					filter = Filter.fromString(constraint.toString());
 
 				SQLiteQueryBuilder q = new SQLiteQueryBuilder();
 				q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
@@ -211,18 +216,18 @@ public class TasksDataSource {
 						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE
 				};
 
-				String where = "1=1";
+				String where = "";
 				List<String> whereArgs = new ArrayList<String>();
 
 				// date from
-				if (filter.getDateFrom() != null) {
-					where += " AND " + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= ?";
-					whereArgs.add(DateFormat.format(DateTime.UNIFIED_FORMAT, filter.getDateFrom().getTime()).toString());
+				if (filter != null && filter.getDateFrom() != null) {
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= ?";
+					whereArgs.add("" + filter.getDateFrom().getTimeInMillis());
 				}
 
-
-
-				return q.query(database, selectColumns, where, whereArgs.toArray(new String[0]), null, null, null);
+				Cursor cursor = q.query(database, selectColumns, where, whereArgs.toArray(new String[0]), null, null, null);
+				Log.d(LOG_TAG, "after filter: " + cursor.getCount() + " items");
+				return cursor;
 			}
 		};
 
