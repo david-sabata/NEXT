@@ -35,6 +35,7 @@ public class LoginActivity extends Activity {
 	/**
 	 * Process result from called activity
 	 */
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
 			String accountName = new String();

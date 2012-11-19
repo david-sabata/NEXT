@@ -9,6 +9,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.Task;
@@ -20,7 +23,7 @@ import cz.fit.next.backend.TasksModelService;
 public class TaskEditFragment extends Fragment {
 
 	private static final String LOG_TAG = "TaskEditFragment";
-
+	private View taskDetailView;
 
 	/**
 	 * Used in Bundle to store ID of task that is being shown
@@ -90,10 +93,10 @@ public class TaskEditFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		View taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
+		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_edit, container, false);
 
 		// load the task data into view
-		setDetailTask(taskDetailView);
+		setDetailTask();
 
 		return taskDetailView;
 	}
@@ -103,40 +106,58 @@ public class TaskEditFragment extends Fragment {
 	/**
 	 * Sets up the (sub)views acording to the loaded task
 	 */
-	private void setDetailTask(View baseView) {
+	private void setDetailTask() {
 		// set Title
-		TextView title = (TextView) baseView.findViewById(R.id.titleTask);
+		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
 		if (title != null) {
 			title.setText(mTask.getTitle());
 		}
 
 		// TODO implements others like title
 		// set description
-		TextView descripton = (TextView) baseView.findViewById(R.id.textDescriptionShow);
+		TextView descripton = (TextView) taskDetailView.findViewById(R.id.editDescription);
 		if (descripton != null) {
 			descripton.setText(mTask.getDescription());
 		}
 
 		// set date
-		TextView date = (TextView) baseView.findViewById(R.id.textDateShow);
+		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		if (date != null) {
 			date.setText(mTask.getDate().toString());
 		}
-
+		
+		// Set IsCompleted
+		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
+		if(isCompleted != null) {
+			isCompleted.setChecked(mTask.isCompleted());
+		}
+		
 		// set project
-		TextView project = (TextView) baseView.findViewById(R.id.textProjectShow);
+		TextView project = (TextView) taskDetailView.findViewById(R.id.editProject);
 		if (project != null) {
 			project.setText(mTask.getProject().getTitle());
 		}
 
 		// set context
-		TextView context = (TextView) baseView.findViewById(R.id.textContextShow);
+		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
 		if (context != null) {
 			context.setText(mTask.getContext());
 		}
 
 		// set priority
-		//TextView priority = (TextView) taskDetailView.findViewById(R.id.textPriorityShow);
+		// Get value of selected RadioButton
+		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
+		switch(mTask.getPriority()) {
+		case 1:
+			priorityGroup.check(R.id.radio0);
+			break;
+		case 2:
+			priorityGroup.check(R.id.radio1);
+			break;
+		case 3:
+			priorityGroup.check(R.id.radio2);
+			break;
+		}
 	}
 
 
@@ -157,7 +178,7 @@ public class TaskEditFragment extends Fragment {
 		if (item.getItemId() == R.id.action_save) {
 
 			// TODO: save stuff
-
+			onSaveItem();
 			getActivity().getSupportFragmentManager().popBackStack();
 			return true;
 		}
@@ -170,6 +191,39 @@ public class TaskEditFragment extends Fragment {
 
 
 		return super.onOptionsItemSelected(item);
+	}
+
+
+
+	private void onSaveItem() {
+		// TODO Auto-generated method stub
+		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
+		TextView description = (TextView) taskDetailView.findViewById(R.id.editDescription);
+		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
+		TextView project = (TextView) taskDetailView.findViewById(R.id.editProject);
+		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
+		CheckBox isCompleted= (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
+
+		// Get value of selected RadioButton
+		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
+		int selected =  priorityGroup.getCheckedRadioButtonId();
+		RadioButton priority = (RadioButton) taskDetailView.findViewById(selected);
+		
+		
+		// Create new changed task
+		Task editedTask = 
+				new Task(mTask.getId(),
+						title.getText().toString(),
+						description.getText().toString(),
+						date.getText().toString(),
+						Integer.parseInt(priority.getText().toString()),
+						mTask.getProject(),
+						context.getText().toString(),
+						isCompleted.isChecked()
+				);
+		Log.i("Priority", priority.getText().toString());
+		TasksModelService.getInstance().saveTask(editedTask);
+		
 	}
 
 
