@@ -84,12 +84,20 @@ public class Task {
 	public Task(JSONObject taskJson, Project project) throws JSONException {
 		this.mId = taskJson.getString("id");
 		this.mTitle = taskJson.getString("title");
-		this.mDescription = taskJson.getString("description");
+		try {
+			this.mDescription = taskJson.getString("description");
+		} catch (JSONException e) {
+			this.mDescription = "";
+		}
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
 		this.mDate = new DateTime(taskJson.getString("date"));
-		this.mContext = taskJson.getString("partContexts");
+		try {
+			this.mContext = taskJson.getString("partContexts");
+		} catch (JSONException e) {
+			this.mContext = "";
+		}
 	}
 	
 	/**
