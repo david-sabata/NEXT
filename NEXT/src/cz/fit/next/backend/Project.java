@@ -121,7 +121,4 @@ public class Project {
 	public void setHistory(ArrayList<TaskHistory> mHistory) {
 		this.mHistory = mHistory;
 	}
-
-	
-	
 }
