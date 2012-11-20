@@ -91,7 +91,7 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		// create deafult adapter - all items
 		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
-		setListAdapter(new TaskListAdapter(getActivity(), cursor));
+		setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
 
 		Bundle args = getArguments();
 		if (args != null) {
@@ -112,6 +112,7 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	}
 
 
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -128,12 +129,11 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 
 
-
+	/**
+	 * Reload fragment content by re-querying database with the current filter
+	 */
 	@Override
 	public void reloadContent() {
-		Log.d(LOG_TAG, "reloadContent");
-		//		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
-
 		setFilter(mFilter);
 	}
 

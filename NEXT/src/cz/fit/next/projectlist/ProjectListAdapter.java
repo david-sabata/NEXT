@@ -10,9 +10,9 @@ public class ProjectListAdapter extends SimpleCursorAdapter {
 
 
 	public ProjectListAdapter(Context context, Cursor cursor) {
-		super(context, R.layout.content_list_item, cursor,
+		super(context, R.layout.task_list_item, cursor,
 				new String[] { Constants.COLUMN_TITLE, Constants.COLUMN_ID },
-				new int[] { R.id.text1, R.id.text2 },
+				new int[] { R.id.title, R.id.subtitle },
 				0);
 	}
 }

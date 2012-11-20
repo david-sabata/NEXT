@@ -109,8 +109,12 @@ public class SidebarFragment extends Fragment {
 				from.set(Calendar.HOUR_OF_DAY, 0);
 				from.set(Calendar.MINUTE, 0);
 				from.set(Calendar.SECOND, 0);
-
 				filter.setDateFrom(from);
+
+				GregorianCalendar until = new GregorianCalendar();
+				until.setTimeInMillis(from.getTimeInMillis());
+				until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+				filter.setDateUntil(until);
 
 				// create new fragment to add to backstack
 				TaskListFragment fragToday = TaskListFragment.newInstance(filter, R.string.frag_title_today);
