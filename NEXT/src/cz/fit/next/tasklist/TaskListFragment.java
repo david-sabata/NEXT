@@ -112,6 +112,7 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	}
 
 
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -128,12 +129,11 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 
 
-
+	/**
+	 * Reload fragment content by re-querying database with the current filter
+	 */
 	@Override
 	public void reloadContent() {
-		Log.d(LOG_TAG, "reloadContent");
-		//		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
-
 		setFilter(mFilter);
 	}
 
