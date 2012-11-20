@@ -2,7 +2,10 @@ package cz.fit.next;
 
 
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.json.JSONException;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -81,11 +84,11 @@ public class MainActivity extends FragmentActivity {
 		bindModelService();
 
 		// start synchronization service
-		//		Intent i = new Intent(this, SyncService.class);
-		//		Bundle b = new Bundle();
-		//		b.putInt("buttonPressed", 0);
-		//		i.putExtras(b);
-		//		this.startService(i);
+				Intent i = new Intent(this, SyncService.class);
+				Bundle b = new Bundle();
+				b.putInt("buttonPressed", 0);
+				i.putExtras(b);
+				this.startService(i);
 
 	}
 

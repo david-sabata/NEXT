@@ -35,6 +35,7 @@ import com.google.api.services.drive.Drive.Files;
 import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.ParentReference;
 
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.backend.sync.SyncServiceCallback;
@@ -129,15 +130,27 @@ public class GDrive {
 	/**
 	 * Download file with given filename to local storage
 	 */
-	public void download(Context appcontext, SyncServiceCallback cb, String filename) {
-		downloadFile(filename, mAppFolder);		
+	public void download(Context appcontext, SyncServiceCallback cb, String id) {
+		downloadFile(id, mAppFolder);		
 		
+	}
+	
+	/**
+	 * Deletes file on storage 
+	 * 	 */
+	public void delete(String filename) {
+		String existing = getFileIdByName(filename, mAppFolder);
+		if (existing != null) Log.i(TAG,"EXISTS!");
+		if (existing != null) deleteFile(existing);
 	}
 	
 	/**
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
+		String existing = getFileIdByName(filename, mAppFolder);
+		if (existing != null) Log.i(TAG,"EXISTS!");
+		if (existing != null) deleteFile(existing);
 		uploadFile(filename, localname, mAppFolder);
 		
 	}
@@ -146,7 +159,7 @@ public class GDrive {
 	 * Unlocks file with given id
 	 */
 	public void unlock(String ident) {
-		String id = getFileIdByName(LOCK_PREFIX + ident);
+		String id = getFileIdByName(LOCK_PREFIX + ident, mAppFolder);
 		deleteFile(id);
 	}
 	
@@ -336,7 +349,7 @@ public class GDrive {
 	/**
 	 * Returns file id by its name
 	 */
-	private String getFileIdByName(String name) {
+	private String getFileIdByName(String name, String appFolder) {
 		
 		String res = null;
 		
@@ -347,7 +360,7 @@ public class GDrive {
 						
 			// Get File By Name
 			request = mService.files().list();
-			String q = "title = '" + name + "'";
+			String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false";
 			request = request.setQ(q);
 
 			flist = request.execute();
@@ -384,7 +397,7 @@ public class GDrive {
 					request = null;
 					;
 					request = mService.files().list();
-					String q = "'" + appFolder + "' in parents";
+					String q = "'" + appFolder + "' in parents and trashed = false";
 					// q = "not 'me' in owners";
 					request = request.setQ(q);
 
@@ -416,6 +429,7 @@ public class GDrive {
 		FileList flist = null;
 		Files.List request = null;
 		List<File> res = new ArrayList<File>();
+		List<File> filtered = new ArrayList<File>();
 
 		try {
 
@@ -424,7 +438,7 @@ public class GDrive {
 			request = null;
 
 			request = mService.files().list();
-			String q = "not 'me' in owners and not '" + appFolder + "' in parents";
+			String q = "not 'me' in owners and not '" + appFolder + "' in parents and trashed = false";
 			// Log.i(TAG, q);
 			request = request.setQ(q);
 
@@ -440,7 +454,11 @@ public class GDrive {
 			// Exclude files with bad names
 			for (int i = 0; i < res.size(); i++) {
 				String title = res.get(i).getTitle();
-				if (!(title.contains(".nextproj.html"))) res.remove(i);
+				Log.i(TAG, title);
+				if (title.contains(".nextproj.html")) 
+				{
+					filtered.add(res.get(i));
+				}
 			}
 
 		} catch (IOException e2) {
@@ -448,7 +466,7 @@ public class GDrive {
 			e2.printStackTrace();
 		}
 
-		return res;
+		return filtered;
 
 	}
 
@@ -531,6 +549,9 @@ public class GDrive {
 			body.setTitle(name);
 			// body.setDescription("");
 			body.setMimeType("text/plain");
+			List<ParentReference> parents = new ArrayList<ParentReference>();
+			parents.add((new ParentReference()).setId(mAppFolder));
+			body.setParents(parents);
 
 			java.io.File fileContent = null;
 			FileContent mediaContent = null;

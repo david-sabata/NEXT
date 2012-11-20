@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Self-editing page</title>
-        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <!-- Basic style of the page -->
         <style>
             .invisible {
@@ -204,7 +204,7 @@
                         li.appendChild(image);
                     } else {
                         span.innerHTML = liData; // Contexts are unique -> they cant be translated
-                        span.setAttribute("class", "sideBarContextItem");                    
+                        span.setAttribute("class", "sideBarContextItem");
 
                         // Add event listener to context
                         li.addEventListener("click", function () {
@@ -213,7 +213,7 @@
                             editor.generateTaskList();
                         });
                     }
-                
+
 
                     li.appendChild(span);
                     li.setAttribute("class", "sideBarItem");
@@ -224,7 +224,7 @@
                     var ul = document.createElement('ul');
 
                     ul.setAttribute("class", "sideBarUl");
-                    
+
                     // Create description of UL block
                     var titleUl = createLi(null, languagesTexts[lang][s]);
                     titleUl.setAttribute("class", "sideBarTitleUl");
@@ -241,7 +241,7 @@
                         }
                         ul.appendChild(li);
                     }
-                    
+
                     return ul;
                 }
 
@@ -272,9 +272,9 @@
                 this.init = init;
                 this.getImage = getImage;
                 function init(ids) {
-                   
+
                     images = new Object();
-                    for(id in ids) {
+                    for (id in ids) {
                         var imgTag = document.getElementById(ids[id]);
                         images[ids[id]] = imgTag;
                     }
@@ -319,7 +319,7 @@
                     return plainText;
                 }
 
-               
+
                 /**
                 * Go ghrought data and find all contexts
                 */
@@ -327,12 +327,11 @@
                     var contexts = [];
                     var taskData = pData.data;
                     for (task in taskData) {
-                        var taskContexts = (taskData[task]).partContexts;
-                        for (c in taskContexts) {
-                            if (contexts.indexOf(taskContexts[c]) == -1) {
-                                contexts.push(taskContexts[c]);
-                            }
+                        var taskContext = (taskData[task]).partContexts;
+                        if (contexts.indexOf(taskContext) == -1) {
+                            contexts.push(taskContext);
                         }
+          
                     }
                     return contexts;
                 }
@@ -367,12 +366,12 @@
                     // Create a new TD element
                     var newTD = document.createElement('td');
                     newTD.innerHTML = pText;
-                    newTD.setAttribute("style","background:" + pBgColor + ";" + 
+                    newTD.setAttribute("style", "background:" + pBgColor + ";" +
                                                "color:" + pTextColor + ";" +
-                                               "border-left:" + pBorders[0] + "px " + pBorderColor+ ";" +
+                                               "border-left:" + pBorders[0] + "px " + pBorderColor + ";" +
                                                "border-right:" + pBorders[1] + "px " + pBorderColor + ";" +
-                                               "border-bottom:" + pBorders[2] + "px " + pBorderColor+ ";" +
-                                                "border-top:" + pBorders[2] + "px " + pBorderColor+ ";" +
+                                               "border-bottom:" + pBorders[2] + "px " + pBorderColor + ";" +
+                                                "border-top:" + pBorders[2] + "px " + pBorderColor + ";" +
                                                "font-weight:" + pBold);
                     newTD.setAttribute("class", pClass);
                     return newTD;
@@ -384,18 +383,25 @@
                 */
                 function generateTableHeader(lang) {
                     // Parse languages texts
-                    var languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(languageElement) + ')');
-
+                    languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(languageElement) + ')');
+                    headers = languagesTexts[lang];
                     // Create new row element
                     var newTR = document.createElement('tr');
-                    var data = tasksData;
-                    if(data) {
-                        var task = data[0];
-                        for (item in task) {
+
+                    for (item in headers) {
+                        if (item == "title" ||
+                              item == "description" ||
+                              item == "date" ||
+                              item == "partProject" ||
+                              item == "partContexts" ||
+                              item == "important" ||
+                              item == "important" ||
+                              item == "status") {
                             // Create a new TD element
-                            var newTD = createCell((languagesTexts[lang])[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
+                            var newTD = createCell(headers[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
                             newTR.appendChild(newTD);
-                        }                
+                        }
+
                     }
                     return newTR;
                 }
@@ -405,69 +411,85 @@
                 function createRow(task) {
                     // Create new row element
                     var newTR = document.createElement('tr');
-                   
+
 
                     // Generate cells of the new row
-                    for (item in task) {
-                        // Create a new TD element
-                        var newTD;
-                        var borderColor = "solid grey";
-                        var classCells = "tableCell";
-                        switch (item) {
-                            case 'title':
-                                                   // text,    bgColor, textColor, borderOn, fontWeight
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor); // left, right, bottom, top
-                                break;
+                    for (item in headers) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
+                        if (item == "title" ||
+                            item == "description" ||
+                            item == "date" ||
+                            item == "partProject" ||
+                            item == "partContexts" ||
+                            item == "important" ||
+                            item == "important" ||
+                            item == "status") {
+                            // Create a new TD element
+                            var newTD = null;
+                            var borderColor = "solid grey";
+                            var classCells = "tableCell";
 
-                            case 'description':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal',classCells, borderColor);
-                                break;
+                            if (task[item] === undefined) {
+                                task[item] = "";
+                            }
 
-                            case 'date':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
-                                break;
+                            switch (item) {
+                                case 'title':
+                                    // text,    bgColor, textColor, borderOn, fontWeight
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor); // left, right, bottom, top
+                                    break;
 
-                            case 'partProject':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
-                                break;
+                                case 'description':
+                                    
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
 
-                            case 'partContexts':
-                                newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
-                                break;
+                                case 'date':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
 
-                            case 'important':
-                                var bgColor;
-                                var value = task[item];
-                                if(value == 1) {
-                                    bgColor = '#2f9b3e';
-                                } else if(value == 2) {
-                                    bgColor = '#ceef4a';
-                                } else {
-                                    bgColor = '#ff3333';
-                                }
+                                case 'partProject':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
 
-                                newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
-                                break;
-                            case 'status':
-                                var value = task[item];
-                                var el;
-                                /**
-                                * I know, that it is not ideal, but it is quick and easy solution
-                                */
-                                if (value == true) {
-                                    el = '<input type="checkbox" checked="checked" />';
-                                } else {
-                                    el = '<input type="checkbox"  />';
-                                }
-                                newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal', "statusCell", borderColor);
-                                break;
+                                case 'partContexts':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
 
-                            default:
-                                console.log("Unknown properties of object");
-                                break;
+                                case 'important':
+                                    var bgColor;
+                                    var value = task[item];
+                                    if (value == 1) {
+                                        bgColor = '#2f9b3e';
+                                    } else if (value == 2) {
+                                        bgColor = '#ceef4a';
+                                    } else {
+                                        bgColor = '#ff3333';
+                                    }
+
+                                    newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+                                case 'status':
+                                    var value = task[item];
+                                    var el;
+                                    /**
+                                    * I know, that it is not ideal, but it is quick and easy solution
+                                    */
+                                    if (value == true) {
+                                        el = '<input type="checkbox" checked="checked" />';
+                                    } else {
+                                        el = '<input type="checkbox"  />';
+                                    }
+                                    newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal', "statusCell", borderColor);
+                                    break;
+
+                                default:
+                                    console.log("Unknown properties of object");
+                                    break;
+                            }
                         }
-
-                        newTR.appendChild(newTD);
+                        if (newTD != null) {
+                            newTR.appendChild(newTD);
+                        }
                     }
 
                     return newTR;
@@ -477,11 +499,9 @@
                 * Is item in actual context?
                 */
                 function isInContext(taskContext) {
-                    for(c in taskContext) {
-                        for (gc in contexts) {
-                            if(taskContext[c] == contexts[gc]) {
-                                return true;
-                            }
+                    for (c in contexts) {
+                        if (taskContext == contexts[c]) {
+                            return true;
                         }
                     }
                     return false;
@@ -491,15 +511,15 @@
                  * Genre content of the table
                  */
                 function generateTable() {
-                   table.appendChild(generateTableHeader('czech'));
+                    table.appendChild(generateTableHeader('czech'));
 
                     // Create new divs and add them to parent div
-                   for (task in tasksData) {
-                       if(isInContext(tasksData[task].partContexts)) {
-                           // Generate new element
-                           var newRow = createRow(tasksData[task]);
-                           table.appendChild(newRow);
-                       }
+                    for (task in tasksData) {
+                        if (isInContext(tasksData[task].partContexts)) {
+                            // Generate new element
+                            var newRow = createRow(tasksData[task]);
+                            table.appendChild(newRow);
+                        }
                     }
                 }
 
@@ -581,22 +601,24 @@
         <script id="languages" type="x-next/xlanguages">
             {
               czech: {
-                        title: "N·zev",
+                        id: "ID",
+                        title: "N√°zev",
                         description: "Popis",
                         date: "Datum",
                         partProject : "Projekt",
                         partContexts : "Kontexty",
-                        important: "D˘leûitost",
+                        important: "D≈Øle≈æitost",
                         status: "Hotovo",
-                        next: "DalöÌ",
+                        next: "Dal≈°√≠",
                         today: "Dnes",
-                        inplan: "V pl·nu",
-                        sometimes: "NÏkdy",
-                        blocked: "BlokovanÈ",
-                        time: "Podle Ëasu",
+                        inplan: "V pl√°nu",
+                        sometimes: "Nƒõkdy",
+                        blocked: "Blokovan√©",
+                        time: "Podle ƒçasu",
                         context: "Kontexty"
                      } ,
              english: {
+                        id: "ID",
                         title: "Title",
                         description: "Description",
                         date: "Date",
@@ -617,76 +639,12 @@
         </script>
 
         <!-- Here we will store our data for tasks -->
-        <script id="data" type="x-next/x-json">
-           {
-            id: "12343434",
-            filename: "editable.html", 
-            projectname: "Reader for NEXT",
-            data: [
-                    {
-                        id: "123",
-                        title: "Basic structure",
-                        description: "Create basic layout",
-                        date: "1.11.2012",
-                        partProject : "Reader for NEXT",
-                        partContexts : "School",
-                        important: "3",
-                        status: true
-                    },
-                    {
-                        id: "124",
-                        title: "Plug-in modules",
-                        description: "Create generator for tasks layout",
-                        date: "1.11.2012",
-                        partProject : "Reader for NEXT",
-                        partContexts : "Javascript",
-                        important: "3",
-                        status: false
-                    
-                    }, 
-                    {
-                        id: "125",
-                        title: "Future extensions - home explore",
-                        description: "Create self-editable task file",
-                        date: "25.11.2012",
-                        partProject : "Reader for NEXT",
-                        partContexts : "Home",
-                        important: "2",
-                        status: true
-                    }, 
-                    {
-                        id: "126",
-                        title: "9 Days to End",
-                        description: "Prepare for the end of the world",
-                        date: "12.12.2012",
-                        partProject : "Reader for NEXT",
-                        partContexts : "HTML5",
-                        important: "3",
-                        status: true
-                    }, 
-                    {
-                        id: "127",
-                        title: "End of the world",
-                        description: "Try to survive",
-                        date: "21.12.2012",
-                        partProject : "Reader for NEXT",
-                        partContexts : "Personal",
-                        important: "3",
-                        status: true
-                    }, 
-                    {
-                        id: "128",
-                        title: "I dont know",
-                        description: "What write there",
-                        date: "1.1.2014",
-                        partProject : "Reader for NEXT",
-                        partContexts : "Android",
-                        important: "1",
-                        status: true
-                    }
+        <script id="data" type="text/javascript">
+            var data =
+  //begin_of_data 
+            {"history":[],"data":[{"id":"97ea5399-6543-461c-b97c-2bc9a4327ce7","title":"Dummy task","status":false,"important":1,"description":"Prevelice dlouhy popis projektu. Budeme se modlit aby se nam do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.","date":"2013-01-21 00:00:00.000+0100","partContexts":"≈†kola","partProject":"Projekt 1"},{"id":"0346cdfd-72f0-472f-b500-23300308b9bd","title":"Dummy task with veeery long title that will surely go out of the screen","status":false,"important":0,"description":"<Some description would be here>","date":"2012-11-10 00:00:00.000+0100","partContexts":"Doma","partProject":"Projekt 1"},{"id":"7dd7b2d1-ff52-43eb-990b-574e5e9c9d39","title":"Completed task with no description","date":"2013-03-03 00:00:00.000+0100","status":true,"partContexts":"Doma","partProject":"Projekt 1","important":2}],"id":"0659c345-7f17-4caa-8525-015ea3317d3a","projectname":"Projekt 1"}Ôªø            //end_of_data
 
-                ]
-            }
+            //end_of_data
         </script>
 
 
@@ -821,7 +779,7 @@
             var images = new ImageCreator();
             var menu = new MenuCreator();
             var globalMethods = new CommonWorker();
-            var data = null;
+            //  var data = null;
             window.onload = function () {
                 ////////////////////////////////////////////
                 ////////////// PREPARE DATA ////////////////
@@ -840,8 +798,8 @@
                 // Load Data
                 var content = globalMethods.getContentOfScriptTag(document.getElementById("data"));
                 // Transfer JSON data to Object
-                data = eval('(' + content + ')');
-                
+                //data = eval('(' + content + ')');
+
                 // Find all contexts
                 var contexts = globalMethods.findAllContexts(data);
 
@@ -857,7 +815,7 @@
                 editor.init(data, images);
 
 
-                
+
                 ////////////////////////////////////////////
                 ////////////////// MENU ////////////////////
                 ////////////////////////////////////////////
@@ -878,8 +836,8 @@
 
                 menu.regenerate();
 
-               // editor.cleanTaskList();
-                
+                // editor.cleanTaskList();
+
             };
         </script>
     </body>

@@ -6,8 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 
 /**
  * @author xsych_000
@@ -17,7 +15,7 @@ public class TaskHistory {
 	protected String mTimeStamp;
 	protected String mAuthor;
 	protected String mTaskId;
-	protected ArrayList<HistoryTaskChange> changes;
+	protected ArrayList<HistoryTaskChange> mChanges;
 	
 	public TaskHistory(JSONObject jsonHistory) {
 		try {
@@ -26,12 +24,19 @@ public class TaskHistory {
 			mTaskId = jsonHistory.getString("taskid");
 			
 			// Parse changes and store them
-			changes = parseChanges(jsonHistory.getJSONArray("changes"));
+			mChanges = parseChanges(jsonHistory.getJSONArray("changes"));
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+	}
+	
+	public TaskHistory() {
+		mTimeStamp = "";
+		mAuthor = "";
+		mTaskId = "";
+		mChanges = new ArrayList<HistoryTaskChange>();
 	}
 
 	private ArrayList<HistoryTaskChange> parseChanges(JSONArray jsonArrayChanges) throws JSONException {
@@ -63,14 +68,54 @@ public class TaskHistory {
 	}
 
 	public ArrayList<HistoryTaskChange> getChanges() {
-		return changes;
+		return mChanges;
+	}
+	
+	
+	
+	/**
+	 * @param mTimeStamp the mTimeStamp to set
+	 */
+	public void setTimeStamp(String mTimeStamp) {
+		this.mTimeStamp = mTimeStamp;
+	}
+
+	/**
+	 * @param mAuthor the mAuthor to set
+	 */
+	public void setAuthor(String mAuthor) {
+		this.mAuthor = mAuthor;
+	}
+
+	/**
+	 * @param mTaskId the mTaskId to set
+	 */
+	public void setTaskId(String mTaskId) {
+		this.mTaskId = mTaskId;
+	}
+
+	/**
+	 * @param mChanges the mChanges to set
+	 */
+	public void setChanges(ArrayList<HistoryTaskChange> mChanges) {
+		this.mChanges = mChanges;
+	}
+
+	public ArrayList<HistoryTaskChange> addChange(String name, String oldvalue, String newvalue) {
+		HistoryTaskChange hist = new HistoryTaskChange();
+		hist.setName(name);
+		hist.setNewValue(newvalue);
+		hist.setOldValue(oldvalue);
+		
+		mChanges.add(hist);
+		return mChanges;
 	}
 	
 
 	/**
 	 * Private class for storage "change" information
 	 */
-	private class HistoryTaskChange {
+	public class HistoryTaskChange {
 		private String mName;
 		private String mOldValue;
 		private String mNewValue;
@@ -81,6 +126,12 @@ public class TaskHistory {
 			mNewValue = change.getString("newvalue");
 		}
 
+		private HistoryTaskChange() {
+			mName = "";
+			mOldValue = "";
+			mNewValue = "";
+		}
+		
 		/**
 		 * @return the mName
 		 */
@@ -101,6 +152,20 @@ public class TaskHistory {
 		public String getNewValue() {
 			return mNewValue;
 		}
+
+		public void setName(String mName) {
+			this.mName = mName;
+		}
+
+		public void setOldValue(String mOldValue) {
+			this.mOldValue = mOldValue;
+		}
+
+		public void setNewValue(String mNewValue) {
+			this.mNewValue = mNewValue;
+		}
+		
+		
 	}
 }
 

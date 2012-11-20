@@ -6,22 +6,29 @@ package cz.fit.next.backend.sync;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import android.R;
+import android.content.Context;
 import android.util.Log;
 
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TaskHistory.HistoryTaskChange;
 
 /**
  * @author xsych_000
@@ -32,11 +39,13 @@ public class JavaParser {
 	private String inputDataString = "<html><head><title>Test</title><!-- Here we will store our data for tasks --><script id='data' type='x-next/x-json'>{ id: '123456', filename: 'editable.html', projectname: 'Reader for NEXT', data: [{id :'23', title: 'Basic structure', description: 'Create basic layout', date: '1.11.2012', partProject : 'Reader for NEXT', partContexts : ['School','Android'],important: '3',status: true},{ id: '45', title: 'Plug-in modules', description: 'Create generator for tasks layout',date: '1.11.2012',partProject : 'Reader for NEXT',partContexts : ['School','Javascript'],important: '3', status: false}], history: [{timestamp : '1223289348934934',author : 'Tomas Sychra',taskid : '2123434333343434',changes: [{name: 'title',oldvalue: 'aa', newvalue: 'bb'}]}]}</script></head><body></body></html>";
 	
 	// It is imporatnt to tell, which input will be used (Temporary String coded above or FileName )
-	private Boolean  READ_FROM_STRING = true;
+	private Boolean  READ_FROM_STRING = false;
 	private InputStream input;
 	
 	// Regex pattern to mine JSON data from HTML page
-	private final String scriptPattern = "(?i)(.*?)(<script id='data' type='x-next/x-json'>)(.+?)(</script>)(.*?)";
+	private final String scriptPattern = "(?i)(^.*?)(//begin_of_data)(.+?)(//end_of_data)(.*$)";
+	//private final String scriptPattern = "(?i)(.*?)(<script id=\"data\" type=\"x-next/x-json\">)(.+?)(</script>)(.?)";
+	//private final String scriptPattern = "^.*(<script id=\"data\" type=\"x-next/x-json\">)(.*)(</script>).*$";
 	
 	// Alld information about project
 	private JSONObject projectData;
@@ -44,7 +53,12 @@ public class JavaParser {
 	// Reader 
 	private BufferedReader reader;
 	
+	private Project mProject = null;
+	private ArrayList<Task> mTasksList = null;
+	private ArrayList<TaskHistory> mTasksHistory = null;
 
+	private String firstTemplate = null;
+	private String secondTemplate = null;
 	/*********************************************************/
 	/************************* READING ***********************/
 	/*********************************************************/
@@ -54,7 +68,7 @@ public class JavaParser {
 	 * @return
 	 * @throws Throwable
 	 */
-	@SuppressWarnings("unused")
+
 	private void openDataFile () throws Throwable {
 		// Open the file 
 		try {
@@ -91,18 +105,16 @@ public class JavaParser {
 	 * @throws JSONException
 	 */
 	private void parseJsonData(BufferedReader reader) throws IOException, JSONException {
-		// Load data to String
-		int c;
-		String outString = new String();
-		
-		while((c = reader.read()) != -1) {
-			char character = (char) c;
-			outString += character;
+		// Load data to String    
+	    StringBuilder wholeFile = new StringBuilder();
+	    String readLine = null;
+		while((readLine = reader.readLine()) != null){
+			wholeFile.append(readLine);	
 		}
 		
-		// Parse data to JSON
-		String jsonString = outString.replaceAll(scriptPattern, "$3");
+		String jsonString = wholeFile.toString().replaceAll(scriptPattern, "$3");
 		projectData = new JSONObject(jsonString);
+		
 	}
 	
 	/**
@@ -240,11 +252,136 @@ public class JavaParser {
 	
 	/*********************************************************/
 	/************************* WRITING ***********************/
-	/*********************************************************/
+	/*********************************************************/	
+	public void setProject(Project pProject) {
+		mProject = pProject;
+	}
 	
+	public void setTasks(ArrayList<Task> pNewTask) {
+	    mTasksList = pNewTask;
+	}
 
+	public void setHistory(ArrayList<TaskHistory> pTaskHistory) {
+		mTasksHistory = pTaskHistory;
+	}
+		
+	private JSONObject convertTaskToJSONObject(Task task) throws JSONException {
+		JSONObject jsonTask = new JSONObject();
 
+		// Fill JSONObject with Task data
+		jsonTask.put("id", task.getId());
+		jsonTask.put("title", task.getTitle());
+		jsonTask.put("description",task.getDescription());
+		jsonTask.put("date",task.getDate());
+		jsonTask.put("partProject", task.getProject().getTitle());
+		jsonTask.put("partContexts",task.getContext());
+		jsonTask.put("important",task.getPriority());
+		jsonTask.put("status",task.isCompleted());
+		
+		return jsonTask;
+	}
 	
+	private JSONObject convertHistoryToJSONObject(TaskHistory taskHistory) throws JSONException {
+		JSONObject jsonHistory = new JSONObject();
+		
+		// Fill JSONObject with Task data
+		jsonHistory.put("timestamp", taskHistory.getTimeStamp());
+		jsonHistory.put("author", taskHistory.getAuthor());
+		jsonHistory.put("taskid", taskHistory.getTaskId());
+		
+		// Generate changes
+		JSONArray jsonChanges = new JSONArray();
+		for(int i = 0; i < taskHistory.getChanges().size(); i++) {
+			JSONObject jsonOneChange = new JSONObject();
+			HistoryTaskChange oneChange = taskHistory.getChanges().get(i);
+				jsonOneChange.put("name", oneChange.getName());
+				jsonOneChange.put("oldvalue", oneChange.getOldValue());
+				jsonOneChange.put("newvalue", oneChange.getNewValue());
+			jsonChanges.put(jsonOneChange);
+		}
+		jsonHistory.put("changes", jsonChanges);
+		
+		return jsonHistory;
+	}
+	
+	private String generateJSONStringProject() throws JSONException {
+		JSONObject projectData = new JSONObject();
+		
+		// Fill JSON data
+		projectData.put("id",mProject.getId());
+		projectData.put("projectname", mProject.getTitle());
+		
+		// Generate array of JSONObject for tasks
+		JSONArray jsonTasksArray = new JSONArray();
+		for(int i = 0; i < mTasksList.size(); i++) {
+			jsonTasksArray.put(convertTaskToJSONObject(mTasksList.get(i)));	
+		}
+		projectData.put("data", jsonTasksArray);
+		
+		// Generate JSONObject for history 
+		JSONArray jsonHistoryArray = new JSONArray();
+		for(int i = 0; i < mTasksHistory.size(); i++) {
+			jsonHistoryArray.put(convertHistoryToJSONObject(mTasksHistory.get(i)));
+		}
+		projectData.put("history", jsonHistoryArray);
+		
+		return projectData.toString();		
+	}
+	
+	private String readFileFromResource(Context c, Integer id) throws IOException {
+		InputStream input = c.getResources().openRawResource(id);
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+	    
+	    String eol = System.getProperty("line.separator"); 	    
+	    StringBuilder wholeFile = new StringBuilder();
+	    String readLine = null;
+	    
+		while((readLine = reader.readLine()) != null){
+			wholeFile.append(readLine);
+			wholeFile.append(eol);		
+		}
+		// Close the InputStream and BufferedReader
+		input.close();
+		reader.close();
+		return wholeFile.toString();
+	}
+	
+	/**
+	 *  Load Templates from resources
+	 */
+	private void loadTemplates(Context c)  throws IOException, JSONException {
+		// Prepare data to write
+		firstTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlfirst);
+		secondTemplate = readFileFromResource(c, cz.fit.next.R.raw.templatehtmlsecond);
+	}
+	
+	/**
+	 * Write a new File with JSON data in Template
+	 * @param c
+	 * @param pFileName
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public void writeFile(Context c, String pFileName) throws IOException, JSONException {		
+ 			FileOutputStream fileOut = new FileOutputStream(pFileName);
+			OutputStreamWriter fileStreamWriter = new OutputStreamWriter(fileOut);		
+			
+			// Load Templates if it is write firsttime
+			if(firstTemplate == null || secondTemplate == null) {
+				loadTemplates(c);
+			}
+			
+			String jsonStringToWrite = generateJSONStringProject();
+			
+			// Write new data to file
+			fileStreamWriter.write(firstTemplate + 
+								   jsonStringToWrite + 
+								   secondTemplate);
+			
+			
+			fileStreamWriter.flush();
+			fileStreamWriter.close();
+	}	
 }
 
 
