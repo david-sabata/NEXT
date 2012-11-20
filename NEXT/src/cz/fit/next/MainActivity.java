@@ -2,10 +2,7 @@ package cz.fit.next;
 
 
 
-import java.io.IOException;
 import java.util.ArrayList;
-
-import org.json.JSONException;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -44,8 +41,6 @@ public class MainActivity extends FragmentActivity {
 
 	protected TasksModelService mModelService;
 
-	protected boolean mIsServiceBound = false;
-
 
 
 
@@ -65,8 +60,6 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
 
-			//			TaskListFragment contentFrag = TaskListFragment.newInstance(null);
-
 			LoadingFragment contentFrag = LoadingFragment.newInstance();
 
 			fan.setFragments(contentFrag, fanFrag);
@@ -84,11 +77,11 @@ public class MainActivity extends FragmentActivity {
 		bindModelService();
 
 		// start synchronization service
-				Intent i = new Intent(this, SyncService.class);
-				Bundle b = new Bundle();
-				b.putInt("buttonPressed", 0);
-				i.putExtras(b);
-				this.startService(i);
+		Intent i = new Intent(this, SyncService.class);
+		Bundle b = new Bundle();
+		b.putInt("buttonPressed", 0);
+		i.putExtras(b);
+		this.startService(i);
 
 	}
 
@@ -105,6 +98,9 @@ public class MainActivity extends FragmentActivity {
 		// restore service if needed
 		bindModelService();
 
+		// hide loading fragment if the service is already ready
+		if (mModelService != null)
+			hideLoadingFragment();
 	}
 
 
@@ -214,6 +210,26 @@ public class MainActivity extends FragmentActivity {
 
 
 
+	/**
+	 * Hides the loading fragment if it is visible and replaces it
+	 * with default task list fragment, else does nothing
+	 */
+	public void hideLoadingFragment() {
+		Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
+		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
+			FanView fan = (FanView) findViewById(R.id.fan_view);
+
+			// default task list
+			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
+
+			// replace without history
+			fan.replaceMainFragment(frag, false);
+		}
+	}
+
+
+
+
 
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
@@ -227,17 +243,7 @@ public class MainActivity extends FragmentActivity {
 			binder.getService().initDataSources(self);
 
 			// reload content if the current fragment is LoadingFragment
-			Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
-			if (currentFragment != null && currentFragment instanceof LoadingFragment) {
-				FanView fan = (FanView) findViewById(R.id.fan_view);
-				TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
-
-				// replace without history
-				fan.replaceMainFragment(frag, false);
-			}
-			else {
-				Log.d(LOG_TAG, "LoadingFragment not current upon ModelService bind. Reload cancelled");
-			}
+			hideLoadingFragment();
 		}
 
 
