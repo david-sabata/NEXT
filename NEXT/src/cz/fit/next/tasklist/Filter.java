@@ -97,6 +97,9 @@ public class Filter implements Serializable {
 
 
 	public static Filter fromString(String s) {
+		if (s == null)
+			return null;
+
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new Base64InputStream(new ByteArrayInputStream(s.getBytes()), Base64.DEFAULT));
 			Object o = ois.readObject();

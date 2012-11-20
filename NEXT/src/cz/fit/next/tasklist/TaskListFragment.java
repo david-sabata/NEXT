@@ -81,8 +81,9 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
 		setListAdapter(new TaskListAdapter(getActivity(), cursor));
 
-		if (savedInstanceState != null) {
-			String filterStr = savedInstanceState.getString(ARG_FILTER);
+		Bundle args = getArguments();
+		if (args != null) {
+			String filterStr = args.getString(ARG_FILTER);
 			mFilter = Filter.fromString(filterStr);
 		}
 	}

@@ -1,8 +1,5 @@
 package cz.fit.next.backend.database;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -218,15 +215,14 @@ public class TasksDataSource {
 				};
 
 				String where = "";
-				List<String> whereArgs = new ArrayList<String>();
+				//List<String> whereArgs = new ArrayList<String>();
 
 				// date from
 				if (filter != null && filter.getDateFrom() != null) {
-					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= ?";
-					whereArgs.add("" + filter.getDateFrom().getTimeInMillis());
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().getTimeInMillis();
 				}
 
-				Cursor cursor = q.query(database, selectColumns, where, whereArgs.toArray(new String[0]), null, null, null);
+				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
 				Log.d(LOG_TAG, "after filter: " + cursor.getCount() + " items");
 				return cursor;
 			}
