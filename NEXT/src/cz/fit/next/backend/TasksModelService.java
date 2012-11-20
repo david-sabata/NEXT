@@ -1,11 +1,14 @@
 package cz.fit.next.backend;
 
+import java.util.Date;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.backend.database.ProjectsDataSource;
@@ -180,12 +183,11 @@ public class TasksModelService extends Service {
 
 
 	/**
-	 * Rreturns localized date formatter
+	 * Rreturns localized date and time string
 	 */
-	public java.text.DateFormat getLocalizedDateFormat() {
-		return android.text.format.DateFormat.getDateFormat(mContext);
+	public String getLocalizedDateTime(Date d) {
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
-
 
 	/**
 	 * Returns tasks filter query provider used to filter tasks

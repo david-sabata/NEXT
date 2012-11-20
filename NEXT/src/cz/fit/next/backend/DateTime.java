@@ -93,10 +93,15 @@ public class DateTime {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleString() {
-		return TasksModelService.getInstance().getLocalizedDateFormat().format(mDate);
+		return TasksModelService.getInstance().getLocalizedDateTime(mDate);
 	}
 
 
-
+	/**
+	 * Returns time in miliseconds of GMT
+	 */
+	public long toMiliseconds() {
+		return mDate.getTime();
+	}
 
 }
