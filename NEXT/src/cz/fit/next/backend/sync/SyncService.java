@@ -2,9 +2,8 @@ package cz.fit.next.backend.sync;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import org.json.JSONException;
 
@@ -31,7 +30,6 @@ import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
@@ -47,6 +45,15 @@ public class SyncService extends Service {
 	private String TAG = "NEXT SyncService";
 	private static final String PREF_FILE_NAME = "SyncServicePref";
 	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
+	
+	// String definitions for History object
+	private String const_title = "next_hist_title";
+	private String const_description = "next_hist_description";
+	private String const_date = "next_hist_date";
+	private String const_priority = "next_hist_priority";
+	private String const_project = "next_hist_project";
+	private String const_context = "next_hist_context";
+	private String const_completed = "next_hist_completed";
 
 	// Notification types
 	private static final int NOTIFICATION_NEW_SHARED = 100;
@@ -195,6 +202,7 @@ public class SyncService extends Service {
 			
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
 			ArrayList<Project> dirtyProjects = new ArrayList<Project>(); 
+			ArrayList<ArrayList<TaskHistory>> dirtyProjectsHistories = new ArrayList<ArrayList<TaskHistory>>();
 			
 			// SYNCHRONIZATION STAGE ONE - from remote to local
 			
@@ -215,19 +223,16 @@ public class SyncService extends Service {
 				
 				Project proj = parser.getProject();
 				ArrayList<Task> remoteTasks = parser.getTasks(proj);
-				ArrayList<TaskHistory> remoteHistories = parser.getHistory();
-				
-				
-				// Get tasks of this project from database
+				ArrayList<TaskHistory> remoteHistory = parser.getHistory();
 				
 				
 				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
 				
-				for (int j = 0; j < remoteTasks.size(); j++)  {
+				/*for (int j = 0; j < remoteTasks.size(); j++)  {
 					Log.i(TAG,"ID: " + remoteTasks.get(j).getId());
 					Log.i(TAG,"Task: " + remoteTasks.get(j).getTitle());
 					Log.i(TAG,"Desc: " + remoteTasks.get(j).getDescription());
-				}
+				}*/
 				
 				projdatasource.open();
 				projdatasource.saveProject(proj);
@@ -236,11 +241,12 @@ public class SyncService extends Service {
 				// add project to list of remote projects
 				remoteProjects.add(proj);
 				
+				// load remote tasks of this project
 				datasource = new TasksDataSource(getApplicationContext());
 				datasource.open();
 				cursor = datasource.getProjectTasksCursor(proj.getId());
 				
-				Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
+				//Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
 				
 								
 				while (cursor.moveToNext()) {
@@ -262,6 +268,7 @@ public class SyncService extends Service {
 								// Tasks are not in remote, but only in local
 								// Project is dirty
 								dirtyProjects.add(task.getProject());
+								dirtyProjectsHistories.add(remoteHistory);
 							}
 						}
 					}
@@ -324,9 +331,10 @@ public class SyncService extends Service {
 				}
 			}
 			
-			// add dirty projects
+			// add dirty projects to local
 			localProjects.addAll(dirtyProjects);
 			
+			// Send local projects to remote
 			for (int i = 0; i < localProjects.size(); i++) {	
 				
 					Log.i(TAG, "Only local project: " + localProjects.get(i).getTitle());
@@ -335,23 +343,48 @@ public class SyncService extends Service {
 					datasource = new TasksDataSource(getApplicationContext());
 					datasource.open();
 					
+					// make history for new project, or recycle for dirty projects
+					ArrayList<TaskHistory> history;
+					if (localProjects.get(i).getHistory() != null) history = localProjects.get(i).getHistory(); 
+					else history = new ArrayList<TaskHistory>();
+					
+					
 					Cursor cursor2 = datasource.getProjectTasksCursor(localProjects.get(i).getId());
 					ArrayList<Task> tasklist = new ArrayList<Task>();
 					while(cursor2.moveToNext()) {
-						tasklist.add(new Task(cursor2));
+						Task addtask = new Task(cursor2);
+						tasklist.add(addtask);
+						
+						TaskHistory hist = new TaskHistory();
+						hist.setAuthor(mAccountName);
+						hist.setTimeStamp("0000"); // TODO
+						hist.setTaskId(addtask.getId());
+						
+						hist.addChange(const_title, "", addtask.getTitle());
+						hist.addChange(const_description, "", addtask.getDescription());
+						hist.addChange(const_context, "", addtask.getContext());
+						hist.addChange(const_date, "", addtask.getDate().toString());
+						hist.addChange(const_priority, "", Integer.toString(addtask.getPriority()));
+						hist.addChange(const_project, "", addtask.getProject().getId());
+						if (addtask.isCompleted()) hist.addChange(const_completed, "", "yes");
+						else hist.addChange(const_completed, "", "no");
+						
+						history.add(hist);
+						
 					}
 					
 					datasource.close();
 					
 					
-					// call serializer and uploader
-					// TODO: HISTORY
-					ArrayList<TaskHistory> histories = new ArrayList<TaskHistory>();
 					
+					
+					
+					
+					// call serializer and uploader
 					JavaParser parser = new JavaParser();
 					parser.setProject(localProjects.get(i));
 					parser.setTasks(tasklist);
-					parser.setHistory(histories);
+					parser.setHistory(history);
 					try {
 						parser.writeFile(getApplicationContext(), getFilesDir() + "/" + localProjects.get(i).getId());
 					} catch (IOException e) {

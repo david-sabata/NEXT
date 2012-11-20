@@ -1,5 +1,6 @@
 package cz.fit.next.backend;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.database.Cursor;
@@ -11,6 +12,8 @@ public class Project {
 	protected String mId;
 
 	protected String mTitle;
+	
+	protected ArrayList<TaskHistory> mHistory = null;
 
 
 
@@ -105,4 +108,20 @@ public class Project {
 		return true;
 	}
 
+	/**
+	 * @return the mHistory
+	 */
+	public ArrayList<TaskHistory> getHistory() {
+		return mHistory;
+	}
+
+	/**
+	 * @param mHistory the mHistory to set
+	 */
+	public void setHistory(ArrayList<TaskHistory> mHistory) {
+		this.mHistory = mHistory;
+	}
+
+	
+	
 }
