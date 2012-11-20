@@ -40,7 +40,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
 				+ Constants.COLUMN_DESCRIPTION + " text, "
-				+ Constants.COLUMN_DATETIME + " long, "
+				+ Constants.COLUMN_DATETIME + " integer, "
 				+ Constants.COLUMN_PRIORITY + " integer, "
 				+ Constants.COLUMN_CONTEXT + " text, "
 				+ Constants.COLUMN_PROJECTS_ID + " text, "

@@ -66,9 +66,10 @@ public class SidebarFragment extends Fragment {
 			item.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					resetAllActiveClicks();
-					item.setBackgroundResource(R.color.FanItemsBackgroundColor);
-					areaOfInterestSelector(id);
+					// disabled - David
+					//resetAllActiveClicks();
+					//item.setBackgroundResource(R.color.FanItemsBackgroundColor);
+					updateContentFromItemClick(id);
 				}
 			});
 		}
@@ -83,7 +84,7 @@ public class SidebarFragment extends Fragment {
 	 * @brief This method switch between activities on id basement
 	 * @param id
 	 */
-	protected void areaOfInterestSelector(int id) {
+	protected void updateContentFromItemClick(int id) {
 		FanView fan = ((MainActivity) getActivity()).getFanView();
 
 		FragmentManager fragmentMgr = getActivity().getSupportFragmentManager();
@@ -93,13 +94,9 @@ public class SidebarFragment extends Fragment {
 			case R.id.Time_Next:
 				Log.i(LOG_TAG, "selection: Next");
 
-				// create new fragment only if needed
-				if (!(currentFragment instanceof TaskListFragment)) {
-					fan.replaceMainFragment(new TaskListFragment());
-				}
-				else {
-					((TaskListFragment) currentFragment).reloadContent();
-				}
+				// create new fragment to add to backstack
+				TaskListFragment fragNext = new TaskListFragment();
+				fan.replaceMainFragment(fragNext);
 
 				break;
 			case R.id.Time_Today:
@@ -116,8 +113,8 @@ public class SidebarFragment extends Fragment {
 				filter.setDateFrom(from);
 
 				// create new fragment to add to backstack
-				TaskListFragment frag = TaskListFragment.newInstance(filter);
-				fan.replaceMainFragment(frag);
+				TaskListFragment fragToday = TaskListFragment.newInstance(filter);
+				fan.replaceMainFragment(fragToday);
 
 				break;
 			case R.id.Time_InPlan:
