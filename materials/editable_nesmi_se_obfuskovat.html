@@ -1,0 +1,904 @@
+<html>
+    <head>
+        <title>Self-editing page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <!-- Basic style of the page -->
+        <style>
+            .invisible {
+                display:none;
+            }
+
+            /**
+            Whole body    
+            **/
+            * {
+                margin:0;
+                padding:0;
+            }
+            body {
+
+            }
+
+            /* Contain all other boxes*/
+            #wholePage {
+                height:100%;
+            }
+
+                #topBox {
+                    height:50px;
+                    background:grey;
+                }
+                    #nextLogo {
+                        float:left;
+                        height:50px;
+                        margin-left:10px;
+                    }
+
+                    #nameOfProject {
+                        width:100%;
+                    }
+                    #projectNameTop {
+                        color:#33b6ea;
+                        text-align:center;
+                        line-height:50px;
+                        font-weight:bold;
+                        font-size:25pt;
+                        text-shadow:5px 5px 15px  black;
+                    }
+                #mainBox {
+                    height:100%;
+                }
+
+                    #sideBar {
+                        width:15%;
+                        height:100%;
+                        float:left;
+                        background:#2c2c2c;
+                        box-shadow: 3px 3px 5px black;
+                      
+                    }
+                        .sideBarUl {
+                            margin-bottom:30px;
+                        }
+
+                        .sideBarTitleUl {
+                            text-align:center;
+                            line-height:30px;
+                            border-top:2px solid #33b6ea;
+                            color : #33b6ea;
+                            font-weight:bold;
+                            font-size:14pt;
+                        }
+                        .sideBarTitleUl span{
+                            margin:0px;
+                        }
+
+
+                        .sideBarImage {
+                            float:left;
+                            height:40px;
+                        }
+                        .sideBaritem {
+                            font-size:13pt;
+                            color:white;
+                            height: 40px;
+                            line-height:40px;
+                            list-style-type:none;
+                        }
+
+                        .sideBaritem:hover {
+                            background:#8FB5D0;
+                            color:white;
+                        }
+
+                        .sideBarContextItem {
+                            margin-left:40px;
+                        }
+                    
+                    /**
+                        Contain content of tasks    
+                    */
+                    #taskListDiv {
+                        height:100%;
+                        float:left;           
+                        width:85%;
+                        
+                                 
+                    }
+
+                        #taskList {
+                            margin:auto;    
+                            border-collapse:collapse;
+                            margin-left:3px;
+                            width:100%;
+                          
+                        }
+
+                            .tableCell {
+                                padding:3px;
+                            }
+
+                            .statusCell {
+                                text-align:center;
+                            }
+
+                            .tableHeader {
+                                  padding:3px;
+                            }
+        </style>
+
+
+        <!-- Javascript worker -->
+        <script type="text/javascript">
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+            function TopPanelCreator() {
+
+                this.init = init;
+
+                function init(projectName, images) {
+                    var logo = images.getImage('nextLogo');
+                    logo.setAttribute("id", "nextLogo");
+                    document.getElementById("logoImgPlace").appendChild(logo);
+
+                    var el = document.getElementById("nameOfProject");
+                    el.setAttribute("id", "projectNameTop");
+                    el.innerHTML = projectName;
+                }
+            }
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+            function MenuCreator() {
+                var images = null;
+                var menu = null;
+                var settings = null;
+                var lang = 'czech';
+
+                var commonMethods = new CommonWorker();
+                // Parse languages texts
+                var languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(document.getElementById('languages')) + ')');
+
+                // Public handlers to private method
+                this.init = init;
+                this.setMenuSettings = setMenuSettings;
+                this.regenerate = regenerate;
+                this.setLanguage = setLanguage;
+
+                /**
+                * Initialize menu element and images
+                */
+                function init(el, pImages) {
+                    images = pImages;
+                    menu = el;
+                }
+
+                /**
+                * This is important, becaouse object settings tell us, how will menu work
+                */
+                function setMenuSettings(pSettings) {
+                    settings = pSettings;
+                }
+
+                function setLanguage(pLang) {
+                    lang = pLang;
+                }
+
+                function createLi(img, liData) {
+                    var li = document.createElement('li');
+                    var span = document.createElement('span');
+
+                    if (img != null) {
+                        // Prepare text of item                        
+                        span.innerHTML = languagesTexts[lang][liData];
+
+                        var image = images.getImage(img);
+                        image.setAttribute("class", "sideBarImage");
+
+                        // Add image to item
+                        li.appendChild(image);
+                    } else {
+                        span.innerHTML = liData; // Contexts are unique -> they cant be translated
+                        span.setAttribute("class", "sideBarContextItem");
+
+                        // Add event listener to context
+                        li.addEventListener("click", function () {
+                            editor.setContexts([liData]);
+                            editor.cleanTaskList();
+                            editor.generateTaskList();
+                        });
+                    }
+
+
+                    li.appendChild(span);
+                    li.setAttribute("class", "sideBarItem");
+                    return li;
+                }
+
+                function createUl(s, ulData) {
+                    var ul = document.createElement('ul');
+
+                    ul.setAttribute("class", "sideBarUl");
+
+                    // Create description of UL block
+                    var titleUl = createLi(null, languagesTexts[lang][s]);
+                    titleUl.setAttribute("class", "sideBarTitleUl");
+                    ul.appendChild(titleUl);
+
+                    for (item in ulData) {
+
+                        // Fixed part of menu
+                        if (s == 'time') {
+                            var li = createLi(ulData[item], item);
+                        } else {
+                            // variable part of menu
+                            var li = createLi(null, ulData[item]);
+                        }
+                        ul.appendChild(li);
+                    }
+
+                    return ul;
+                }
+
+                /**
+                * Regenerate Menu
+                */
+                function regenerate() {
+                    for (s in settings) {
+                        var ul = createUl(s, settings[s]);
+                        menu.appendChild(ul);
+                    }
+                }
+            }
+
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+            /**
+            * This object will create all iamges that are defined in script tag with bass64 data
+            */
+            function ImageCreator() {
+                var images = null;
+                var commonMethods = new CommonWorker();
+                var data;
+
+                this.init = init;
+                this.getImage = getImage;
+                function init(ids) {
+
+                    images = new Object();
+                    for (id in ids) {
+                        var imgTag = document.getElementById(ids[id]);
+                        images[ids[id]] = imgTag;
+                    }
+                };
+
+                /**
+                * Return HTML image tag
+                * return concrete image
+                */
+                function getImage(key) {
+                    console.log(images[key]);
+                    return images[key];
+
+                }
+            }
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+            /**
+            * This object contatin methods, that needs all other object (like working with DOM and etc.)
+            */
+            function CommonWorker() {
+
+                // Public handler to private method
+                this.getContentOfScriptTag = getContentOfScriptTag;
+                this.findAllContexts = findAllContexts;
+
+                /**
+                * Load plain text from script tag
+                */
+                function getContentOfScriptTag(el) {
+                    var plainText = "";
+                    var node = el.firstChild;
+                    while (node) {
+                        if (node.nodeType == 3) {
+                            plainText += node.textContent;
+                        }
+                        node = node.nextSibling;
+                    }
+                    return plainText;
+                }
+
+
+                /**
+                * Go ghrought data and find all contexts
+                */
+                function findAllContexts(pData) {
+                    var contexts = [];
+                    var taskData = pData.data;
+                    for (task in taskData) {
+                        var taskContext = (taskData[task]).partContexts;
+                        if (contexts.indexOf(taskContext) == -1) {
+                            contexts.push(taskContext);
+                        }
+          
+                    }
+                    return contexts;
+                }
+            }
+
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+            /**
+            * Page modules, generator patterns
+            */
+            function TaskListGenerator() {
+                // Constants
+                var languageElement = document.getElementById('languages');
+
+                var tasksData = null;
+                var table = null;
+                var contexts = null;
+
+                var commonMethods = new CommonWorker();
+
+                // Public handlers to private method
+                this.createContent = createContent;
+
+
+                /**
+                * Generate content of cell and setting style of the cell
+                */
+                function createCell(pText, pBgColor, pTextColor, pBorders, pBold, pClass, pBorderColor) {
+                    // Create a new TD element
+                    var newTD = document.createElement('td');
+                    newTD.innerHTML = pText;
+                    newTD.setAttribute("style", "background:" + pBgColor + ";" +
+                                               "color:" + pTextColor + ";" +
+                                               "border-left:" + pBorders[0] + "px " + pBorderColor + ";" +
+                                               "border-right:" + pBorders[1] + "px " + pBorderColor + ";" +
+                                               "border-bottom:" + pBorders[2] + "px " + pBorderColor + ";" +
+                                                "border-top:" + pBorders[2] + "px " + pBorderColor + ";" +
+                                               "font-weight:" + pBold);
+                    newTD.setAttribute("class", pClass);
+                    return newTD;
+                }
+
+
+                /**
+                * Generate table header in language you want
+                */
+                function generateTableHeader(lang) {
+                    // Parse languages texts
+                    languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(languageElement) + ')');
+                    headers = languagesTexts[lang];
+                    // Create new row element
+                    var newTR = document.createElement('tr');
+                    var data = tasksData;
+                    if (data) {
+                        var task = data[0];
+                        for (item in task) {
+                            if (headers[item] != "ID") {
+                                // Create a new TD element
+                                var newTD = createCell(headers[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
+                                newTR.appendChild(newTD);
+                            }
+                        }
+                    }
+                    return newTR;
+                }
+                /**
+                * Generate on row in Task List
+                */
+                function createRow(task) {
+                    // Create new row element
+                    var newTR = document.createElement('tr');
+
+
+                    // Generate cells of the new row
+                    for (item in headers) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
+                        if (item == "title" ||
+                            item == "description" ||
+                            item == "date" ||
+                            item == "partProject" ||
+                            item == "partContexts" ||
+                            item == "important" ||
+                            item == "important" ||
+                            item == "status") {
+                            // Create a new TD element
+                            var newTD = null;
+                            var borderColor = "solid grey";
+                            var classCells = "tableCell";
+
+                            if (task[item] === undefined) {
+                                task[item] = "";
+                            }
+
+                            switch (item) {
+                                case 'title':
+                                    // text,    bgColor, textColor, borderOn, fontWeight
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor); // left, right, bottom, top
+                                    break;
+
+                                case 'description':
+                                    
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+
+                                case 'date':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+
+                                case 'partProject':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+
+                                case 'partContexts':
+                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+
+                                case 'important':
+                                    var bgColor;
+                                    var value = task[item];
+                                    if (value == 1) {
+                                        bgColor = '#2f9b3e';
+                                    } else if (value == 2) {
+                                        bgColor = '#ceef4a';
+                                    } else {
+                                        bgColor = '#ff3333';
+                                    }
+
+                                    newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    break;
+                                case 'status':
+                                    var value = task[item];
+                                    var el;
+                                    /**
+                                    * I know, that it is not ideal, but it is quick and easy solution
+                                    */
+                                    if (value == true) {
+                                        el = '<input type="checkbox" checked="checked" />';
+                                    } else {
+                                        el = '<input type="checkbox"  />';
+                                    }
+                                    newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal', "statusCell", borderColor);
+                                    break;
+
+                                default:
+                                    console.log("Unknown properties of object");
+                                    break;
+                            }
+                        }
+                        if (newTD != null) {
+                            newTR.appendChild(newTD);
+                        }
+                    }
+
+                    return newTR;
+                }
+
+                /**
+                * Is item in actual context?
+                */
+                function isInContext(taskContext) {
+                    for (c in contexts) {
+                        if (taskContext == contexts[c]) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                /**
+                 * Genre content of the table
+                 */
+                function generateTable() {
+                    table.appendChild(generateTableHeader('czech'));
+
+                    // Create new divs and add them to parent div
+                    for (task in tasksData) {
+                        if (isInContext(tasksData[task].partContexts)) {
+                            // Generate new element
+                            var newRow = createRow(tasksData[task]);
+                            table.appendChild(newRow);
+                        }
+                    }
+                }
+
+                /**
+                * Initialize data
+                */
+                function createContent(pTable, pData, pContexts) {
+                    tasksData = pData;
+                    table = pTable;
+                    contexts = pContexts;
+
+                    // Table content generation
+                    generateTable();
+                }
+
+            }
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
+
+            /**
+            * Editor Worker
+            * it is main worker, that control generating whole page
+            */
+            function EditorWorker() {
+                // constants
+                var taskListId = "taskList";
+                var contexts = null;
+                // variables
+                var tasksData = null;
+
+                // public handlers to private methods
+                this.init = init;
+                this.setContexts = setContexts;
+                this.cleanTaskList = cleanTaskList;
+                this.generateTaskList = generateTaskList;
+
+                var generatorTaskList = new TaskListGenerator();
+                var commonMethods = new CommonWorker();
+
+
+                /**
+                 * We have to initialize page on start
+                 */
+                function init(pTasksData) {
+                    // Dynamically add tasks from tasksData to page
+                    tasksData = pTasksData;
+                    generateTaskList();
+                }
+
+                /**
+                * Set Contexts, that we want to see
+                */
+                function setContexts(pContexts) {
+                    contexts = pContexts;
+                }
+
+                /**
+                * Delete TaskList cotnent on page
+                */
+                function cleanTaskList() {
+                    document.getElementById(taskListId).innerHTML = "";
+                }
+
+                /**
+                * Fill Task with data
+                */
+                function generateTaskList() {
+                    console.log(contexts);
+                    generatorTaskList.createContent(document.getElementById(taskListId), tasksData.data, contexts);
+                }
+
+            }
+        </script>
+
+        <!-- Languages data stored -->
+        <script id="languages" type="x-next/xlanguages">
+            {
+              czech: {
+                        id: "ID",
+                        title: "Název",
+                        description: "Popis",
+                        date: "Datum",
+                        partProject : "Projekt",
+                        partContexts : "Kontexty",
+                        important: "Důležitost",
+                        status: "Hotovo",
+                        next: "Další",
+                        today: "Dnes",
+                        inplan: "V plánu",
+                        sometimes: "Někdy",
+                        blocked: "Blokované",
+                        time: "Podle času",
+                        context: "Kontexty"
+                     } ,
+             english: {
+                        id: "ID",
+                        title: "Title",
+                        description: "Description",
+                        date: "Date",
+                        partProject : "Project",
+                        partContexts :"Contexts",
+                        important: "Important",
+                        status: "Done",
+                        next: "Next",
+                        today: "Today",
+                        inplan: "In plan",
+                        sometimes: "Sometimes",
+                        blocked: "Blocked",
+                        time: "Time",
+                        context: "Contexts"
+             }
+                
+            }
+        </script>
+
+        <!-- Here we will store our data for tasks -->
+        <script id="data" type="text/javascript">
+            var data =
+            //begin_of_data          
+             {
+                 filename: "editable.html",
+                 id: "123123",
+                 projectname: "Reader for NEXT",
+                 data: [
+                         {
+                             id: "111",
+                             title: "Basic structure",
+                             description: "Create basic layout",
+                             date: "1.11.2012",
+                             partProject: "Reader for NEXT",
+                             partContexts:"School",
+                             important: "3",
+                             status: true
+                         },
+                         {
+                             id: "112",
+                             title: "Plug-in modules",
+                             description: "Create generator for tasks layout",
+                             date: "1.11.2012",
+                             partProject: "Reader for NEXT",
+                             partContexts: "Javascript",
+                             important: "3",
+                             status: false
+
+                         },
+                         {
+                             id: "113",
+                             title: "Future extensions - home explore",
+                             date: "25.11.2012",
+                             partContexts: "Home",
+                             important: "2",
+                             status: true
+                         },
+                         {
+                             id: "114",
+                             title: "9 Days to End",
+                             description: "Prepare for the end of the world",
+                             date: "12.12.2012",
+                             partProject: "Reader for NEXT",
+                             partContexts: "Businnes",
+                             important: "3",
+                             status: true
+                         },
+                         {
+                             id: "115",
+                             title: "End of the world",
+                             description: "Try to survive",
+                             important: "3",
+                             status: true
+                         },
+                         {
+                             id: "116",
+                             title: "I dont know",
+                             description: "What write there",
+                             date: "1.1.2014",
+                             partProject: "Reader for NEXT",
+                             partContexts: "Businnes",
+                             important: "1",
+                             status: true
+                         }
+
+                 ],
+                 history:
+                 [
+                 ]
+             }
+            //end_of_data
+        </script>
+
+
+    </head>
+    
+    <body>
+        <div id="imageResources" style="display:none;">
+            <img id="nextLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAJ30lEQVR42u1cC0xUVxqWUq0FH1Gy1rpuQ9qmbpuatGktdN1uskkxu9s0jTamXfvQpgm22tR2uzY2cZeuLxaFqEvQNRgFU0jRajZhBYci
+                        WmQYWByBERxGpVOswMAMDjPMA+bB2fNdz4U7473zgBmYhyc5yeTec87/f989/+Oce+7MmHG/3C/3SwyVBLVa/VRPT89nAwMD/x4aGjpnsVg0drtdMzo66ias4Deu4R7aoC36oC/GiDlSurq61lKQZcPD
+                        w7cpeDLRgr4YA2NhzGgmK0GlUj1uMBiOUUD6yZDihyw9ZEBW1JBVXV2d0tfXd9jhcNjCQYwYUZAFmZAdscScPHlyVnd3d9bIyMjgVBAjRhRkQwfoEkncPKDVatdbrdbu6SBGjCjoAp2g27Qyc+LEiWSd
+                        Tvety+UikVagE3SDjtPihOvq6paZTKYOt9tNIrVAN+gIXafSiScoFIo0mp/oIsGkAjE56Aqdp4KkBKVS+QeawJmjgRwvksxNTU0Z4SQpoba2diUVZIwmcrxIMgJDOEhKkMlkv6b23B+N5AhJAgZgCSlJ
+                        OTk5c3t7e9WR7JCDcdzAAkyh4idRo9GUOp1OEisFWK5fv14KbJNOAuvr6z+kax4SawWYaPjfOKlkcu/evYv7aYlmv+PLHwEbME7YtJqbmwvpQpDEagE2YJyIqSWUlJS8YDQanSTGCzACa7BR7UHK7JlY
+                        csy+HDawAnPAsyc/P3+5wWBwkDgpwArMgc6iB6l3L4zFyOUnohUGNIvS0tLmdXZ29sVi5PIV0YAZ2P3mPadOnXqHOi4SbwWYgd1fXjTz0qVLp+PJvIRmBuzgwBdByR0dHbfiybyEZgbs4EAyeuXm5q7o
+                        7u7mOrwnv0N+K9Nz9bPLg5IDZzYYx9rV6MZnXp/dPXY90HrDfDet+OZHm8f1sp9sorJzrw2NtXmF1kbDCDnfOxy03HV1d7jxgJ0uYl+SimaJZWVlX9KQxzVeW3uHvFDRP1YrusXNbkO9caxNde94m16b
+                        26N/IFXDCHLRCfy+fFw+wPfYPPe9W40OsqJyvO/XrWbuuqxnOGi5b/4wwId7Qjn4QiqznlVRUVFsNptFCXq12kCMI+4JE/QuBfxx46DP+rN1nITOIRd5+Zx+rP8n/xskvOE73J76/bHGQMyOu3cvDzju
+                        GXcNJYBvm0ZJ9b7Pkwvs4ABciBGUdPHixQt2u12UINS/sYEmQlDzneDzzuIfrR5jlN++q1vhDc/rdf0jPseBifJtf/+9XrIdsIMDcCFG0NyGhoYb/OJUjCBUhX5kyghy00nxgcLoAU5JZ4hwZn0t8tAm
+                        ShCWHY2NjTfAhRhB81taWnT8Oy4hQb+rGlfo9QsDxOYanRKCULosLrJSNi7/JYHfEZpWKAjCbqNKpTKCCzGCFrS1tQ3xIV5IUInW5vHUDqgtQROEqLiJ+hGpeqrLJql4qdYmOpv9mVawBAH7tWvXbOBC
+                        jKCF7e3tTjGC5FSRozetHk9RbXKGNIohZPsyNW+T/6rZFPAsDJIgAi7ECEqh08spZmIgyEmVfOvS+DXkDrC0QAnCDPSVixzssEgqDvMUhnTe1C3O0ZASBOzgAFyIEqRUKofEnLScTeW2QaeHosWd1rD7
+                        IPi7Ny4OiM66f6jMISUI2MGBFEEL5XK5QSzMywW2nkdNgb8O5wlHGU6C/tk25DHOn+s8Te2CbjhkBAE7OJAysQVVVVVasURRSBCeKKa32BMNNUENNKV4UTDGX5QmYnV6ys+gCezAsDskBAE7OJBy0vPP
+                        nDmjEFtqyL2ihbfi4SAI4ftPgtkJYHpGBNZcQvmf+1grBkMQsIMDqTA/t6io6Luenh6/BKFk0QQtGII+oL5qS9Ogz1opWO/93Wv8Sq+1YLaX6f3nZ/ukCcJiFRxIJYpJBw8ezL558yYX7vwRZKJPOOO8
+                        IWCCAqlHrt+NZPArwut/Vd4b0r1N7RWazN62uiZMEDAD+4EDB3ZLLTVmbdy4MYN6cW7zCM4w/Vw/V72XF3ypoitnvg3qeYHD1NndHvcCqVhjDdKVKBw/fw0PQcrHwNSE/T9qNHI5k3f5jiahwvGkNsyA
+                        HRxILVaxxF9MV7P98brlCuzgQGq7A5tEC44fP37+1q1bJN427YEZ2FkEk3z9k7xr164vr1y5QuLttQ8wA7uvLVdu037RokVPlJeXD/LhPk5eHBJgBnZ/m/Z45ZFSUFDw346ODhIvr56BFZjZEsPvcZik
+                        9evXv0YzSlc8OGtgBFZglgrv97x6hic/fPiwXK1Wk1g//oLZA6wsegV0gAEefM6GDRvWnD17dlSv15NYPUAFbMCYmZmJT6vmBHMEBkw+SrPKc/Du/Ao/lgowARswAmswx1/4WZScnp6eVlJSYtJqtSTW
+                        DnECE7ABIwvtQR8LRjb5i6ysrLzKykqc5yOxcgwYWIAJ2IBxMqddZ9Oaun///tr6+nocwiYxcJCcAAswARvDOPFjwLTOS01Nfe7IkSO9LS0t+BaLROunCNAdGIAFmIAtFN+UYfqlrFu37u1jx45Zr169
+                        GnUk8eRAd2AAFpYUTvog+dgSBJ5+8+bNnxYVFQ2rVCpisVhItHwOBV2hM3QHBha1Zob0YxZmq0s3bdr0xdGjR+0IkbDnKPigjgvn0Bm6AwPDEvovftjAv6JpeSbNPk1yuZyLCJGYAkAn6AYdoSt0hu7h
+                        IsebpF+uXr36bZpk9SFcIqew2WwkUj7qhS7QCbpBR+gKncNNjpCkh7B2Wbp0aVp2dnY9TbhIU1MTPjPi9lam67NwyIYO0AU6QTfoyNZZD03pd6vMySESPL1169Z/0bzCePr0adLa2sqtcbAQnMI/FuBk
+                        QjZ0gC7QCboxHWdO1z8zJLJcInXJkiUrt2/f/m1+fr69vLyctLW1cUqHa0bxMwYyIAsyIRs6QBeWBM4LZSifTDI5mz2pJ5cvX/7qjh07qgoKChxQGhEE+73Yd5ksWTwpGAtjYmzIgCzIhGzowHSZPe1/
+                        LCBC1MNsbbMsIyNj7c6dOy/k5eVZiouLiUwm416r4N0TXtBhmxOveuFQYSLCdAG/cQ330AZt0Qd9MQbGwpgYGzIgCzKZ7IcjjRgxs8Pq+BGm9IotW7Zk7969+/K+fftMhw4dIqWlpdyTr6mpIQqFgpsJ
+                        7e3tRKPRcBW/cQ330AZt0Qd9MQbGwpgYm8l4hMlMnBElJYEpm8Sm+2O0PkPri6tWrXpn27ZthdQkvt+zZ8/VnJwcHQXdTyvJzc3lKn7jGu6hDdqiD/piDDbWY2zsJCYrev9LiEWRZPbOaTFzoHjyz9L6
+                        PAOdTutvWE1n155nbZaxPovZGMnTGZmmYmbNYk9+DjtJsYCdyUlhdSG7Np+1SWJ9EmORlKgu/weWw08W40/+iwAAAABJRU5ErkJggg=="/>
+          
+               <!-- Img at menu - Arrow-->
+               <img id="arrowImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG
+                   9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNU
+                   CBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMj
+                   Ij4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyI
+                   geG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW
+                   5zdGFuY2VJRD0ieG1wLmlpZDpGOEY2Mjc1QjVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGOEY2Mjc1QzVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNT
+                   TpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkY4NjA2OEZBNUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkY4RjYyNzVBNUIwRjExRTE5NDE5
+                   RTRCQ0FGNTE3NEIxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+1VnQNAAAAi9JREFUeNrsmM0rBGEcx2e2xXpZNkSIcnBBTuTOFaXEwUV
+                   JXvKWAwf/gQORKP4DOShnfwEX5eZGiFLyunnZ8X3qq/ZgzKz5mdnJ89Sn2Z1md7+f5/1Z07IsI8wlYoS8aAEtoAW0wP8RKAdmmAU6QXuYBSrBMmgIq0AS1IE1SQm/B/GztEQQs9CLpERQ06iYRJDrgIhE0AuZZ4l
+                   sWIk9SfgpkPoLiUwFYiAOikAJ3xt8X5R23+C2IZ52Xz1rSUuYGZyJq8AmKGMQFXAUtIBZLlT54BBMgkXQw2Cq5II8BwmD33EGpsGpZAuMgUbWZjU4ALdgnPdKQQHYBs2gn2ESJOYifMYt4VaglbX5yM+cg3Uwwj1
+                   OkjW8A47BPIiCV/BOUn8xsN0IqGAzvKZ43QA1oI/bgxxwAVZBL2ijlMTspH6ry+6hqIsv6mULPLFLHIF9sMXgX7WvxscHmGDN+/KHk5NABRhmIJMBV0A3a/kpbeDuggVQy67mtbgazD91oUIO3Hp2HTVQ98AlmErr
+                   Tm9gCTSBQcpGvyEiHd6pBVS/6wBXrP0rdpMBzjY3vCqpEx5WkmwV02YsiU+jP60DcdbaBwO9c2AVM8TXWvDI1wk+Y1eG2HIPUuGdWsDuh+5t7t+5OJGZkuH93gtFpMNny2701+GzQcBT+KAFPIcPUkAkfFACYuGD
+                   ECiQDO+3QEw6vN8C12BOMnymR0qvpZwnOCusAr4v71pAC2gBLaAFHMunAAMAyPeYoNE+CVEAAAAASUVORK5CYII=" />
+              
+             <!-- Img at menu - Cloud-->
+             <img id="cloudImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9i
+                 ZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3
+                 JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJk
+                 ZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3
+                 RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0i
+                 eG1wLmlpZDpFNTQyRkJDODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFNTQyRkJDOTVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJvbS
+                 BzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkU1NDJGQkM2NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkU1NDJGQkM3NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIi8+
+                 IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+D3BqmgAAAe9JREFUeNrsmD8sQ0Ecx19bolQTfwaJwYCIfxFiwEIiGAxmi0UkjU3MFgM2EhOJxWARbE
+                 aR2CQWEhIsFgwSQkRpq8/3km+TppE+fe/eaxu/Sz5pcu273ufud7+7ez7TNI1iLn6jyIsIiIAIiIAIiIAIiMB/FijR1E4LaAX14AXcgEsQK3SBMJgE4+y8ai8JnsEJ2AF3bgr4HNwHmsAK6AZfIJ72XQAEwSNYBMeF
+                 JlALtkAbeM/yOyURBTPgvJAWcQR0WHRelU8QAvNpdeWggTNYmY8ZUKO/D6pA4i//wc9VUAdGQDXrXzkzu+DMK4FhsMbO5/KwWhdlXCtJPpuqU2G2CTa8yEJBPpfI8TnV6Y9f6uJsb44i226tARU6Y6DfRucNi9lKMJ
+                 PNgmY3ZmAKTFPCzEiZuopqs4Z7yrpOgQizSCrXu/kiSe3cvVwb3zoWcSdjMmAzbHJOKuz4BTgCe1azbTUDozwuvHl0NktlpgEwCHrAQrYzldUibvRo5DMlotwkJziItrNQzMhfSfJzyInAtcYjt12JCicCh+CBu2U+
+                 Sim4ciJwD5YZSiEuML9HhBkBBzrOQn3cD9o5Kl6EjrrRLYFbXYc5dePq4lHY5+KGptp+AqeMANduZPJWQgREQAREQAREQAREQASclR8BBgC5mXcq9ghS2AAAAABJRU5ErkJggg==" />
+
+             <!-- Img at menu - Calendar-->
+             <img id="calendarImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZ
+                 G9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCB
+                 Db3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gP
+                 HJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM
+                 6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJR
+                 D0ieG1wLmlpZDpFNjUyMTJGODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFNkI0MTIwMDVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJ
+                 vbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkU2NTIxMkY2NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkU2NTIxMkY3NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxI
+                 i8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+RSw4EgAAAf1JREFUeNrsWeFKwzAQTm1x4jZ14ivsjQaKf/zpM/nTH4KCb7R3GFa76aQlXuACx5G
+                 11y5LGCbwseXWS/Itd1+ubaa1VsfcTtSRt0QgEUgEEoG4rdjD9wzwDrjEfglYAH4O5DeYwClgBOAn3gRwRRaSYb/qGE/qZ+xbwG/bYJngJH4GzAGNY4IRfiokuHUQVQP9csAS8LBvDpjFT8mEIVqGc859hFBD4rRio
+                 eCKZUkIdfnZa7SvJNY40Tex1YAPMkmJ/a5klPg1ksX3VaGc9U3c3jliuatJ/PIQMqoF4eLTLx1kEuUYs9BY4/c+dh2LwDng1aEuqof9lpCLsgNmMTNmUwPsKQeGqlJJ+iXajKavSClS4lmQ77g+GoENxjbXd5Ooj8w
+                 +wlhfDDhH9iaQ9VCPMSbqBP91O2eFh1kdI4Ta1IbWOCv8583ibxgBW+88Aa5Dq5BUbWq01wSK/XaRVMij2ihm/0R7weaxfY3XFKFVyKU2thTm9oIUbjyJDe5JFGgcO5qMutoa1WbCiFW+KtKhKvQmUCFrN9r+4qh5o
+                 uVA35qnQKmckZsVbzufVKhFhST2KAQ2Lfe0Uvsm9g7sUpC+9qA50AQM7cb3DljlyQMRsOeGlwdbZtFT6ZMyz7enXz5CaIkDhXwfq3HOZSfT9J44EUgEEoFE4F8T+BNgAI4AvJW6qkmzAAAAAElFTkSuQmCC" />
+            
+             <!-- Img at menu - Lock-->
+             <img id="lockImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZ
+                 S54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3J
+                 lIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZ
+                 jpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3R
+                 SZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ie
+                 G1wLmlpZDpENEUyMTU5MDVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpENTVEOTM3ODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+                 zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkQ0RTIxNThFNUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkQ0RTIxNThGNUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIi8+I
+                 DwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+6uBu2gAAAetJREFUeNrsmMtKw0AUhpNerBfwRtEqoggqPoELQcSFuNGlbrwsfAdXgqC48x1EdOe2bsS
+                 VCIIPUHAjohRU8IKorb3Y+A/8hVBsSbRDUnsGPjJNZibzzWTmJDUtyzJqOQWMGk8iIAIiIALeppCmNgfAIGjhuQ9wDW5A3s8CPWABTDBfnOECuANn4JD5qiSzipF4BqyBfpD5YaTVYEXALdgBx34SmAPbHHHV+SBo5
+                 FGlL/DJY4Qzsg6O/CAwBPZAKzvfDB7BKUfb4KxMgihIUeIFrIIrr9fAIjv2DprABdgAyZJyfWALjHE2YmAJbHo5A1Euyk7VFnjgqCbLlFcSu6AbqBs/g3nw5FUcGAEdfKYbQLxC5w1ei7OsqtMOhr0MZF0gzLx6/hM
+                 O6iRY1qBIzA+R2OQOk3JQNsWyph9fJcwqlZGXuboRsEgxX3BQp1BS50/7uNtAtgxGQRrkGIXzto6roDZVoV1Vttcmon7Pss0wA+ElONAVyPbBNHjlYszatkSDHQhVGFWTnU7bzkW4nao6beAErOiaAXXjN742lLvuN
+                 mVsgxBw24bsQiIgAiIgAiIgAiJQzwKhXwirOkGN/QnoFMjyozytSSDMezj/CHf5PTDOv0FyGgXuwbkuAVnEIiACIiAC/0vgW4ABAPzVePVeng+uAAAAAElFTkSuQmCC" />
+            
+             <!-- Img at menu - Desk-->
+             <img id="deskImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZ
+                 S54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3J
+                 lIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZ
+                 jpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3R
+                 SZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ie
+                 G1wLmlpZDpGMURBQjAyNjVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGMjNFQThEODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+                 zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkYxREFCMDI0NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkYxREFCMDI1NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIi8+I
+                 DwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+JVwUBAAAAidJREFUeNrsmjtLA0EUhXc3MT4SU1nFQrRXGwW1FCtBxEehomBlIWhn7Q8QtFQCoqBgp52
+                 l/gEbsdAqYGNlY4zPPNZz8SyENbKbZB9E58KHMLvOzJl7587sTHTTNLVGNkNrcFMCwraoj3X3gjFQBJfgxo9GdJ8msXR8CySANPAMNsBFIwhoAmcgzk6XwDbIgSmQDzqE+sE4O1ZyeFdGIwa6wQm4YrmM/BzYBK8u5
+                 p5Boefgul4BPWAetDKeNRciPsEIGGTZEDs0I153UUcEvIE7LwQU6P4CO5eo0Amdz1/KylJgt6ydfFn4xFlmVhCfY33vrNOzLGTQ/Qes3LCJlA5PstxkmVH23BIqYXgMHhiWlkl5C1gAbX6kUYOhcchRsts04/zD1im
+                 7SSjegtMKz8S7s/wb2DqQBBNgkXPEdJgf4o1V0EUR92GuxJ0gzeySooecTOZBB0WIN/vCFLAOBkCWHXOTYawJ/8QBWAlrK9EORjkIyTraH+b/Z4MWIBN075d06HonQM8Vw/CA5Px9tZ1W3wO1m6TCJYdNnsE9Tdq2w
+                 CkPeOGBR7Dz10PITQRIGj3igKgQUiHkZ7ioEPqPIaQWMhVCPi5knmQlFULqe0AJUAKUgMCykOR6ubxY1n6eTnth1ul0rJp1pVoBzWBNc3eEWItZ9wOeCpB35LjbuqExtdpP4tyYXH5E2G7UCwEZ7fu+q55v31q3GRm
+                 nF3X1Wwkl4J8L+BJgAMi4jS3Qe29kAAAAAElFTkSuQmCC" />
+
+         </div>
+        <div id="wholePage">
+            <!-- Top panel -->
+            <div id="topBox">
+                <div id="logoImgPlace"></div>
+                <div id="nameOfProject"></div>
+                <div id="buttonSwitchEditor"></div>
+            </div>
+            
+            <!-- Main content ( SideBar and ListView) -->
+            <div id="mainBox">
+                <!-- Sidebar on the left -->
+                <div id="sideBar">
+                </div>
+
+                <!-- WORKERSTART:TASKLIST -->
+                <div id="taskListDiv">
+                    <table id="taskList">
+                    </table>
+                </div>
+                <!-- WORKEREND:TASKLIST -->
+            </div>
+        </div>
+        
+        <!-- Start our APPLICATION ! YES :-) -->
+        <script>
+            var topPanel = new TopPanelCreator();
+            var editor = new EditorWorker();
+            var images = new ImageCreator();
+            var menu = new MenuCreator();
+            var globalMethods = new CommonWorker();
+            //  var data = null;
+            window.onload = function () {
+                ////////////////////////////////////////////
+                ////////////// PREPARE DATA ////////////////
+                ////////////////////////////////////////////
+
+                // Load images
+                var imagesIds = ["nextLogo",
+                                 "arrowImg",
+                                 "cloudImg",
+                                 "calendarImg",
+                                 "deskImg",
+                                 "lockImg"];
+                images.init(imagesIds);
+
+
+                // Load Data
+                var content = globalMethods.getContentOfScriptTag(document.getElementById("data"));
+                // Transfer JSON data to Object
+                //data = eval('(' + content + ')');
+
+                // Find all contexts
+                var contexts = globalMethods.findAllContexts(data);
+
+                ////////////////////////////////////////////
+                //////////////////// TOP ///////////////////
+                ////////////////////////////////////////////
+                topPanel.init(data.projectname, images);
+
+                ////////////////////////////////////////////
+                ////////////////// TASKS ///////////////////
+                ////////////////////////////////////////////
+                editor.setContexts(contexts); //it is very important !!
+                editor.init(data, images);
+
+
+
+                ////////////////////////////////////////////
+                ////////////////// MENU ////////////////////
+                ////////////////////////////////////////////
+                // Set menu settings
+                var menuSet = new Object();
+                menuSet['time'] = {
+                    'next': 'arrowImg', // text : img
+                    'today': 'deskImg',
+                    'inplan': 'calendarImg',
+                    'sometimes': 'cloudImg',
+                    'blocked': 'lockImg'
+                };
+                menuSet['context'] = contexts;
+
+                // Create menu
+                menu.init(document.getElementById("sideBar"), images);
+                menu.setMenuSettings(menuSet);
+
+                menu.regenerate();
+
+                // editor.cleanTaskList();
+
+            };
+        </script>
+    </body>
+</html>
