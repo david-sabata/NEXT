@@ -53,9 +53,11 @@ public class DateTime {
 	public DateTime(String s) {
 		for (String format : FORMATS) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				mDate = sdf.parse(s);
+				break;
 			} catch (ParseException e) {
+				mDate = null;
 			}
 		}
 

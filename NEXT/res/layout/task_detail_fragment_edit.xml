@@ -178,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
-                    android:inputType="date"
+                    android:inputType="text"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
