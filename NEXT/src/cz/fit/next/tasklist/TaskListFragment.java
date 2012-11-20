@@ -91,7 +91,7 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		// create deafult adapter - all items
 		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
-		setListAdapter(new TaskListAdapter(getActivity(), cursor));
+		setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
 
 		Bundle args = getArguments();
 		if (args != null) {

@@ -64,8 +64,7 @@ public class TasksDataSource {
 
 
 	/**
-	 * Returns query used for Tasks listing - does not contain all 
-	 * data, only Task.ID, Task.TITLE, Project.TITLE 
+	 * Returns query used for Tasks listing
 	 */
 	public Cursor getAllTasksCursor() {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
@@ -75,14 +74,16 @@ public class TasksDataSource {
 		String[] selectColumns = new String[] {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
-				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME
 		};
 
 		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null);
 
 		return cursor;
 	}
-	
+
 	/**
 	 * Returns complete tasks from one project
 	 */
@@ -101,9 +102,9 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
-		
+
 		};
-		
+
 		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = '" + projectId + "'";
 
 		Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
@@ -136,8 +137,9 @@ public class TasksDataSource {
 
 		Cursor cursor = q.query(database, selectColumns, where, args, null, null, null, "1");
 		cursor.moveToFirst();
-		
-		if (cursor.getCount() == 0) return null;
+
+		if (cursor.getCount() == 0)
+			return null;
 		return cursor;
 	}
 
@@ -211,15 +213,18 @@ public class TasksDataSource {
 				String[] selectColumns = new String[] {
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
-						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE
+						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME
 				};
 
 				String where = "";
-				//List<String> whereArgs = new ArrayList<String>();
 
-				// date from
-				if (filter != null && filter.getDateFrom() != null) {
+				// datetime
+				if (filter != null && filter.getDateFrom() != null && filter.getDateUntil() != null) {
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().getTimeInMillis();
+					where += " AND ";
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().getTimeInMillis();
 				}
 
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
@@ -229,5 +234,4 @@ public class TasksDataSource {
 		};
 
 	}
-
 }
