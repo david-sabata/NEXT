@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
@@ -122,6 +123,31 @@ public class TaskDetailFragment extends Fragment {
 	}
 
 
+	private void setTitleLayout(LinearLayout titleLayout, TextView textData, String itemType) {
+		if (textData != null && titleLayout != null ) {
+			String text = null;
+			if(itemType.equals("title")) {
+				text = mTask.getTitle();
+			} else if (itemType.equals("description")) {
+				text = mTask.getDescription();
+			} else if (itemType.equals("date")) {
+				text = mTask.getDate().toLocaleString();
+			} else if (itemType.equals("project")) {
+				text = mTask.getProject().getTitle();
+			} else if (itemType.equals("context")) {
+				text = mTask.getContext();
+			}
+		
+			//Log.i("description", text);
+			if(text != null && !text.equals("")) {
+				textData.setText(text);
+				titleLayout.setVisibility(View.VISIBLE);
+			} else {
+				titleLayout.setVisibility(View.GONE);
+			}	
+		}
+		
+	}
 
 	/**
 	 * Sets up the (sub)views acording to the loaded task
@@ -134,33 +160,29 @@ public class TaskDetailFragment extends Fragment {
 		}
 
 		// set description
-		TextView descripton = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
-		if (descripton != null) {
-			descripton.setText(mTask.getDescription());
-		}
+		TextView description = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
+		LinearLayout descriptionLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskDescriptionLayout);
+		setTitleLayout(descriptionLayout, description, "description");
 
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.textDateShow);
-		if (date != null) {
-			date.setText(mTask.getDate().toLocaleString());
-		}
+		LinearLayout dateLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskDateLayout);
+		setTitleLayout(dateLayout, date, "date");
 
+		// set project
+		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
+		LinearLayout projectLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskProjectLayout);
+		setTitleLayout(projectLayout, project, "project");
+
+		// set context
+		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
+		LinearLayout contextLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskContextLayout);
+		setTitleLayout(contextLayout, context, "context");
+		
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
 		if (isCompleted != null) {
 			isCompleted.setChecked(mTask.isCompleted());
-		}
-
-		// set project
-		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
-		if (project != null) {
-			project.setText(mTask.getProject().getTitle());
-		}
-
-		// set context
-		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
-		if (context != null) {
-			context.setText(mTask.getContext());
 		}
 
 		// set priority
