@@ -387,16 +387,21 @@
                     headers = languagesTexts[lang];
                     // Create new row element
                     var newTR = document.createElement('tr');
-                    var data = tasksData;
-                    if (data) {
-                        var task = data[0];
-                        for (item in task) {
-                            if (headers[item] != "ID") {
-                                // Create a new TD element
-                                var newTD = createCell(headers[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
-                                newTR.appendChild(newTD);
-                            }
+
+                    for (item in headers) {
+                        if (item == "title" ||
+                              item == "description" ||
+                              item == "date" ||
+                              item == "partProject" ||
+                              item == "partContexts" ||
+                              item == "important" ||
+                              item == "important" ||
+                              item == "status") {
+                            // Create a new TD element
+                            var newTD = createCell(headers[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
+                            newTR.appendChild(newTD);
                         }
+
                     }
                     return newTR;
                 }
@@ -636,74 +641,9 @@
         <!-- Here we will store our data for tasks -->
         <script id="data" type="text/javascript">
             var data =
-            //begin_of_data          
-             {
-                 filename: "editable.html",
-                 id: "123123",
-                 projectname: "Reader for NEXT",
-                 data: [
-                         {
-                             id: "111",
-                             title: "Basic structure",
-                             description: "Create basic layout",
-                             date: "1.11.2012",
-                             partProject: "Reader for NEXT",
-                             partContexts:"School",
-                             important: "3",
-                             status: true
-                         },
-                         {
-                             id: "112",
-                             title: "Plug-in modules",
-                             description: "Create generator for tasks layout",
-                             date: "1.11.2012",
-                             partProject: "Reader for NEXT",
-                             partContexts: "Javascript",
-                             important: "3",
-                             status: false
+  //begin_of_data 
+            {"history":[],"data":[{"id":"97ea5399-6543-461c-b97c-2bc9a4327ce7","title":"Dummy task","status":false,"important":1,"description":"Prevelice dlouhy popis projektu. Budeme se modlit aby se nam do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.","date":"2013-01-21 00:00:00.000+0100","partContexts":"Škola","partProject":"Projekt 1"},{"id":"0346cdfd-72f0-472f-b500-23300308b9bd","title":"Dummy task with veeery long title that will surely go out of the screen","status":false,"important":0,"description":"<Some description would be here>","date":"2012-11-10 00:00:00.000+0100","partContexts":"Doma","partProject":"Projekt 1"},{"id":"7dd7b2d1-ff52-43eb-990b-574e5e9c9d39","title":"Completed task with no description","date":"2013-03-03 00:00:00.000+0100","status":true,"partContexts":"Doma","partProject":"Projekt 1","important":2}],"id":"0659c345-7f17-4caa-8525-015ea3317d3a","projectname":"Projekt 1"}﻿            //end_of_data
 
-                         },
-                         {
-                             id: "113",
-                             title: "Future extensions - home explore",
-                             date: "25.11.2012",
-                             partContexts: "Home",
-                             important: "2",
-                             status: true
-                         },
-                         {
-                             id: "114",
-                             title: "9 Days to End",
-                             description: "Prepare for the end of the world",
-                             date: "12.12.2012",
-                             partProject: "Reader for NEXT",
-                             partContexts: "Businnes",
-                             important: "3",
-                             status: true
-                         },
-                         {
-                             id: "115",
-                             title: "End of the world",
-                             description: "Try to survive",
-                             important: "3",
-                             status: true
-                         },
-                         {
-                             id: "116",
-                             title: "I dont know",
-                             description: "What write there",
-                             date: "1.1.2014",
-                             partProject: "Reader for NEXT",
-                             partContexts: "Businnes",
-                             important: "1",
-                             status: true
-                         }
-
-                 ],
-                 history:
-                 [
-                 ]
-             }
             //end_of_data
         </script>
 
