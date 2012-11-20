@@ -118,10 +118,15 @@ public class TasksDataSource {
 
 
 	/**
-	 * Returns Task object based on ID
+	 * Returns Task object based on ID 
+	 * or NULL if the ID was not found
 	 */
 	public Task getTaskById(String id) {
-		return new Task(getSingleTaskCursor(id));
+		Cursor cursor = getSingleTaskCursor(id);
+		if (cursor.getCount() > 0)
+			return new Task(cursor);
+		else
+			return null;
 	}
 
 

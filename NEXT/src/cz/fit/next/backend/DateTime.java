@@ -33,6 +33,12 @@ public class DateTime {
 	protected Date mDate;
 
 
+	/**
+	 * Create from current time
+	 */
+	public DateTime() {
+		mDate = new Date();
+	}
 
 	/**
 	 * Create from date object
