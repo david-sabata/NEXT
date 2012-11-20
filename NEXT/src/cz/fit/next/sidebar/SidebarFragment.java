@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,7 +26,6 @@ import cz.fit.next.tasklist.TaskListFragment;
 public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
-	private TextView lastSelected = null;
 
 	/**
 	 * IDs of fixed menu items
@@ -63,14 +63,21 @@ public class SidebarFragment extends Fragment {
 			// set graphic layout of item
 			setItemProperties(item);
 
-			// set on click event
-			item.setOnClickListener(new View.OnClickListener() {
+			//set on touch event
+			item.setOnTouchListener(new View.OnTouchListener() {		
 				@Override
-				public void onClick(View v) {
-					// disabled - David
-					//resetAllActiveClicks();
-					//item.setBackgroundResource(R.color.FanItemsBackgroundColor);
-					updateContentFromItemClick(id);
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					Log.i("TOUCH", "item");
+					if(event.getAction() == MotionEvent.ACTION_DOWN) {
+						v.setBackgroundColor(Color.parseColor("#00FFFF"));		
+					} else if (event.getAction() == MotionEvent.ACTION_UP) {
+						v.setBackgroundColor(Color.TRANSPARENT);
+						updateContentFromItemClick(id);
+					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+						v.setBackgroundColor(Color.TRANSPARENT);
+					}
+					return true;
 				}
 			});
 		}
@@ -151,16 +158,6 @@ public class SidebarFragment extends Fragment {
 				break;
 		}
 		
-		// Reset color of last checked to transparent
-		if(lastSelected != null) {
-			lastSelected.setBackgroundColor(Color.TRANSPARENT);
-		}
-		
-		// Set background of actual selected item to blue
-		TextView itemSelected = (TextView) fan.findViewById(id);
-		itemSelected.setBackgroundColor(Color.parseColor("#8FB5D0"));
-
-		lastSelected = itemSelected;
 		// always toggle sidebar
 		fan.showMenu();
 	}
