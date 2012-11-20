@@ -95,7 +95,7 @@ public class SidebarFragment extends Fragment {
 				Log.i(LOG_TAG, "selection: Next");
 
 				// create new fragment to add to backstack
-				TaskListFragment fragNext = new TaskListFragment();
+				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
 				fan.replaceMainFragment(fragNext);
 
 				break;
@@ -113,7 +113,7 @@ public class SidebarFragment extends Fragment {
 				filter.setDateFrom(from);
 
 				// create new fragment to add to backstack
-				TaskListFragment fragToday = TaskListFragment.newInstance(filter);
+				TaskListFragment fragToday = TaskListFragment.newInstance(filter, R.string.frag_title_today);
 				fan.replaceMainFragment(fragToday);
 
 				break;

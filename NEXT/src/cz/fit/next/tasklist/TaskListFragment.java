@@ -37,15 +37,26 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	private final static String LOG_TAG = "ContentFragment";
 
 	/**
-	 * Used in Bundle to store serialized Filter state
+	 * Key to Bundle to store serialized Filter state
 	 */
 	private static final String ARG_FILTER = "filter";
+
+	/**
+	 * Key to Budnle to store fragment title
+	 */
+	private static final String ARG_TITLE = "title";
+
 
 
 	/**
 	 * Active filter or null for all items
 	 */
 	protected Filter mFilter;
+
+	/**
+	 * Title of this fragment - shown in action bar if set
+	 */
+	protected int mTitleResId;
 
 
 
@@ -56,11 +67,12 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	 * 
 	 * Use ONLY this method to create a new instance!
 	 */
-	public static TaskListFragment newInstance(Filter filter) {
+	public static TaskListFragment newInstance(Filter filter, int title) {
 		TaskListFragment frag = new TaskListFragment();
 
 		Bundle b = new Bundle();
 		b.putString(ARG_FILTER, filter != null ? filter.toString() : null);
+		b.putInt(ARG_TITLE, title);
 
 		frag.setArguments(b);
 
@@ -83,8 +95,8 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		Bundle args = getArguments();
 		if (args != null) {
-			String filterStr = args.getString(ARG_FILTER);
-			mFilter = Filter.fromString(filterStr);
+			mTitleResId = args.getInt(ARG_TITLE);
+			mFilter = Filter.fromString(args.getString(ARG_FILTER));
 		}
 	}
 
@@ -106,6 +118,9 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		// re-apply filter
 		setFilter(mFilter);
+
+		// update actionbar title
+		getActivity().getActionBar().setTitle(mTitleResId);
 
 		// register long click events
 		registerForContextMenu(getListView());

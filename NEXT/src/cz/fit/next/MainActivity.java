@@ -230,7 +230,7 @@ public class MainActivity extends FragmentActivity {
 			Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
 			if (currentFragment != null && currentFragment instanceof LoadingFragment) {
 				FanView fan = (FanView) findViewById(R.id.fan_view);
-				TaskListFragment frag = TaskListFragment.newInstance(null);
+				TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
 
 				// replace without history
 				fan.replaceMainFragment(frag, false);
