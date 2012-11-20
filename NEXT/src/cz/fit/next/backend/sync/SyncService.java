@@ -99,13 +99,13 @@ public class SyncService extends Service {
 		// if button pressed ask for username
 		if (intent != null) {
 			Bundle b = intent.getExtras();
-			if (b.getInt("buttonPressed") == 1) {
+			/*if (b.getInt("buttonPressed") == 1) {
 				
 				Intent i = new Intent(this,LoginActivity.class);
 				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				this.startActivity(i);
 				
-			}
+			}*/
 			
 			if (b.getInt("inAuth") == -1) {
 				

@@ -26,6 +26,7 @@ import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.JavaParser;
+import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.sidebar.SidebarFragment;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -148,11 +149,12 @@ public class MainActivity extends FragmentActivity {
 				// Log.i("Setting", "Google Login");
 
 				// tell synchronization service to choose user account
-				Intent i = new Intent(this, SyncService.class);
+				Intent i = new Intent(this, LoginActivity.class);
 				Bundle b = new Bundle();
-				b.putInt("buttonPressed", 1);
+				b.putInt("login", 1);
 				i.putExtras(b);
-				this.startService(i);
+				//this.startService(i);
+				startActivity(i);
 
 
 				break;

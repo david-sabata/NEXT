@@ -41,9 +41,15 @@ public class LoginActivity extends Activity {
 		String accList[] = new String[1];
 		accList[0] = "com.google";
 
-		startActivityForResult(
+		Intent i = getIntent();
+		Bundle b = i.getExtras();
+		
+		if (b.getInt("login") == 1) {
+			Log.i("yy", "starting picker");
+			startActivityForResult(
 				AccountPicker.newChooseAccountIntent(null, null, accList, true, null, null, null, null),
 				CHOOSE_ACCOUNT);
+		}
 		
 	}
 
@@ -52,7 +58,9 @@ public class LoginActivity extends Activity {
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i("yy", "on activity result");
 		if ((requestCode == CHOOSE_ACCOUNT) && (resultCode == RESULT_OK) && (data != null)) {
+			Log.i("yy", "on account activity result");
 			mAccountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
 			
 			AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
@@ -76,6 +84,7 @@ public class LoginActivity extends Activity {
     {
     	@Override
     	protected String doInBackground(Void... arg0) {
+    			Log.i("yy", "before auth");
     			Account account = new Account(mAccountName,"com.google");
     		    String authToken = getGoogleAccessToken(LoginActivity.this, account);
     		    Log.e("ii","Token is: " + authToken);
@@ -91,6 +100,7 @@ public class LoginActivity extends Activity {
     		if (result != null) {
     			Intent i = new Intent(LoginActivity.this, SyncService.class);
     			Bundle b = new Bundle();
+    			Log.i("yy", "post execute good");
     			b.putInt("inAuth", 1);
     			b.putString("accountName", mAccountName);
     			i.putExtras(b);
@@ -100,6 +110,7 @@ public class LoginActivity extends Activity {
     		} else {
     			Intent i = new Intent(LoginActivity.this, SyncService.class);
     			Bundle b = new Bundle();
+    			Log.i("yy", "post execute bad");
     			b.putInt("inAuth", -1);
     			i.putExtras(b);
     			LoginActivity.this.startService(i);

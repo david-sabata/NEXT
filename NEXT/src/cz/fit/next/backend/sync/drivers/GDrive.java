@@ -334,14 +334,14 @@ public class GDrive {
 				// body.setDescription("");
 				body.setMimeType("application/vnd.google-apps.folder");
 				mService.files().insert(body).execute();
-				
+				getAppFolderId();				
 			}
 			
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+		mAppFolder = nextDirId;
 		return nextDirId;
 		
 	}
