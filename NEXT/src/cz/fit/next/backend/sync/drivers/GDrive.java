@@ -153,6 +153,9 @@ public class GDrive {
 		if (existing != null) deleteFile(existing);
 		uploadFile(filename, localname, mAppFolder);
 		
+		// Delete local pattern
+		java.io.File f = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+		if (!f.delete()) Log.e(TAG, "DELETING ERROR!!!!");
 	}
 	
 	/**

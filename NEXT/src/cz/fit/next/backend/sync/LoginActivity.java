@@ -45,7 +45,7 @@ public class LoginActivity extends Activity {
 			SyncService s = SyncService.getInstance();
 			s.authorize(accountName, LoginActivity.this);
 			
-			//finish();
+			finish();
 
 		} else {
 			Log.e("NEXT", "Unexpected result.");

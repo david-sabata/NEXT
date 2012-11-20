@@ -226,6 +226,10 @@ public class SyncService extends Service {
 				ArrayList<Task> remoteTasks = parser.getTasks(proj);
 				ArrayList<TaskHistory> remoteHistory = parser.getHistory();
 				
+				// Delete temp file from mobile
+				java.io.File f = new java.io.File(getFilesDir() + "/" + lf.get(i).getTitle());
+				f.delete();
+				
 				
 				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
 				
@@ -247,46 +251,47 @@ public class SyncService extends Service {
 				datasource.open();
 				cursor = datasource.getProjectTasksCursor(proj.getId());
 				
-				//Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
-				
+				if (cursor != null) {							
+					while (cursor.moveToNext()) {
+						
+						//Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
+						Task task = new Task(cursor);
+						//Log.i(TAG, "po tasku");
+						
+						for (int j = 0; j < remoteTasks.size(); j++) {
+							if (task.getId().equals(remoteTasks.get(j).getId())) {
+								// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
+								Log.i(TAG,"Twoway sync : " + task.getTitle());
 								
-				while (cursor.moveToNext()) {
-					
-					Task task = new Task(cursor);
-					
-					for (int j = 0; j < remoteTasks.size(); j++) {
-						if (task.getId().equals(remoteTasks.get(j).getId())) {
-							// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
-							Log.i(TAG,"Twoway sync: " + task.getTitle());
-							
-							// remote task was processed, delete it from array
-							remoteTasks.remove(j);
-							j--;
-							// go to next local task
-							break;
-						} else {
-							if (j == remoteTasks.size() - 1) {
-								// Tasks are not in remote, but only in local
-								// Project is dirty
-								dirtyProjects.add(task.getProject());
-								dirtyProjectsHistories.add(remoteHistory);
+								// remote task was processed, delete it from array
+								remoteTasks.remove(j);
+								j--;
+								// go to next local task
+								break;
+							} else {
+								if (j == remoteTasks.size() - 1) {
+									// Tasks are not in remote, but only in local
+									// Project is dirty
+									dirtyProjects.add(task.getProject());
+									dirtyProjectsHistories.add(remoteHistory);
+								}
 							}
 						}
+						
+						
 					}
-					
-					
-				} 
+				}
 				
 				// Create tasks, that are not in local, but only in remote
 				for (int j = 0; j < remoteTasks.size(); j++) {
-					Task newtask = new Task(remoteTasks.get(i).getId(),
-							remoteTasks.get(i).getTitle(),
-							remoteTasks.get(i).getDescription(),
-							remoteTasks.get(i).getDate(),
-							remoteTasks.get(i).getPriority(),
-							remoteTasks.get(i).getProject(),
-							remoteTasks.get(i).getContext(),
-							remoteTasks.get(i).isCompleted());
+					Task newtask = new Task(remoteTasks.get(j).getId(),
+							remoteTasks.get(j).getTitle(),
+							remoteTasks.get(j).getDescription(),
+							remoteTasks.get(j).getDate(),
+							remoteTasks.get(j).getPriority(),
+							remoteTasks.get(j).getProject(),
+							remoteTasks.get(j).getContext(),
+							remoteTasks.get(j).isCompleted());
 					
 					datasource.saveTask(newtask);
 				}
