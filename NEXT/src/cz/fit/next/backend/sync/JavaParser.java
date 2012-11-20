@@ -105,17 +105,14 @@ public class JavaParser {
 	 * @throws JSONException
 	 */
 	private void parseJsonData(BufferedReader reader) throws IOException, JSONException {
-		// Load data to String
-		String line;
-		String outString = new String();
-		
-		while ((line = reader.readLine()) != null) {
-			outString += line;
+		// Load data to String    
+	    StringBuilder wholeFile = new StringBuilder();
+	    String readLine = null;
+		while((readLine = reader.readLine()) != null){
+			wholeFile.append(readLine);	
 		}
 		
-		
-		String jsonString = outString.replaceAll(scriptPattern, "$3");
-		Log.i("a", jsonString);
+		String jsonString = wholeFile.toString().replaceAll(scriptPattern, "$3");
 		projectData = new JSONObject(jsonString);
 		
 	}
@@ -335,17 +332,18 @@ public class JavaParser {
 		InputStream input = c.getResources().openRawResource(id);
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 	    
-	    String eol = System.getProperty("line.separator"); 
-	    
+	    String eol = System.getProperty("line.separator"); 	    
+	    StringBuilder wholeFile = new StringBuilder();
 	    String readLine = null;
-		String output = "";
+	    
 		while((readLine = reader.readLine()) != null){
-		    output += readLine + eol;
+			wholeFile.append(readLine);
+			wholeFile.append(eol);		
 		}
 		// Close the InputStream and BufferedReader
 		input.close();
 		reader.close();
-		return output;
+		return wholeFile.toString();
 	}
 	
 	/**
