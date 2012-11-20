@@ -151,7 +151,7 @@ public class TasksDataSource {
 	 */
 	public Task getTaskById(String id) {
 		Cursor cursor = getSingleTaskCursor(id);
-		if (cursor.getCount() > 0)
+		if ((cursor != null) && (cursor.getCount() > 0))
 			return new Task(cursor);
 		else
 			return null;

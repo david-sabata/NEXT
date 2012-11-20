@@ -332,13 +332,19 @@ public class SyncService extends Service {
 				}
 			}
 			
+			int posOfDirtyProjects = localProjects.size();
+			
 			// add dirty projects to local
 			localProjects.addAll(dirtyProjects);
 			
 			// Send local projects to remote
 			for (int i = 0; i < localProjects.size(); i++) {	
 				
-					Log.i(TAG, "Only local project: " + localProjects.get(i).getTitle());
+					if (i >= posOfDirtyProjects) {
+						Log.i(TAG, "Dirty project: " + localProjects.get(i).getTitle());
+					} else {
+						Log.i(TAG, "Only local project: " + localProjects.get(i).getTitle());
+					}
 					
 					// write all the tasks from project to remote storage
 					datasource = new TasksDataSource(getApplicationContext());
@@ -396,7 +402,7 @@ public class SyncService extends Service {
 						e.printStackTrace();
 					}
 					
-					drive.upload(getApplicationContext(), null, localProjects.get(i).getTitle() + ".nextproj.html", localProjects.get(i).getId());
+					drive.upload(getApplicationContext(), null, localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
 					
 			}
 				

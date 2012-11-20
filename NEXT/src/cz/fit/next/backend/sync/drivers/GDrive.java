@@ -136,6 +136,15 @@ public class GDrive {
 	}
 	
 	/**
+	 * Deletes file on storage 
+	 * 	 */
+	public void delete(String filename) {
+		String existing = getFileIdByName(filename, mAppFolder);
+		if (existing != null) Log.i(TAG,"EXISTS!");
+		if (existing != null) deleteFile(existing);
+	}
+	
+	/**
 	 * Upload file with given local name to storage with other name
 	 */
 	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
