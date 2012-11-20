@@ -30,6 +30,7 @@ import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
@@ -357,12 +358,12 @@ public class SyncService extends Service {
 						
 						TaskHistory hist = new TaskHistory();
 						hist.setAuthor(mAccountName);
-						hist.setTimeStamp("0000"); // TODO
+						hist.setTimeStamp(new DateTime().toString());
 						hist.setTaskId(addtask.getId());
 						
-						hist.addChange(const_title, "", addtask.getTitle());
-						hist.addChange(const_description, "", addtask.getDescription());
-						hist.addChange(const_context, "", addtask.getContext());
+						hist.addChange(const_title, "", (addtask.getTitle() != null) ? addtask.getTitle() : "");
+						hist.addChange(const_description, "", (addtask.getDescription() != null) ? addtask.getDescription() : "");
+						hist.addChange(const_context, "", (addtask.getContext() != null) ? addtask.getContext() : "");
 						hist.addChange(const_date, "", addtask.getDate().toString());
 						hist.addChange(const_priority, "", Integer.toString(addtask.getPriority()));
 						hist.addChange(const_project, "", addtask.getProject().getId());
