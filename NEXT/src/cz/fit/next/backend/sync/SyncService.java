@@ -8,7 +8,6 @@ import java.util.List;
 import org.json.JSONException;
 
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -71,6 +70,8 @@ public class SyncService extends Service {
 
 	//private boolean mAuthorized = false;
 	private String mAccountName;
+	
+	private authorizeDoneHandler mCb;
 
 
 	@Override
@@ -83,6 +84,8 @@ public class SyncService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
 		Log.i(TAG,"onStart");
+		
+		mCb = new authorizeDoneHandler();
 		
 		// Reload stored preferences
 		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -104,6 +107,17 @@ public class SyncService extends Service {
 				
 			}
 			
+			if (b.getInt("inAuth") == -1) {
+				
+				mCb.Done(null, false);
+				
+			}
+			if (b.getInt("inAuth") == 1) {
+				
+				mCb.Done(b.getString("accountName"), true);
+				
+			}
+					
 		}
 		
 		return START_STICKY;
@@ -125,23 +139,16 @@ public class SyncService extends Service {
 	public static SyncService getInstance() {
 		return sInstance;
 	}
+	
+	public authorizeDoneHandler getAuthCallback() {
+		return mCb;
+	}
 
 
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	
-	/*
-	 * Do first-time authorization after service starts
-	 */
-	public void authorize(String accountName, Activity act) {
-		authorizeDoneHandler ad = new authorizeDoneHandler();
-		drive.authorize(accountName, act, getApplicationContext(), this, ad);
-		
-		Log.i(TAG,"SyncService: begin authorization");
-	}
-
-
 	public class authorizeDoneHandler implements SyncServiceCallback { 
 	
 		@Override
@@ -165,11 +172,11 @@ public class SyncService extends Service {
 				
 				synchronize();
 			} else {
-				Context context = getApplicationContext();
-				CharSequence text = "Synchronization not available";
-				int duration = Toast.LENGTH_SHORT;
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
+				//Context context = getApplicationContext();
+				//CharSequence text = "Synchronization not available";
+				//int duration = Toast.LENGTH_SHORT;
+				//Toast toast = Toast.makeText(context, text, duration);
+				//toast.show();
 			}
 		}
 
