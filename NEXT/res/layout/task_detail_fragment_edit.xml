@@ -37,6 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:background="@color/TaskTitleBackground"
+                    android:inputType="text"
                     android:text="@string/TaskTitle"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/TaskTitleColor"
@@ -132,8 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
-                    android:inputType="date"
-                    android:text="TextView"
+                    android:inputType="textMultiLine"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
@@ -178,8 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
-                    android:inputType="date"
-                    android:text="TextView"
+                    android:inputType="text"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
@@ -224,7 +223,6 @@
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
                     android:inputType="textMultiLine"
-                    android:text="@string/TaskProjectTextAutoComplete"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
@@ -269,7 +267,6 @@
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
                     android:inputType="text"
-                    android:text="@string/TaskContextTextAutoComplete"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>

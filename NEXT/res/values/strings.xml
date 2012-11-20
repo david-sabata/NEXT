@@ -17,7 +17,7 @@
     <string name="TitleByProject">Projects</string>
     <string name="TitleByProject_ShowProjects">Show Projects</string>
     <string name="SettingsConnectToDrive">Drive login</string>
-    <string name="TaskTitle">Title</string>
+    <string name="TaskTitle">Task title</string>
     <string name="TaskDateTitle">DATE</string>
     <string name="TaskProjectTitle">PROJECT</string>
     <string name="TaskContextTitle">CONTEXT</string>

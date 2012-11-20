@@ -33,6 +33,12 @@ public class DateTime {
 	protected Date mDate;
 
 
+	/**
+	 * Create from current time
+	 */
+	public DateTime() {
+		mDate = new Date();
+	}
 
 	/**
 	 * Create from date object
@@ -47,9 +53,11 @@ public class DateTime {
 	public DateTime(String s) {
 		for (String format : FORMATS) {
 			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				mDate = sdf.parse(s);
+				break;
 			} catch (ParseException e) {
+				mDate = null;
 			}
 		}
 
@@ -85,10 +93,15 @@ public class DateTime {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleString() {
-		return TasksModelService.getInstance().getLocalizedDateFormat().format(mDate);
+		return TasksModelService.getInstance().getLocalizedDateTime(mDate);
 	}
 
 
-
+	/**
+	 * Returns time in miliseconds of GMT
+	 */
+	public long toMiliseconds() {
+		return mDate.getTime();
+	}
 
 }

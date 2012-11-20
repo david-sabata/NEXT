@@ -146,15 +146,16 @@ public class TasksDataSource {
 
 
 	/**
-	 * Returns Task object based on ID
+	 * Returns Task object based on ID 
+	 * or NULL if the ID was not found
 	 */
 	public Task getTaskById(String id) {
 		Cursor cursor = getSingleTaskCursor(id);
-		if (cursor == null) {
-			return null;
-		} else {
+		if (cursor.getCount() > 0)
 			return new Task(cursor);
-		}
+		else
+			return null;
+
 	}
 
 
@@ -173,7 +174,7 @@ public class TasksDataSource {
 		vals.put(Constants.COLUMN_DESCRIPTION, task.getDescription());
 		vals.put(Constants.COLUMN_CONTEXT, task.getContext());
 		vals.put(Constants.COLUMN_PROJECTS_ID, task.getProject().getId());
-		vals.put(Constants.COLUMN_DATETIME, task.getDate().toString());
+		vals.put(Constants.COLUMN_DATETIME, task.getDate().toMiliseconds());
 		vals.put(Constants.COLUMN_PRIORITY, task.getPriority());
 		vals.put(Constants.COLUMN_COMPLETED, task.isCompleted() ? 1 : 0);
 

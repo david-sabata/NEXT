@@ -1,5 +1,6 @@
 package cz.fit.next.taskdetail;
 
+import java.util.Date;
 import java.util.UUID;
 
 import android.os.Bundle;
@@ -108,6 +109,8 @@ public class TaskEditFragment extends Fragment {
 		// load the task data into view
 		if (mTask != null)
 			loadTaskToView(mTask);
+		else
+			loadDefaults();
 
 		return taskDetailView;
 	}
@@ -161,6 +164,14 @@ public class TaskEditFragment extends Fragment {
 
 
 
+	private void loadDefaults() {
+		// set date
+		DateTime dateTime = new DateTime(new Date());
+		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
+		date.setText(dateTime.toString());
+	}
+
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
@@ -199,7 +210,7 @@ public class TaskEditFragment extends Fragment {
 		String title = ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString();
 		String description = ((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString();
 		String projectTitle = ((TextView) taskDetailView.findViewById(R.id.editProject)).getText().toString();
-		String projectId = ((TextView) taskDetailView.findViewById(R.id.editProject)).getTag().toString();
+		String projectId = (String) ((TextView) taskDetailView.findViewById(R.id.editProject)).getTag();
 		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
 		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.editIsCompleted)).isChecked();
 
