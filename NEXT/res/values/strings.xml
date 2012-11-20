@@ -36,5 +36,7 @@
     <string name="action_delete_task">Delete task</string>
     <string name="TaskIsCompletedTitle">COMPLETED</string>
     <string name="action_add_task">Add task</string>
+    <string name="frag_title_next">Next tasks</string>
+    <string name="frag_title_today">Today tasks</string>
 
 </resources>
