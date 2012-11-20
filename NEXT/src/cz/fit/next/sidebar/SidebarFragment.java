@@ -3,6 +3,7 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +25,7 @@ import cz.fit.next.tasklist.TaskListFragment;
 public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
-
+	private TextView lastSelected = null;
 
 	/**
 	 * IDs of fixed menu items
@@ -149,7 +150,17 @@ public class SidebarFragment extends Fragment {
 				 */
 				break;
 		}
+		
+		// Reset color of last checked to transparent
+		if(lastSelected != null) {
+			lastSelected.setBackgroundColor(Color.TRANSPARENT);
+		}
+		
+		// Set background of actual selected item to blue
+		TextView itemSelected = (TextView) fan.findViewById(id);
+		itemSelected.setBackgroundColor(Color.parseColor("#8FB5D0"));
 
+		lastSelected = itemSelected;
 		// always toggle sidebar
 		fan.showMenu();
 	}

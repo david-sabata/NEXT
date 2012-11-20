@@ -83,12 +83,13 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <CheckBox
                     android:id="@+id/IsCompleted"
                     android:layout_width="123dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskBodyPadding"
+                    android:clickable="false"
                     android:text="Completed" />
 
             </LinearLayout>
@@ -313,25 +314,29 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:orientation="horizontal" >
-
+
                     <RadioButton
                         android:id="@+id/radio0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:clickable="false"
                         android:text="1" />
-
+
                     <RadioButton
                         android:id="@+id/radio1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:text="2" />
-
+
                     <RadioButton
                         android:id="@+id/radio2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:text="3" />
+
                 </RadioGroup>
             </LinearLayout>
 
