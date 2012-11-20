@@ -68,7 +68,6 @@ public class SidebarFragment extends Fragment {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
-					Log.i("TOUCH", "item");
 					if(event.getAction() == MotionEvent.ACTION_DOWN) {
 						v.setBackgroundColor(Color.parseColor("#00FFFF"));		
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {

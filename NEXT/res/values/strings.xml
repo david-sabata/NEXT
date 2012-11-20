@@ -38,5 +38,6 @@
     <string name="action_add_task">Add task</string>
     <string name="frag_title_next">Next tasks</string>
     <string name="frag_title_today">Today tasks</string>
+    <string name="testDescriptionString">"prevelice dlouhy popis projektu prevelice dlouhy popis projektu prevelice dlouhy popis projektu prevelice dlouhy popis projektu "</string>
 
 </resources>
