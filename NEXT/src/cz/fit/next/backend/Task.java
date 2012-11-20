@@ -70,7 +70,6 @@ public class Task {
 
 		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
 
-		String x = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		long milis = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		mDate = new DateTime(new Date(milis));
 
@@ -85,31 +84,38 @@ public class Task {
 	public Task(JSONObject taskJson, Project project) throws JSONException {
 		this.mId = taskJson.getString("id");
 		this.mTitle = taskJson.getString("title");
-		this.mDescription = taskJson.getString("description");
+		try {
+			this.mDescription = taskJson.getString("description");
+		} catch (JSONException e) {
+			this.mDescription = "";
+		}
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
 		this.mDate = new DateTime(taskJson.getString("date"));
-		this.mContext = taskJson.getString("partContexts");
+		try {
+			this.mContext = taskJson.getString("partContexts");
+		} catch (JSONException e) {
+			this.mContext = "";
+		}
 	}
-	
+
 	/**
 	 * Constructor to construct Task from parameters
 	 * @param taskJson
-	 * @throws JSONException 
 	 */
-	public Task(String pId, 
-				String pTitle, 
-				String pDescription, 
-				String pDate,
-				Integer pPriority,
-				Project pProject,
-				String pContext,
-				Boolean pIsCompleted) {
+	public Task(String pId,
+			String pTitle,
+			String pDescription,
+			DateTime pDate,
+			Integer pPriority,
+			Project pProject,
+			String pContext,
+			Boolean pIsCompleted) {
 		mId = pId;
 		mTitle = pTitle;
 		mDescription = pDescription;
-		mDate = new DateTime(pDate);
+		mDate = pDate;
 		mPriority = pPriority;
 		mProject = pProject;
 		mContext = pContext;

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.json.JSONException;
 
 import android.app.AlertDialog;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.deaux.fan.FanView;
-
 
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
@@ -45,9 +43,9 @@ public class MainActivity extends FragmentActivity {
 
 
 	protected TasksModelService mModelService;
-	
+
 	protected boolean mIsServiceBound = false;
-	
+
 
 
 
@@ -67,7 +65,9 @@ public class MainActivity extends FragmentActivity {
 		if (savedInstanceState == null) {
 			Fragment fanFrag = new SidebarFragment();
 
-			TaskListFragment contentFrag = new TaskListFragment();
+			//			TaskListFragment contentFrag = TaskListFragment.newInstance(null);
+
+			LoadingFragment contentFrag = LoadingFragment.newInstance();
 
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
@@ -82,13 +82,13 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		bindModelService();
-		
+
 		// start synchronization service
-		Intent i = new Intent(this,SyncService.class);
-		Bundle b = new Bundle();
-		b.putInt("buttonPressed",0);
-		i.putExtras(b);
-		this.startService(i);
+				Intent i = new Intent(this, SyncService.class);
+				Bundle b = new Bundle();
+				b.putInt("buttonPressed", 0);
+				i.putExtras(b);
+				this.startService(i);
 
 	}
 
@@ -150,15 +150,15 @@ public class MainActivity extends FragmentActivity {
 
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
-				
+
 				// tell synchronization service to choose user account
-				Intent i = new Intent(this,SyncService.class);
+				Intent i = new Intent(this, SyncService.class);
 				Bundle b = new Bundle();
-				b.putInt("buttonPressed",1);
+				b.putInt("buttonPressed", 1);
 				i.putExtras(b);
 				this.startService(i);
-				
-								
+
+
 				break;
 
 			case R.id.setting_read_file:
@@ -166,25 +166,12 @@ public class MainActivity extends FragmentActivity {
 
 				// Just for debugging
 				JavaParser parser = new JavaParser();
-				parser.setFile("file.html"); 
+				parser.setFile("file.html");
 				Project project = parser.getProject();
 				ArrayList<Task> tasks = parser.getTasks(project);
-				
+
 				ArrayList<TaskHistory> histories = parser.getHistory();
-				
-				parser.setProject(project);
-				parser.setTasks(tasks);
-				parser.setHistory(histories);
-				try {
-					parser.writeFile(this, "neco.txt");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+
 				break;
 
 			case R.id.menu_wipe_db:
@@ -216,7 +203,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
-	
+
 	/**
 	 * Public FanView getter so the fragments can switch main fragment
 	 */
@@ -239,13 +226,17 @@ public class MainActivity extends FragmentActivity {
 			// init service objects
 			binder.getService().initDataSources(self);
 
-			// reload content fragment (all fragments must implement ContentReloadable)
-			ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(R.id.appView);
-			if (currentFragment != null) {
-				currentFragment.reloadContent();
+			// reload content if the current fragment is LoadingFragment
+			Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
+			if (currentFragment != null && currentFragment instanceof LoadingFragment) {
+				FanView fan = (FanView) findViewById(R.id.fan_view);
+				TaskListFragment frag = TaskListFragment.newInstance(null);
+
+				// replace without history
+				fan.replaceMainFragment(frag, false);
 			}
 			else {
-				Log.d(LOG_TAG, "No current fragment upon ModelService bind. Reload cancelled");
+				Log.d(LOG_TAG, "LoadingFragment not current upon ModelService bind. Reload cancelled");
 			}
 		}
 
@@ -256,5 +247,5 @@ public class MainActivity extends FragmentActivity {
 		}
 	};
 
-	
+
 }
