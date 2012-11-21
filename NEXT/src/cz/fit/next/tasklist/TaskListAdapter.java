@@ -75,7 +75,7 @@ public class TaskListAdapter extends CursorAdapter {
 		
 		// priority
 		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
-		//if(cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
+		if(cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
 			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
 			switch(priority) {
 				
@@ -92,7 +92,7 @@ public class TaskListAdapter extends CursorAdapter {
 					prl.setBackgroundColor(Color.parseColor("#000000"));
 					break;	
 			}
-		//}
+		}
 
 	}
 
