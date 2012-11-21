@@ -14,8 +14,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
@@ -81,7 +79,7 @@ public class GDrive {
 	/**
 	 * Public method for first authorization after service start
 	 */
-	public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
+	/*public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
 		mAccountName = username;
 		mSyncService = syncserv;
 		//mCallback = cb;
@@ -93,7 +91,7 @@ public class GDrive {
 
 		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
 		auth.execute(params);
-	}
+	}*/
 	
 	/**
 	 * Gets list of files in application folder
@@ -153,6 +151,9 @@ public class GDrive {
 		if (existing != null) deleteFile(existing);
 		uploadFile(filename, localname, mAppFolder);
 		
+		// Delete local pattern
+		java.io.File f = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+		if (!f.delete()) Log.e(TAG, "DELETING ERROR!!!!");
 	}
 	
 	/**
@@ -174,7 +175,7 @@ public class GDrive {
 	/**
 	 * Asynctask provides authorization.
 	 */
-	private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
+	/*private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
 		@Override
 		protected Object doInBackground(Object... params) {
 			Log.e(TAG, "Starting async");
@@ -200,7 +201,7 @@ public class GDrive {
 				((SyncServiceCallback)param).Done(mAccountName, false);
 			}
 		}
-	}
+	}*/
 	
 	
 	
@@ -238,7 +239,7 @@ public class GDrive {
 		} catch (UserRecoverableAuthException e) {
 			Log.e(TAG, "ERROR in authentication");
 			Log.e(TAG, e.toString());
-			Intent intent = e.getIntent();
+			/*Intent intent = e.getIntent();
 
 			class UserRecover implements Runnable {
 
@@ -261,7 +262,7 @@ public class GDrive {
 			if (main != null)
 				main.runOnUiThread(new UserRecover(main, intent));
 
-
+			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (GoogleAuthException e) {
@@ -271,7 +272,7 @@ public class GDrive {
 		}
 		
 		// Finish login activity, if exists
-		if (main != null) main.finish();
+		//if (main != null) main.finish();
 
 		return retval;
 	}
@@ -333,14 +334,14 @@ public class GDrive {
 				// body.setDescription("");
 				body.setMimeType("application/vnd.google-apps.folder");
 				mService.files().insert(body).execute();
-				
+				getAppFolderId();				
 			}
 			
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+		mAppFolder = nextDirId;
 		return nextDirId;
 		
 	}
