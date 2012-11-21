@@ -5,6 +5,7 @@ import java.util.Date;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -70,6 +72,27 @@ public class TaskListAdapter extends CursorAdapter {
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		DateTime datetime = new DateTime(new Date(date));
 		dt.setText(datetime.toLocaleString());
+		
+		// priority
+		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
+		//if(cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
+			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
+			switch(priority) {
+				
+				case 1:
+					prl.setBackgroundColor(Color.parseColor("#2f9b3e"));
+					break;
+				case 2:
+					prl.setBackgroundColor(Color.parseColor("#ceef4a"));
+					break;
+				case 3:
+					prl.setBackgroundColor(Color.parseColor("#ff3333"));
+					break;
+				default:
+					prl.setBackgroundColor(Color.parseColor("#000000"));
+					break;	
+			}
+		//}
 
 	}
 
