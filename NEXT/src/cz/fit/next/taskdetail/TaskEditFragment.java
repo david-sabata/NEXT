@@ -224,8 +224,8 @@ public class TaskEditFragment extends Fragment {
 	private void onSaveItem() {
 		String title = ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString();
 		String description = ((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString();
-		String projectTitle = ((TextView)((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView()).getText().toString();
-		String projectId = ((TextView)((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView()).getTag().toString();
+		String projectTitle = ((TextView)((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText)).getText().toString();
+		String projectId = ((TextView)((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText)).getTag().toString();
 		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
 		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.editIsCompleted)).isChecked();
 
