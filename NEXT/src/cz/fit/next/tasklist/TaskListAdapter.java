@@ -9,10 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 
 
@@ -26,11 +30,35 @@ public class TaskListAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
+		String id = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		// checkbox
 		CheckBox cb = (CheckBox) view.findViewById(R.id.checkBox);
 		int status = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
 		cb.setChecked(status != 0);
+		cb.setTag(id);
+
+		// checkbox oncheck
+		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+				final String taskId = buttonView.getTag().toString();
+
+				// update db on background
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Task task = TasksModelService.getInstance().getTaskById(taskId);
+						Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task
+								.getProject(), task.getContext(), isChecked);
+
+						// save
+						TasksModelService.getInstance().saveTask(newTask);
+					}
+				}).start();
+			}
+		});
+
 
 		// task title
 		TextView ttl = (TextView) view.findViewById(R.id.title);
@@ -42,6 +70,7 @@ public class TaskListAdapter extends CursorAdapter {
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		DateTime datetime = new DateTime(new Date(date));
 		dt.setText(datetime.toLocaleString());
+
 	}
 
 
