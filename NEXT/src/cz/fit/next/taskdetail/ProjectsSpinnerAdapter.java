@@ -8,6 +8,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class ProjectsSpinnerAdapter extends CursorAdapter {
@@ -20,8 +21,8 @@ public class ProjectsSpinnerAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View v, Context c, Cursor cursor) {
-		// TODO Auto-generated method stub
+	public void bindView(View v, Context c, Cursor cursor) {		
+		// Text setting
 		TextView textView = (TextView) v.findViewById(R.id.taskSpinnerText);
 		textView.setText(cursor.getString(cursor.getColumnIndex(cz.fit.next.backend.database.Constants.COLUMN_TITLE)));
 		textView.setTag(cursor.getString(cursor.getColumnIndex(cz.fit.next.backend.database.Constants.COLUMN_ID)));
@@ -29,9 +30,7 @@ public class ProjectsSpinnerAdapter extends CursorAdapter {
 
 	@Override
 	public View newView(Context c, Cursor arg1, ViewGroup mainView) {
-		// TODO Auto-generated method stub
-		View view = (View) inflater.inflate(R.layout.spinner_item, mainView);
-	//	TextView view = (TextView) mainView.findViewById(R.id.taskSpinnerText);		
+		RelativeLayout view = (RelativeLayout) inflater.inflate(R.layout.spinner_item, mainView, false);
 		return view;
 	}
 	
