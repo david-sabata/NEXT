@@ -70,8 +70,7 @@ public class SyncService extends Service {
 
 	//private boolean mAuthorized = false;
 	private String mAccountName;
-	
-	private authorizeDoneHandler mCb;
+
 
 
 	@Override
@@ -85,7 +84,6 @@ public class SyncService extends Service {
 		
 		Log.i(TAG,"onStart");
 		
-		mCb = new authorizeDoneHandler();
 		
 		// Reload stored preferences
 		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -109,12 +107,12 @@ public class SyncService extends Service {
 			
 			if (b.getInt("inAuth") == -1) {
 				
-				mCb.Done(null, false);
+				authorizeDone(null, false);
 				
 			}
 			if (b.getInt("inAuth") == 1) {
 				
-				mCb.Done(b.getString("accountName"), true);
+				authorizeDone(b.getString("accountName"), true);
 				
 			}
 					
@@ -140,22 +138,18 @@ public class SyncService extends Service {
 		return sInstance;
 	}
 	
-	public authorizeDoneHandler getAuthCallback() {
-		return mCb;
-	}
+
 
 
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	
-	public class authorizeDoneHandler implements SyncServiceCallback { 
+	private void authorizeDone(String name, Boolean status) { 
 	
-		@Override
-		public void Done(Object param, Boolean status) {
 			if (status == true) {
 				//mAuthorized = true;
-				mAccountName = (String) param;
+				mAccountName = name;
 				Log.e(TAG, "Authorized");
 		
 				// save username into permanent storage
@@ -178,7 +172,7 @@ public class SyncService extends Service {
 				//Toast toast = Toast.makeText(context, text, duration);
 				//toast.show();
 			}
-		}
+		
 
 		
 	}
@@ -215,7 +209,7 @@ public class SyncService extends Service {
 			// SYNCHRONIZATION STAGE ONE - from remote to local
 			
 			// loop walking through files on storage
-			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
+			List<File> lf = drive.list(getApplicationContext(), getInstance());
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
 				
@@ -223,7 +217,7 @@ public class SyncService extends Service {
 				//Log.i(TAG,"locked");
 				
 				// Download file from storage
-				drive.download(getApplicationContext(), null, lf.get(i).getId());
+				drive.download(getApplicationContext(), lf.get(i).getId());
 				
 				// Parse it
 				JavaParser parser = new JavaParser();
@@ -414,7 +408,7 @@ public class SyncService extends Service {
 						e.printStackTrace();
 					}
 					
-					drive.upload(getApplicationContext(), null, localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
+					drive.upload(getApplicationContext(), localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
 					
 			}
 				
@@ -424,7 +418,7 @@ public class SyncService extends Service {
 			
 			
 			
-			List<File> lsf = drive.listShared(getApplicationContext(), null);
+			List<File> lsf = drive.listShared(getApplicationContext());
 			if (lsf != null) {
 				for (int i = 0; i < lsf.size(); i++) {
 					Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());

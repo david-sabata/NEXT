@@ -36,7 +36,7 @@ import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
 
 import cz.fit.next.backend.sync.SyncService;
-import cz.fit.next.backend.sync.SyncServiceCallback;
+
 
 public class GDrive {
 
@@ -76,27 +76,11 @@ public class GDrive {
 	}
 
 		
-	/**
-	 * Public method for first authorization after service start
-	 */
-	/*public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
-		mAccountName = username;
-		mSyncService = syncserv;
-		//mCallback = cb;
-		
-		Object[] params = new Object[3];
-		params[0] = main;
-		params[1] = appcontext;
-		params[2] = cb;
-
-		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
-		auth.execute(params);
-	}*/
 	
 	/**
 	 * Gets list of files in application folder
 	 */
-	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
+	public List<File> list(Context appcontext, SyncService syncserv) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
 		
@@ -108,7 +92,7 @@ public class GDrive {
 	/**
 	 * Gets list of files in shared folder
 	 */
-	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
+	public List<File> listShared(Context appcontext) {
 		
 		List<File> res = getSharedFileList(mAppFolder);
 		return res;
@@ -128,7 +112,7 @@ public class GDrive {
 	/**
 	 * Download file with given filename to local storage
 	 */
-	public void download(Context appcontext, SyncServiceCallback cb, String id) {
+	public void download(Context appcontext, String id) {
 		downloadFile(id, mAppFolder);		
 		
 	}
@@ -145,7 +129,7 @@ public class GDrive {
 	/**
 	 * Upload file with given local name to storage with other name
 	 */
-	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
+	public void upload(Context appcontext, String filename, String localname) {
 		String existing = getFileIdByName(filename, mAppFolder);
 		if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) deleteFile(existing);
@@ -168,42 +152,7 @@ public class GDrive {
 	
 	
 	
-	/**************************************************/
-	/*              ASYNCTASK CLASSES                 */
-	/**************************************************/
 
-	/**
-	 * Asynctask provides authorization.
-	 */
-	/*private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
-		@Override
-		protected Object doInBackground(Object... params) {
-			Log.e(TAG, "Starting async");
-			Account account = new Account(mAccountName, "com.google");
-			mAuthToken = getGoogleAccessToken((Activity) params[0], (Context) params[1], account);
-			Log.e(TAG, "Token is: " + mAuthToken);
-
-			return params[2];
-
-		}
-
-
-		@Override
-		protected void onPostExecute(Object param) {
-			super.onPostExecute(param);
-
-			// Build the service object
-			mService = buildService(mAuthToken, API_KEY);
-			//Log.e(TAG, "Connection initiated.");
-			if (mAuthToken != null) {
-				((SyncServiceCallback)param).Done(mAccountName, true);
-			} else {
-				((SyncServiceCallback)param).Done(mAccountName, false);
-			}
-		}
-	}*/
-	
-	
 	
 	
 	
@@ -239,30 +188,7 @@ public class GDrive {
 		} catch (UserRecoverableAuthException e) {
 			Log.e(TAG, "ERROR in authentication");
 			Log.e(TAG, e.toString());
-			/*Intent intent = e.getIntent();
 
-			class UserRecover implements Runnable {
-
-				private Activity activity;
-				private Intent intent;
-
-
-				public UserRecover(Activity act, Intent intnt) {
-					activity = act;
-					intent = intnt;
-				}
-
-
-				@Override
-				public void run() {
-					this.activity.startActivityForResult(this.intent, CHOOSE_ACCOUNT);
-				}
-
-			}
-			if (main != null)
-				main.runOnUiThread(new UserRecover(main, intent));
-
-			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (GoogleAuthException e) {
