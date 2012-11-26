@@ -209,6 +209,7 @@ public class SyncService extends Service {
 				
 				// PERM TEST
 				drive.getUserList(lf.get(i).getId());
+				//drive.share(lf.get(i).getId(), "xsychr03@gmail.com", GDrive.READ);
 				
 				//drive.lock(lf.get(0).getId());
 				//Log.i(TAG,"locked");

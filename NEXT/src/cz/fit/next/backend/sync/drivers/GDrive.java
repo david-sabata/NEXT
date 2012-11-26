@@ -138,8 +138,8 @@ public class GDrive {
 	public void upload(Context appcontext, String filename, String localname) {
 		String existing = getFileIdByName(filename, mAppFolder);
 		if (existing != null) Log.i(TAG,"EXISTS!");
-		if (existing != null) deleteFile(existing);
-		uploadFile(filename, localname, mAppFolder);
+		if (existing != null) updateFile(existing, localname);
+		else uploadFile(filename, localname, mAppFolder);
 		
 		// Delete local pattern
 		java.io.File f = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
@@ -159,10 +159,21 @@ public class GDrive {
 	 * Starts sharing of file to given google account
 	 */
 	public void share(String file, String user, int mode) {
+		setPermissions(file, user, mode);
+		
+		
+	}
+	
+	
+	/**
+	 * Stops sharing of file to given google account
+	 */
+	public void unshare(String file, String user, int mode) {
 		
 		
 		
 	}
+	
 	
 	/**
 	 * Get userlist of one file
@@ -505,8 +516,7 @@ public class GDrive {
 
 				
 		try {
-			// TODO: Move to app folder
-
+			
 			// Upload file
 
 			// File's metadata.
@@ -540,6 +550,37 @@ public class GDrive {
 
 	}
 	
+	
+	/**
+	 * Uploads file from "localname" to "appfolder"/"name" on storage
+	 */
+	private void updateFile(String fileid, String localname) {
+
+				
+		try {
+			
+			// Update file
+
+			java.io.File fileContent = null;
+			FileContent mediaContent = null;
+			
+			// File's content.
+			if (localname != null) {
+				fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+				mediaContent = new FileContent("text/plain", fileContent);
+				mService.files().update(fileid, null, mediaContent).execute();
+			}
+
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
 	/**
 	 * Delete file in app folder
 	 */
@@ -566,7 +607,23 @@ public class GDrive {
 	 */
 	
 	private void setPermissions(String fileid, String gmail, int mode) {
-		
+		Permission newPermission = new Permission();
+
+	    newPermission.setValue(gmail);
+	    newPermission.setType("user");
+	    if (mode == READ) {
+	    	newPermission.setRole("reader"); //owner,writer,reader
+	    } else {
+	    	newPermission.setRole("writer"); //owner,writer,reader
+	    }
+	    try {
+	      mService.permissions().insert(fileid, newPermission).execute();
+	    } catch (IOException e) {
+	    	// TODO Auto-generated catch block
+	    	e.printStackTrace();
+	    }
+	  
+
 	}
 	
 	/**

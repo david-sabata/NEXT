@@ -14,6 +14,9 @@ public class Project {
 	protected String mTitle;
 	
 	protected ArrayList<TaskHistory> mHistory = null;
+	
+	
+	// TODO: Seznam sdileni
 
 
 
