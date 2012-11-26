@@ -97,13 +97,7 @@ public class SyncService extends Service {
 		// if button pressed ask for username
 		if (intent != null) {
 			Bundle b = intent.getExtras();
-			/*if (b.getInt("buttonPressed") == 1) {
-				
-				Intent i = new Intent(this,LoginActivity.class);
-				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				this.startActivity(i);
-				
-			}*/
+			
 			
 			if (b.getInt("inAuth") == -1) {
 				
@@ -212,6 +206,9 @@ public class SyncService extends Service {
 			List<File> lf = drive.list(getApplicationContext(), getInstance());
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
+				
+				// PERM TEST
+				drive.getUserList(lf.get(i).getId());
 				
 				//drive.lock(lf.get(0).getId());
 				//Log.i(TAG,"locked");

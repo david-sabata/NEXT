@@ -34,6 +34,8 @@ import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.drive.model.Permission;
+import com.google.api.services.drive.model.PermissionList;
 
 import cz.fit.next.backend.sync.SyncService;
 
@@ -55,6 +57,10 @@ public class GDrive {
 	private Drive mService = null;
 	private SyncService mSyncService = null;
 	private String mAppFolder = null;
+	
+	
+	public static int READ = 0;
+	public static int WRITE = 0;
 	
 
 
@@ -148,6 +154,38 @@ public class GDrive {
 		deleteFile(id);
 	}
 	
+	
+	/**
+	 * Starts sharing of file to given google account
+	 */
+	public void share(String file, String user, int mode) {
+		
+		
+		
+	}
+	
+	/**
+	 * Get userlist of one file
+	 */
+	public List<UserPerm> getUserList(String fileid) {
+		List<UserPerm> result = new ArrayList<UserPerm>();
+		List<Permission> perms = getPermissions(fileid);
+		
+		for (int i = 0; i < perms.size(); i++) {
+			UserPerm up = new UserPerm();
+			up.username = perms.get(i).getName();
+			Log.i("PERM","Name: " + perms.get(i).getName() + ", perm: " + perms.get(i).getRole());
+			if (perms.get(i).getRole().equals("owner") || perms.get(i).getRole().equals("writer"))
+				up.mode = WRITE;
+			else if (perms.get(i).getRole().equals("reader"))
+				up.mode = READ;
+			else continue;
+			
+			result.add(up);
+		}
+		
+		return result;
+	}
 
 	
 	
@@ -521,6 +559,46 @@ public class GDrive {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Set/update permission on file
+	 */
+	
+	private void setPermissions(String fileid, String gmail, int mode) {
+		
+	}
+	
+	/**
+	 * Get permissions of file
+	 */
+	
+	List<Permission> getPermissions(String fileid) {
+		PermissionList permissions = null;
+		
+		try {
+			permissions = mService.permissions().list(fileid).execute();
+			return permissions.getItems();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+
+	}
+	
+	
+	
+	
+	
+	/***************************************/
+	/*        SUBCLASSES DEFINITION        */
+	/***************************************/
+	
+	public class UserPerm {
+		public String username;
+		public int mode;
 	}
 
 
