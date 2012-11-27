@@ -72,7 +72,7 @@ public class TaskListAdapter extends CursorAdapter {
 		DateTime datetime = new DateTime(date);
 
 		if (datetime.isSomeday()) {
-			dt.setVisibility(View.INVISIBLE);
+			dt.setVisibility(View.GONE);
 		}
 		else if (showAs.equals(DateTime.FLAG_DATE)) {
 			dt.setText(datetime.toLocaleDateString());
@@ -103,7 +103,6 @@ public class TaskListAdapter extends CursorAdapter {
 		}
 
 	}
-
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
