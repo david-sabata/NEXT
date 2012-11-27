@@ -31,6 +31,7 @@ public class Project {
 		if (projIdCol > -1 && projTitleCol > -1) {
 			this.mId = cursor.getString(projIdCol);
 			this.mTitle = cursor.getString(projTitleCol);
+			this.mHistory = cursor.getString(projHistoryCol);
 		}
 		// from PROJECTS row
 		else {

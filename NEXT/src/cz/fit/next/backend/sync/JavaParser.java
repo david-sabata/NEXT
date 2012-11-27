@@ -379,7 +379,21 @@ public class JavaParser {
 			
 			fileStreamWriter.flush();
 			fileStreamWriter.close();
-	}	
+	}
+	
+	public String generateHistoryString() {
+		JSONArray jsonHistoryArray = new JSONArray();
+		try {
+			for(int i = 0; i < mTasksHistory.size(); i++) {
+				jsonHistoryArray.put(convertHistoryToJSONObject(mTasksHistory.get(i)));
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		return jsonHistoryArray.toString();
+	}
 }
 
 
