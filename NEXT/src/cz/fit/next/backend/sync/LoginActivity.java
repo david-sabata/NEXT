@@ -12,6 +12,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,8 @@ public class LoginActivity extends Activity {
 	
 	
 	private String AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/drive";
+	private static final String PREF_FILE_NAME = "SyncServicePref";
+	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
 	
 	SyncService mSyncService;
 	String mAccountName;
@@ -98,6 +101,13 @@ public class LoginActivity extends Activity {
     		super.onPostExecute(result);
     		
     		if (result != null) {
+    			
+    			// save username into permanent storage
+				SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putString(PREF_ACCOUNT_NAME, mAccountName);
+				editor.commit();
+    			
     			Intent i = new Intent(LoginActivity.this, SyncService.class);
     			Bundle b = new Bundle();
     			Log.i("yy", "post execute good");

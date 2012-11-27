@@ -7,7 +7,6 @@ import android.database.Cursor;
 
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.JavaParser;
-import cz.fit.next.backend.sync.SyncService;
 
 public class Project {
 

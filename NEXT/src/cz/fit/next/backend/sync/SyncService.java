@@ -154,12 +154,6 @@ public class SyncService extends Service {
 				mAccountName = name;
 				Log.e(TAG, "Authorized");
 		
-				// save username into permanent storage
-				SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-				SharedPreferences.Editor editor = preferences.edit();
-				editor.putString(PREF_ACCOUNT_NAME, mAccountName);
-				editor.commit();
-		
 				Context context = getApplicationContext();
 				CharSequence text = "Logged into GDrive as " + mAccountName;
 				int duration = Toast.LENGTH_SHORT;
