@@ -47,15 +47,15 @@ public class SidebarFragment extends Fragment {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 		//TODO generate views for menu fixed items
-		
+
 		//TODO load contexts from database
-		/*Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		Log.i("Count item", cursor.getCount() + "");
-		Log.i("Index columnt", cursor.getColumnIndex(Constants.COLUMN_CONTEXT) + "");
-		Log.i("Context",cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
-		*/
-		//TODO Generate views for contexts
-		
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		while (!cursor.isAfterLast()) {
+			Log.i("Context", "Context: " + cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
+			cursor.moveToNext();
+		}
+
+		//TODO Generate views for contexts		
 		sideBarView = setFixedItemsSidebar(sideBarView);
 
 		return sideBarView;
@@ -215,7 +215,7 @@ public class SidebarFragment extends Fragment {
 		item.setPadding(15, 0, 0, 0);
 		// set gravity to vertical center
 		item.setGravity(Gravity.CENTER_VERTICAL);
-		
+
 	}
 
 
