@@ -45,8 +45,8 @@ public class Project {
 			}
 		}
 
-		int starred = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_STARRED));
-		this.mIsStarred = starred != 0;
+		int starredCol = cursor.getColumnIndex(Constants.COLUMN_STARRED);
+		this.mIsStarred = starredCol > -1 && cursor.getInt(starredCol) != 0;
 	}
 
 	/**
