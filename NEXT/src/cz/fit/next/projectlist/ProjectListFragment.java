@@ -65,7 +65,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 	public void setItems(Cursor cursor) {
 		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new ProjectListAdapter(getActivity(), cursor));
+		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
 
 

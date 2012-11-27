@@ -188,6 +188,14 @@ public class TasksModelService extends Service {
 	}
 
 
+	/**
+	 * Saves project to db. If there is already a project with 
+	 * the same ID, it will be updated.
+	 */
+	public void saveProject(Project project) {
+		mProjectsDataSource.saveProject(project);
+	}
+
 
 
 	/**

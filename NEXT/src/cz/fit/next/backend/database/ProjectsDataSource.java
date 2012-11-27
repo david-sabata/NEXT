@@ -23,7 +23,7 @@ public class ProjectsDataSource {
 	/**
 	 * Columns to be fetched from the table
 	 */
-	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE };
+	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE, Constants.COLUMN_STARRED };
 
 
 	/**
@@ -118,6 +118,7 @@ public class ProjectsDataSource {
 
 		// update
 		if (existing != null) {
+			vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
 			vals.put(Constants.COLUMN_TITLE, project.getTitle());
 			String where = Constants.COLUMN_ID + " = ?";
 			String[] args = new String[] { project.getId() };
@@ -130,6 +131,7 @@ public class ProjectsDataSource {
 		// add
 		vals.put(Constants.COLUMN_ID, project.getId());
 		vals.put(Constants.COLUMN_TITLE, project.getTitle());
+		vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
 		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}
 

@@ -12,7 +12,9 @@ public class Project {
 	protected String mId;
 
 	protected String mTitle;
-	
+
+	protected boolean mIsStarred;
+
 	protected ArrayList<TaskHistory> mHistory = null;
 
 
@@ -42,22 +44,32 @@ public class Project {
 				throw new RuntimeException("Instantiating Project from invalid Cursor");
 			}
 		}
+
+		int starredCol = cursor.getColumnIndex(Constants.COLUMN_STARRED);
+		this.mIsStarred = starredCol > -1 && cursor.getInt(starredCol) != 0;
 	}
 
 	/**
 	 * Create project by title; a new ID will be generated
 	 */
 	public Project(String title) {
-		mId = UUID.randomUUID().toString();
-		mTitle = title;
+		this(UUID.randomUUID().toString(), title);
 	}
 
 	/**
 	 * Create project by id and title
 	 */
-	public Project(String pId, String pTitle) {
-		this.mId = pId;
-		this.mTitle = pTitle;
+	public Project(String id, String title) {
+		this(id, title, false);
+	}
+
+	/**
+	 * Create project by id and title and starred
+	 */
+	public Project(String id, String title, boolean starred) {
+		this.mId = id;
+		this.mTitle = title;
+		this.mIsStarred = starred;
 	}
 
 
@@ -72,41 +84,10 @@ public class Project {
 		return mId;
 	}
 
-
-
-
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((mId == null) ? 0 : mId.hashCode());
-		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
-		return result;
+	public boolean isStarred() {
+		return mIsStarred;
 	}
 
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Project other = (Project) obj;
-		if (mId == null) {
-			if (other.mId != null)
-				return false;
-		} else if (!mId.equals(other.mId))
-			return false;
-		if (mTitle == null) {
-			if (other.mTitle != null)
-				return false;
-		} else if (!mTitle.equals(other.mTitle))
-			return false;
-		return true;
-	}
 
 	/**
 	 * @return the mHistory
@@ -121,4 +102,48 @@ public class Project {
 	public void setHistory(ArrayList<TaskHistory> mHistory) {
 		this.mHistory = mHistory;
 	}
+
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((mHistory == null) ? 0 : mHistory.hashCode());
+		result = prime * result + ((mId == null) ? 0 : mId.hashCode());
+		result = prime * result + (mIsStarred ? 1231 : 1237);
+		result = prime * result + ((mTitle == null) ? 0 : mTitle.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Project other = (Project) obj;
+		if (mHistory == null) {
+			if (other.mHistory != null)
+				return false;
+		} else if (!mHistory.equals(other.mHistory))
+			return false;
+		if (mId == null) {
+			if (other.mId != null)
+				return false;
+		} else if (!mId.equals(other.mId))
+			return false;
+		if (mIsStarred != other.mIsStarred)
+			return false;
+		if (mTitle == null) {
+			if (other.mTitle != null)
+				return false;
+		} else if (!mTitle.equals(other.mTitle))
+			return false;
+		return true;
+	}
+
 }
