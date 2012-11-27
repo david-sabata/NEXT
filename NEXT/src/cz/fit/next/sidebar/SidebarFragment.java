@@ -1,9 +1,9 @@
 package cz.fit.next.sidebar;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.deaux.fan.FanView;
 
@@ -25,7 +26,6 @@ import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.DateTime;
-import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -56,46 +56,58 @@ public class SidebarFragment extends Fragment {
 		
 		//TODO load contexts from database
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		//TODO Generate views for contexts		
-		ArrayList<Integer> contextsId = generateContextsView(cursor, sideBarView);
+		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
+		final Context c = sideBarView.getContext();
+		while (!cursor.isAfterLast()) {
+			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+			if(contextTitle != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(contextTitle);			
+				
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener () {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				contextsLayout.addView(itemLayout);				
+			}
+			cursor.moveToNext();
+		}
 
 
 		// load starred projects
 		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
 		while (!starredProjects.isAfterLast()) {
-
+			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
+			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+			if(projectId != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(projectTitle);			
+				
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener () {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				projectsLayout.addView(itemLayout);				
+			}
+			starredProjects.moveToNext();
 		}
-
-
 
 		return sideBarView;
-	}
-
-	/**
-	 *  Generate TextView for each contexts from database
-	 * @param cursor
-	 */
-	private ArrayList<Integer> generateContextsView(Cursor cursor, View sideBarView) {
-		// get parent layout of contexts
-		ArrayList<Integer> contextsId = new ArrayList<Integer>();
-		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
-		while (!cursor.isAfterLast()) {
-			String context = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			if(context != null) {
-				// Create new TextView
-				TextView newItem = new TextView(sideBarView.getContext());
-				newItem.setText(context);
-				// Remember id to textview
-				contextsId.add(newItem.getId());
-				
-				// Add final id to layout
-				contextsLayout.addView(newItem);
-				
-				Log.i("Zpracovavam kuzor", "Ted");
-			}
-			cursor.moveToNext();
-		}
-		return contextsId;
 	}
 
 
