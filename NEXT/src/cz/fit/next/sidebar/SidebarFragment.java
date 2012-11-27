@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.deaux.fan.FanView;
+import com.deaux.fan.SidebarListener;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -33,7 +34,7 @@ import cz.fit.next.tasklist.TaskListFragment;
 public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
-
+	private View sideBarView;
 	/**
 	 * IDs of fixed menu items
 	 */
@@ -47,66 +48,14 @@ public class SidebarFragment extends Fragment {
 
 
 
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
+		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 		//TODO generate views for menu fixed items
 		sideBarView = setFixedItemsSidebar(sideBarView);
 		
-		//TODO load contexts from database
-		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
-		final Context c = sideBarView.getContext();
-		while (!cursor.isAfterLast()) {
-			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			if(contextTitle != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(contextTitle);			
-				
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener () {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				contextsLayout.addView(itemLayout);				
-			}
-			cursor.moveToNext();
-		}
-
-
-		// load starred projects
-		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
-		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
-		while (!starredProjects.isAfterLast()) {
-			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
-			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
-			if(projectId != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(projectTitle);			
-				
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener () {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				projectsLayout.addView(itemLayout);				
-			}
-			starredProjects.moveToNext();
-		}
-
 		return sideBarView;
 	}
 
@@ -163,6 +112,86 @@ public class SidebarFragment extends Fragment {
 		});
 	}
 	
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		FanView f = ((MainActivity) getActivity()).getFanView();
+		f.setSidebarListener(new SidebarListener() {
+			
+			@Override
+			public void onSidebarOpen() {
+				// TODO Auto-generated method stub
+				initSideBarContextProjects();
+			}
+			
+			@Override
+			public void onSidebarClose() {
+				// TODO Auto-generated method stub
+				
+			}
+		});	
+	}
+	
+	public void initSideBarContextProjects() {
+		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		//TODO load contexts from database
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
+		contextsLayout.removeAllViews();
+		final Context c = sideBarView.getContext();
+		while (!cursor.isAfterLast()) {
+			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+			if(contextTitle != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(contextTitle);			
+				
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener () {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				contextsLayout.addView(itemLayout);				
+			}
+			cursor.moveToNext();
+		}
+		
+		// load starred projects
+		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
+		projectsLayout.removeAllViews();
+		while (!starredProjects.isAfterLast()) {
+			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
+			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+			if(projectId != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(projectTitle);			
+				
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener () {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				projectsLayout.addView(itemLayout);				
+			}
+			starredProjects.moveToNext();
+		}
+	}
+
+
 	/**
 	 * ActivitySelector
 	 * 
