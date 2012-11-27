@@ -1,5 +1,6 @@
 package cz.fit.next.sidebar;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.deaux.fan.FanView;
@@ -34,10 +36,12 @@ public class SidebarFragment extends Fragment {
 	/**
 	 * IDs of fixed menu items
 	 */
-	int menuItemsId[] = {
+	int menuFixedItemsId[] = {
 			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
-			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
+			 R.id.Projects_ShowProjects
 	};
+	
+	int menuFloatItemsId[];
 
 
 
@@ -47,18 +51,41 @@ public class SidebarFragment extends Fragment {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 		//TODO generate views for menu fixed items
-
+		sideBarView = setFixedItemsSidebar(sideBarView);
+		
 		//TODO load contexts from database
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		while (!cursor.isAfterLast()) {
-			Log.i("Context", "Context: " + cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
-			cursor.moveToNext();
-		}
-
 		//TODO Generate views for contexts		
-		sideBarView = setFixedItemsSidebar(sideBarView);
+		ArrayList<Integer> contextsId = generateContextsView(cursor, sideBarView);
 
 		return sideBarView;
+	}
+
+	/**
+	 *  Generate TextView for each contexts from database
+	 * @param cursor
+	 */
+	private ArrayList<Integer> generateContextsView(Cursor cursor, View sideBarView) {
+		// get parent layout of contexts
+		ArrayList<Integer> contextsId = new ArrayList<Integer>();
+		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
+		while (!cursor.isAfterLast()) {
+			String context = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+			if(context != null) {
+				// Create new TextView
+				TextView newItem = new TextView(sideBarView.getContext());
+				newItem.setText(context);
+				// Remember id to textview
+				contextsId.add(newItem.getId());
+				
+				// Add final id to layout
+				contextsLayout.addView(newItem);
+				
+				Log.i("Zpracovavam kuzor", "Ted");
+			}
+			cursor.moveToNext();
+		}
+		return contextsId;
 	}
 
 
@@ -70,7 +97,7 @@ public class SidebarFragment extends Fragment {
 	 */
 	protected View setFixedItemsSidebar(View pSideBarView) {
 
-		for (final int id : menuItemsId) {
+		for (final int id : menuFixedItemsId) {
 			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
 			// set graphic layout of item
@@ -78,6 +105,14 @@ public class SidebarFragment extends Fragment {
 			//set listener
 			setOnItemTouchListener(id, item);
 		}
+		return pSideBarView;
+	}
+	
+	protected View setFloatItemsSidebar(View pSideBarView) {
+		
+		//for (final int id : contextsItemId) {
+			
+	//	}
 		return pSideBarView;
 	}
 
@@ -223,7 +258,7 @@ public class SidebarFragment extends Fragment {
 	 * Reset background of all items in menu to transparent
 	 */
 	protected void resetAllActiveClicks() {
-		for (int viewId : menuItemsId) {
+		for (int viewId : menuFixedItemsId) {
 			getView().findViewById(viewId).setBackgroundResource(android.R.color.transparent);
 		}
 	}
