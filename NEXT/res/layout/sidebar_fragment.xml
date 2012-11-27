@@ -4,196 +4,201 @@
     android:layout_height="match_parent"
     android:background="@color/FanBackgroundDark" >
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dip"
-    android:layout_height="wrap_content"
-    android:background="@color/FanBackgroundDark"
-    android:clickable="true"
-    android:focusable="true"
-    android:orientation="vertical" >
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-<TextView
-            android:id="@+id/TitleByTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/TitleByTime"
-            android:textColor="@color/FanTitleColor"
-            android:textSize="@dimen/FanTitleSize"
-            android:textStyle="bold"
-            android:typeface="normal" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/FanTitleColor"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:clickable="true"
-            android:orientation="vertical" >
-            
-            <TextView
-                android:id="@+id/Time_Next"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:clickable="true"
-                android:drawableLeft="@drawable/menu_next"
-                android:drawablePadding="@dimen/FanItemDrawablePadding"
-                android:gravity="center_vertical"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByTime_Next"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
-            
-            <TextView
-                android:id="@+id/Time_Today"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:drawableLeft="@drawable/menu_today"
-                android:drawablePadding="@dimen/FanItemDrawablePadding"
-                android:gravity="center_vertical"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByTime_Today"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
-            
-            <TextView
-                android:id="@+id/Time_InPlan"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:drawableLeft="@drawable/menu_inplan"
-                android:drawablePadding="@dimen/FanItemDrawablePadding"
-                android:gravity="center_vertical"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByTime_InPlan"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
-            
-            <TextView
-                android:id="@+id/Time_Someday"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:drawableLeft="@drawable/menu_sometimes"
-                android:drawablePadding="@dimen/FanItemDrawablePadding"
-                android:gravity="center_vertical"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByTime_Someday"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
-            
-            <TextView
-                android:id="@+id/Time_Blocked"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:drawableLeft="@drawable/menu_blocked"
-                android:drawablePadding="@dimen/FanItemDrawablePadding"
-                android:gravity="center_vertical"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/TityleByTime_Blocked"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
-
-        </LinearLayout>
-
-    </FrameLayout>
-    
-    
-    <FrameLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="200dip"
         android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
-        android:layout_marginTop="10dp" >
+        android:background="@color/FanBackgroundDark"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/FanTitleColor"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ContextsLayout"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:gravity="center|left"
-            android:orientation="vertical" >
-        </LinearLayout>
+            android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/TitleByContext"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/TitleByContext"
-            android:textColor="@color/FanTitleColor"
-            android:textSize="@dimen/FanTitleSize"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/FanTitleColor"
-            android:orientation="vertical" >
-        </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/projects"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="25dp"
-            android:orientation="vertical" >
-            
             <TextView
-                android:id="@+id/Projects_ShowProjects"
+                android:id="@+id/TitleByTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/TitleByTime"
+                android:textColor="@color/FanTitleColor"
+                android:textSize="@dimen/FanTitleSize"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/FanTitleColor"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/Time_Next"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill_horizontal"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/menu_next"
+                    android:drawablePadding="@dimen/FanItemDrawablePadding"
+                    android:gravity="center_vertical"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/TitleByTime_Next"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+
+                <TextView
+                    android:id="@+id/Time_Today"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/menu_today"
+                    android:drawablePadding="@dimen/FanItemDrawablePadding"
+                    android:gravity="center_vertical"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/TitleByTime_Today"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+
+                <TextView
+                    android:id="@+id/Time_InPlan"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/menu_inplan"
+                    android:drawablePadding="@dimen/FanItemDrawablePadding"
+                    android:gravity="center_vertical"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/TitleByTime_InPlan"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+
+                <TextView
+                    android:id="@+id/Time_Someday"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/menu_sometimes"
+                    android:drawablePadding="@dimen/FanItemDrawablePadding"
+                    android:gravity="center_vertical"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/TitleByTime_Someday"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+
+                <TextView
+                    android:id="@+id/Time_Blocked"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/menu_blocked"
+                    android:drawablePadding="@dimen/FanItemDrawablePadding"
+                    android:gravity="center_vertical"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/TityleByTime_Blocked"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:layout_marginTop="10dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/FanTitleColor"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ContextsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center|left"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/TitleByContext"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:height="@dimen/FainItemHeight"
-                android:text="@string/show_all_projects"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/FanItemsText"
-                android:textSize="@dimen/FanItemTextSize" />
+                android:gravity="center_horizontal"
+                android:text="@string/TitleByContext"
+                android:textColor="@color/FanTitleColor"
+                android:textSize="@dimen/FanTitleSize"
+                android:textStyle="bold" />
+        </FrameLayout>
 
-        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/TitleByProject"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/TitleByProject"
-            android:textColor="@color/FanTitleColor"
-            android:textSize="@dimen/FanTitleSize"
-            android:textStyle="bold"
-            android:typeface="normal" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/FanTitleColor"
+                android:orientation="vertical" >
+            </LinearLayout>
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/TitleByProject"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/TitleByProject"
+                android:textColor="@color/FanTitleColor"
+                android:textSize="@dimen/FanTitleSize"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+            <LinearLayout
+                android:id="@+id/projectsAll"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/projects"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:orientation="vertical" >
 
-</LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/Projects_ShowProjects"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:height="@dimen/FainItemHeight"
+                    android:text="@string/show_all_projects"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/FanItemsText"
+                    android:textSize="@dimen/FanItemTextSize" />
+
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
 </ScrollView>
