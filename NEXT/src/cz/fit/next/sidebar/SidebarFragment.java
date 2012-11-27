@@ -156,13 +156,8 @@ public class SidebarFragment extends Fragment {
 			case R.id.Projects_ShowProjects:
 				Log.i(LOG_TAG, "selection: Show Projects");
 
-				// create new fragment only if needed
-				if (!(currentFragment instanceof ProjectListFragment)) {
-					fan.replaceMainFragment(new ProjectListFragment());
-				}
-				else {
-					((ProjectListFragment) currentFragment).reloadContent();
-				}
+				// replace current fragment
+				fan.replaceMainFragment(new ProjectListFragment());
 
 				break;
 			default:

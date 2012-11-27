@@ -17,7 +17,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
-import cz.fit.next.ContentReloadable;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
@@ -32,7 +31,7 @@ import cz.fit.next.taskdetail.TaskEditFragment;
  * 
  * @author David
  */
-public class TaskListFragment extends ListFragment implements ContentReloadable {
+public class TaskListFragment extends ListFragment {
 
 	private final static String LOG_TAG = "ContentFragment";
 
@@ -125,16 +124,6 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		// register long click events
 		registerForContextMenu(getListView());
-	}
-
-
-
-	/**
-	 * Reload fragment content by re-querying database with the current filter
-	 */
-	@Override
-	public void reloadContent() {
-		setFilter(mFilter);
 	}
 
 
