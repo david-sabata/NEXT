@@ -59,28 +59,20 @@ public class ProjectsDataSource {
 	}
 
 
-	//	public Comment createComment(String comment) {
-	//		ContentValues values = new ContentValues();
-	//		values.put(DbOpenHelper.COLUMN_COMMENT, comment);
-	//		long insertId = database.insert(DbOpenHelper.TABLE_COMMENTS, null, values);
-	//		Cursor cursor = database.query(DbOpenHelper.TABLE_COMMENTS, allColumns, DbOpenHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
-	//		cursor.moveToFirst();
-	//		Comment newComment = cursorToComment(cursor);
-	//		cursor.close();
-	//		return newComment;
-	//	}
-	//
-	//	public void deleteComment(Comment comment) {
-	//		long id = comment.getId();
-	//		System.out.println("Comment deleted with id: " + id);
-	//		database.delete(DbOpenHelper.TABLE_COMMENTS, DbOpenHelper.COLUMN_ID + " = " + id, null);
-	//	}
-
-
 
 
 	public Cursor getAllProjectsCursor() {
 		Cursor cursor = database.query(Constants.TABLE_PROJECTS, allColumns, null, null, null, null, null);
+		cursor.moveToFirst();
+
+		return cursor;
+	}
+
+
+	public Cursor getStarredProjectsCursor() {
+		String where = Constants.TABLE_PROJECTS + "." + Constants.COLUMN_STARRED + " != 0";
+
+		Cursor cursor = database.query(Constants.TABLE_PROJECTS, allColumns, where, null, null, null, null);
 		cursor.moveToFirst();
 
 		return cursor;

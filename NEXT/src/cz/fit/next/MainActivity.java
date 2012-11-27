@@ -195,11 +195,6 @@ public class MainActivity extends FragmentActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								TasksModelService.getInstance().wipeDatabaseData();
-								ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(
-										R.id.appView);
-								if (currentFragment != null) {
-									currentFragment.reloadContent();
-								}
 							}
 						})
 						.setNegativeButton("No", null)
