@@ -25,6 +25,7 @@ import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -57,6 +58,15 @@ public class SidebarFragment extends Fragment {
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
 		//TODO Generate views for contexts		
 		ArrayList<Integer> contextsId = generateContextsView(cursor, sideBarView);
+
+
+		// load starred projects
+		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+		while (!starredProjects.isAfterLast()) {
+
+		}
+
+
 
 		return sideBarView;
 	}

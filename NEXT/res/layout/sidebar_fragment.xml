@@ -164,6 +164,7 @@
         </LinearLayout>
         
         <LinearLayout
+            android:id="@+id/projects"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="25dp"
@@ -174,7 +175,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByProject_ShowProjects"
+                android:text="@string/show_all_projects"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/FanItemsText"
                 android:textSize="@dimen/FanItemTextSize" />

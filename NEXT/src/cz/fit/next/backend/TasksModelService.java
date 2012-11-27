@@ -149,8 +149,14 @@ public class TasksModelService extends Service {
 	 * Returns cursor to all projects
 	 */
 	public Cursor getAllProjectsCursor() {
-		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
-		return cursor;
+		return mProjectsDataSource.getAllProjectsCursor();
+	}
+
+	/**
+	 * Returns cursor to starred projects only
+	 */
+	public Cursor getStarredProjectsCursor() {
+		return mProjectsDataSource.getStarredProjectsCursor();
 	}
 
 	/**
