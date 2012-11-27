@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout1"
+    android:id="@+id/rootLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="top"
@@ -10,7 +10,7 @@
     tools:context=".TaskDetailFragment" >
 
     <ScrollView
-        android:id="@+id/scrollView1"
+        android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/background_light" >
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
+            
             <LinearLayout
                 android:id="@+id/titleLayout"
                 android:layout_width="fill_parent"
@@ -29,7 +29,7 @@
                 android:orientation="vertical"
                 android:padding="@dimen/TaskTittlePadding"
                 android:paddingTop="@dimen/TaskTitlePaddingTop" >
-                
+                
                 <EditText
                     android:id="@+id/titleTask"
                     android:layout_width="wrap_content"
@@ -180,7 +180,7 @@
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
-
+            
             <LinearLayout
                 android:id="@+id/taskProjectLayout"
                 android:layout_width="fill_parent"
@@ -213,7 +213,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+                
                 <Spinner
                     android:id="@+id/spinnerProject"
                     android:layout_width="match_parent"

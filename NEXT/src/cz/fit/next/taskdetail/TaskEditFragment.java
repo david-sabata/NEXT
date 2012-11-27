@@ -2,6 +2,7 @@ package cz.fit.next.taskdetail;
 
 
 import java.util.UUID;
+
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
@@ -115,6 +117,19 @@ public class TaskEditFragment extends Fragment {
 
 		return taskDetailView;
 	}
+
+
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// register for gestures
+		View v = getView().findViewById(R.id.scrollView);
+		((MainActivity) getActivity()).attachGestureDetector(v);
+	}
+
 
 
 
