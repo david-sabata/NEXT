@@ -33,6 +33,7 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
@@ -47,13 +48,13 @@ public class SyncService extends Service {
 	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
 	
 	// String definitions for History object
-	private String const_title = "next_hist_title";
-	private String const_description = "next_hist_description";
-	private String const_date = "next_hist_date";
-	private String const_priority = "next_hist_priority";
-	private String const_project = "next_hist_project";
-	private String const_context = "next_hist_context";
-	private String const_completed = "next_hist_completed";
+	public static String const_title = "next_hist_title";
+	public static String const_description = "next_hist_description";
+	public static String const_date = "next_hist_date";
+	public static String const_priority = "next_hist_priority";
+	public static String const_project = "next_hist_project";
+	public static String const_context = "next_hist_context";
+	public static String const_completed = "next_hist_completed";
 
 	// Notification types
 	private static final int NOTIFICATION_NEW_SHARED = 100;
@@ -257,8 +258,10 @@ public class SyncService extends Service {
 						
 						for (int j = 0; j < remoteTasks.size(); j++) {
 							if (task.getId().equals(remoteTasks.get(j).getId())) {
-								// TODO: SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
+								// SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
 								Log.i(TAG,"Twoway sync : " + task.getTitle());
+								Task result = twoWaySync(task, remoteTasks.get(j));
+								TasksModelService.getInstance().saveTask(result);
 								
 								// remote task was processed, delete it from array
 								remoteTasks.remove(j);
@@ -452,6 +455,28 @@ public class SyncService extends Service {
 			//stopSelf();
 		}
 	}
+	
+	
+	/**
+	 * Compares two tasks and returns newer
+	 */
+	public Task twoWaySync(Task first, Task second) {
+		ArrayList<TaskHistory> hist1 = first.getProject().getHistory();
+		ArrayList<TaskHistory> hist2 = second.getProject().getHistory();
+		
+		if ((hist1 != null) && (hist2 != null)) {
+			String time1 = hist1.get((hist1.size())-1).getTimeStamp();
+			String time2 = hist2.get((hist2.size())-1).getTimeStamp();
+			
+			if (Long.decode(time1) < Long.decode(time2)) return second;
+			else return first;
+		}
+		
+		if (hist1 == null) return second;
+		
+		return first;
+	}
+	
 
 	/*
 	 * Starts synchronization
