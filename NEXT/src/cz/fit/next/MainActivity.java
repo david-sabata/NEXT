@@ -88,9 +88,10 @@ public class MainActivity extends FragmentActivity {
 
 
 
+
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
@@ -98,6 +99,14 @@ public class MainActivity extends FragmentActivity {
 
 		// restore service if needed
 		bindModelService();
+	}
+
+
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 
 		// hide loading fragment if the service is already ready
 		if (mModelService != null)
