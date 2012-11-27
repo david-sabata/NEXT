@@ -34,7 +34,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		// create PROJECTS table
 		database.execSQL("CREATE TABLE " + Constants.TABLE_PROJECTS + "("
 				+ Constants.COLUMN_ID + " text primary key not null, "
-				+ Constants.COLUMN_TITLE + " text not null);");
+				+ Constants.COLUMN_TITLE + " text not null, "
+				+ Constants.COLUMN_STARRED + " integer);");
 
 		// create TASKS table
 		database.execSQL("CREATE TABLE " + Constants.TABLE_TASKS + "("
@@ -62,11 +63,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		String tmpUUID = UUID.randomUUID().toString();
 
 		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
-				+ ") VALUES ('" + tmpUUID + "', 'Projekt 1')");
+				+ ", " + Constants.COLUMN_STARRED + ") VALUES ('" + tmpUUID + "', 'Projekt 1', 0)");
 		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
-				+ ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 2')");
+				+ ", " + Constants.COLUMN_STARRED + ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 2', 1)");
 		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
-				+ ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 3')");
+				+ ", " + Constants.COLUMN_STARRED + ") VALUES ('" + UUID.randomUUID() + "', 'Projekt 3', 1)");
 
 		ContentValues otherValues = new ContentValues();
 		otherValues.put(Constants.COLUMN_ID, UUID.randomUUID().toString());

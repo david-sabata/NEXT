@@ -23,6 +23,7 @@ public interface Constants {
 	public static final String COLUMN_DATETIME_TYPE = "datetime_type"; // date/datetime
 	public static final String COLUMN_PRIORITY = "priority"; // int
 	public static final String COLUMN_COMPLETED = "completed"; // int
+	public static final String COLUMN_STARRED = "starred"; // int
 
 
 	// unique column names to disambiguate names when using JOIN
@@ -35,5 +36,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 13;
+	public static final int DATABASE_VERSION = 14;
 }
