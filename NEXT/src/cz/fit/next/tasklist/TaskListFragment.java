@@ -20,6 +20,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.deaux.fan.FanView;
+
 import cz.fit.next.MainActivity;
 import cz.fit.next.MyGestureDetector;
 import cz.fit.next.R;
@@ -106,8 +109,9 @@ public class TaskListFragment extends ListFragment {
 			mFilter = Filter.fromString(args.getString(ARG_FILTER));
 		}
 
+		FanView fan = ((MainActivity) getActivity()).getFanView();
 
-		mGestureDetector = new GestureDetector(getActivity(), new MyGestureDetector(getActivity()));
+		mGestureDetector = new GestureDetector(getActivity(), new MyGestureDetector(fan));
 		mTouchListener = new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
