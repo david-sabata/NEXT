@@ -177,7 +177,7 @@ public class SidebarFragment extends Fragment {
 
 					GregorianCalendar until = new GregorianCalendar();
 					until.setTimeInMillis(from.getTimeInMillis());
-					until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+					until.add(Calendar.HOUR_OF_DAY, 24);
 					filterToday.setDateUntil(until);
 
 					// create new fragment to add to backstack

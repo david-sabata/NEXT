@@ -1,7 +1,6 @@
 package cz.fit.next.taskdetail;
 
 
-import java.util.Date;
 import java.util.UUID;
 import android.database.Cursor;
 import android.os.Bundle;
