@@ -131,7 +131,7 @@ public class TaskDetailFragment extends Fragment {
 			} else if (itemType.equals("description")) {
 				text = mTask.getDescription();
 			} else if (itemType.equals("date")) {
-				text = mTask.getDate().toLocaleString();
+				text = mTask.getDate().toLocaleDateTimeString();
 			} else if (itemType.equals("project")) {
 				text = mTask.getProject().getTitle();
 			} else if (itemType.equals("context")) {

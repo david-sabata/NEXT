@@ -20,6 +20,7 @@ public interface Constants {
 	public static final String COLUMN_DESCRIPTION = "description"; // string
 	public static final String COLUMN_CONTEXT = "context"; // string
 	public static final String COLUMN_DATETIME = "datetime"; // serialized DateTime object
+	public static final String COLUMN_DATETIME_TYPE = "datetime_type"; // date/datetime
 	public static final String COLUMN_PRIORITY = "priority"; // int
 	public static final String COLUMN_COMPLETED = "completed"; // int
 
@@ -34,5 +35,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 12;
+	public static final int DATABASE_VERSION = 13;
 }

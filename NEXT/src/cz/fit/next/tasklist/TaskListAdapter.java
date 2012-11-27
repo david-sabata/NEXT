@@ -1,8 +1,6 @@
 package cz.fit.next.tasklist;
 
 
-import java.util.Date;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -68,8 +66,18 @@ public class TaskListAdapter extends CursorAdapter {
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
-		DateTime datetime = new DateTime(new Date(date));
-		dt.setText(datetime.toLocaleString());
+		String showAs = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME_TYPE));
+		DateTime datetime = new DateTime(date);
+
+		if (datetime.isSomeday()) {
+			dt.setVisibility(View.INVISIBLE);
+		}
+		else if (showAs.equals(DateTime.FLAG_DATE)) {
+			dt.setText(datetime.toLocaleDateString());
+		}
+		else {
+			dt.setText(datetime.toLocaleDateTimeString());
+		}
 
 	}
 

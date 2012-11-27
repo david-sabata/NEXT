@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
+import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 
@@ -183,11 +184,26 @@ public class TasksModelService extends Service {
 
 
 	/**
+	 * Rreturns localized date string
+	 */
+	public String getLocalizedDate(Date d) {
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE);
+	}
+
+	/**
 	 * Rreturns localized date and time string
 	 */
 	public String getLocalizedDateTime(Date d) {
 		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
+
+	/**
+	 * Returns localized label for 'someday'
+	 */
+	public String getLocalizedSomedayTime() {
+		return mContext.getResources().getString(R.string.someday);
+	}
+
 
 	/**
 	 * Returns tasks filter query provider used to filter tasks

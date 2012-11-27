@@ -8,11 +8,6 @@ import java.util.Locale;
 public class DateTime {
 
 	/**
-	 * Format used for saving
-	 */
-	public static final String UNIFIED_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";
-
-	/**
 	 * Format supported for parsing
 	 */
 	private static final String[] FORMATS = new String[] {
@@ -26,53 +21,77 @@ public class DateTime {
 			"dd. MM. yyyy"
 	};
 
+	/**
+	 * Timestamp (in milis) used for 'someday'
+	 */
+	public static final long SOMEDAY_TIMESTAMP = 9999999999999l;
 
 	/**
-	 * Underlying Date object
+	 * Flags used in db as datetime_type
 	 */
-	protected Date mDate;
+	public static final String FLAG_DATE = "date";
+	public static final String FLAG_DATETIME = "datetime";
+
+
+	/**
+	 * Timestamp
+	 */
+	protected long mTimestamp;
 
 
 	/**
 	 * Create from current time
 	 */
 	public DateTime() {
-		mDate = new Date();
+		mTimestamp = new Date().getTime();
 	}
 
 	/**
-	 * Create from date object
+	 * Create from timestamp in miliseconds
 	 */
-	public DateTime(Date date) {
-		mDate = date;
+	public DateTime(long time) {
+		mTimestamp = time;
 	}
 
 	/**
 	 * Create from string in one of supported formats
 	 */
 	public DateTime(String s) {
-		for (String format : FORMATS) {
-			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				mDate = sdf.parse(s);
-				break;
-			} catch (ParseException e) {
-				mDate = null;
+		boolean isOk = false;
+
+		// someday
+		if (Long.parseLong(s) == SOMEDAY_TIMESTAMP) {
+			mTimestamp = SOMEDAY_TIMESTAMP;
+			isOk = true;
+		}
+
+		// regular date(time)
+		else {
+			for (String format : FORMATS) {
+				try {
+					SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+					Date d = sdf.parse(s);
+					mTimestamp = d.getTime();
+					isOk = true;
+					break;
+				} catch (ParseException e) {
+					// silently ignore
+				}
 			}
 		}
 
-		if (mDate == null)
+		if (!isOk)
 			throw new RuntimeException("Unable to parse DateTime [" + s + "]");
 	}
 
 
-	/**
-	 * Underlying Date object getter
-	 */
-	public Date getDate() {
-		return mDate;
-	}
 
+	/**
+	 * Is this date someday?
+	 */
+	public boolean isSomeday() {
+		return mTimestamp == SOMEDAY_TIMESTAMP;
+	}
 
 
 
@@ -83,17 +102,28 @@ public class DateTime {
 	 */
 	@Override
 	public String toString() {
-		SimpleDateFormat sdf = new SimpleDateFormat(UNIFIED_FORMAT, Locale.US);
-		return sdf.format(mDate);
+		return String.valueOf(mTimestamp);
 	}
 
+
+	/**
+	 * Returns localized datetime string
+	 * (Uses service to get localized DateFormatter)
+	 */
+	public String toLocaleDateTimeString() {
+		return isSomeday() ?
+				TasksModelService.getInstance().getLocalizedSomedayTime() :
+				TasksModelService.getInstance().getLocalizedDateTime(new Date(mTimestamp));
+	}
 
 	/**
 	 * Returns localized date string
 	 * (Uses service to get localized DateFormatter)
 	 */
-	public String toLocaleString() {
-		return TasksModelService.getInstance().getLocalizedDateTime(mDate);
+	public String toLocaleDateString() {
+		return isSomeday() ?
+				TasksModelService.getInstance().getLocalizedSomedayTime() :
+				TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
 	}
 
 
@@ -101,7 +131,7 @@ public class DateTime {
 	 * Returns time in miliseconds of GMT
 	 */
 	public long toMiliseconds() {
-		return mDate.getTime();
+		return mTimestamp;
 	}
 
 }

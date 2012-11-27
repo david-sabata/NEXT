@@ -1,6 +1,5 @@
 package cz.fit.next.taskdetail;
 
-import java.util.Date;
 import java.util.UUID;
 
 import android.os.Bundle;
@@ -166,7 +165,7 @@ public class TaskEditFragment extends Fragment {
 
 	private void loadDefaults() {
 		// set date
-		DateTime dateTime = new DateTime(new Date());
+		DateTime dateTime = new DateTime();
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toString());
 	}
