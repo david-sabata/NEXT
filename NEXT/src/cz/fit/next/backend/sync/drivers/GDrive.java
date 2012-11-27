@@ -176,6 +176,15 @@ public class GDrive {
 	
 	
 	/**
+	 * Move file on remote storage to my folder
+	 */
+	
+	public void move(String fileid) {
+		moveFile(fileid, mAppFolder);
+	}
+	
+	
+	/**
 	 * Get userlist of one file
 	 */
 	public List<UserPerm> getUserList(String fileid) {
@@ -582,6 +591,32 @@ public class GDrive {
 	
 	
 	/**
+	 * Moves file to "appfolder"-id on storage
+	 */
+	private void moveFile(String fileid, String appfolder) {
+
+				
+		try {
+			// get old file
+			File dfile = mService.files().get(fileid).execute();
+			
+			// Change file's metadata.
+			List<ParentReference> parents = dfile.getParents();
+			parents.add((new ParentReference()).setId(appfolder));
+			dfile.setParents(parents);
+			
+			mService.files().update(fileid, dfile).execute();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
+	/**
 	 * Delete file in app folder
 	 */
 	private void deleteFile(String id) {
@@ -591,7 +626,7 @@ public class GDrive {
 			// Delete file
 			mService.files().delete(id).execute();
 			
-			Log.i(TAG, "Deleted");
+			Log.i(TAG, "Deleted ");
 
 
 

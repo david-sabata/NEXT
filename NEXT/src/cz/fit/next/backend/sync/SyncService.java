@@ -59,12 +59,9 @@ public class SyncService extends Service {
 	private static final int NOTIFICATION_NEW_SHARED = 100;
 
 	// Self
-	private static SyncService sInstance;
+	private static SyncService sInstance = null;
+	private static SyncService sInstanceOld = null;
 	
-	// Flag to determine, if service is connected to some activity, or has been restarted by Android
-	// 1 = connected
-	int ActivityPresent = 1;
-
 	// GDrive Driver
 	private GDrive drive;
 
@@ -91,23 +88,34 @@ public class SyncService extends Service {
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
-			synchronize();
+			//synchronize();
+			if (sInstanceOld == null) {
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 10);
+				alarm.run();
+			}
 		}
+		
+		sInstanceOld = sInstance;
 		
 		// if button pressed ask for username
 		if (intent != null) {
 			Bundle b = intent.getExtras();
 			
-			
-			if (b.getInt("inAuth") == -1) {
+			if (b != null) {
+				if (b.getInt("inAuth") == -1) {
+					
+					authorizeDone(null, false);
+					
+				}
+				if (b.getInt("inAuth") == 1) {
+					
+					authorizeDone(b.getString("accountName"), true);
+					
+				}
 				
-				authorizeDone(null, false);
-				
-			}
-			if (b.getInt("inAuth") == 1) {
-				
-				authorizeDone(b.getString("accountName"), true);
-				
+				if (b.getInt("SyncAlarm") == 1) {
+					synchronize();
+				}
 			}
 					
 		}
@@ -420,6 +428,7 @@ public class SyncService extends Service {
 			if (lsf != null) {
 				for (int i = 0; i < lsf.size(); i++) {
 					Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
+					drive.move(lsf.get(i).getId());
 				}
 			
 				returnObject ret = new returnObject(lsf.size());
@@ -444,8 +453,13 @@ public class SyncService extends Service {
 				}
 			}
 			
-			//TODO: ALARM MANAGER
-			stopSelf();
+			// Plan next synchronization
+			// TODO: Variable interval
+			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 20);
+			//alarm.run();
+			
+			//Log.i(TAG, "Killing SyncService.");
+			//stopSelf();
 		}
 	}
 
@@ -481,7 +495,7 @@ public class SyncService extends Service {
 		if (type == NOTIFICATION_NEW_SHARED) {
 			title = "NEXT Sharing";
 			content = "New shared files found on your Drive.";
-			ticker = "New shared files found.";
+			ticker = "NEXT: New shared files found.";
 		}
 		
 		

@@ -32,6 +32,8 @@
 
         <service android:name=".backend.TasksModelService"></service>
         <service android:name=".backend.sync.SyncService"></service>
+        
+        <receiver android:name=".backend.sync.AlarmReceiver" />
 
     </application>
     
