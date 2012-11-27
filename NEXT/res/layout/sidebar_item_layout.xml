@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/sidebarItem"
         android:layout_width="fill_parent"
@@ -11,6 +11,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:height="@dimen/FainItemHeight"
+        android:paddingLeft="@dimen/FanItemPaddingLeft"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/FanItemsText"
         android:textSize="@dimen/FanItemTextSize" />

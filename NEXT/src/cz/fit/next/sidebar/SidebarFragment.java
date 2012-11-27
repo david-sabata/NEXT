@@ -43,11 +43,7 @@ public class SidebarFragment extends Fragment {
 			R.id.Projects_ShowProjects
 	};
 
-	int menuFloatItemsId[];
-
-
-
-
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,60 +52,8 @@ public class SidebarFragment extends Fragment {
 		//TODO generate views for menu fixed items
 		sideBarView = setFixedItemsSidebar(sideBarView);
 
-
-		//TODO load contexts from database
-		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
-		final Context c = sideBarView.getContext();
-		while (!cursor.isAfterLast()) {
-			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			if (contextTitle != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(contextTitle);
-
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				contextsLayout.addView(itemLayout);
-			}
-			cursor.moveToNext();
-		}
-
-
-		// load starred projects
-		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
-		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
-		while (!starredProjects.isAfterLast()) {
-			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
-			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
-			if (projectId != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(projectTitle);
-
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				projectsLayout.addView(itemLayout);
-			}
-			starredProjects.moveToNext();
-		}
-
+		initSideBarContextProjects();
+	
 		return sideBarView;
 	}
 
@@ -124,19 +68,9 @@ public class SidebarFragment extends Fragment {
 		for (final int id : menuFixedItemsId) {
 			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
-			// set graphic layout of item
-			setItemProperties(item);
 			//set listener
 			setOnItemTouchListener(id, item);
 		}
-		return pSideBarView;
-	}
-
-	protected View setFloatItemsSidebar(View pSideBarView) {
-
-		//for (final int id : contextsItemId) {
-
-		//	}
 		return pSideBarView;
 	}
 
@@ -164,7 +98,6 @@ public class SidebarFragment extends Fragment {
 			}
 		});
 	}
-
 
 
 	@Override
@@ -336,22 +269,6 @@ public class SidebarFragment extends Fragment {
 
 		// always toggle sidebar
 		fan.showMenu();
-	}
-
-	protected void setItemProperties(TextView item) {
-
-		// set dafault icon if nothing is set
-		/*
-		 * if (item.getDrawableState().length == 1) {
-		 * item.setCompoundDrawablesWithIntrinsicBounds
-		 * (R.drawable.menu_sometimes, 0, 0, 0); }
-		 */
-
-		// set padding of item
-		item.setPadding(15, 0, 0, 0);
-		// set gravity to vertical center
-		item.setGravity(Gravity.CENTER_VERTICAL);
-
 	}
 
 
