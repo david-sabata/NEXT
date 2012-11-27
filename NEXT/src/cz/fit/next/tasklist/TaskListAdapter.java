@@ -86,19 +86,17 @@ public class TaskListAdapter extends CursorAdapter {
 		if (cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
 			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
 			switch (priority) {
-
 				case 1:
-					prl.setBackgroundColor(Color.parseColor("#2f9b3e"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_1));
 					break;
 				case 2:
-					prl.setBackgroundColor(Color.parseColor("#ceef4a"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_2));
 					break;
 				case 3:
-					prl.setBackgroundColor(Color.parseColor("#ff3333"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_3));
 					break;
 				default:
-					prl.setBackgroundColor(Color.parseColor("#000000"));
-					break;
+					prl.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
 

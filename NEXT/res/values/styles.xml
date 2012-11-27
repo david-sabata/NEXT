@@ -33,5 +33,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:indeterminate">true</item>
     </style>
+    <color name="priority_3">#BF3000</color>
+    <color name="priority_1">#93BF00</color>
+    <color name="priority_2">#BF9600</color>
 
 </resources>
