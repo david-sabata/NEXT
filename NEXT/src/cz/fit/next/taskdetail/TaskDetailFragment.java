@@ -120,13 +120,17 @@ public class TaskDetailFragment extends Fragment {
 			mTask = task;
 			setDetailTask();
 		}
+
+		// register for gestures
+		View v = getView().findViewById(R.id.scrollView);
+		((MainActivity) getActivity()).attachGestureDetector(v);
 	}
 
 
 	private void setTitleLayout(LinearLayout titleLayout, TextView textData, String itemType) {
-		if (textData != null && titleLayout != null ) {
+		if (textData != null && titleLayout != null) {
 			String text = null;
-			if(itemType.equals("title")) {
+			if (itemType.equals("title")) {
 				text = mTask.getTitle();
 			} else if (itemType.equals("description")) {
 				text = mTask.getDescription();
@@ -137,16 +141,16 @@ public class TaskDetailFragment extends Fragment {
 			} else if (itemType.equals("context")) {
 				text = mTask.getContext();
 			}
-		
+
 			//Log.i("description", text);
-			if(text != null && !text.equals("")) {
+			if (text != null && !text.equals("")) {
 				textData.setText(text);
 				titleLayout.setVisibility(View.VISIBLE);
 			} else {
 				titleLayout.setVisibility(View.GONE);
-			}	
+			}
 		}
-		
+
 	}
 
 	/**
@@ -178,7 +182,7 @@ public class TaskDetailFragment extends Fragment {
 		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
 		LinearLayout contextLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskContextLayout);
 		setTitleLayout(contextLayout, context, "context");
-		
+
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
 		if (isCompleted != null) {

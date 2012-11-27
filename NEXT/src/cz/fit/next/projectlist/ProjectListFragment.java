@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 
@@ -38,6 +39,10 @@ public class ProjectListFragment extends ListFragment {
 		} catch (RuntimeException e) {
 			// ignore and wait for the next call
 		}
+
+
+		// register for gestures
+		((MainActivity) getActivity()).attachGestureDetector(getListView());
 	}
 
 

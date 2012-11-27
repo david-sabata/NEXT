@@ -260,8 +260,6 @@ public class TasksDataSource {
 		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null, null);
 		cursor.moveToFirst();
 
-		Log.i(LOG_TAG, "contexts after filter: " + cursor.getCount() + " items");
-
 		if (cursor.getCount() == 0)
 			return null;
 		return cursor;
