@@ -31,7 +31,7 @@ public class SidebarFragment extends Fragment {
 	 * IDs of fixed menu items
 	 */
 	int menuItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes, R.id.Time_Blocked,
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
 			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
 	};
 
@@ -64,12 +64,12 @@ public class SidebarFragment extends Fragment {
 			setItemProperties(item);
 
 			//set on touch event
-			item.setOnTouchListener(new View.OnTouchListener() {		
+			item.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
-					if(event.getAction() == MotionEvent.ACTION_DOWN) {
-						v.setBackgroundColor(Color.parseColor("#00FFFF"));		
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						v.setBackgroundColor(Color.parseColor("#00FFFF"));
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
 						v.setBackgroundColor(Color.TRANSPARENT);
 						updateContentFromItemClick(id);
@@ -131,8 +131,8 @@ public class SidebarFragment extends Fragment {
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");
 				break;
-			case R.id.Time_Sometimes:
-				Log.i(LOG_TAG, "selection: Sometimes");
+			case R.id.Time_Someday:
+				Log.i(LOG_TAG, "selection: Someday");
 				break;
 			case R.id.Time_Blocked:
 				Log.i(LOG_TAG, "selection: Blocked");
@@ -160,7 +160,7 @@ public class SidebarFragment extends Fragment {
 				 */
 				break;
 		}
-		
+
 		// always toggle sidebar
 		fan.showMenu();
 	}

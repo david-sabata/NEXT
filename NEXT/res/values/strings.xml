@@ -9,7 +9,7 @@
     
     <string name="TitleByTime_Next">Next</string>
     <string name="TitleByTime_InPlan">In plan</string>
-    <string name="TitleByTime_Sometimes">Sometimes</string>
+    <string name="TitleByTime_Someday">Someday</string>
     <string name="TityleByTime_Blocked">Blocked</string><string name="TitleByContext">Contexts</string>
     <string name="TitleByContext_Home">Home</string>
     <string name="TitleByContext_Work">Work</string>
