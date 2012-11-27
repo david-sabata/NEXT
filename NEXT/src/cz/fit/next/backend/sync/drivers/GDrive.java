@@ -224,6 +224,7 @@ public class GDrive {
 	private boolean reauth(Context appcontext) {
 		AccountManager am = AccountManager.get(appcontext);
 		am.invalidateAuthToken("com.google", null);
+		if (mAccountName == null) return false;
 
 		Account account = new Account(mAccountName, "com.google");
 		mAuthToken = getGoogleAccessToken(null, appcontext, account);
