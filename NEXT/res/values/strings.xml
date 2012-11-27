@@ -50,5 +50,6 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
+    <string name="menuSyncNow">Sync Now</string>
     
 </resources>

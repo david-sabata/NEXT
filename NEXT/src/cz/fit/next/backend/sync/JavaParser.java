@@ -14,14 +14,12 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import android.R;
 import android.content.Context;
 import android.util.Log;
 
@@ -179,8 +177,8 @@ public class JavaParser {
 			Task newTask = new Task(taskJson, project);
 			
 			// Debug Task
-			Log.i("Task id:", newTask.getId());
-			Log.i("Task title:", newTask.getTitle());
+			//Log.i("Task id:", newTask.getId());
+			//Log.i("Task title:", newTask.getTitle());
 			
 			tasksList.add(newTask);
 		}	
@@ -272,7 +270,7 @@ public class JavaParser {
 		jsonTask.put("id", task.getId());
 		jsonTask.put("title", task.getTitle());
 		jsonTask.put("description",task.getDescription());
-		jsonTask.put("date",task.getDate());
+		jsonTask.put("date",task.getDate().toString());
 		jsonTask.put("partProject", task.getProject().getTitle());
 		jsonTask.put("partContexts",task.getContext());
 		jsonTask.put("important",task.getPriority());
