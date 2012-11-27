@@ -23,7 +23,7 @@ public class ProjectsDataSource {
 	/**
 	 * Columns to be fetched from the table
 	 */
-	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE };
+	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE, Constants.COLUMN_STARRED, Constants.COLUMN_HISTORY };
 
 
 	/**
@@ -59,28 +59,20 @@ public class ProjectsDataSource {
 	}
 
 
-	//	public Comment createComment(String comment) {
-	//		ContentValues values = new ContentValues();
-	//		values.put(DbOpenHelper.COLUMN_COMMENT, comment);
-	//		long insertId = database.insert(DbOpenHelper.TABLE_COMMENTS, null, values);
-	//		Cursor cursor = database.query(DbOpenHelper.TABLE_COMMENTS, allColumns, DbOpenHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
-	//		cursor.moveToFirst();
-	//		Comment newComment = cursorToComment(cursor);
-	//		cursor.close();
-	//		return newComment;
-	//	}
-	//
-	//	public void deleteComment(Comment comment) {
-	//		long id = comment.getId();
-	//		System.out.println("Comment deleted with id: " + id);
-	//		database.delete(DbOpenHelper.TABLE_COMMENTS, DbOpenHelper.COLUMN_ID + " = " + id, null);
-	//	}
-
-
 
 
 	public Cursor getAllProjectsCursor() {
 		Cursor cursor = database.query(Constants.TABLE_PROJECTS, allColumns, null, null, null, null, null);
+		cursor.moveToFirst();
+
+		return cursor;
+	}
+
+
+	public Cursor getStarredProjectsCursor() {
+		String where = Constants.TABLE_PROJECTS + "." + Constants.COLUMN_STARRED + " != 0";
+
+		Cursor cursor = database.query(Constants.TABLE_PROJECTS, allColumns, where, null, null, null, null);
 		cursor.moveToFirst();
 
 		return cursor;
@@ -118,7 +110,9 @@ public class ProjectsDataSource {
 
 		// update
 		if (existing != null) {
+			vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
 			vals.put(Constants.COLUMN_TITLE, project.getTitle());
+			vals.put(Constants.COLUMN_HISTORY, project.getSerializedHistory());
 			String where = Constants.COLUMN_ID + " = ?";
 			String[] args = new String[] { project.getId() };
 
@@ -130,6 +124,8 @@ public class ProjectsDataSource {
 		// add
 		vals.put(Constants.COLUMN_ID, project.getId());
 		vals.put(Constants.COLUMN_TITLE, project.getTitle());
+		vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
+		vals.put(Constants.COLUMN_HISTORY, project.getSerializedHistory());
 		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}
 

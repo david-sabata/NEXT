@@ -2,8 +2,6 @@ package cz.fit.next;
 
 
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,12 +18,10 @@ import android.view.MenuItem;
 
 import com.deaux.fan.FanView;
 
-import cz.fit.next.backend.Project;
-import cz.fit.next.backend.Task;
-import cz.fit.next.backend.TaskHistory;
+
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
-import cz.fit.next.backend.sync.JavaParser;
+
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.sidebar.SidebarFragment;
@@ -59,8 +55,8 @@ public class MainActivity extends FragmentActivity {
 		fan.setAnimationDuration(200); // 200ms
 
 		if (savedInstanceState == null) {
-			Fragment fanFrag = new SidebarFragment();
-
+			//Fragment fanFrag = new SidebarFragment();
+			LoadingFragment fanFrag = LoadingFragment.newInstance();
 			LoadingFragment contentFrag = LoadingFragment.newInstance();
 
 			fan.setFragments(contentFrag, fanFrag);
@@ -88,9 +84,10 @@ public class MainActivity extends FragmentActivity {
 
 
 
+
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
@@ -98,6 +95,14 @@ public class MainActivity extends FragmentActivity {
 
 		// restore service if needed
 		bindModelService();
+	}
+
+
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 
 		// hide loading fragment if the service is already ready
 		if (mModelService != null)
@@ -163,13 +168,21 @@ public class MainActivity extends FragmentActivity {
 				Log.i(LOG_TAG, "JSON Read File");
 
 				// Just for debugging
-				JavaParser parser = new JavaParser();
-				parser.setFile("file.html");
-				Project project = parser.getProject();
-				ArrayList<Task> tasks = parser.getTasks(project);
+				//JavaParser parser = new JavaParser();
+				//parser.setFile("file.html");
+				//Project project = parser.getProject();
+				//ArrayList<Task> tasks = parser.getTasks(project);
 
-				ArrayList<TaskHistory> histories = parser.getHistory();
+				//ArrayList<TaskHistory> histories = parser.getHistory();
 
+				break;
+				
+			case R.id.menu_sync_now:
+				// tell synchronization service to start sync
+				Intent in = new Intent(this, SyncService.class);
+				in.putExtra("SyncAlarm", 1);
+				this.startService(in);
+				
 				break;
 
 			case R.id.menu_wipe_db:
@@ -182,11 +195,6 @@ public class MainActivity extends FragmentActivity {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								TasksModelService.getInstance().wipeDatabaseData();
-								ContentReloadable currentFragment = (ContentReloadable) self.getSupportFragmentManager().findFragmentById(
-										R.id.appView);
-								if (currentFragment != null) {
-									currentFragment.reloadContent();
-								}
 							}
 						})
 						.setNegativeButton("No", null)
@@ -226,6 +234,15 @@ public class MainActivity extends FragmentActivity {
 
 			// replace without history
 			fan.replaceMainFragment(frag, false);
+		}
+		
+		Fragment currentFanFragment = self.getSupportFragmentManager().findFragmentById(R.id.fanView);
+		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
+			FanView fan = (FanView) findViewById(R.id.fan_view);
+			
+			//default sidebar
+			SidebarFragment sidebar = new SidebarFragment();
+			fan.replaceFanFragment(sidebar, false);
 		}
 	}
 

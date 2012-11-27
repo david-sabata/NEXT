@@ -3,6 +3,8 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +15,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -31,10 +37,12 @@ public class SidebarFragment extends Fragment {
 	/**
 	 * IDs of fixed menu items
 	 */
-	int menuItemsId[] = {
+	int menuFixedItemsId[] = {
 			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
-			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
+			R.id.Projects_ShowProjects
 	};
+
+	int menuFloatItemsId[];
 
 
 
@@ -43,11 +51,64 @@ public class SidebarFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
-		sideBarView = setItemsSidebar(sideBarView);
+		//TODO generate views for menu fixed items
+		sideBarView = setFixedItemsSidebar(sideBarView);
+
+		//TODO load contexts from database
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
+		final Context c = sideBarView.getContext();
+		while (!cursor.isAfterLast()) {
+			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+			if (contextTitle != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(contextTitle);
+
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				contextsLayout.addView(itemLayout);
+			}
+			cursor.moveToNext();
+		}
+
+
+		// load starred projects
+		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
+		while (!starredProjects.isAfterLast()) {
+			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
+			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+			if (projectId != null) {
+				// Create new TextView
+				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+				newItem.setText(projectTitle);
+
+				// Set Action on Item click
+				newItem.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
+					}
+				});
+				// Add final id to layout
+				projectsLayout.addView(itemLayout);
+			}
+			starredProjects.moveToNext();
+		}
 
 		return sideBarView;
 	}
-
 
 	/**
 	 * Generate menu layout
@@ -55,36 +116,51 @@ public class SidebarFragment extends Fragment {
 	 * @param sideBarView View of sidebar
 	 * @return sideBar - laout changed with new items and seetings
 	 */
-	protected View setItemsSidebar(View pSideBarView) {
+	protected View setFixedItemsSidebar(View pSideBarView) {
 
-		for (final int id : menuItemsId) {
+		for (final int id : menuFixedItemsId) {
 			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
-
 			// set graphic layout of item
 			setItemProperties(item);
-
-			//set on touch event
-			item.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					// TODO Auto-generated method stub
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						v.setBackgroundColor(Color.parseColor("#00FFFF"));
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						v.setBackgroundColor(Color.TRANSPARENT);
-						updateContentFromItemClick(id);
-					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-						v.setBackgroundColor(Color.TRANSPARENT);
-					}
-					return true;
-				}
-			});
+			//set listener
+			setOnItemTouchListener(id, item);
 		}
-
 		return pSideBarView;
 	}
 
+	protected View setFloatItemsSidebar(View pSideBarView) {
+
+		//for (final int id : contextsItemId) {
+
+		//	}
+		return pSideBarView;
+	}
+
+
+	/**
+	 * Set onTouchListener to item
+	 * @param id R.id of TextView (TextView is one item in list)
+	 * @param item (Item in list)
+	 */
+	protected void setOnItemTouchListener(final Integer id, TextView item) {
+		//set on touch event
+		item.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					v.setBackgroundColor(Color.parseColor("#00FFFF"));
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					v.setBackgroundColor(Color.TRANSPARENT);
+					updateContentFromItemClick(id);
+				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					v.setBackgroundColor(Color.TRANSPARENT);
+				}
+				return true;
+			}
+		});
+	}
 
 	/**
 	 * ActivitySelector
@@ -109,6 +185,7 @@ public class SidebarFragment extends Fragment {
 				break;
 			case R.id.Time_Today:
 				Log.i(LOG_TAG, "selection: Today");
+
 				{
 					// create filter
 					Filter filterToday = new Filter();
@@ -121,13 +198,14 @@ public class SidebarFragment extends Fragment {
 
 					GregorianCalendar until = new GregorianCalendar();
 					until.setTimeInMillis(from.getTimeInMillis());
-					until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+					until.add(Calendar.HOUR_OF_DAY, 24);
 					filterToday.setDateUntil(until);
 
 					// create new fragment to add to backstack
 					TaskListFragment fragToday = TaskListFragment.newInstance(filterToday, R.string.frag_title_today);
 					fan.replaceMainFragment(fragToday);
 				}
+
 				break;
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");
@@ -155,13 +233,8 @@ public class SidebarFragment extends Fragment {
 			case R.id.Projects_ShowProjects:
 				Log.i(LOG_TAG, "selection: Show Projects");
 
-				// create new fragment only if needed
-				if (!(currentFragment instanceof ProjectListFragment)) {
-					fan.replaceMainFragment(new ProjectListFragment());
-				}
-				else {
-					((ProjectListFragment) currentFragment).reloadContent();
-				}
+				// replace current fragment
+				fan.replaceMainFragment(new ProjectListFragment());
 
 				break;
 			default:
@@ -193,6 +266,7 @@ public class SidebarFragment extends Fragment {
 		item.setPadding(15, 0, 0, 0);
 		// set gravity to vertical center
 		item.setGravity(Gravity.CENTER_VERTICAL);
+
 	}
 
 
@@ -200,7 +274,7 @@ public class SidebarFragment extends Fragment {
 	 * Reset background of all items in menu to transparent
 	 */
 	protected void resetAllActiveClicks() {
-		for (int viewId : menuItemsId) {
+		for (int viewId : menuFixedItemsId) {
 			getView().findViewById(viewId).setBackgroundResource(android.R.color.transparent);
 		}
 	}

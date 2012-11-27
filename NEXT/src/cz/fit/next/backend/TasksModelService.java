@@ -149,10 +149,23 @@ public class TasksModelService extends Service {
 	 * Returns cursor to all projects
 	 */
 	public Cursor getAllProjectsCursor() {
-		Cursor cursor = mProjectsDataSource.getAllProjectsCursor();
-		return cursor;
+		return mProjectsDataSource.getAllProjectsCursor();
 	}
 
+	/**
+	 * Returns cursor to starred projects only
+	 */
+	public Cursor getStarredProjectsCursor() {
+		return mProjectsDataSource.getStarredProjectsCursor();
+	}
+
+	/**
+	 * Return cursor to contexts
+	 */
+	public Cursor getContextsCursor() {
+		Cursor cursor = mTasksDataSource.getContexts();
+		return cursor;
+	}
 
 	/**
 	 * Returns single project object
@@ -180,6 +193,14 @@ public class TasksModelService extends Service {
 		mTasksDataSource.saveTask(task);
 	}
 
+
+	/**
+	 * Saves project to db. If there is already a project with 
+	 * the same ID, it will be updated.
+	 */
+	public void saveProject(Project project) {
+		mProjectsDataSource.saveProject(project);
+	}
 
 
 

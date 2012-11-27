@@ -90,7 +90,7 @@ public class Task {
 		this.mPriority = taskJson.getInt("important");
 		this.mProject = project;
 		this.mIsCompleted = taskJson.getBoolean("status");
-		this.mDate = new DateTime(taskJson.getString("date"));
+		this.mDate = new DateTime(Long.parseLong(taskJson.getString("date")));
 		try {
 			this.mContext = taskJson.getString("partContexts");
 		} catch (JSONException e) {

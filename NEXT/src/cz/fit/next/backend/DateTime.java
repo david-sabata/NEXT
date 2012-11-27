@@ -58,12 +58,19 @@ public class DateTime {
 	 */
 	public DateTime(String s) {
 		boolean isOk = false;
-
+		long parsed = 0;
+		
+		
 		// someday
-		if (Long.parseLong(s) == SOMEDAY_TIMESTAMP) {
+		try {
+			parsed = Long.parseLong(s);
+		} catch (NumberFormatException e) {}
+		
+		if (parsed == SOMEDAY_TIMESTAMP) {
 			mTimestamp = SOMEDAY_TIMESTAMP;
 			isOk = true;
 		}
+		
 
 		// regular date(time)
 		else {

@@ -43,6 +43,10 @@
 			    	   android:resource="@xml/next_widget_provider" />
         </receiver>
         
+
+        <receiver android:name=".backend.sync.AlarmReceiver" />
+
+
     </application>
     
     

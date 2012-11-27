@@ -7,18 +7,21 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
-import cz.fit.next.ContentReloadable;
 import cz.fit.next.MainActivity;
+import cz.fit.next.MyGestureDetector;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
@@ -32,7 +35,7 @@ import cz.fit.next.taskdetail.TaskEditFragment;
  * 
  * @author David
  */
-public class TaskListFragment extends ListFragment implements ContentReloadable {
+public class TaskListFragment extends ListFragment {
 
 	private final static String LOG_TAG = "ContentFragment";
 
@@ -58,6 +61,10 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 	 */
 	protected int mTitleResId;
 
+
+	protected GestureDetector mGestureDetector;
+
+	protected OnTouchListener mTouchListener;
 
 
 
@@ -98,8 +105,16 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 			mTitleResId = args.getInt(ARG_TITLE);
 			mFilter = Filter.fromString(args.getString(ARG_FILTER));
 		}
-	}
 
+
+		mGestureDetector = new GestureDetector(getActivity(), new MyGestureDetector(getActivity()));
+		mTouchListener = new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return mGestureDetector.onTouchEvent(event);
+			}
+		};
+	}
 
 	/**
 	 * Load custom layout
@@ -125,16 +140,8 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		// register long click events
 		registerForContextMenu(getListView());
-	}
 
-
-
-	/**
-	 * Reload fragment content by re-querying database with the current filter
-	 */
-	@Override
-	public void reloadContent() {
-		setFilter(mFilter);
+		getListView().setOnTouchListener(mTouchListener);
 	}
 
 
@@ -242,6 +249,8 @@ public class TaskListFragment extends ListFragment implements ContentReloadable 
 
 		return super.onOptionsItemSelected(item);
 	}
+
+
 
 
 }

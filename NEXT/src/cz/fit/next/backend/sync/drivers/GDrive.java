@@ -34,9 +34,11 @@ import com.google.api.services.drive.DriveRequest;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.api.services.drive.model.Permission;
+import com.google.api.services.drive.model.PermissionList;
 
 import cz.fit.next.backend.sync.SyncService;
-import cz.fit.next.backend.sync.SyncServiceCallback;
+
 
 public class GDrive {
 
@@ -55,6 +57,10 @@ public class GDrive {
 	private Drive mService = null;
 	private SyncService mSyncService = null;
 	private String mAppFolder = null;
+	
+	
+	public static int READ = 0;
+	public static int WRITE = 0;
 	
 
 
@@ -76,27 +82,11 @@ public class GDrive {
 	}
 
 		
-	/**
-	 * Public method for first authorization after service start
-	 */
-	/*public void authorize(String username, Activity main, Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
-		mAccountName = username;
-		mSyncService = syncserv;
-		//mCallback = cb;
-		
-		Object[] params = new Object[3];
-		params[0] = main;
-		params[1] = appcontext;
-		params[2] = cb;
-
-		AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
-		auth.execute(params);
-	}*/
 	
 	/**
 	 * Gets list of files in application folder
 	 */
-	public List<File> list(Context appcontext, SyncService syncserv, SyncServiceCallback cb) {
+	public List<File> list(Context appcontext, SyncService syncserv) {
 		//mSyncService = syncserv;
 		//mCallback = cb;
 		
@@ -108,7 +98,7 @@ public class GDrive {
 	/**
 	 * Gets list of files in shared folder
 	 */
-	public List<File> listShared(Context appcontext, SyncServiceCallback cb) {
+	public List<File> listShared(Context appcontext) {
 		
 		List<File> res = getSharedFileList(mAppFolder);
 		return res;
@@ -128,7 +118,7 @@ public class GDrive {
 	/**
 	 * Download file with given filename to local storage
 	 */
-	public void download(Context appcontext, SyncServiceCallback cb, String id) {
+	public void download(Context appcontext, String id) {
 		downloadFile(id, mAppFolder);		
 		
 	}
@@ -145,11 +135,11 @@ public class GDrive {
 	/**
 	 * Upload file with given local name to storage with other name
 	 */
-	public void upload(Context appcontext, SyncServiceCallback cb, String filename, String localname) {
+	public void upload(Context appcontext, String filename, String localname) {
 		String existing = getFileIdByName(filename, mAppFolder);
 		if (existing != null) Log.i(TAG,"EXISTS!");
-		if (existing != null) deleteFile(existing);
-		uploadFile(filename, localname, mAppFolder);
+		if (existing != null) updateFile(existing, localname);
+		else uploadFile(filename, localname, mAppFolder);
 		
 		// Delete local pattern
 		java.io.File f = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
@@ -164,46 +154,63 @@ public class GDrive {
 		deleteFile(id);
 	}
 	
-
 	
-	
-	
-	/**************************************************/
-	/*              ASYNCTASK CLASSES                 */
-	/**************************************************/
-
 	/**
-	 * Asynctask provides authorization.
+	 * Starts sharing of file to given google account
 	 */
-	/*private class AuthorizeGoogleDriveClass extends AsyncTask<Object, Void, Object> {
-		@Override
-		protected Object doInBackground(Object... params) {
-			Log.e(TAG, "Starting async");
-			Account account = new Account(mAccountName, "com.google");
-			mAuthToken = getGoogleAccessToken((Activity) params[0], (Context) params[1], account);
-			Log.e(TAG, "Token is: " + mAuthToken);
-
-			return params[2];
-
-		}
-
-
-		@Override
-		protected void onPostExecute(Object param) {
-			super.onPostExecute(param);
-
-			// Build the service object
-			mService = buildService(mAuthToken, API_KEY);
-			//Log.e(TAG, "Connection initiated.");
-			if (mAuthToken != null) {
-				((SyncServiceCallback)param).Done(mAccountName, true);
-			} else {
-				((SyncServiceCallback)param).Done(mAccountName, false);
-			}
-		}
-	}*/
+	public void share(String file, String user, int mode) {
+		setPermissions(file, user, mode);
+		
+		
+	}
 	
 	
+	/**
+	 * Stops sharing of file to given google account
+	 */
+	public void unshare(String file, String user, int mode) {
+		
+		
+		
+	}
+	
+	
+	/**
+	 * Move file on remote storage to my folder
+	 */
+	
+	public void move(String fileid) {
+		moveFile(fileid, mAppFolder);
+	}
+	
+	
+	/**
+	 * Get userlist of one file
+	 */
+	public List<UserPerm> getUserList(String fileid) {
+		List<UserPerm> result = new ArrayList<UserPerm>();
+		List<Permission> perms = getPermissions(fileid);
+		
+		for (int i = 0; i < perms.size(); i++) {
+			UserPerm up = new UserPerm();
+			up.username = perms.get(i).getName();
+			Log.i("PERM","Name: " + perms.get(i).getName() + ", perm: " + perms.get(i).getRole());
+			if (perms.get(i).getRole().equals("owner") || perms.get(i).getRole().equals("writer"))
+				up.mode = WRITE;
+			else if (perms.get(i).getRole().equals("reader"))
+				up.mode = READ;
+			else continue;
+			
+			result.add(up);
+		}
+		
+		return result;
+	}
+
+	
+	
+	
+
 	
 	
 	
@@ -239,30 +246,7 @@ public class GDrive {
 		} catch (UserRecoverableAuthException e) {
 			Log.e(TAG, "ERROR in authentication");
 			Log.e(TAG, e.toString());
-			/*Intent intent = e.getIntent();
 
-			class UserRecover implements Runnable {
-
-				private Activity activity;
-				private Intent intent;
-
-
-				public UserRecover(Activity act, Intent intnt) {
-					activity = act;
-					intent = intnt;
-				}
-
-
-				@Override
-				public void run() {
-					this.activity.startActivityForResult(this.intent, CHOOSE_ACCOUNT);
-				}
-
-			}
-			if (main != null)
-				main.runOnUiThread(new UserRecover(main, intent));
-
-			*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (GoogleAuthException e) {
@@ -541,8 +525,7 @@ public class GDrive {
 
 				
 		try {
-			// TODO: Move to app folder
-
+			
 			// Upload file
 
 			// File's metadata.
@@ -576,6 +559,63 @@ public class GDrive {
 
 	}
 	
+	
+	/**
+	 * Uploads file from "localname" to "appfolder"/"name" on storage
+	 */
+	private void updateFile(String fileid, String localname) {
+
+				
+		try {
+			
+			// Update file
+
+			java.io.File fileContent = null;
+			FileContent mediaContent = null;
+			
+			// File's content.
+			if (localname != null) {
+				fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+				mediaContent = new FileContent("text/plain", fileContent);
+				mService.files().update(fileid, null, mediaContent).execute();
+			}
+
+
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	/**
+	 * Moves file to "appfolder"-id on storage
+	 */
+	private void moveFile(String fileid, String appfolder) {
+
+				
+		try {
+			// get old file
+			File dfile = mService.files().get(fileid).execute();
+			
+			// Change file's metadata.
+			List<ParentReference> parents = dfile.getParents();
+			parents.add((new ParentReference()).setId(appfolder));
+			dfile.setParents(parents);
+			
+			mService.files().update(fileid, dfile).execute();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
 	/**
 	 * Delete file in app folder
 	 */
@@ -586,7 +626,7 @@ public class GDrive {
 			// Delete file
 			mService.files().delete(id).execute();
 			
-			Log.i(TAG, "Deleted");
+			Log.i(TAG, "Deleted ");
 
 
 
@@ -595,6 +635,62 @@ public class GDrive {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Set/update permission on file
+	 */
+	
+	private void setPermissions(String fileid, String gmail, int mode) {
+		Permission newPermission = new Permission();
+
+	    newPermission.setValue(gmail);
+	    newPermission.setType("user");
+	    if (mode == READ) {
+	    	newPermission.setRole("reader"); //owner,writer,reader
+	    } else {
+	    	newPermission.setRole("writer"); //owner,writer,reader
+	    }
+	    try {
+	      mService.permissions().insert(fileid, newPermission).execute();
+	    } catch (IOException e) {
+	    	// TODO Auto-generated catch block
+	    	e.printStackTrace();
+	    }
+	  
+
+	}
+	
+	/**
+	 * Get permissions of file
+	 */
+	
+	List<Permission> getPermissions(String fileid) {
+		PermissionList permissions = null;
+		
+		try {
+			permissions = mService.permissions().list(fileid).execute();
+			return permissions.getItems();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+
+	}
+	
+	
+	
+	
+	
+	/***************************************/
+	/*        SUBCLASSES DEFINITION        */
+	/***************************************/
+	
+	public class UserPerm {
+		public String username;
+		public int mode;
 	}
 
 

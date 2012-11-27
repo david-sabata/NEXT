@@ -1,7 +1,7 @@
 package cz.fit.next.taskdetail;
 
-import java.util.UUID;
 
+import java.util.UUID;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

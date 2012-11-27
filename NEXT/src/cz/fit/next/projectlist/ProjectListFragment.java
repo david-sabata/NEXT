@@ -8,11 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import cz.fit.next.ContentReloadable;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 
-public class ProjectListFragment extends ListFragment implements ContentReloadable {
+public class ProjectListFragment extends ListFragment {
 
 	private final static String LOG_TAG = "ProjectListFragment";
 
@@ -35,7 +34,7 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 		// try to reload items; if the call fails, reload will be
 		// called by the activity when the service will be running again
 		try {
-			reloadContent();
+			setItems(TasksModelService.getInstance().getAllProjectsCursor());
 		} catch (RuntimeException e) {
 			// ignore and wait for the next call
 		}
@@ -51,21 +50,10 @@ public class ProjectListFragment extends ListFragment implements ContentReloadab
 
 
 
-
-	@Override
-	public void reloadContent() {
-		TasksModelService modelService = TasksModelService.getInstance();
-		if (modelService == null)
-			throw new RuntimeException("TasksModelService is not running");
-
-		setItems(modelService.getAllProjectsCursor());
-	}
-
-
 	public void setItems(Cursor cursor) {
 		Log.d(LOG_TAG, "loading items");
 
-		setListAdapter(new ProjectListAdapter(getActivity(), cursor));
+		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
 
 
