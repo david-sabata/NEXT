@@ -29,6 +29,10 @@
             android:name=".backend.sync.LoginActivity"
             android:label="@string/title_activity_main" >
         </activity>
+        <activity
+            android:name=".backend.sync.PermissionActivity"
+            android:label="@string/title_activity_main" >
+        </activity>
 
         <service android:name=".backend.TasksModelService"></service>
         <service android:name=".backend.sync.SyncService"></service>

@@ -142,35 +142,27 @@ public class SyncService extends Service {
 	
 
 
-
-	
+	//////////////////////////////////////////////////////////////////////////////////
+	// AUTHORIZATION	
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	
 	private void authorizeDone(String name, Boolean status) { 
 	
-			if (status == true) {
-				//mAuthorized = true;
-				mAccountName = name;
-				Log.e(TAG, "Authorized");
-		
-				Context context = getApplicationContext();
-				CharSequence text = "Logged into GDrive as " + mAccountName;
-				int duration = Toast.LENGTH_SHORT;
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
+		if (status == true) {
+			//mAuthorized = true;
+			mAccountName = name;
+			Log.e(TAG, "Authorized");
+	
+			Context context = getApplicationContext();
+			CharSequence text = "Logged into GDrive as " + mAccountName;
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			
+			synchronize();
+		}
 				
-				synchronize();
-			} else {
-				//Context context = getApplicationContext();
-				//CharSequence text = "Synchronization not available";
-				//int duration = Toast.LENGTH_SHORT;
-				//Toast toast = Toast.makeText(context, text, duration);
-				//toast.show();
-			}
-		
-
-		
 	}
 	
 	public String getAccountName() {
