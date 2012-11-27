@@ -2,9 +2,13 @@ package cz.fit.next.taskdetail;
 
 
 import java.util.UUID;
+
+import android.app.DialogFragment;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +38,7 @@ public class TaskEditFragment extends Fragment {
 	 * Used in Bundle to store ID of task that is being shown
 	 */
 	private static final String ARG_TASK_ID = "taskID";
+	protected static final int MY_REQUEST_CODE = 0;
 
 
 	/**
@@ -122,6 +127,7 @@ public class TaskEditFragment extends Fragment {
 	 * Sets up the (sub)views according to the task
 	 */
 	private void loadTaskToView(Task task) {
+		final Fragment editFragment = this;
 		// set Title
 		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
 		title.setText(task.getTitle());
@@ -130,10 +136,42 @@ public class TaskEditFragment extends Fragment {
 		TextView descripton = (TextView) taskDetailView.findViewById(R.id.editDescription);
 		descripton.setText(task.getDescription());
 
+		
+		// set time
+		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
+		time.setText(task.getDate().toLocaleTimeString());
+		// We dont want keyboard
+		time.setInputType(InputType.TYPE_NULL); 
+		time.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				DialogFragment newFragment = new TaskEditFragmentTimeDialog();
+				//newFragment.setTargetFragment((Fragment) editFragment, MY_REQUEST_CODE);
+			    newFragment.show(getActivity().getFragmentManager(), "Dialog time");
+			    Log.i("EditTime", "Click");
+			}
+		});
+		
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
-		date.setText(task.getDate().toString());
-
+		date.setText(task.getDate().toLocaleDateString());
+		// We dont want keyboard
+		date.setInputType(InputType.TYPE_NULL); 
+		date.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				DialogFragment newFragment = new TaskEditFragmentDateDialog();
+			    newFragment.show(getActivity().getFragmentManager(), "Dialog date");
+			    Log.i("EditDate", "Click");
+			}
+		});
+		
+		
+		
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
 		isCompleted.setChecked(task.isCompleted());

@@ -205,17 +205,24 @@ public class TasksModelService extends Service {
 
 
 	/**
-	 * Rreturns localized date string
+	 * Returns localized date string
 	 */
 	public String getLocalizedDate(Date d) {
 		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	/**
-	 * Rreturns localized date and time string
+	 * Returns localized date and time string
 	 */
 	public String getLocalizedDateTime(Date d) {
 		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+	}
+	
+	/**
+	 * Returns localized time string
+	 */
+	public String getLocalizedTime (Date d) {
+		return DateUtils.formatDateTime(mContext,  d.getTime(), DateUtils.FORMAT_SHOW_TIME);
 	}
 
 	/**
