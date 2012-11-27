@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import android.database.Cursor;
+
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.backend.sync.JavaParser;
+import cz.fit.next.backend.sync.SyncService;
 
 public class Project {
 
@@ -16,6 +19,9 @@ public class Project {
 	protected boolean mIsStarred;
 
 	protected ArrayList<TaskHistory> mHistory = null;
+	
+	
+	// TODO: Seznam sdileni
 
 
 
@@ -23,13 +29,17 @@ public class Project {
 	 * Construct Project from FULL TASK or PROJECTS db row
 	 */
 	public Project(Cursor cursor) {
+		JavaParser parser = new JavaParser();
+		
 		int projIdCol = cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID);
 		int projTitleCol = cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE);
+		int projHistoryCol = cursor.getColumnIndex(Constants.COLUMN_HISTORY);
 
 		// from FULL TASK row
 		if (projIdCol > -1 && projTitleCol > -1) {
 			this.mId = cursor.getString(projIdCol);
 			this.mTitle = cursor.getString(projTitleCol);
+			this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
 		}
 		// from PROJECTS row
 		else {
@@ -39,6 +49,7 @@ public class Project {
 			if (projIdCol > -1 && projTitleCol > -1) {
 				this.mId = cursor.getString(projIdCol);
 				this.mTitle = cursor.getString(projTitleCol);
+				this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
 			}
 			else {
 				throw new RuntimeException("Instantiating Project from invalid Cursor");
@@ -60,16 +71,17 @@ public class Project {
 	 * Create project by id and title
 	 */
 	public Project(String id, String title) {
-		this(id, title, false);
+		this(id, title, false, null);
 	}
 
 	/**
 	 * Create project by id and title and starred
 	 */
-	public Project(String id, String title, boolean starred) {
+	public Project(String id, String title, boolean starred, ArrayList<TaskHistory> history) {
 		this.mId = id;
 		this.mTitle = title;
 		this.mIsStarred = starred;
+		this.mHistory = history;
 	}
 
 
@@ -87,13 +99,19 @@ public class Project {
 	public boolean isStarred() {
 		return mIsStarred;
 	}
-
-
+	
+	
 	/**
 	 * @return the mHistory
 	 */
 	public ArrayList<TaskHistory> getHistory() {
 		return mHistory;
+	}
+	
+	public String getSerializedHistory() {
+		JavaParser parser = new JavaParser();
+		parser.setHistory(mHistory);
+		return parser.generateHistoryString();
 	}
 
 	/**
@@ -145,5 +163,7 @@ public class Project {
 			return false;
 		return true;
 	}
+	
+
 
 }

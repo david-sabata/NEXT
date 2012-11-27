@@ -46,7 +46,8 @@ public class ProjectListAdapter extends CursorAdapter {
 					@Override
 					public void run() {
 						Project project = TasksModelService.getInstance().getProjectById(projectId);
-						Project newProject = new Project(projectId, project.getTitle(), isChecked);
+						// TODO: History change
+						Project newProject = new Project(projectId, project.getTitle(), isChecked, null);
 
 						// save
 						TasksModelService.getInstance().saveProject(newProject);

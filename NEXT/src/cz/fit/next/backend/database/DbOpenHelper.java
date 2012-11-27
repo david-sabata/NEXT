@@ -35,7 +35,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		database.execSQL("CREATE TABLE " + Constants.TABLE_PROJECTS + "("
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
-				+ Constants.COLUMN_STARRED + " integer);");
+				+ Constants.COLUMN_STARRED + " integer,"
+				+ Constants.COLUMN_HISTORY + " text);");
 
 		// create TASKS table
 		database.execSQL("CREATE TABLE " + Constants.TABLE_TASKS + "("

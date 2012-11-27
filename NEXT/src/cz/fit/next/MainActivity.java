@@ -2,8 +2,6 @@ package cz.fit.next;
 
 
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,12 +18,10 @@ import android.view.MenuItem;
 
 import com.deaux.fan.FanView;
 
-import cz.fit.next.backend.Project;
-import cz.fit.next.backend.Task;
-import cz.fit.next.backend.TaskHistory;
+
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
-import cz.fit.next.backend.sync.JavaParser;
+
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.sidebar.SidebarFragment;
@@ -172,13 +168,21 @@ public class MainActivity extends FragmentActivity {
 				Log.i(LOG_TAG, "JSON Read File");
 
 				// Just for debugging
-				JavaParser parser = new JavaParser();
-				parser.setFile("file.html");
-				Project project = parser.getProject();
-				ArrayList<Task> tasks = parser.getTasks(project);
+				//JavaParser parser = new JavaParser();
+				//parser.setFile("file.html");
+				//Project project = parser.getProject();
+				//ArrayList<Task> tasks = parser.getTasks(project);
 
-				ArrayList<TaskHistory> histories = parser.getHistory();
+				//ArrayList<TaskHistory> histories = parser.getHistory();
 
+				break;
+				
+			case R.id.menu_sync_now:
+				// tell synchronization service to start sync
+				Intent in = new Intent(this, SyncService.class);
+				in.putExtra("SyncAlarm", 1);
+				this.startService(in);
+				
 				break;
 
 			case R.id.menu_wipe_db:

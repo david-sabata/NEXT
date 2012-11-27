@@ -78,7 +78,8 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
 		};
 
 		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null);
@@ -105,6 +106,7 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
 
 		};
 
@@ -134,6 +136,7 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
 		};
 
 		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_ID + " = ?";

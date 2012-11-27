@@ -24,17 +24,20 @@ public interface Constants {
 	public static final String COLUMN_PRIORITY = "priority"; // int
 	public static final String COLUMN_COMPLETED = "completed"; // int
 	public static final String COLUMN_STARRED = "starred"; // int
+	public static final String COLUMN_HISTORY = "history"; //serialized TaskHistory object
+
 
 
 	// unique column names to disambiguate names when using JOIN
 	// e.g. to set alias COLUMN_ALIAS_PROJECTS_TITLE <==> TABLE_PROJECTS.COLUMN_TITLE
 	public static final String COLUMN_ALIAS_PROJECTS_TITLE = "project_title"; // string
-	public static final String COLUMN_ALIAS_TASKS_TITLE = "task_title"; // string	
+	public static final String COLUMN_ALIAS_TASKS_TITLE = "task_title"; // string
+
 
 
 
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 14;
+	public static final int DATABASE_VERSION = 16;
 }

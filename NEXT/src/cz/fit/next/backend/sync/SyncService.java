@@ -59,19 +59,15 @@ public class SyncService extends Service {
 	private static final int NOTIFICATION_NEW_SHARED = 100;
 
 	// Self
-	private static SyncService sInstance;
+	private static SyncService sInstance = null;
+	private static SyncService sInstanceOld = null;
 	
-	// Flag to determine, if service is connected to some activity, or has been restarted by Android
-	// 1 = connected
-	int ActivityPresent = 1;
-
 	// GDrive Driver
 	private GDrive drive;
 
 	//private boolean mAuthorized = false;
 	private String mAccountName;
-	
-	private authorizeDoneHandler mCb;
+
 
 
 	@Override
@@ -85,7 +81,6 @@ public class SyncService extends Service {
 		
 		Log.i(TAG,"onStart");
 		
-		mCb = new authorizeDoneHandler();
 		
 		// Reload stored preferences
 		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -93,29 +88,34 @@ public class SyncService extends Service {
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
-			synchronize();
+			//synchronize();
+			if (sInstanceOld == null) {
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 10);
+				alarm.run();
+			}
 		}
+		
+		sInstanceOld = sInstance;
 		
 		// if button pressed ask for username
 		if (intent != null) {
 			Bundle b = intent.getExtras();
-			/*if (b.getInt("buttonPressed") == 1) {
-				
-				Intent i = new Intent(this,LoginActivity.class);
-				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				this.startActivity(i);
-				
-			}*/
 			
-			if (b.getInt("inAuth") == -1) {
+			if (b != null) {
+				if (b.getInt("inAuth") == -1) {
+					
+					authorizeDone(null, false);
+					
+				}
+				if (b.getInt("inAuth") == 1) {
+					
+					authorizeDone(b.getString("accountName"), true);
+					
+				}
 				
-				mCb.Done(null, false);
-				
-			}
-			if (b.getInt("inAuth") == 1) {
-				
-				mCb.Done(b.getString("accountName"), true);
-				
+				if (b.getInt("SyncAlarm") == 1) {
+					synchronize();
+				}
 			}
 					
 		}
@@ -140,22 +140,18 @@ public class SyncService extends Service {
 		return sInstance;
 	}
 	
-	public authorizeDoneHandler getAuthCallback() {
-		return mCb;
-	}
+
 
 
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	
-	public class authorizeDoneHandler implements SyncServiceCallback { 
+	private void authorizeDone(String name, Boolean status) { 
 	
-		@Override
-		public void Done(Object param, Boolean status) {
 			if (status == true) {
 				//mAuthorized = true;
-				mAccountName = (String) param;
+				mAccountName = name;
 				Log.e(TAG, "Authorized");
 		
 				// save username into permanent storage
@@ -178,9 +174,13 @@ public class SyncService extends Service {
 				//Toast toast = Toast.makeText(context, text, duration);
 				//toast.show();
 			}
-		}
+		
 
 		
+	}
+	
+	public String getAccountName() {
+		return mAccountName;
 	}
 	
 	/*
@@ -215,15 +215,19 @@ public class SyncService extends Service {
 			// SYNCHRONIZATION STAGE ONE - from remote to local
 			
 			// loop walking through files on storage
-			List<File> lf = drive.list(getApplicationContext(), getInstance(), null);
+			List<File> lf = drive.list(getApplicationContext(), getInstance());
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
+				
+				// PERM TEST
+				drive.getUserList(lf.get(i).getId());
+				//drive.share(lf.get(i).getId(), "xsychr03@gmail.com", GDrive.READ);
 				
 				//drive.lock(lf.get(0).getId());
 				//Log.i(TAG,"locked");
 				
 				// Download file from storage
-				drive.download(getApplicationContext(), null, lf.get(i).getId());
+				drive.download(getApplicationContext(), lf.get(i).getId());
 				
 				// Parse it
 				JavaParser parser = new JavaParser();
@@ -414,7 +418,7 @@ public class SyncService extends Service {
 						e.printStackTrace();
 					}
 					
-					drive.upload(getApplicationContext(), null, localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
+					drive.upload(getApplicationContext(), localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
 					
 			}
 				
@@ -424,10 +428,11 @@ public class SyncService extends Service {
 			
 			
 			
-			List<File> lsf = drive.listShared(getApplicationContext(), null);
+			List<File> lsf = drive.listShared(getApplicationContext());
 			if (lsf != null) {
 				for (int i = 0; i < lsf.size(); i++) {
 					Log.i(TAG,"SharedFile: " + lsf.get(i).getTitle());
+					drive.move(lsf.get(i).getId());
 				}
 			
 				returnObject ret = new returnObject(lsf.size());
@@ -452,8 +457,13 @@ public class SyncService extends Service {
 				}
 			}
 			
-			//TODO: ALARM MANAGER
-			stopSelf();
+			// Plan next synchronization
+			// TODO: Variable interval
+			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 20);
+			//alarm.run();
+			
+			//Log.i(TAG, "Killing SyncService.");
+			//stopSelf();
 		}
 	}
 
@@ -489,7 +499,7 @@ public class SyncService extends Service {
 		if (type == NOTIFICATION_NEW_SHARED) {
 			title = "NEXT Sharing";
 			content = "New shared files found on your Drive.";
-			ticker = "New shared files found.";
+			ticker = "NEXT: New shared files found.";
 		}
 		
 		
