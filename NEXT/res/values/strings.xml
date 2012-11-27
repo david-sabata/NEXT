@@ -50,5 +50,7 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
+    <string name="frag_title_someday"/>
+    <string name="all_done">All tasks completed!</string>
     
 </resources>

@@ -73,6 +73,10 @@ public class TaskListAdapter extends CursorAdapter {
 
 		if (datetime.isSomeday()) {
 			dt.setVisibility(View.GONE);
+
+			//LinearLayout textParent = (LinearLayout) ttl.getParent();
+			//ttl.setHeight(textParent.getHeight());
+			//ttl.setGravity(Gravity.CENTER_VERTICAL);
 		}
 		else if (showAs.equals(DateTime.FLAG_DATE)) {
 			dt.setText(datetime.toLocaleDateString());

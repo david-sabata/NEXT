@@ -19,6 +19,7 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -108,31 +109,45 @@ public class SidebarFragment extends Fragment {
 				break;
 			case R.id.Time_Today:
 				Log.i(LOG_TAG, "selection: Today");
+				{
+					// create filter
+					Filter filterToday = new Filter();
 
-				// create filter
-				Filter filter = new Filter();
+					GregorianCalendar from = new GregorianCalendar();
+					from.set(Calendar.HOUR_OF_DAY, 0);
+					from.set(Calendar.MINUTE, 0);
+					from.set(Calendar.SECOND, 0);
+					filterToday.setDateFrom(from);
 
-				GregorianCalendar from = new GregorianCalendar();
-				from.set(Calendar.HOUR_OF_DAY, 0);
-				from.set(Calendar.MINUTE, 0);
-				from.set(Calendar.SECOND, 0);
-				filter.setDateFrom(from);
+					GregorianCalendar until = new GregorianCalendar();
+					until.setTimeInMillis(from.getTimeInMillis());
+					until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+					filterToday.setDateUntil(until);
 
-				GregorianCalendar until = new GregorianCalendar();
-				until.setTimeInMillis(from.getTimeInMillis());
-				until.add(GregorianCalendar.HOUR_OF_DAY, 24);
-				filter.setDateUntil(until);
-
-				// create new fragment to add to backstack
-				TaskListFragment fragToday = TaskListFragment.newInstance(filter, R.string.frag_title_today);
-				fan.replaceMainFragment(fragToday);
-
+					// create new fragment to add to backstack
+					TaskListFragment fragToday = TaskListFragment.newInstance(filterToday, R.string.frag_title_today);
+					fan.replaceMainFragment(fragToday);
+				}
 				break;
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");
 				break;
 			case R.id.Time_Someday:
 				Log.i(LOG_TAG, "selection: Someday");
+				{
+					Filter filter = new Filter();
+
+					GregorianCalendar from = new GregorianCalendar();
+					from.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP);
+					filter.setDateFrom(from);
+
+					GregorianCalendar until = new GregorianCalendar();
+					until.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP + 1);
+					filter.setDateUntil(until);
+
+					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
+					fan.replaceMainFragment(frag);
+				}
 				break;
 			case R.id.Time_Blocked:
 				Log.i(LOG_TAG, "selection: Blocked");

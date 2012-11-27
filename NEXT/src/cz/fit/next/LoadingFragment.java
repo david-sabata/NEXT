@@ -36,7 +36,7 @@ public class LoadingFragment extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		return inflater.inflate(R.layout.content_list_fragment, container, false);
+		return inflater.inflate(R.layout.loading_fragment, container, false);
 	}
 
 
