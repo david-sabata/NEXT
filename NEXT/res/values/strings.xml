@@ -52,5 +52,6 @@
     </string-array>
     <string name="frag_title_someday"/>
     <string name="all_done">All tasks completed!</string>
+    <string name="show_all_projects">Show all projects</string>
     
 </resources>

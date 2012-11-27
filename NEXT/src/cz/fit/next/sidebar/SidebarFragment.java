@@ -3,6 +3,7 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import com.deaux.fan.FanView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -44,6 +46,15 @@ public class SidebarFragment extends Fragment {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 		sideBarView = setItemsSidebar(sideBarView);
+
+
+		// load starred projects
+		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+		while (!starredProjects.isAfterLast()) {
+
+		}
+
+
 
 		return sideBarView;
 	}
