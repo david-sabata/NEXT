@@ -236,4 +236,26 @@ public class TasksDataSource {
 		};
 
 	}
+	/**
+	 * getContexts
+	 * @return
+	 */
+	public Cursor getContexts() {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_TASKS);
+		q.setDistinct(true);
+		String[] selectColumns = new String[] {
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT
+    	};
+
+		Cursor cursor = q.query(database,  selectColumns, null, null, null, null, null, null);
+		cursor.moveToFirst();
+
+		Log.i(LOG_TAG, "contexts after filter: " + cursor.getCount() + " items");
+		
+		if (cursor.getCount() == 0)
+			return null;
+		return cursor;
+	}
 }

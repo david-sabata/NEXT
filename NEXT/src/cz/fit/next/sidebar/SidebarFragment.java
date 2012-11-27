@@ -3,6 +3,7 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,8 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -42,6 +45,16 @@ public class SidebarFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
+		//TODO generate views for menu fixed items
+		
+		//TODO load contexts from database
+		/*Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		Log.i("Count item", cursor.getCount() + "");
+		Log.i("Index columnt", cursor.getColumnIndex(Constants.COLUMN_CONTEXT) + "");
+		Log.i("Context",cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
+		*/
+		//TODO Generate views for contexts
+		
 		sideBarView = setItemsSidebar(sideBarView);
 
 		return sideBarView;
@@ -120,7 +133,7 @@ public class SidebarFragment extends Fragment {
 
 				GregorianCalendar until = new GregorianCalendar();
 				until.setTimeInMillis(from.getTimeInMillis());
-				until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+				until.add(Calendar.HOUR_OF_DAY, 24);
 				filter.setDateUntil(until);
 
 				// create new fragment to add to backstack
@@ -178,6 +191,7 @@ public class SidebarFragment extends Fragment {
 		item.setPadding(15, 0, 0, 0);
 		// set gravity to vertical center
 		item.setGravity(Gravity.CENTER_VERTICAL);
+		
 	}
 
 

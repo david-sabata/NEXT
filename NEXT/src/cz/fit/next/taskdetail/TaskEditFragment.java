@@ -1,20 +1,17 @@
 package cz.fit.next.taskdetail;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -25,8 +22,6 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.database.Constants;
-import cz.fit.next.backend.database.ProjectsDataSource;
 
 
 

@@ -3,7 +3,6 @@ package cz.fit.next.taskdetail;
 import cz.fit.next.R;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.SyncStateContract.Constants;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
