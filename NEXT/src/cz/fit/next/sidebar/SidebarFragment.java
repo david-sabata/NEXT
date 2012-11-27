@@ -22,6 +22,7 @@ import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -34,7 +35,7 @@ public class SidebarFragment extends Fragment {
 	 * IDs of fixed menu items
 	 */
 	int menuItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes, R.id.Time_Blocked,
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
 			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
 	};
 
@@ -77,12 +78,12 @@ public class SidebarFragment extends Fragment {
 			setItemProperties(item);
 
 			//set on touch event
-			item.setOnTouchListener(new View.OnTouchListener() {		
+			item.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
-					if(event.getAction() == MotionEvent.ACTION_DOWN) {
-						v.setBackgroundColor(Color.parseColor("#00FFFF"));		
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						v.setBackgroundColor(Color.parseColor("#00FFFF"));
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
 						v.setBackgroundColor(Color.TRANSPARENT);
 						updateContentFromItemClick(id);
@@ -122,30 +123,46 @@ public class SidebarFragment extends Fragment {
 			case R.id.Time_Today:
 				Log.i(LOG_TAG, "selection: Today");
 
-				// create filter
-				Filter filter = new Filter();
+				{
+					// create filter
+					Filter filterToday = new Filter();
 
-				GregorianCalendar from = new GregorianCalendar();
-				from.set(Calendar.HOUR_OF_DAY, 0);
-				from.set(Calendar.MINUTE, 0);
-				from.set(Calendar.SECOND, 0);
-				filter.setDateFrom(from);
+					GregorianCalendar from = new GregorianCalendar();
+					from.set(Calendar.HOUR_OF_DAY, 0);
+					from.set(Calendar.MINUTE, 0);
+					from.set(Calendar.SECOND, 0);
+					filterToday.setDateFrom(from);
 
-				GregorianCalendar until = new GregorianCalendar();
-				until.setTimeInMillis(from.getTimeInMillis());
-				until.add(Calendar.HOUR_OF_DAY, 24);
-				filter.setDateUntil(until);
+					GregorianCalendar until = new GregorianCalendar();
+					until.setTimeInMillis(from.getTimeInMillis());
+					until.add(GregorianCalendar.HOUR_OF_DAY, 24);
+					filterToday.setDateUntil(until);
 
-				// create new fragment to add to backstack
-				TaskListFragment fragToday = TaskListFragment.newInstance(filter, R.string.frag_title_today);
-				fan.replaceMainFragment(fragToday);
+					// create new fragment to add to backstack
+					TaskListFragment fragToday = TaskListFragment.newInstance(filterToday, R.string.frag_title_today);
+					fan.replaceMainFragment(fragToday);
+				}
 
 				break;
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");
 				break;
-			case R.id.Time_Sometimes:
-				Log.i(LOG_TAG, "selection: Sometimes");
+			case R.id.Time_Someday:
+				Log.i(LOG_TAG, "selection: Someday");
+				{
+					Filter filter = new Filter();
+
+					GregorianCalendar from = new GregorianCalendar();
+					from.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP);
+					filter.setDateFrom(from);
+
+					GregorianCalendar until = new GregorianCalendar();
+					until.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP + 1);
+					filter.setDateUntil(until);
+
+					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
+					fan.replaceMainFragment(frag);
+				}
 				break;
 			case R.id.Time_Blocked:
 				Log.i(LOG_TAG, "selection: Blocked");
@@ -173,7 +190,7 @@ public class SidebarFragment extends Fragment {
 				 */
 				break;
 		}
-		
+
 		// always toggle sidebar
 		fan.showMenu();
 	}

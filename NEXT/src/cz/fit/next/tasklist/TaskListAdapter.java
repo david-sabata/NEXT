@@ -1,8 +1,6 @@
 package cz.fit.next.tasklist;
 
 
-import java.util.Date;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -70,33 +68,43 @@ public class TaskListAdapter extends CursorAdapter {
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
-		DateTime datetime = new DateTime(new Date(date));
-		dt.setText(datetime.toLocaleString());
-		
+		String showAs = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME_TYPE));
+		DateTime datetime = new DateTime(date);
+
+		if (datetime.isSomeday()) {
+			dt.setVisibility(View.GONE);
+
+			//LinearLayout textParent = (LinearLayout) ttl.getParent();
+			//ttl.setHeight(textParent.getHeight());
+			//ttl.setGravity(Gravity.CENTER_VERTICAL);
+		}
+		else if (showAs.equals(DateTime.FLAG_DATE)) {
+			dt.setText(datetime.toLocaleDateString());
+		}
+		else {
+			dt.setText(datetime.toLocaleDateTimeString());
+		}
+
 		// priority
 		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
-		if(cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
+		if (cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
 			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
-			switch(priority) {
-				
+			switch (priority) {
 				case 1:
-					prl.setBackgroundColor(Color.parseColor("#2f9b3e"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_1));
 					break;
 				case 2:
-					prl.setBackgroundColor(Color.parseColor("#ceef4a"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_2));
 					break;
 				case 3:
-					prl.setBackgroundColor(Color.parseColor("#ff3333"));
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_3));
 					break;
 				default:
-					prl.setBackgroundColor(Color.parseColor("#000000"));
-					break;	
+					prl.setBackgroundColor(Color.TRANSPARENT);
 			}
 		}
 
 	}
-
-
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {

@@ -4,14 +4,14 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
-
+    
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:focusable="false" />
-
+    
     <LinearLayout
         android:id="@+id/taskListTextsLayout"
         android:layout_width="fill_parent"
@@ -19,7 +19,7 @@
         android:layout_gravity="left"
         android:layout_weight="0.9"
         android:orientation="vertical" >
-
+        
         <TextView
             android:id="@+id/title"
             android:layout_width="fill_parent"
@@ -27,7 +27,7 @@
             android:layout_marginRight="@dimen/TasklistItemMarginRight"
             android:textSize="16sp"
             android:textStyle="bold" />
-
+        
         <TextView
             android:id="@+id/subtitle"
             android:layout_width="fill_parent"
@@ -36,9 +36,9 @@
             android:layout_marginRight="@dimen/TasklistItemMarginRight"
             android:gravity="right"
             android:textSize="16sp" />
-
+    
     </LinearLayout>
-
+    
     <LinearLayout
         android:id="@+id/TasklistItemPriority"
         android:layout_width="10dp"

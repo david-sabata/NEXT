@@ -9,7 +9,7 @@
     
     <string name="TitleByTime_Next">Next</string>
     <string name="TitleByTime_InPlan">In plan</string>
-    <string name="TitleByTime_Sometimes">Sometimes</string>
+    <string name="TitleByTime_Someday">Someday</string>
     <string name="TityleByTime_Blocked">Blocked</string><string name="TitleByContext">Contexts</string>
     <string name="TitleByContext_Home">Home</string>
     <string name="TitleByContext_Work">Work</string>
@@ -38,7 +38,7 @@
     <string name="action_add_task">Add task</string>
     <string name="frag_title_next">Next tasks</string>
     <string name="frag_title_today">Today tasks</string>
-    <string name="testDescriptionString">"prevelice dlouhy popis projektu prevelice dlouhy popis projektu prevelice dlouhy popis projektu prevelice dlouhy popis projektu "</string>
+    <string name="someday">someday</string>
 
     <string-array name="planets_array">
         <item>Mercury</item>
@@ -50,5 +50,7 @@
         <item>Uranus</item>
         <item>Neptune</item>
     </string-array>
+    <string name="frag_title_someday"/>
+    <string name="all_done">All tasks completed!</string>
     
 </resources>
