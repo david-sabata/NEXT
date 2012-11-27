@@ -180,13 +180,13 @@
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskProjectLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
+                android:layout_marginTop="@dimen/TaskSubtitleMarginBoth"
                 android:layout_weight="2.10"
                 android:orientation="vertical" >
 
@@ -213,12 +213,12 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <Spinner
                     android:id="@+id/spinnerProject"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/TaskSubtitleMarginBoth" />
+                    android:layout_marginLeft="@dimen/TaskSubTitlePaddingLeft" />
 
             </LinearLayout>
 

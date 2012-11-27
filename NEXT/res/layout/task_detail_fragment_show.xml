@@ -217,7 +217,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textProjectShow"
                     android:layout_width="match_parent"

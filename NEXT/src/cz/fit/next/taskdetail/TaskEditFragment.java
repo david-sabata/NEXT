@@ -184,6 +184,13 @@ public class TaskEditFragment extends Fragment {
 		DateTime dateTime = new DateTime(new Date());
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toString());
+		
+		// set project
+		Cursor cursor = TasksModelService.getInstance().getAllProjectsCursor(); 	
+		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
+		ProjectsSpinnerAdapter spinnerAdapter = new ProjectsSpinnerAdapter(getActivity(), cursor, 0);
+		spinnerProject.setAdapter(spinnerAdapter);		
+		
 	}
 
 
