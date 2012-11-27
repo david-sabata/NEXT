@@ -56,7 +56,7 @@ public class SidebarFragment extends Fragment {
 		*/
 		//TODO Generate views for contexts
 		
-		sideBarView = setItemsSidebar(sideBarView);
+		sideBarView = setFixedItemsSidebar(sideBarView);
 
 		return sideBarView;
 	}
@@ -68,37 +68,44 @@ public class SidebarFragment extends Fragment {
 	 * @param sideBarView View of sidebar
 	 * @return sideBar - laout changed with new items and seetings
 	 */
-	protected View setItemsSidebar(View pSideBarView) {
+	protected View setFixedItemsSidebar(View pSideBarView) {
 
 		for (final int id : menuItemsId) {
 			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
-
 			// set graphic layout of item
 			setItemProperties(item);
-
-			//set on touch event
-			item.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					// TODO Auto-generated method stub
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						v.setBackgroundColor(Color.parseColor("#00FFFF"));
-					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						v.setBackgroundColor(Color.TRANSPARENT);
-						updateContentFromItemClick(id);
-					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-						v.setBackgroundColor(Color.TRANSPARENT);
-					}
-					return true;
-				}
-			});
+			//set listener
+			setOnItemTouchListener(id, item);
 		}
-
 		return pSideBarView;
 	}
 
 
+	/**
+	 * Set onTouchListener to item
+	 * @param id R.id of TextView (TextView is one item in list)
+	 * @param item (Item in list)
+	 */
+	protected void setOnItemTouchListener(final Integer id, TextView item) {
+		//set on touch event
+		item.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					v.setBackgroundColor(Color.parseColor("#00FFFF"));
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					v.setBackgroundColor(Color.TRANSPARENT);
+					updateContentFromItemClick(id);
+				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					v.setBackgroundColor(Color.TRANSPARENT);
+				}
+				return true;
+			}
+		});
+	}
+	
 	/**
 	 * ActivitySelector
 	 * 
