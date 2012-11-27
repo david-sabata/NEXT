@@ -46,15 +46,16 @@ public class SidebarFragment extends Fragment {
 
 		View sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 		//TODO generate views for menu fixed items
-		
+
 		//TODO load contexts from database
-		/*Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		Log.i("Count item", cursor.getCount() + "");
-		Log.i("Index columnt", cursor.getColumnIndex(Constants.COLUMN_CONTEXT) + "");
-		Log.i("Context",cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
-		*/
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		while (!cursor.isAfterLast()) {
+			Log.i("Context", "Context: " + cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT)));
+			cursor.moveToNext();
+		}
+
 		//TODO Generate views for contexts
-		
+
 		sideBarView = setItemsSidebar(sideBarView);
 
 		return sideBarView;
@@ -77,12 +78,12 @@ public class SidebarFragment extends Fragment {
 			setItemProperties(item);
 
 			//set on touch event
-			item.setOnTouchListener(new View.OnTouchListener() {		
+			item.setOnTouchListener(new View.OnTouchListener() {
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					// TODO Auto-generated method stub
-					if(event.getAction() == MotionEvent.ACTION_DOWN) {
-						v.setBackgroundColor(Color.parseColor("#00FFFF"));		
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						v.setBackgroundColor(Color.parseColor("#00FFFF"));
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
 						v.setBackgroundColor(Color.TRANSPARENT);
 						updateContentFromItemClick(id);
@@ -173,7 +174,7 @@ public class SidebarFragment extends Fragment {
 				 */
 				break;
 		}
-		
+
 		// always toggle sidebar
 		fan.showMenu();
 	}
@@ -191,7 +192,7 @@ public class SidebarFragment extends Fragment {
 		item.setPadding(15, 0, 0, 0);
 		// set gravity to vertical center
 		item.setGravity(Gravity.CENTER_VERTICAL);
-		
+
 	}
 
 
