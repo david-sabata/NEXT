@@ -3,12 +3,14 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,12 +27,11 @@ public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
 
-
 	/**
 	 * IDs of fixed menu items
 	 */
 	int menuItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Sometimes, R.id.Time_Blocked,
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
 			R.id.Context_Home, R.id.Context_Work, R.id.Context_FreeTime, R.id.Projects_ShowProjects
 	};
 
@@ -62,14 +63,20 @@ public class SidebarFragment extends Fragment {
 			// set graphic layout of item
 			setItemProperties(item);
 
-			// set on click event
-			item.setOnClickListener(new View.OnClickListener() {
+			//set on touch event
+			item.setOnTouchListener(new View.OnTouchListener() {
 				@Override
-				public void onClick(View v) {
-					// disabled - David
-					//resetAllActiveClicks();
-					//item.setBackgroundResource(R.color.FanItemsBackgroundColor);
-					updateContentFromItemClick(id);
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						v.setBackgroundColor(Color.parseColor("#00FFFF"));
+					} else if (event.getAction() == MotionEvent.ACTION_UP) {
+						v.setBackgroundColor(Color.TRANSPARENT);
+						updateContentFromItemClick(id);
+					} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+						v.setBackgroundColor(Color.TRANSPARENT);
+					}
+					return true;
 				}
 			});
 		}
@@ -124,8 +131,8 @@ public class SidebarFragment extends Fragment {
 			case R.id.Time_InPlan:
 				Log.i(LOG_TAG, "selection: In plan");
 				break;
-			case R.id.Time_Sometimes:
-				Log.i(LOG_TAG, "selection: Sometimes");
+			case R.id.Time_Someday:
+				Log.i(LOG_TAG, "selection: Someday");
 				break;
 			case R.id.Time_Blocked:
 				Log.i(LOG_TAG, "selection: Blocked");

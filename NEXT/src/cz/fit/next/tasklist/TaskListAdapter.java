@@ -1,10 +1,9 @@
 package cz.fit.next.tasklist;
 
 
-import java.util.Date;
-
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -68,12 +68,39 @@ public class TaskListAdapter extends CursorAdapter {
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
-		DateTime datetime = new DateTime(new Date(date));
-		dt.setText(datetime.toLocaleString());
+		String showAs = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME_TYPE));
+		DateTime datetime = new DateTime(date);
+
+		if (datetime.isSomeday()) {
+			dt.setVisibility(View.GONE);
+		}
+		else if (showAs.equals(DateTime.FLAG_DATE)) {
+			dt.setText(datetime.toLocaleDateString());
+		}
+		else {
+			dt.setText(datetime.toLocaleDateTimeString());
+		}
+
+		// priority
+		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
+		if (cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
+			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
+			switch (priority) {
+				case 1:
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_1));
+					break;
+				case 2:
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_2));
+					break;
+				case 3:
+					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_3));
+					break;
+				default:
+					prl.setBackgroundColor(Color.TRANSPARENT);
+			}
+		}
 
 	}
-
-
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {

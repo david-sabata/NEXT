@@ -1,8 +1,6 @@
 package cz.fit.next.backend;
 
 
-import java.util.Date;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,7 +69,7 @@ public class Task {
 		mIsCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED)) != 0;
 
 		long milis = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
-		mDate = new DateTime(new Date(milis));
+		mDate = new DateTime(milis);
 
 		mProject = new Project(cursor);
 	}

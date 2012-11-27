@@ -16,8 +16,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
-        <TextView
+
+<TextView
             android:id="@+id/TitleByTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:layout_marginTop="25dp"
             android:clickable="true"
             android:orientation="vertical" >
-
+            
             <TextView
                 android:id="@+id/Time_Next"
                 android:layout_width="fill_parent"
@@ -56,7 +56,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/FanItemsText"
                 android:textSize="@dimen/FanItemTextSize" />
-
+            
             <TextView
                 android:id="@+id/Time_Today"
                 android:layout_width="fill_parent"
@@ -70,7 +70,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/FanItemsText"
                 android:textSize="@dimen/FanItemTextSize" />
-
+            
             <TextView
                 android:id="@+id/Time_InPlan"
                 android:layout_width="fill_parent"
@@ -84,9 +84,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/FanItemsText"
                 android:textSize="@dimen/FanItemTextSize" />
-
+            
             <TextView
-                android:id="@+id/Time_Sometimes"
+                android:id="@+id/Time_Someday"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -94,11 +94,12 @@
                 android:drawablePadding="@dimen/FanItemDrawablePadding"
                 android:gravity="center_vertical"
                 android:height="@dimen/FainItemHeight"
-                android:text="@string/TitleByTime_Sometimes"
+                android:text="@string/TitleByTime_Someday"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/FanItemsText"
                 android:textSize="@dimen/FanItemTextSize" />
-     <TextView
+            
+            <TextView
                 android:id="@+id/Time_Blocked"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +116,8 @@
         </LinearLayout>
 
     </FrameLayout>
-
+    
+    
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -189,13 +191,13 @@
             android:background="@color/FanTitleColor"
             android:orientation="vertical" >
         </LinearLayout>
-
+        
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="25dp"
             android:orientation="vertical" >
-
+            
             <TextView
                 android:id="@+id/Projects_ShowProjects"
                 android:layout_width="fill_parent"
