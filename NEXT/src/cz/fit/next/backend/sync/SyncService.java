@@ -179,6 +179,10 @@ public class SyncService extends Service {
 		
 	}
 	
+	public String getAccountName() {
+		return mAccountName;
+	}
+	
 	/*
 	 * Asynctask provides synchronization.
 	 */

@@ -51,5 +51,7 @@
         <item>Neptune</item>
     </string-array>
     <string name="menuSyncNow">Sync Now</string>
+    <string name="frag_title_someday"/>
+    <string name="all_done">All tasks completed!</string>
     
 </resources>

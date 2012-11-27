@@ -247,6 +247,26 @@ public class JavaParser {
 	
 	}
 	
+	public ArrayList<TaskHistory> parseHistory(String histstr) {
+		
+		JSONArray json;
+		ArrayList<TaskHistory> historyList = null;
+		
+		if (histstr == null) return new ArrayList<TaskHistory>();
+		if (histstr.equals("")) return new ArrayList<TaskHistory>();
+		
+		try {
+			json = new JSONArray(histstr);
+			historyList = createHistoryList(json);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		
+		
+		return historyList;
+		
+	}
+	
 	
 	/*********************************************************/
 	/************************* WRITING ***********************/
@@ -383,6 +403,9 @@ public class JavaParser {
 	
 	public String generateHistoryString() {
 		JSONArray jsonHistoryArray = new JSONArray();
+		
+		if (mTasksHistory == null) return "";
+		
 		try {
 			for(int i = 0; i < mTasksHistory.size(); i++) {
 				jsonHistoryArray.put(convertHistoryToJSONObject(mTasksHistory.get(i)));
