@@ -2,6 +2,7 @@ package cz.fit.next.taskdetail;
 
 import java.util.UUID;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -137,9 +139,17 @@ public class TaskEditFragment extends Fragment {
 		isCompleted.setChecked(task.isCompleted());
 
 		// set project
-		TextView project = (TextView) taskDetailView.findViewById(R.id.editProject);
-		project.setText(task.getProject().getTitle());
-		project.setTag(task.getProject().getId());
+		Cursor cursor = TasksModelService.getInstance().getAllProjectsCursor();
+		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
+		ProjectsSpinnerAdapter spinnerAdapter = new ProjectsSpinnerAdapter(getActivity(), cursor, 0);
+		spinnerProject.setAdapter(spinnerAdapter);
+		int posSpinner = spinnerAdapter.getPosition(task.getProject().getId(), cursor);
+		if (posSpinner != -1) {
+			spinnerProject.setSelection(posSpinner);
+		} else {
+			//default value
+		}
+
 
 		// set context
 		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
@@ -168,6 +178,13 @@ public class TaskEditFragment extends Fragment {
 		DateTime dateTime = new DateTime();
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toString());
+
+		// set project
+		Cursor cursor = TasksModelService.getInstance().getAllProjectsCursor();
+		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
+		ProjectsSpinnerAdapter spinnerAdapter = new ProjectsSpinnerAdapter(getActivity(), cursor, 0);
+		spinnerProject.setAdapter(spinnerAdapter);
+
 	}
 
 
@@ -208,8 +225,10 @@ public class TaskEditFragment extends Fragment {
 	private void onSaveItem() {
 		String title = ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString();
 		String description = ((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString();
-		String projectTitle = ((TextView) taskDetailView.findViewById(R.id.editProject)).getText().toString();
-		String projectId = (String) ((TextView) taskDetailView.findViewById(R.id.editProject)).getTag();
+		String projectTitle = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(
+				R.id.taskSpinnerText)).getText().toString();
+		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(
+				R.id.taskSpinnerText)).getTag().toString();
 		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
 		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.editIsCompleted)).isChecked();
 
@@ -239,7 +258,8 @@ public class TaskEditFragment extends Fragment {
 
 		// date time
 		String dateString = ((TextView) taskDetailView.findViewById(R.id.editDate)).getText().toString();
-		DateTime dateTime = new DateTime(dateString);
+		long timestamp = Long.parseLong(dateString);
+		DateTime dateTime = new DateTime(timestamp);
 
 		// Create new changed task
 		Task editedTask =

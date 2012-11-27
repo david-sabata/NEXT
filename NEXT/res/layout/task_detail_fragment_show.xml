@@ -14,10 +14,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/background_light" >
-
+
         <LinearLayout
             android:id="@+id/taskBody"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
@@ -83,22 +83,23 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <CheckBox
                     android:id="@+id/IsCompleted"
                     android:layout_width="123dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskBodyPadding"
+                    android:clickable="false"
                     android:text="Completed" />
 
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskDescriptionLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="2.10"
+                android:layout_weight="1"
                 android:orientation="vertical" >
 
                 <TextView
@@ -124,15 +125,16 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textDescriptionShow"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="fill_parent"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
-                    android:inputType="date"
-                    android:text="TextView"
+                    android:inputType="textMultiLine"
+                    android:scrollHorizontally="false"
+                    android:text="Fill description"
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
@@ -215,7 +217,7 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textProjectShow"
                     android:layout_width="match_parent"
@@ -227,14 +229,13 @@
                     android:textSize="@dimen/TaskSubTextSize" />
 
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskContextLayout"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
                 android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:layout_weight="2.10"
                 android:orientation="vertical" >
 
                 <TextView
@@ -260,14 +261,14 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
+
                 <TextView
                     android:id="@+id/textContextShow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:ems="10"
-                    android:inputType="text"
+                    android:inputType="text|textMultiLine"
                     android:text="@string/TaskContextTextAutoComplete"
                     android:textSize="@dimen/TaskSubTextSize" />
 
@@ -313,25 +314,29 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:orientation="horizontal" >
-
+
                     <RadioButton
                         android:id="@+id/radio0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:clickable="false"
                         android:text="1" />
-
+
                     <RadioButton
                         android:id="@+id/radio1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:text="2" />
-
+
                     <RadioButton
                         android:id="@+id/radio2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="false"
                         android:text="3" />
+
                 </RadioGroup>
             </LinearLayout>
 
