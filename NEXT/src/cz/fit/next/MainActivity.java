@@ -59,8 +59,8 @@ public class MainActivity extends FragmentActivity {
 		fan.setAnimationDuration(200); // 200ms
 
 		if (savedInstanceState == null) {
-			Fragment fanFrag = new SidebarFragment();
-
+			//Fragment fanFrag = new SidebarFragment();
+			LoadingFragment fanFrag = LoadingFragment.newInstance();
 			LoadingFragment contentFrag = LoadingFragment.newInstance();
 
 			fan.setFragments(contentFrag, fanFrag);
@@ -230,6 +230,15 @@ public class MainActivity extends FragmentActivity {
 
 			// replace without history
 			fan.replaceMainFragment(frag, false);
+		}
+		
+		Fragment currentFanFragment = self.getSupportFragmentManager().findFragmentById(R.id.fanView);
+		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
+			FanView fan = (FanView) findViewById(R.id.fan_view);
+			
+			//default sidebar
+			SidebarFragment sidebar = new SidebarFragment();
+			fan.replaceFanFragment(sidebar, false);
 		}
 	}
 

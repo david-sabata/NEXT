@@ -14,14 +14,10 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import android.R;
 import android.content.Context;
 import android.util.Log;
 

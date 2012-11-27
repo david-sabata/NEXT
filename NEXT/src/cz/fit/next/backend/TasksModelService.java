@@ -159,6 +159,13 @@ public class TasksModelService extends Service {
 		return mProjectsDataSource.getStarredProjectsCursor();
 	}
 
+	/**
+	 * Return cursor to contexts
+	 */
+	public Cursor getContextsCursor() {
+		Cursor cursor = mTasksDataSource.getContexts();
+		return cursor;
+	}
 
 	/**
 	 * Returns single project object
