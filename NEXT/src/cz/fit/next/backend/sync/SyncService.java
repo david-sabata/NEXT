@@ -225,6 +225,7 @@ public class SyncService extends Service {
 				parser.setFile(getFilesDir() + "/" + lf.get(i).getTitle());
 				
 				Project proj = parser.getProject();
+				proj.setHistory(parser.getHistory());
 				
 				// Delete temp file from mobile
 				java.io.File f = new java.io.File(getFilesDir() + "/" + lf.get(i).getTitle());
@@ -265,7 +266,7 @@ public class SyncService extends Service {
 								remoteProjects.get(i).getHistory(),
 								localProjects.get(j).getHistory()
 								);
-						Project newproj = new Project(localProjects.get(j).getId(), localProjects.get(j).getTitle());
+						Project newproj = new Project(localProjects.get(j).getId(), localProjects.get(j).getTitle(), localProjects.get(j).isStarred());
 						newproj.setHistory(merged);
 						resultProjects.add(newproj);
 						

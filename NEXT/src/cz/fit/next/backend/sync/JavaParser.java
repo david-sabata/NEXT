@@ -155,7 +155,7 @@ public class JavaParser {
 			Log.i("Project Title: ", projectName);
 
 			project = new Project(projectId, projectName);
-			project.setHistory(mTasksHistory);
+			
 
 			return project;
 		} catch (Throwable e) {

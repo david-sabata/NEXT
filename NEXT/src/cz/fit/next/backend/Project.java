@@ -73,8 +73,20 @@ public class Project {
 		this(id, title, false, null);
 	}
 
+	
 	/**
 	 * Create project by id and title and starred
+	 */
+	public Project(String id, String title, boolean starred) {
+		this.mId = id;
+		this.mTitle = title;
+		this.mIsStarred = starred;
+	}
+	
+	
+	
+	/**
+	 * Create project by id and title and starred and history
 	 */
 	public Project(String id, String title, boolean starred, ArrayList<TaskHistory> history) {
 		this.mId = id;
