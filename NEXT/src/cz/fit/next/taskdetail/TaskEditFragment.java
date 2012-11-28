@@ -352,7 +352,7 @@ public class TaskEditFragment extends Fragment {
 		case DIALOG_EDIT_DATE:
 			Bundle dateData = data.getExtras();
 			String year = Integer.toString(dateData.getInt("year"));
-			String month = Integer.toString(dateData.getInt("monthOfYear"));
+			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
 			String day = Integer.toString(dateData.getInt("dayOfMonth"));
 			
 			dateString = year + "-" + month + "-" + day;
@@ -361,11 +361,8 @@ public class TaskEditFragment extends Fragment {
 			DateTime dateTime = new DateTime(dateString);
 			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
 			dateView.setText(dateTime.toLocaleDateString());
-			
-			
-			
-		
 			break;
+			
 		case DIALOG_EDIT_TIME:
 			Bundle time = data.getExtras();
 			String hour = Integer.toString(time.getInt("hourOfDay"));
