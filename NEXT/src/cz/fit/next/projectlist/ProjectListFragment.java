@@ -1,15 +1,26 @@
 package cz.fit.next.projectlist;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
+import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
+import cz.fit.next.taskdetail.TaskEditFragment;
 
 public class ProjectListFragment extends ListFragment {
 
@@ -38,6 +49,10 @@ public class ProjectListFragment extends ListFragment {
 		} catch (RuntimeException e) {
 			// ignore and wait for the next call
 		}
+		
+		
+		// register long click events
+				registerForContextMenu(getListView());
 	}
 
 
@@ -55,6 +70,40 @@ public class ProjectListFragment extends ListFragment {
 
 		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+
+		if (v.getId() == android.R.id.list) {
+			menu.add(Menu.NONE, R.id.action_share, 0, R.string.proj_share);
+		}
+		else {
+			Log.e(LOG_TAG, "fail");
+		}
+	}
+
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+
+		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
+		String projId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+
+		switch (item.getItemId()) {
+
+			case R.id.action_share:
+				ShareDialog newFragment = new ShareDialog();
+				newFragment.setProjId(projId);
+			    newFragment.show(getActivity().getSupportFragmentManager(),"nextshare");
+				break;
+		}
+
+		return true;
+	}
+
 
 
 

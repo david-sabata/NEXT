@@ -52,7 +52,11 @@
     </string-array>
     <string name="menuSyncNow">Sync Now</string>
     <string name="frag_title_someday">Someday tasks</string>
+    <string name="proj_share">Share project</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
+    <string name="share_prompt">Google mail of your friend:</string>
     
 </resources>
