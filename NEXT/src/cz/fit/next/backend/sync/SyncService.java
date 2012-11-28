@@ -261,7 +261,7 @@ public class SyncService extends Service {
 								// SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
 								Log.i(TAG,"Twoway sync : " + task.getTitle());
 								Task result = twoWaySync(task, remoteTasks.get(j));
-								TasksModelService.getInstance().saveTask(result);
+								//TasksModelService.getInstance().saveTask(result);
 								
 								// remote task was processed, delete it from array
 								remoteTasks.remove(j);
@@ -367,21 +367,24 @@ public class SyncService extends Service {
 						Task addtask = new Task(cursor2);
 						tasklist.add(addtask);
 						
-						TaskHistory hist = new TaskHistory();
-						hist.setAuthor(mAccountName);
-						hist.setTimeStamp(new DateTime().toString());
-						hist.setTaskId(addtask.getId());
+//						TaskHistory hist = new TaskHistory();
+//						hist.setAuthor(mAccountName);
+//						hist.setTimeStamp(new DateTime().toString());
+//						hist.setTaskId(addtask.getId());
+//						
+//						hist.addChange(const_title, "", (addtask.getTitle() != null) ? addtask.getTitle() : "");
+//						hist.addChange(const_description, "", (addtask.getDescription() != null) ? addtask.getDescription() : "");
+//						hist.addChange(const_context, "", (addtask.getContext() != null) ? addtask.getContext() : "");
+//						hist.addChange(const_date, "", addtask.getDate().toString());
+//						hist.addChange(const_priority, "", Integer.toString(addtask.getPriority()));
+//						hist.addChange(const_project, "", addtask.getProject().getId());
+//						if (addtask.isCompleted()) hist.addChange(const_completed, "", "yes");
+//						else hist.addChange(const_completed, "", "no");
+//						
+//						history.add(hist);
 						
-						hist.addChange(const_title, "", (addtask.getTitle() != null) ? addtask.getTitle() : "");
-						hist.addChange(const_description, "", (addtask.getDescription() != null) ? addtask.getDescription() : "");
-						hist.addChange(const_context, "", (addtask.getContext() != null) ? addtask.getContext() : "");
-						hist.addChange(const_date, "", addtask.getDate().toString());
-						hist.addChange(const_priority, "", Integer.toString(addtask.getPriority()));
-						hist.addChange(const_project, "", addtask.getProject().getId());
-						if (addtask.isCompleted()) hist.addChange(const_completed, "", "yes");
-						else hist.addChange(const_completed, "", "no");
-						
-						history.add(hist);
+						ArrayList<TaskHistory> histories = getTaskHistories(addtask);
+						history.addAll(histories);
 						
 					}
 					
@@ -464,17 +467,63 @@ public class SyncService extends Service {
 		ArrayList<TaskHistory> hist1 = first.getProject().getHistory();
 		ArrayList<TaskHistory> hist2 = second.getProject().getHistory();
 		
-		if ((hist1 != null) && (hist2 != null)) {
-			String time1 = hist1.get((hist1.size())-1).getTimeStamp();
-			String time2 = hist2.get((hist2.size())-1).getTimeStamp();
+		TaskHistory last1 = null;
+		TaskHistory last2 = null;
+		
+		if (hist1 != null)
+			for (int i = 0; i < hist1.size(); i++) {
+				if (hist1.get(i).getTaskId().equals(first.getId()))
+					if ((last1 == null) || (Long.parseLong(last1.getTimeStamp()) < Long.parseLong(hist1.get(i).getTimeStamp())))
+						last1 = hist1.get(i);
+			}
+		
+		if (hist2 != null)
+			for (int i = 0; i < hist2.size(); i++) {
+				if (hist2.get(i).getTaskId().equals(second.getId()))
+					if ((last2 == null) || (Long.parseLong(last2.getTimeStamp()) < Long.parseLong(hist2.get(i).getTimeStamp())))
+						last2 = hist2.get(i);
+			}
+		
+		// TODO: Merge histories
+		
+		if ((last1 != null) && (last2 != null)) {
+			String time1 = last1.getTimeStamp();
+			String time2 = last2.getTimeStamp();
 			
-			if (Long.decode(time1) < Long.decode(time2)) return second;
-			else return first;
+			if (Long.decode(time1) < Long.decode(time2)) {
+				Log.i(TAG, "SECOND");
+				return second;
+			}
+			else {
+				Log.i(TAG, "FIRST");
+				return first;
+			}
 		}
 		
-		if (hist1 == null) return second;
+		if (last1 == null) {
+			Log.i(TAG, "SECOND");
+			return second;
+		}
 		
+		Log.i(TAG, "FIRST");
 		return first;
+	}
+	
+	
+	/**
+	 * Get history of one Task from project
+	 */
+	
+	ArrayList<TaskHistory> getTaskHistories(Task task) {
+		ArrayList<TaskHistory> result = new ArrayList<TaskHistory>();
+		
+		Project proj = task.getProject();
+		for (int i = 0; i < proj.getHistory().size(); i++) {
+			if (proj.getHistory().get(i).getTaskId().equals(task.getId()))
+				result.add(proj.getHistory().get(i));
+		}
+		
+		return result;
 	}
 	
 
