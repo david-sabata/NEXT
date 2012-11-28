@@ -460,6 +460,7 @@ public class SyncService extends Service {
 						i--;
 						h2.remove(j);
 						j--;
+						break;
 					}
 				}
 			}
