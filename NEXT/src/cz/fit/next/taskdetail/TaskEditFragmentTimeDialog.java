@@ -2,10 +2,12 @@ package cz.fit.next.taskdetail;
 
 import java.util.Calendar;
 
-import android.app.TimePickerDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.app.TimePickerDialog;
+import android.content.Intent;
+
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TimePicker;
@@ -28,8 +30,14 @@ public class TaskEditFragmentTimeDialog extends DialogFragment  implements TimeP
 	@Override
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		// TODO Auto-generated method stub
-		Log.i("Hour: ", Integer.toString(hourOfDay));
-		Log.i("Minute: ", Integer.toString(minute));
+		Intent i = new Intent();
+		Bundle date = new Bundle();
+		date.putInt("hourOfDay", hourOfDay);
+		date.putInt("minute", minute);
+		i.putExtras(date);
+	
+		getTargetFragment().onActivityResult(getTargetRequestCode(), 0, i);
+		
 	}
 	
 }
