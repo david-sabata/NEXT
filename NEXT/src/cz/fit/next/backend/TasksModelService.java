@@ -1,5 +1,6 @@
 package cz.fit.next.backend;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Service;
@@ -14,6 +15,7 @@ import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
+import cz.fit.next.backend.sync.SyncService;
 
 /**
  * @author David Sabata
@@ -184,11 +186,30 @@ public class TasksModelService extends Service {
 	 * be created.
 	 */
 	public void saveTask(Task task) {
+				
+		// add into history
+		Project proj = task.getProject();
+		ArrayList<TaskHistory> history = proj.getHistory();
+		TaskHistory hist = new TaskHistory();
+		hist.setAuthor(SyncService.getInstance().getAccountName());
+		if (hist.getAuthor() == null) hist.setAuthor("");
+		hist.setTaskId(task.getId());
+		hist.setTimeStamp(new DateTime().toString());
+		hist.addChange(SyncService.const_title, "", task.getTitle());
+		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "true" : "false" );
+		hist.addChange(SyncService.const_context, "", (task.getContext() != null) ? task.getContext() : "");
+		hist.addChange(SyncService.const_date, "", task.getDate().toString());
+		hist.addChange(SyncService.const_description, "", (task.getDescription() != null) ? task.getDescription() : "");
+		hist.addChange(SyncService.const_priority, "", Integer.toString(task.getPriority()));
+		if (history == null) history = new ArrayList<TaskHistory>();
+		history.add(hist);
+		proj.setHistory(history);
+		
 		// save project first
 		if (task.getProject() != null) {
 			mProjectsDataSource.saveProject(task.getProject());
 		}
-
+		
 		// save task
 		mTasksDataSource.saveTask(task);
 	}

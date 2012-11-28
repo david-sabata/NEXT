@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Log;
 import cz.fit.next.backend.Project;
 
 public class ProjectsDataSource {
@@ -107,6 +108,8 @@ public class ProjectsDataSource {
 	public void saveProject(Project project) {
 		ContentValues vals = new ContentValues();
 		Project existing = getProjectById(project.getId());
+		
+		Log.i("PROJ HIST", project.getSerializedHistory());
 
 		// update
 		if (existing != null) {
