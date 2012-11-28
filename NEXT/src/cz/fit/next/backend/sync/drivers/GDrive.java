@@ -134,7 +134,7 @@ public class GDrive {
 	 * 	 */
 	public void delete(String filename) {
 		String existing = getFileIdByName(filename, mAppFolder);
-		if (existing != null) Log.i(TAG,"EXISTS!");
+		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) deleteFile(existing);
 	}
 	
@@ -143,7 +143,7 @@ public class GDrive {
 	 */
 	public void upload(Context appcontext, String filename, String localname) {
 		String existing = getFileIdByName(filename, mAppFolder);
-		if (existing != null) Log.i(TAG,"EXISTS!");
+		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) updateFile(existing, localname);
 		else uploadFile(filename, localname, mAppFolder);
 		
@@ -506,7 +506,7 @@ public class GDrive {
 			String token = mService.files().get(id).getOauthToken();
 			String name = dfile.getTitle();
 
-			Log.i(TAG, "URL: " + dfile.getDownloadUrl());
+			//Log.i(TAG, "URL: " + dfile.getDownloadUrl());
 
 			if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
 				OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);

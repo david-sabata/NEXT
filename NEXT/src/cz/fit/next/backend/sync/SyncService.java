@@ -1,9 +1,11 @@
 package cz.fit.next.backend.sync;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -29,13 +31,15 @@ import com.google.api.services.drive.model.File;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
-import cz.fit.next.backend.TasksModelService;
+
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
+
 import cz.fit.next.backend.sync.drivers.GDrive;
 
 
@@ -192,22 +196,22 @@ public class SyncService extends Service {
 			}
 			
 			ProjectsDataSource projdatasource = new ProjectsDataSource(getApplicationContext());
-			TasksDataSource datasource;
+			TasksDataSource datasource = new TasksDataSource(getApplicationContext());
 			Cursor cursor;
 			
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
-			ArrayList<Project> dirtyProjects = new ArrayList<Project>(); 
-			ArrayList<ArrayList<TaskHistory>> dirtyProjectsHistories = new ArrayList<ArrayList<TaskHistory>>();
+			ArrayList<Task> remoteTasks = new ArrayList<Task>();
+			ArrayList<Project> localProjects = new ArrayList<Project>();
+			ArrayList<Project> resultProjects = new ArrayList<Project>();
+			ArrayList<Task> resultTasks = new ArrayList<Task>();
 			
-			// SYNCHRONIZATION STAGE ONE - from remote to local
-			
-			// loop walking through files on storage
+			// ===========  LOAD FILES FROM STORAGE ==============
 			List<File> lf = drive.list(getApplicationContext(), getInstance());
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG,"Sync File: " + lf.get(i).getTitle());
 				
 				// PERM TEST
-				drive.getUserList(lf.get(i).getId());
+				//drive.getUserList(lf.get(i).getId());
 				//drive.share(lf.get(i).getId(), "xsychr03@gmail.com", GDrive.READ);
 				
 				//drive.lock(lf.get(0).getId());
@@ -221,205 +225,185 @@ public class SyncService extends Service {
 				parser.setFile(getFilesDir() + "/" + lf.get(i).getTitle());
 				
 				Project proj = parser.getProject();
-				ArrayList<Task> remoteTasks = parser.getTasks(proj);
-				ArrayList<TaskHistory> remoteHistory = parser.getHistory();
 				
 				// Delete temp file from mobile
 				java.io.File f = new java.io.File(getFilesDir() + "/" + lf.get(i).getTitle());
 				f.delete();
 				
 				
-				Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
+				//Log.i(TAG,"Projekt id " + proj.getId() + " name " + proj.getTitle());
+				remoteTasks.addAll(parser.getTasks(proj));
 				
 				/*for (int j = 0; j < remoteTasks.size(); j++)  {
 					Log.i(TAG,"ID: " + remoteTasks.get(j).getId());
 					Log.i(TAG,"Task: " + remoteTasks.get(j).getTitle());
 					Log.i(TAG,"Desc: " + remoteTasks.get(j).getDescription());
 				}*/
-				
-				projdatasource.open();
-				projdatasource.saveProject(proj);
-				projdatasource.close();
-				
+							
 				// add project to list of remote projects
-				remoteProjects.add(proj);
+				remoteProjects.add(proj);	
 				
-				// load remote tasks of this project
-				datasource = new TasksDataSource(getApplicationContext());
-				datasource.open();
-				cursor = datasource.getProjectTasksCursor(proj.getId());
-				
-				if (cursor != null) {							
-					while (cursor.moveToNext()) {
-						
-						//Log.i(TAG, "CURSOR: pos " + cursor.getPosition() + " size " + cursor.getCount());
-						Task task = new Task(cursor);
-						//Log.i(TAG, "po tasku");
-						
-						for (int j = 0; j < remoteTasks.size(); j++) {
-							if (task.getId().equals(remoteTasks.get(j).getId())) {
-								// SYNCHRONIZATION LOGIC BETWEEN LOCAL AND REMOTE STORAGE
-								Log.i(TAG,"Twoway sync : " + task.getTitle());
-								Task result = twoWaySync(task, remoteTasks.get(j));
-								//TasksModelService.getInstance().saveTask(result);
-								
-								// remote task was processed, delete it from array
-								remoteTasks.remove(j);
-								j--;
-								// go to next local task
-								break;
-							} else {
-								if (j == remoteTasks.size() - 1) {
-									// Tasks are not in remote, but only in local
-									// Project is dirty
-									dirtyProjects.add(task.getProject());
-									dirtyProjectsHistories.add(remoteHistory);
-								}
-							}
-						}
-						
-						
-					}
-				}
-				
-				// Create tasks, that are not in local, but only in remote
-				for (int j = 0; j < remoteTasks.size(); j++) {
-					Task newtask = new Task(remoteTasks.get(j).getId(),
-							remoteTasks.get(j).getTitle(),
-							remoteTasks.get(j).getDescription(),
-							remoteTasks.get(j).getDate(),
-							remoteTasks.get(j).getPriority(),
-							remoteTasks.get(j).getProject(),
-							remoteTasks.get(j).getContext(),
-							remoteTasks.get(j).isCompleted());
-					
-					datasource.saveTask(newtask);
-				}
-				
-				
-				
-				datasource.close();
-				
-				
-				
-				
-				//drive.unlock(lf.get(0).getId());
-				
-				
-			} // end of remote projects cycle
+			}
 			
 			
-			// SYNCHRONIZATION STAGE TWO - from local to remote 
-			
-			ArrayList<Project> localProjects = new ArrayList<Project>();
-			
-			// get list of local projects
+			// ===========  LOAD DATA FROM LOCAL DATABASE ==============
 			projdatasource.open();
 			cursor = projdatasource.getAllProjectsCursor();
 			cursor.moveToPrevious();
-						
 			while (cursor.moveToNext()) {
-				Project p = new Project(cursor);
-				localProjects.add(p);
+				localProjects.add(new Project(cursor));
 			}
-			
 			projdatasource.close();
 			
-			// filter completed projects away (from stage 1)			
-			for (int i = 0; i < localProjects.size(); i++) {
-				for (int j = 0; j < remoteProjects.size(); j++) {
-					//Log.i(TAG, "Porovnani " + p.getId() + " " + remoteProjects.get(k).getId());
-					if (localProjects.get(i).getId().equals(remoteProjects.get(j).getId())) {
-						localProjects.remove(i);
+			
+			// ============= MERGE HISTORIES ==========================
+			for (int i = 0; i < remoteProjects.size(); i++) {
+				for (int j = 0; j < localProjects.size(); j++) {
+					if (remoteProjects.get(i).getId().equals(localProjects.get(j).getId())) {
+						// project exists in both sides, merge histories
+						ArrayList<TaskHistory> merged = mergeHistories(
+								remoteProjects.get(i).getHistory(),
+								localProjects.get(j).getHistory()
+								);
+						Project newproj = new Project(localProjects.get(j).getId(), localProjects.get(j).getTitle());
+						newproj.setHistory(merged);
+						resultProjects.add(newproj);
+						
+						remoteProjects.remove(i);
 						i--;
+						localProjects.remove(j);
+						j--;
 						break;
 					}
 				}
 			}
 			
-			int posOfDirtyProjects = localProjects.size();
+			resultProjects.addAll(remoteProjects);
+			resultProjects.addAll(localProjects);
 			
-			// add dirty projects to local
-			localProjects.addAll(dirtyProjects);
+						
 			
-			// Send local projects to remote
-			for (int i = 0; i < localProjects.size(); i++) {	
+			// ============ REGENERATE TASKS ==================
+			class HistoryProject {
+				public Project project;
+				public TaskHistory history;
 				
-					if (i >= posOfDirtyProjects) {
-						Log.i(TAG, "Dirty project: " + localProjects.get(i).getTitle());
-					} else {
-						Log.i(TAG, "Only local project: " + localProjects.get(i).getTitle());
-					}
+				HistoryProject(Project p, TaskHistory h) {
+					project = p;
+					history = h;
 					
-					// write all the tasks from project to remote storage
-					datasource = new TasksDataSource(getApplicationContext());
-					datasource.open();
-					
-					// make history for new project, or recycle for dirty projects
-					ArrayList<TaskHistory> history;
-					if (localProjects.get(i).getHistory() != null) history = localProjects.get(i).getHistory(); 
-					else history = new ArrayList<TaskHistory>();
-					
-					
-					Cursor cursor2 = datasource.getProjectTasksCursor(localProjects.get(i).getId());
-					ArrayList<Task> tasklist = new ArrayList<Task>();
-					while(cursor2.moveToNext()) {
-						Task addtask = new Task(cursor2);
-						tasklist.add(addtask);
-						
-//						TaskHistory hist = new TaskHistory();
-//						hist.setAuthor(mAccountName);
-//						hist.setTimeStamp(new DateTime().toString());
-//						hist.setTaskId(addtask.getId());
-//						
-//						hist.addChange(const_title, "", (addtask.getTitle() != null) ? addtask.getTitle() : "");
-//						hist.addChange(const_description, "", (addtask.getDescription() != null) ? addtask.getDescription() : "");
-//						hist.addChange(const_context, "", (addtask.getContext() != null) ? addtask.getContext() : "");
-//						hist.addChange(const_date, "", addtask.getDate().toString());
-//						hist.addChange(const_priority, "", Integer.toString(addtask.getPriority()));
-//						hist.addChange(const_project, "", addtask.getProject().getId());
-//						if (addtask.isCompleted()) hist.addChange(const_completed, "", "yes");
-//						else hist.addChange(const_completed, "", "no");
-//						
-//						history.add(hist);
-						
-						ArrayList<TaskHistory> histories = getTaskHistories(addtask);
-						history.addAll(histories);
-						
-					}
-					
-					datasource.close();
-					
-					
-					
-					
-					
-					
-					// call serializer and uploader
-					JavaParser parser = new JavaParser();
-					parser.setProject(localProjects.get(i));
-					parser.setTasks(tasklist);
-					parser.setHistory(history);
-					try {
-						parser.writeFile(getApplicationContext(), getFilesDir() + "/" + localProjects.get(i).getId());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					drive.upload(getApplicationContext(), localProjects.get(i).getTitle() + "-" + localProjects.get(i).getId() + ".nextproj.html", localProjects.get(i).getId());
-					
+				}
 			}
+			
+			HashMap<String, HistoryProject> regenerate = new HashMap<String, HistoryProject>();
+			
+			for (int i = 0; i < resultProjects.size(); i++) {
+				for (int j = 0; j < resultProjects.get(i).getHistory().size(); j++) {
+					String taskid = resultProjects.get(i).getHistory().get(j).getTaskId();
+					Long timestamp = Long.parseLong(resultProjects.get(i).getHistory().get(j).getTimeStamp());
+					
+					if (regenerate.get(taskid) == null) {
+						regenerate.put(taskid, new HistoryProject(resultProjects.get(i),resultProjects.get(i).getHistory().get(j)));
+						continue;
+					}
+					if (Long.parseLong(regenerate.get(taskid).history.getTimeStamp()) < timestamp) {
+						regenerate.put(taskid, new HistoryProject(resultProjects.get(i), resultProjects.get(i).getHistory().get(j)));
+						continue;
+					}
+				}
+			}
+			
+			
+			// ============== STORE REGENERATED TASKS INTO DATABASE ================
+			
+			String pId;
+			String pTitle;
+			String pDescription;
+			DateTime pDate;
+			Integer pPriority;
+			Project pProject;
+			String pContext;
+			Boolean pIsCompleted;
+			
+			for (HistoryProject regen2 : regenerate.values()) {
 				
+				pId = regen2.history.getTaskId();
+				pTitle = null;
+				pDescription = null;
+				pDate = null;
+				pPriority = 0;
+				pProject = regen2.project;
+				pContext = null;
+				pIsCompleted = false;
+				
+				for (int j = 0; j < regen2.history.getChanges().size(); j++) {
+					if (regen2.history.getChanges().get(j).getName().equals(const_title)) {
+						//Log.i(TAG,"REGEN: " + regen2.history.getChanges().get(j).getNewValue());
+						pTitle = regen2.history.getChanges().get(j).getNewValue();
+					}
+					if (regen2.history.getChanges().get(j).getName().equals(const_description))
+						pDescription = regen2.history.getChanges().get(j).getNewValue();
+					if (regen2.history.getChanges().get(j).getName().equals(const_date))
+						pDate = new DateTime(Long.parseLong(regen2.history.getChanges().get(j).getNewValue()));
+					if (regen2.history.getChanges().get(j).getName().equals(const_priority))
+						pPriority = Integer.decode(regen2.history.getChanges().get(j).getNewValue());
+					if (regen2.history.getChanges().get(j).getName().equals(const_context))
+						pContext = regen2.history.getChanges().get(j).getNewValue();
+					if (regen2.history.getChanges().get(j).getName().equals(const_completed))
+						pIsCompleted = Boolean.parseBoolean(regen2.history.getChanges().get(j).getNewValue());
+					
+				}
+				
+				projdatasource.open();
+				projdatasource.saveProject(regen2.project);
+				projdatasource.close();
+				
+				datasource.open();
+				datasource.saveTask(new Task(pId, pTitle, pDescription, pDate, pPriority, pProject, pContext, pIsCompleted));
+				datasource.close();
+				
+			}
+			
+			// ============ UPDATE FILES ON REMOTE STORAGE ================
+			
+			for (int i = 0; i < resultProjects.size(); i++) {
+				resultTasks.clear();
+				
+				datasource.open();
+				cursor = datasource.getProjectTasksCursor(resultProjects.get(i).getId());
+				while(cursor.moveToNext()) {
+					Task uptask = new Task(cursor);
+					resultTasks.add(uptask);				
+				}
+				datasource.close();
+				
+				// call serializer and uploader
+				JavaParser parser = new JavaParser();
+				parser.setProject(resultProjects.get(i));
+				parser.setTasks(resultTasks);
+				parser.setHistory(resultProjects.get(i).getHistory());
+				try {
+					parser.writeFile(getApplicationContext(), getFilesDir() + "/" + resultProjects.get(i).getId());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				drive.upload(getApplicationContext(), resultProjects.get(i).getTitle() + "-" + resultProjects.get(i).getId() + ".nextproj.html", resultProjects.get(i).getId());
+				
+				
+			}
 			
 			
 			
 			
 			
 			
+			
+			// ============= SEARCH FOR NEW SHARED FILES ================
 			List<File> lsf = drive.listShared(getApplicationContext());
 			if (lsf != null) {
 				for (int i = 0; i < lsf.size(); i++) {
@@ -460,70 +444,31 @@ public class SyncService extends Service {
 	}
 	
 	
+
 	/**
-	 * Compares two tasks and returns newer
+	 * Merge histories, h1 is remote, h2 is local (preffered in merging)
 	 */
-	public Task twoWaySync(Task first, Task second) {
-		ArrayList<TaskHistory> hist1 = first.getProject().getHistory();
-		ArrayList<TaskHistory> hist2 = second.getProject().getHistory();
+	public ArrayList<TaskHistory> mergeHistories(ArrayList<TaskHistory> h1, ArrayList<TaskHistory> h2) {
+		ArrayList<TaskHistory> res = new ArrayList<TaskHistory>();
 		
-		TaskHistory last1 = null;
-		TaskHistory last2 = null;
-		
-		if (hist1 != null)
-			for (int i = 0; i < hist1.size(); i++) {
-				if (hist1.get(i).getTaskId().equals(first.getId()))
-					if ((last1 == null) || (Long.parseLong(last1.getTimeStamp()) < Long.parseLong(hist1.get(i).getTimeStamp())))
-						last1 = hist1.get(i);
-			}
-		
-		if (hist2 != null)
-			for (int i = 0; i < hist2.size(); i++) {
-				if (hist2.get(i).getTaskId().equals(second.getId()))
-					if ((last2 == null) || (Long.parseLong(last2.getTimeStamp()) < Long.parseLong(hist2.get(i).getTimeStamp())))
-						last2 = hist2.get(i);
-			}
-		
-		// TODO: Merge histories
-		
-		if ((last1 != null) && (last2 != null)) {
-			String time1 = last1.getTimeStamp();
-			String time2 = last2.getTimeStamp();
-			
-			if (Long.decode(time1) < Long.decode(time2)) {
-				Log.i(TAG, "SECOND");
-				return second;
-			}
-			else {
-				Log.i(TAG, "FIRST");
-				return first;
+		if ((h1 != null) && (h2 != null)) {
+			for (int i = 0; i < h1.size(); i++) {
+				for (int j = 0; j < h2.size(); j++) {
+					if (h1.get(i).headerequals(h2.get(j))) {
+						res.add(h2.get(i));
+						h1.remove(i);
+						i--;
+						h2.remove(j);
+						j--;
+					}
+				}
 			}
 		}
 		
-		if (last1 == null) {
-			Log.i(TAG, "SECOND");
-			return second;
-		}
+		if (h1 != null) res.addAll(h1);
+		if (h2 != null) res.addAll(h2);
 		
-		Log.i(TAG, "FIRST");
-		return first;
-	}
-	
-	
-	/**
-	 * Get history of one Task from project
-	 */
-	
-	ArrayList<TaskHistory> getTaskHistories(Task task) {
-		ArrayList<TaskHistory> result = new ArrayList<TaskHistory>();
-		
-		Project proj = task.getProject();
-		for (int i = 0; i < proj.getHistory().size(); i++) {
-			if (proj.getHistory().get(i).getTaskId().equals(task.getId()))
-				result.add(proj.getHistory().get(i));
-		}
-		
-		return result;
+		return res;
 	}
 	
 

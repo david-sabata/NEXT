@@ -115,7 +115,7 @@ public class ProjectsDataSource {
 		if (existing != null) {
 			vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
 			vals.put(Constants.COLUMN_TITLE, project.getTitle());
-			vals.put(Constants.COLUMN_HISTORY, existing.getSerializedHistory());
+			vals.put(Constants.COLUMN_HISTORY, project.getSerializedHistory());
 			String where = Constants.COLUMN_ID + " = ?";
 			String[] args = new String[] { project.getId() };
 

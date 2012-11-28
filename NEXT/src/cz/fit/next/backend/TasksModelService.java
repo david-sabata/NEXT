@@ -196,7 +196,7 @@ public class TasksModelService extends Service {
 		hist.setTaskId(task.getId());
 		hist.setTimeStamp(new DateTime().toString());
 		hist.addChange(SyncService.const_title, "", task.getTitle());
-		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "1" : "0" );
+		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "true" : "false" );
 		hist.addChange(SyncService.const_context, "", (task.getContext() != null) ? task.getContext() : "");
 		hist.addChange(SyncService.const_date, "", task.getDate().toString());
 		hist.addChange(SyncService.const_description, "", (task.getDescription() != null) ? task.getDescription() : "");
