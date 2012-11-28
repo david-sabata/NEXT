@@ -40,6 +40,7 @@
     <string name="frag_title_today">Today tasks</string>
     <string name="someday">someday</string>
     <string name="widget_text">Widget FTW!</string>
+    <string name="widgetButton_text">+</string>
     
 
     <string name="menuSyncNow">Sync Now</string>

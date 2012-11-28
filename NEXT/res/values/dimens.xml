@@ -20,4 +20,6 @@
     <dimen name="TaskSubBodyItemMarginTop">7dp</dimen>
     <dimen name="SpinnerPaddingText">4dp</dimen>
     <dimen name="TasklistItemMarginRight">10dp</dimen>
+    <dimen name="WidgetMargin">8dp</dimen>
+    <dimen name="AddButtonWidth">32dp</dimen>
 </resources>
