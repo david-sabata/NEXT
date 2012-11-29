@@ -130,7 +130,7 @@ public class SidebarFragment extends Fragment {
 		final Context c = sideBarView.getContext();
 		while (!cursor.isAfterLast()) {
 			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			if (contextTitle != null) {
+			if (contextTitle != null && !contextTitle.equals("")) {
 				// Create new TextView
 				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
 				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
