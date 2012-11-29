@@ -36,6 +36,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
 				+ Constants.COLUMN_STARRED + " integer,"
+				+ Constants.COLUMN_SHARED + " integer,"
 				+ Constants.COLUMN_HISTORY + " text);");
 
 		// create TASKS table

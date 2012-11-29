@@ -151,8 +151,8 @@ public class JavaParser {
 			String projectId = projectData.getString("id");
 			String projectName = projectData.getString("projectname");
 
-			Log.i("Project ID: ", projectId);
-			Log.i("Project Title: ", projectName);
+			//Log.i("Project ID: ", projectId);
+			//Log.i("Project Title: ", projectName);
 
 			project = new Project(projectId, projectName);
 			

@@ -24,7 +24,7 @@ public class ProjectsDataSource {
 	/**
 	 * Columns to be fetched from the table
 	 */
-	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE, Constants.COLUMN_STARRED, Constants.COLUMN_HISTORY };
+	private String[] allColumns = { Constants.COLUMN_ID, Constants.COLUMN_TITLE, Constants.COLUMN_STARRED, Constants.COLUMN_SHARED, Constants.COLUMN_HISTORY };
 
 
 	/**
@@ -109,11 +109,12 @@ public class ProjectsDataSource {
 		ContentValues vals = new ContentValues();
 		Project existing = getProjectById(project.getId());
 		
-		Log.i("PROJ HIST", project.getSerializedHistory());
+		//Log.i("PROJ HIST", project.getSerializedHistory());
 
 		// update
 		if (existing != null) {
 			vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
+			vals.put(Constants.COLUMN_SHARED, project.isShared() ? 1 : 0);
 			vals.put(Constants.COLUMN_TITLE, project.getTitle());
 			vals.put(Constants.COLUMN_HISTORY, project.getSerializedHistory());
 			String where = Constants.COLUMN_ID + " = ?";
@@ -128,6 +129,7 @@ public class ProjectsDataSource {
 		vals.put(Constants.COLUMN_ID, project.getId());
 		vals.put(Constants.COLUMN_TITLE, project.getTitle());
 		vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
+		vals.put(Constants.COLUMN_SHARED, project.isShared() ? 1 : 0);
 		vals.put(Constants.COLUMN_HISTORY, project.getSerializedHistory());
 		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}

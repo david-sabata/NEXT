@@ -41,6 +41,7 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 
 import cz.fit.next.backend.sync.drivers.GDrive;
+import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
 
 
 
@@ -227,6 +228,16 @@ public class SyncService extends Service {
 				Project proj = parser.getProject();
 				proj.setHistory(parser.getHistory());
 				
+				// Determine sharing status
+				boolean shared = false;
+				List <UserPerm> users = drive.getUserList(lf.get(i).getId());
+				for (int j = 0; j < users.size(); j++) {
+					if ((users.get(j).mode == GDrive.READ) || (users.get(j).mode == GDrive.WRITE))
+						shared = true;
+				}
+				//Log.i(TAG,"SH: " + Boolean.toString(shared));
+				proj.setShared(shared);
+				
 				// Delete temp file from mobile
 				java.io.File f = new java.io.File(getFilesDir() + "/" + lf.get(i).getTitle());
 				f.delete();
@@ -256,6 +267,7 @@ public class SyncService extends Service {
 			}
 			projdatasource.close();
 			
+			Log.i(TAG, "before merge");
 			
 			// ============= MERGE HISTORIES ==========================
 			for (int i = 0; i < remoteProjects.size(); i++) {
@@ -267,6 +279,7 @@ public class SyncService extends Service {
 								localProjects.get(j).getHistory()
 								);
 						Project newproj = new Project(localProjects.get(j).getId(), localProjects.get(j).getTitle(), localProjects.get(j).isStarred());
+						newproj.setShared(remoteProjects.get(i).isShared());
 						newproj.setHistory(merged);
 						resultProjects.add(newproj);
 						
@@ -283,7 +296,7 @@ public class SyncService extends Service {
 			resultProjects.addAll(localProjects);
 			
 						
-			
+			Log.i(TAG,"before regenerate");
 			// ============ REGENERATE TASKS ==================
 			class HistoryProject {
 				public Project project;
@@ -314,7 +327,7 @@ public class SyncService extends Service {
 				}
 			}
 			
-			
+			Log.i(TAG, "before store");
 			// ============== STORE REGENERATED TASKS INTO DATABASE ================
 			
 			String pId;
@@ -365,7 +378,10 @@ public class SyncService extends Service {
 				
 			}
 			
+			
+			Log.i(TAG,"before upload");
 			// ============ UPDATE FILES ON REMOTE STORAGE ================
+			// TODO: Nenacitat z databaze !
 			
 			for (int i = 0; i < resultProjects.size(); i++) {
 				resultTasks.clear();

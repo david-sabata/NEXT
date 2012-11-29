@@ -60,7 +60,10 @@ public class ProjectListAdapter extends CursorAdapter {
 		// task title
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
-		ttl.setText(title);
+		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
+		String sharedStr = "";
+		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) sharedStr = " - shared"; 
+		ttl.setText(title + sharedStr);
 	}
 
 
