@@ -11,14 +11,12 @@ import android.widget.TextView;
 
 public class PrioritySpinnerAdapter extends ArrayAdapter<String> {
 
-	private Context c;
 	private LayoutInflater inflater;
 	private String[] priorityTexts;
 	
 	public PrioritySpinnerAdapter(Context context, int textViewResourceId, String[] datas) {
 		super(context, textViewResourceId, datas);
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		c = context;
 		priorityTexts = datas;
 	}
 

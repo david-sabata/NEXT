@@ -21,7 +21,6 @@ public class ProjectsSpinnerAdapter extends CursorAdapter {
 		super(context, c, flags);
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		noProjectConstant = context.getResources().getString(R.string.implicit_project);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
