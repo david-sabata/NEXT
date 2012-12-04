@@ -1,34 +1,24 @@
 package cz.fit.next.projectlist;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import cz.fit.next.R;
 
 public class ProjectEditDialog extends DialogFragment {
 
-	private static final String KEY_PREFILL = "prefill";
 
-	private String mPrefillValue = "";
-
-
-	/**
-	 * Create a new instance of the fragment, providing prefilled value
-	 * as an argument.
-	 */
-	static ProjectEditDialog newInstance(String prefill) {
+	static ProjectEditDialog newInstance() {
 		ProjectEditDialog f = new ProjectEditDialog();
-
-		Bundle args = new Bundle();
-		args.putString(KEY_PREFILL, prefill);
-		f.setArguments(args);
-
 		return f;
 	}
 
@@ -38,38 +28,58 @@ public class ProjectEditDialog extends DialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mPrefillValue = getArguments().getString(KEY_PREFILL);
-
-		setStyle(STYLE_NO_TITLE, 0);
+		this.setCancelable(true);
 	}
+
 
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.project_edit_dialog, container, false);
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		LayoutInflater factory = LayoutInflater.from(getActivity());
+		final View v = factory.inflate(R.layout.project_edit_dialog, null);
 
-		Button cancel = (Button) v.findViewById(R.id.cmdCancel);
-		cancel.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
+		// setup dialog
+		return new AlertDialog.Builder(getActivity())
+				.setTitle(getString(R.string.project_title))
+				.setView(v)
+				.setPositiveButton(android.R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+								Fragment parent = getTargetFragment();
 
-		Button ok = (Button) v.findViewById(R.id.cmdOk);
-		ok.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Fragment parent = getTargetFragment();
+								// care only if parent is project listing
+								if (parent instanceof ProjectListFragment) {
+									ProjectListFragment projList = (ProjectListFragment) parent;
+									EditText text = (EditText) v.findViewById(R.id.text);
 
-				// care only if parent is project listing
-				if (parent instanceof ProjectListFragment) {
-					ProjectListFragment projList = (ProjectListFragment) parent;
-					View text = v.findViewById(R.id.text);
+									if (text.getText() != null && text.getText().length() > 0) {
+										projList.addProject(text.getText().toString());
+									}
+								}
 
-				}
-			}
-		});
-
-		return v;
+								// hide sw keyboard
+								EditText text = (EditText) v.findViewById(R.id.text);
+								InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+								imm.hideSoftInputFromWindow(text.getWindowToken(), 0);
+							}
+						}
+				)
+				.setNegativeButton(android.R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+								// hide sw keyboard
+								EditText text = (EditText) v.findViewById(R.id.text);
+								InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+								imm.hideSoftInputFromWindow(text.getWindowToken(), 0);
+							}
+						}
+				)
+				.create();
 	}
+
+
+
+
 }

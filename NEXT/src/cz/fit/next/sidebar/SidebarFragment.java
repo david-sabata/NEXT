@@ -99,6 +99,7 @@ public class SidebarFragment extends Fragment {
 		});
 	}
 
+
 	/**
 	 * Init sidebar contexts and projects
 	 */
@@ -114,26 +115,28 @@ public class SidebarFragment extends Fragment {
 
 		// Adding new items to contexts layout
 		final Context c = sideBarView.getContext();
-		while (!cursor.isAfterLast()) {
-			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+		if (cursor != null && cursor.getCount() > 0) {
+			while (!cursor.isAfterLast()) {
+				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
 
-			if (contextTitle != null && !contextTitle.equals("")) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(contextTitle);
+				if (contextTitle != null && !contextTitle.equals("")) {
+					// Create new TextView
+					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+					newItem.setText(contextTitle);
 
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				contextsLayout.addView(itemLayout);
+					// Set Action on Item click
+					newItem.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
+						}
+					});
+					// Add final id to layout
+					contextsLayout.addView(itemLayout);
+				}
+				cursor.moveToNext();
 			}
-			cursor.moveToNext();
 		}
 
 		// Load starred projects from database
@@ -143,31 +146,32 @@ public class SidebarFragment extends Fragment {
 		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
 		projectsLayout.removeAllViews();
 
-		// Adding new starred projects to projects layout
-		while (!starredProjects.isAfterLast()) {
-			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
-			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+		if (starredProjects != null && starredProjects.getCount() > 0) {
+			// Adding new starred projects to projects layout
+			while (!starredProjects.isAfterLast()) {
+				final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
+				final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
 
-			if (projectId != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(projectTitle);
+				if (projectId != null) {
+					// Create new TextView
+					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+					newItem.setText(projectTitle);
 
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				projectsLayout.addView(itemLayout);
+					// Set Action on Item click
+					newItem.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
+						}
+					});
+					// Add final id to layout
+					projectsLayout.addView(itemLayout);
+				}
+				starredProjects.moveToNext();
 			}
-			starredProjects.moveToNext();
 		}
 	}
-
 
 	/**
 	 * ActivitySelector
@@ -197,15 +201,14 @@ public class SidebarFragment extends Fragment {
 					// create filter
 					Filter filterToday = new Filter();
 
-					GregorianCalendar from = new GregorianCalendar();
-					from.set(Calendar.HOUR_OF_DAY, 0);
-					from.set(Calendar.MINUTE, 0);
-					from.set(Calendar.SECOND, 0);
+					DateTime from = new DateTime();
+					from.setTime(0, 0);
 					filterToday.setDateFrom(from);
 
-					GregorianCalendar until = new GregorianCalendar();
-					until.setTimeInMillis(from.getTimeInMillis());
-					until.add(Calendar.HOUR_OF_DAY, 24);
+					GregorianCalendar untilCal = new GregorianCalendar();
+					untilCal.setTimeInMillis(from.toCalendar().getTimeInMillis());
+					untilCal.add(Calendar.HOUR_OF_DAY, 24);
+					DateTime until = new DateTime(untilCal.getTimeInMillis());
 					filterToday.setDateUntil(until);
 
 					// create new fragment to add to backstack
@@ -222,12 +225,12 @@ public class SidebarFragment extends Fragment {
 				{
 					Filter filter = new Filter();
 
-					GregorianCalendar from = new GregorianCalendar();
-					from.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP);
+					DateTime from = new DateTime();
+					from.setIsSomeday(true);
 					filter.setDateFrom(from);
 
-					GregorianCalendar until = new GregorianCalendar();
-					until.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP + 1);
+					DateTime until = new DateTime();
+					until.setIsSomeday(true);
 					filter.setDateUntil(until);
 
 					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
@@ -245,6 +248,7 @@ public class SidebarFragment extends Fragment {
 
 				break;
 			default:
+
 				break;
 		}
 

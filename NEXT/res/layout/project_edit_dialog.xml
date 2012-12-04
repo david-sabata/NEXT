@@ -8,26 +8,11 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/enter_project_title" >
+        android:inputType="text" >
 
         <requestFocus />
     </EditText>
     
-    <Button
-        android:id="@+id/cmdCancel"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@android:string/cancel" />
-
-    <Button
-        android:id="@+id/cmdOk"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@android:string/ok" />
-
 </LinearLayout>

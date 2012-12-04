@@ -23,4 +23,8 @@
     <dimen name="WidgetMargin">8dp</dimen>
     <dimen name="AddButtonWidth">32dp</dimen>
     <dimen name="FanItemPaddingLeft">15dp</dimen>
+    <dimen name="TaskDateEditMarginLeft">21dp</dimen>
+    <dimen name="TaskSubBodyMarginLeft">21dp</dimen>
+    <dimen name="TaskSubBodyMarginRight">21dp</dimen>
+    <dimen name="SideBarItemPaddingTopBottom">5dp</dimen>
 </resources>

@@ -36,6 +36,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 				+ Constants.COLUMN_ID + " text primary key not null, "
 				+ Constants.COLUMN_TITLE + " text not null, "
 				+ Constants.COLUMN_STARRED + " integer,"
+				+ Constants.COLUMN_SHARED + " integer,"
 				+ Constants.COLUMN_HISTORY + " text);");
 
 		// create TASKS table
@@ -60,6 +61,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		database.insertOrThrow(Constants.TABLE_PROJECTS, null, implProject);
 
 
+
 		// TEMP ========================================================
 		String tmpUUID = UUID.randomUUID().toString();
 
@@ -79,7 +81,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues.put(Constants.COLUMN_CONTEXT, "Škola");
 		otherValues.put(Constants.COLUMN_PRIORITY, 1);
 		otherValues.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 12, 21).getTimeInMillis());
-		otherValues.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATE);
 		otherValues.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues);
 
@@ -91,7 +92,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues2.put(Constants.COLUMN_CONTEXT, "Doma");
 		otherValues2.put(Constants.COLUMN_PRIORITY, 0);
 		otherValues2.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 10, 10).getTimeInMillis());
-		otherValues2.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATETIME);
 		otherValues2.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues2);
 
@@ -102,7 +102,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues3.put(Constants.COLUMN_CONTEXT, "Doma");
 		otherValues3.put(Constants.COLUMN_PRIORITY, 2);
 		otherValues3.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2013, 2, 3).getTimeInMillis());
-		otherValues3.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATETIME);
 		otherValues3.put(Constants.COLUMN_COMPLETED, 1);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues3);
 
@@ -112,17 +111,18 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues4.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues4.put(Constants.COLUMN_PRIORITY, 0);
 		otherValues4.put(Constants.COLUMN_DATETIME, new GregorianCalendar(2012, 11, 12).getTimeInMillis());
-		otherValues4.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATE);
 		otherValues4.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues4);
 
+		DateTime somedayDate = new DateTime();
+		somedayDate.setIsSomeday(true);
 		ContentValues otherValues5 = new ContentValues();
 		otherValues5.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
 		otherValues5.put(Constants.COLUMN_TITLE, "Someday task");
 		otherValues5.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues5.put(Constants.COLUMN_PRIORITY, 0);
-		otherValues5.put(Constants.COLUMN_DATETIME, DateTime.SOMEDAY_TIMESTAMP);
-		otherValues5.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATE);
+
+		otherValues5.put(Constants.COLUMN_DATETIME, somedayDate.toMiliseconds());
 		otherValues5.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues5);
 
@@ -131,8 +131,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues6.put(Constants.COLUMN_TITLE, "Someday task 2");
 		otherValues6.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues6.put(Constants.COLUMN_PRIORITY, 0);
-		otherValues6.put(Constants.COLUMN_DATETIME, DateTime.SOMEDAY_TIMESTAMP);
-		otherValues6.put(Constants.COLUMN_DATETIME_TYPE, DateTime.FLAG_DATETIME);
+		otherValues6.put(Constants.COLUMN_DATETIME, somedayDate.toMiliseconds());
 		otherValues6.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues6);
 	}

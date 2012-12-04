@@ -16,6 +16,7 @@ public class Project {
 	protected String mTitle;
 
 	protected boolean mIsStarred;
+	protected boolean mIsShared;
 
 	protected ArrayList<TaskHistory> mHistory = null;
 	
@@ -33,6 +34,7 @@ public class Project {
 		int projIdCol = cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID);
 		int projTitleCol = cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE);
 		int projHistoryCol = cursor.getColumnIndex(Constants.COLUMN_HISTORY);
+		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
 
 		// from FULL TASK row
 		if (projIdCol > -1 && projTitleCol > -1) {
@@ -57,6 +59,8 @@ public class Project {
 
 		int starredCol = cursor.getColumnIndex(Constants.COLUMN_STARRED);
 		this.mIsStarred = starredCol > -1 && cursor.getInt(starredCol) != 0;
+		
+		this.mIsShared = sharedCol > -1 && cursor.getInt(sharedCol) != 0;
 	}
 
 	/**
@@ -109,6 +113,14 @@ public class Project {
 
 	public boolean isStarred() {
 		return mIsStarred;
+	}
+	
+	public boolean isShared() {
+		return mIsShared;
+	}
+	
+	public void setShared(boolean b) {
+		mIsShared = b;
 	}
 	
 	

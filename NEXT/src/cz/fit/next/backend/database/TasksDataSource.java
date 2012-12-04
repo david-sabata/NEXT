@@ -231,9 +231,9 @@ public class TasksDataSource {
 
 				// datetime
 				if (filter != null && filter.getDateFrom() != null && filter.getDateUntil() != null) {
-					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().getTimeInMillis();
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().toMiliseconds();
 					where += " AND ";
-					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().getTimeInMillis();
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().toMiliseconds();
 				}
 
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
@@ -243,7 +243,6 @@ public class TasksDataSource {
 		};
 
 	}
-
 
 	/**
 	 * getContexts

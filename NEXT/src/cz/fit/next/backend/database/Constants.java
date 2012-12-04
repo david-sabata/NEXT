@@ -24,6 +24,7 @@ public interface Constants {
 	public static final String COLUMN_PRIORITY = "priority"; // int
 	public static final String COLUMN_COMPLETED = "completed"; // int
 	public static final String COLUMN_STARRED = "starred"; // int
+	public static final String COLUMN_SHARED = "shared"; // int
 	public static final String COLUMN_HISTORY = "history"; //serialized TaskHistory object
 
 
@@ -39,5 +40,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 16;
+	public static final int DATABASE_VERSION = 17;
 }

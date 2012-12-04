@@ -46,13 +46,19 @@
     <string name="menuSyncNow">Sync Now</string>
 
     <string name="frag_title_someday">Someday tasks</string>
-    <string name="proj_share">Share project</string>
+    <string name="project_share">Share project</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
     <string name="share_prompt">Google mail of your friend:</string>
+    <string name="TaskTimeTitle">TIME</string>
+    <string name="TaskSomeDay">Someday</string>
+    <string name="TaskWholeDay">All day</string>
     <string name="implicit_project">&lt;No project&gt;</string>
-    <string name="enter_project_title">Enter project title</string>
+    <string name="project_title">Project title</string>
+    <string name="project_delete">Delete project</string>
+    <string name="project_delete_confirm_msg">Do you really want to delete this project? All its tasks will be lost.</string>
+    <string name="no_actions">No actions available</string>
     
 </resources>

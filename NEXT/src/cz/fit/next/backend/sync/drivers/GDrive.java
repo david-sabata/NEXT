@@ -66,7 +66,8 @@ public class GDrive {
 	
 	
 	public static int READ = 0;
-	public static int WRITE = 0;
+	public static int WRITE = 1;
+	public static int OWNER = 2;
 	
 
 
@@ -200,9 +201,11 @@ public class GDrive {
 		for (int i = 0; i < perms.size(); i++) {
 			UserPerm up = new UserPerm();
 			up.username = perms.get(i).getName();
-			Log.i("PERM","Name: " + perms.get(i).getName() + ", perm: " + perms.get(i).getRole());
-			if (perms.get(i).getRole().equals("owner") || perms.get(i).getRole().equals("writer"))
+			//Log.i("PERM","Name: " + perms.get(i).getName() + ", perm: " + perms.get(i).getRole());
+			if (perms.get(i).getRole().equals("writer"))
 				up.mode = WRITE;
+			else if (perms.get(i).getRole().equals("owner"))
+				up.mode = OWNER;
 			else if (perms.get(i).getRole().equals("reader"))
 				up.mode = READ;
 			else continue;
