@@ -3,6 +3,7 @@ package cz.fit.next.backend.sync;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,35 +12,29 @@ import java.util.List;
 
 import org.json.JSONException;
 
+
+import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
-
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.api.services.drive.model.File;
 
-import cz.fit.next.MainActivity;
 import cz.fit.next.R;
-
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
-
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
-
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
 
@@ -72,6 +67,7 @@ public class SyncService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 
 		Log.i(TAG, "onStart");
+
 
 		// Reload stored preferences
 		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME,
@@ -125,17 +121,20 @@ public class SyncService extends Service {
 		// Log.e(TAG, "onCreate");
 		drive = new GDrive();
 
+
 	}
 
 	public static SyncService getInstance() {
 		return sInstance;
 	}
 
+
 	// ////////////////////////////////////////////////////////////////////////////////
 	// AUTHORIZATION
 	// ////////////////////////////////////////////////////////////////////////////////
 
 	private void authorizeDone(String name, Boolean status) {
+
 
 		if (status == true) {
 			// mAuthorized = true;
@@ -173,16 +172,20 @@ public class SyncService extends Service {
 		@Override
 		protected Object doInBackground(Void... params) {
 
+
 			boolean retval = drive.initSync(getApplicationContext(),
 					getInstance(), mAccountName);
+
 			if (!retval) {
 				return null;
 			}
+
 
 			ProjectsDataSource projdatasource = new ProjectsDataSource(
 					getApplicationContext());
 			TasksDataSource datasource = new TasksDataSource(
 					getApplicationContext());
+
 			Cursor cursor;
 
 			ArrayList<Project> remoteProjects = new ArrayList<Project>();
@@ -191,18 +194,22 @@ public class SyncService extends Service {
 			ArrayList<Project> resultProjects = new ArrayList<Project>();
 			ArrayList<Task> resultTasks = new ArrayList<Task>();
 
+
 			// =========== LOAD FILES FROM STORAGE ==============
+
 			List<File> lf = drive.list(getApplicationContext(), getInstance());
 			for (int i = 0; i < lf.size(); i++) {
 				Log.i(TAG, "Sync File: " + lf.get(i).getTitle());
 
 				// PERM TEST
+
 				// drive.getUserList(lf.get(i).getId());
 				// drive.share(lf.get(i).getId(), "xsychr03@gmail.com",
 				// GDrive.READ);
 
 				// drive.lock(lf.get(0).getId());
 				// Log.i(TAG,"locked");
+
 
 				// Download file from storage
 				drive.download(getApplicationContext(), lf.get(i).getId());
@@ -213,6 +220,7 @@ public class SyncService extends Service {
 
 				Project proj = parser.getProject();
 				proj.setHistory(parser.getHistory());
+
 
 				// Determine sharing status
 				boolean shared = false;
@@ -225,10 +233,12 @@ public class SyncService extends Service {
 				// Log.i(TAG,"SH: " + Boolean.toString(shared));
 				proj.setShared(shared);
 
+
 				// Delete temp file from mobile
 				java.io.File f = new java.io.File(getFilesDir() + "/"
 						+ lf.get(i).getTitle());
 				f.delete();
+
 
 				// Log.i(TAG,"Projekt id " + proj.getId() + " name " +
 				// proj.getTitle());
@@ -241,12 +251,15 @@ public class SyncService extends Service {
 				 * Log.i(TAG,"Desc: " + remoteTasks.get(j).getDescription()); }
 				 */
 
+
 				// add project to list of remote projects
 				remoteProjects.add(proj);
 
 			}
 
+
 			// =========== LOAD DATA FROM LOCAL DATABASE ==============
+
 			projdatasource.open();
 			cursor = projdatasource.getAllProjectsCursor();
 			cursor.moveToPrevious();
@@ -255,7 +268,7 @@ public class SyncService extends Service {
 			}
 			projdatasource.close();
 
-			Log.i(TAG, "before merge");
+
 
 			// ============= MERGE HISTORIES ==========================
 			for (int i = 0; i < remoteProjects.size(); i++) {
@@ -285,6 +298,7 @@ public class SyncService extends Service {
 			resultProjects.addAll(remoteProjects);
 			resultProjects.addAll(localProjects);
 
+
 			Log.i(TAG, "before regenerate");
 			// ============ REGENERATE TASKS ==================
 
@@ -300,6 +314,7 @@ public class SyncService extends Service {
 
 					if (regenerate.get(taskid) == null) {
 						regenerate.put(taskid, resultProjects.get(i));
+
 						continue;
 					}
 				}
@@ -307,7 +322,7 @@ public class SyncService extends Service {
 
 			Log.i(TAG, "before store");
 			// ============== STORE REGENERATED TASKS INTO DATABASE
-			// ================
+
 
 			String pId;
 			String pTitle;
@@ -317,6 +332,7 @@ public class SyncService extends Service {
 			Project pProject;
 			String pContext;
 			Boolean pIsCompleted;
+
 
 			projdatasource.open();
 			datasource.open();
@@ -374,6 +390,7 @@ public class SyncService extends Service {
 
 				cursor = datasource.getProjectTasksCursor(resultProjects.get(i)
 						.getId());
+
 				while (cursor.moveToNext()) {
 					Task uptask = new Task(cursor);
 					resultTasks.add(uptask);
@@ -395,6 +412,7 @@ public class SyncService extends Service {
 					e.printStackTrace();
 				}
 
+
 				drive.upload(getApplicationContext(), resultProjects.get(i)
 						.getTitle()
 						+ "-"
@@ -403,6 +421,7 @@ public class SyncService extends Service {
 
 			}
 			datasource.close();
+
 
 			// ============= SEARCH FOR NEW SHARED FILES ================
 			List<File> lsf = drive.listShared(getApplicationContext());
@@ -415,7 +434,9 @@ public class SyncService extends Service {
 				returnObject ret = new returnObject(lsf.size());
 				return ret;
 
+
 			} else
+
 				return null;
 		}
 
@@ -436,12 +457,14 @@ public class SyncService extends Service {
 			// Plan next synchronization
 			// TODO: Variable interval
 			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 20);
+
 			// alarm.run();
 
 			// Log.i(TAG, "Killing SyncService.");
 			// stopSelf();
 		}
 	}
+
 
 	/**
 	 * Merge histories, h1 is remote, h2 is local (preffered in merging)
@@ -464,10 +487,12 @@ public class SyncService extends Service {
 				}
 			}
 		}
+
 		if (h1 != null)
 			res.addAll(h1);
 		if (h2 != null)
 			res.addAll(h2);
+
 
 		// Log.i("MERGE","Remote: " + h1.size() + " local: " + h2.size() +
 		// " result: " + res.size());
@@ -497,6 +522,7 @@ public class SyncService extends Service {
 		return res;
 	}
 
+
 	/*
 	 * Starts synchronization
 	 */
@@ -505,6 +531,7 @@ public class SyncService extends Service {
 		SynchronizeClass cls = new SynchronizeClass();
 		cls.execute();
 	}
+
 
 	/*
 	 * Display notification to notice about new shared files
@@ -530,25 +557,26 @@ public class SyncService extends Service {
 			ticker = "NEXT: New shared files found.";
 		}
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this).setSmallIcon(R.drawable.menu_next).setContentTitle(title)
-				.setContentText(content).setNumber(count).setTicker(ticker)
-				.setAutoCancel(true);
 
-		Intent resultIntent = new Intent(this, MainActivity.class);
 
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(MainActivity.class);
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		mBuilder.setContentIntent(resultPendingIntent);
+		Notification.Builder mBuilder = new Notification.Builder(this).setSmallIcon(R.drawable.menu_next)
+				.setContentTitle(title).setContentText(content)
+				.setNumber(count).setTicker(ticker).setAutoCancel(true);
+
+		//		Intent resultIntent = new Intent(this, MainActivity.class);
+		//
+		//		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		//		stackBuilder.addParentStack(MainActivity.class);
+		//		stackBuilder.addNextIntent(resultIntent);
+		//		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+		//		mBuilder.setContentIntent(resultPendingIntent);
+
 
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
 		int notid = 0;
-		mNotificationManager.notify(notid, mBuilder.build());
-
+		mNotificationManager.notify(notid, mBuilder.getNotification());
 	}
+
 
 }

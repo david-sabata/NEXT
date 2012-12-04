@@ -1,30 +1,22 @@
 package cz.fit.next.tasklist;
 
+import android.app.ListFragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.deaux.fan.FanView;
-
 import cz.fit.next.MainActivity;
-import cz.fit.next.MyGestureDetector;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
@@ -65,9 +57,6 @@ public class TaskListFragment extends ListFragment {
 	protected int mTitleResId;
 
 
-	protected GestureDetector mGestureDetector;
-
-	protected OnTouchListener mTouchListener;
 
 
 
@@ -108,16 +97,6 @@ public class TaskListFragment extends ListFragment {
 			mTitleResId = args.getInt(ARG_TITLE);
 			mFilter = Filter.fromString(args.getString(ARG_FILTER));
 		}
-
-		FanView fan = ((MainActivity) getActivity()).getFanView();
-
-		mGestureDetector = new GestureDetector(getActivity(), new MyGestureDetector(fan));
-		mTouchListener = new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return mGestureDetector.onTouchEvent(event);
-			}
-		};
 	}
 
 	/**
@@ -145,7 +124,8 @@ public class TaskListFragment extends ListFragment {
 		// register long click events
 		registerForContextMenu(getListView());
 
-		getListView().setOnTouchListener(mTouchListener);
+		// register for gestures
+		((MainActivity) getActivity()).attachGestureDetector(getListView());
 	}
 
 
@@ -191,9 +171,6 @@ public class TaskListFragment extends ListFragment {
 		if (v.getId() == android.R.id.list) {
 			menu.add(Menu.NONE, R.id.action_edit, 0, R.string.action_edit_task);
 			menu.add(Menu.NONE, R.id.action_delete, 1, R.string.action_delete_task);
-		}
-		else {
-			Log.e(LOG_TAG, "fail");
 		}
 	}
 

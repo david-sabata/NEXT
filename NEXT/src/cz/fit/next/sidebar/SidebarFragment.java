@@ -3,15 +3,13 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -42,92 +40,80 @@ public class SidebarFragment extends Fragment {
 			R.id.Projects_ShowProjects
 	};
 
-	
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+		// Load layout for sidebar
 		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
-		//TODO generate views for menu fixed items
+
+		// Generate fixed item in sidebar
 		sideBarView = setFixedItemsSidebar(sideBarView);
 
+		// Generate context items in sidebar
 		initSideBarContextProjects();
-	
+
 		return sideBarView;
 	}
 
 	/**
-	 * Generate menu layout
-	 * 
-	 * @param sideBarView View of sidebar
-	 * @return sideBar - laout changed with new items and seetings
+	 * Set options of fixed item in menu sidebar
+	 * @param sideBarView View of menu sidebar
+	 * @return sideBar - layout changed with new items
 	 */
 	protected View setFixedItemsSidebar(View pSideBarView) {
-
 		for (final int id : menuFixedItemsId) {
-			// getView() return root view for fragment
 			final TextView item = (TextView) pSideBarView.findViewById(id);
-			//set listener
-			setOnItemTouchListener(id, item);
+
+			// Set onClickListener to item -> it will switch fragment
+			item.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					updateContentFromItemClick(id);
+				}
+			});
 		}
 		return pSideBarView;
 	}
 
 
-	/**
-	 * Set onTouchListener to item
-	 * @param id R.id of TextView (TextView is one item in list)
-	 * @param item (Item in list)
-	 */
-	protected void setOnItemTouchListener(final Integer id, TextView item) {
-		//set on touch event
-		item.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					v.setBackgroundColor(Color.parseColor("#00FFFF"));
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					v.setBackgroundColor(Color.TRANSPARENT);
-					updateContentFromItemClick(id);
-				} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-					v.setBackgroundColor(Color.TRANSPARENT);
-				}
-				return true;
-			}
-		});
-	}
-
-
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
-		FanView f = ((MainActivity) getActivity()).getFanView();
-		f.setSidebarListener(new SidebarListener() {
 
+		MainActivity activity = (MainActivity) getActivity();
+
+		FanView f = activity.getFanView();
+		f.setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {
-				// TODO Auto-generated method stub
+
+				// Regenerate contexts and projects in sidebar menu
 				initSideBarContextProjects();
 			}
 
 			@Override
 			public void onSidebarClose() {
-				// TODO Auto-generated method stub
-
 			}
 		});
 	}
 
+	/**
+	 * Init sidebar contexts and projects
+	 */
 	public void initSideBarContextProjects() {
 		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		//TODO load contexts from database
+		// Load contexts from database
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+
+		// Get pointer to layout of contexts and clean it before adding new items
 		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
 		contextsLayout.removeAllViews();
+
+		// Adding new items to contexts layout
 		final Context c = sideBarView.getContext();
+
 		if(cursor != null && cursor.getCount() > 0) {
 			while (!cursor.isAfterLast()) {
 				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
@@ -149,16 +135,22 @@ public class SidebarFragment extends Fragment {
 					contextsLayout.addView(itemLayout);
 				}
 				cursor.moveToNext();
+
 			}
 		}
 
-		// load starred projects
+		// Load starred projects from database
 		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+
+		// Get pointer to layout of projects and clean it before adding new starred projects
 		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
 		projectsLayout.removeAllViews();
+
+		// Adding new starred projects to projects layout
 		while (!starredProjects.isAfterLast()) {
 			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
 			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+
 			if (projectId != null) {
 				// Create new TextView
 				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
@@ -169,7 +161,6 @@ public class SidebarFragment extends Fragment {
 				newItem.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
 					}
 				});
@@ -190,7 +181,7 @@ public class SidebarFragment extends Fragment {
 	protected void updateContentFromItemClick(int id) {
 		FanView fan = ((MainActivity) getActivity()).getFanView();
 
-		FragmentManager fragmentMgr = getActivity().getSupportFragmentManager();
+		FragmentManager fragmentMgr = getActivity().getFragmentManager();
 		Fragment currentFragment = fragmentMgr.findFragmentById(R.id.appView);
 
 		switch (id) {
@@ -257,14 +248,6 @@ public class SidebarFragment extends Fragment {
 
 				break;
 			default:
-				// user defined items of menu
-				Log.i(LOG_TAG, "selection: User defined");
-				/*
-				 * TODO send id of TextView - area interest -> we have to have
-				 * some global variable (maybe HashMap) to stored context
-				 * between user defined contexts and area of interests It could
-				 * be possible saved in JSON
-				 */
 				break;
 		}
 

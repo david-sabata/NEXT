@@ -2,7 +2,9 @@ package cz.fit.next;
 
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,18 +12,18 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 
 import com.deaux.fan.FanView;
 
-
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
-
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.sidebar.SidebarFragment;
@@ -29,11 +31,16 @@ import cz.fit.next.tasklist.TaskListFragment;
 
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends Activity {
 
 	private static final String LOG_TAG = "FragmentActivity";
 
 	private final MainActivity self = this;
+
+
+	protected GestureDetector mGestureDetector;
+
+	protected OnTouchListener mTouchListener;
 
 
 	protected TasksModelService mModelService;
@@ -79,7 +86,6 @@ public class MainActivity extends FragmentActivity {
 		b.putInt("buttonPressed", 0);
 		i.putExtras(b);
 		this.startService(i);
-
 	}
 
 
@@ -107,6 +113,15 @@ public class MainActivity extends FragmentActivity {
 		// hide loading fragment if the service is already ready
 		if (mModelService != null)
 			hideLoadingFragment();
+
+		// prepare gesture listener for fragments
+		mGestureDetector = new GestureDetector(this, new MyGestureDetector(getFanView()));
+		mTouchListener = new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return mGestureDetector.onTouchEvent(event);
+			}
+		};
 	}
 
 
@@ -176,13 +191,13 @@ public class MainActivity extends FragmentActivity {
 				//ArrayList<TaskHistory> histories = parser.getHistory();
 
 				break;
-				
+
 			case R.id.menu_sync_now:
 				// tell synchronization service to start sync
 				Intent in = new Intent(this, SyncService.class);
 				in.putExtra("SyncAlarm", 1);
 				this.startService(in);
-				
+
 				break;
 
 			case R.id.menu_wipe_db:
@@ -218,6 +233,13 @@ public class MainActivity extends FragmentActivity {
 	}
 
 
+	/**
+	 * Setup gesture detection for given view
+	 */
+	public void attachGestureDetector(View v) {
+		v.setOnTouchListener(mTouchListener);
+	}
+
 
 
 	/**
@@ -225,21 +247,19 @@ public class MainActivity extends FragmentActivity {
 	 * with default task list fragment, else does nothing
 	 */
 	public void hideLoadingFragment() {
-		Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
-		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
-			FanView fan = (FanView) findViewById(R.id.fan_view);
+		FanView fan = (FanView) findViewById(R.id.fan_view);
+		Fragment currentFragment = self.getFragmentManager().findFragmentById(R.id.appView);
 
+		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
 			// default task list
 			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
 
 			// replace without history
 			fan.replaceMainFragment(frag, false);
 		}
-		
-		Fragment currentFanFragment = self.getSupportFragmentManager().findFragmentById(R.id.fanView);
-		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
-			FanView fan = (FanView) findViewById(R.id.fan_view);
-			
+
+		Fragment currentFanFragment = self.getFragmentManager().findFragmentById(R.id.fanView);
+		if (currentFanFragment != null && currentFragment instanceof LoadingFragment) {
 			//default sidebar
 			SidebarFragment sidebar = new SidebarFragment();
 			fan.replaceFanFragment(sidebar, false);

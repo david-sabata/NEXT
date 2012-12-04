@@ -60,10 +60,24 @@ public class ProjectListAdapter extends CursorAdapter {
 		// task title
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
+
 		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
 		String sharedStr = "";
 		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) sharedStr = " - shared"; 
 		ttl.setText(title + sharedStr);
+
+
+		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {
+			// use localized string
+			ttl.setText(R.string.implicit_project);
+
+			// set tag for the parent layout to be able create correct context menu
+			view.setTag(Constants.IMPLICIT_PROJECT_NAME);
+		}
+		else {
+			ttl.setText(title);
+		}
+
 	}
 
 

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.util.Log;
 import cz.fit.next.backend.Project;
 
 public class ProjectsDataSource {
@@ -108,8 +107,6 @@ public class ProjectsDataSource {
 	public void saveProject(Project project) {
 		ContentValues vals = new ContentValues();
 		Project existing = getProjectById(project.getId());
-		
-		//Log.i("PROJ HIST", project.getSerializedHistory());
 
 		// update
 		if (existing != null) {
@@ -134,4 +131,20 @@ public class ProjectsDataSource {
 		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}
 
+
+	/**
+	 * Delete project by its ID. Make sure the deletion has been confirmed 
+	 * by the user!
+	 * 
+	 * @param projectId
+	 */
+	public void deleteProject(String projectId) {
+		String args[] = { projectId };
+
+		// delete tasks
+		database.delete(Constants.TABLE_TASKS, Constants.COLUMN_PROJECTS_ID + " = ?", args);
+
+		// delete the project
+		database.delete(Constants.TABLE_PROJECTS, Constants.COLUMN_ID + " = ?", args);
+	}
 }

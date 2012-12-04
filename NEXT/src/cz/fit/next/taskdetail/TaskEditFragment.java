@@ -3,12 +3,11 @@ package cz.fit.next.taskdetail;
 
 import java.util.UUID;
 
-
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +21,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
@@ -50,7 +50,7 @@ public class TaskEditFragment extends Fragment {
 	private Task mTask;
 	private Fragment editFragment;
 
-	
+
 	/**
 	 * 	Setting details of date and time 
 	 */
@@ -108,7 +108,7 @@ public class TaskEditFragment extends Fragment {
 			String taskId = args.getString(ARG_TASK_ID);
 			mTask = TasksModelService.getInstance().getTaskById(taskId);
 		}
-		
+
 		editFragment = this;
 	}
 
@@ -132,38 +132,51 @@ public class TaskEditFragment extends Fragment {
 		// set time
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		// We dont want keyboard
-		time.setInputType(InputType.TYPE_NULL); 
+		time.setInputType(InputType.TYPE_NULL);
 		time.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				DialogFragment newFragment = new TaskEditFragmentTimeDialog();
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
-			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogTime");
-			    
-			    Log.i("EditTime", "Click");
+				newFragment.show(getActivity().getFragmentManager(), "DialogTime");
+
+				Log.i("EditTime", "Click");
 			}
 		});
-		
+
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		// We dont want keyboard
-		date.setInputType(InputType.TYPE_NULL); 
+		date.setInputType(InputType.TYPE_NULL);
 		date.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				DialogFragment newFragment = new TaskEditFragmentDateDialog();
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
-			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogDate");
-			    Log.i("EditDate", "Click");
+				newFragment.show(getActivity().getFragmentManager(), "DialogDate");
+				Log.i("EditDate", "Click");
 			}
 		});
-		
+
 		return taskDetailView;
 	}
+
+
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// register for gestures
+		View v = getView().findViewById(R.id.scrollView);
+		((MainActivity) getActivity()).attachGestureDetector(v);
+	}
+
 
 
 
@@ -179,16 +192,16 @@ public class TaskEditFragment extends Fragment {
 		TextView descripton = (TextView) taskDetailView.findViewById(R.id.editDescription);
 		descripton.setText(task.getDescription());
 
-		
+
 		// set time
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		time.setText(task.getDate().toLocaleTimeString());
-	
+
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(task.getDate().toLocaleDateString());
-	
-		
+
+
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
 		isCompleted.setChecked(task.isCompleted());
@@ -233,10 +246,10 @@ public class TaskEditFragment extends Fragment {
 		DateTime dateTime = new DateTime();
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toLocaleDateString());
-		
+
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		time.setText(dateTime.toLocaleTimeString());
-		
+
 		// set project
 		Cursor cursor = TasksModelService.getInstance().getAllProjectsCursor();
 		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
@@ -261,13 +274,13 @@ public class TaskEditFragment extends Fragment {
 		// save
 		if (item.getItemId() == R.id.action_save) {
 			onSaveItem();
-			getActivity().getSupportFragmentManager().popBackStack();
+			getActivity().getFragmentManager().popBackStack();
 			return true;
 		}
 
 		// cancel
 		if (item.getItemId() == R.id.action_cancel) {
-			getActivity().getSupportFragmentManager().popBackStackImmediate();
+			getActivity().getFragmentManager().popBackStackImmediate();
 			return true;
 		}
 
@@ -315,15 +328,15 @@ public class TaskEditFragment extends Fragment {
 		int priority = Integer.parseInt(priorityBtn.getText().toString());
 
 		// date time
-		DateTime dateTime = null; 
-		if(dateString != null && timeString != null) {
+		DateTime dateTime = null;
+		if (dateString != null && timeString != null) {
 			dateTime = new DateTime(dateString + " " + timeString);
 		} else if (mTask != null) {
 			dateTime = mTask.getDate();
 		} else {
 			dateTime = new DateTime();
 		}
-	
+
 		// Create new changed task
 		Task editedTask =
 				new Task(taskId,
@@ -347,41 +360,41 @@ public class TaskEditFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		
-		switch(requestCode) {
-		case DIALOG_EDIT_DATE:
-			Bundle dateData = data.getExtras();
-			String year = Integer.toString(dateData.getInt("year"));
-			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
-			String day = Integer.toString(dateData.getInt("dayOfMonth"));
-			
-			dateString = year + "-" + month + "-" + day;
-			
-			// SetDate to edit text
-			DateTime dateTime = new DateTime(dateString);
-			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
-			dateView.setText(dateTime.toLocaleDateString());
-			break;
-			
-		case DIALOG_EDIT_TIME:
-			Bundle time = data.getExtras();
-			String hour = Integer.toString(time.getInt("hourOfDay"));
-			String minute = Integer.toString(time.getInt("minute"));
 
-			timeString = hour + ":" + minute;
-			
-			// Set Time to EditText
-			TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
-			timeView.setText(timeString);
-			
-			break;
+		switch (requestCode) {
+			case DIALOG_EDIT_DATE:
+				Bundle dateData = data.getExtras();
+				String year = Integer.toString(dateData.getInt("year"));
+				String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
+				String day = Integer.toString(dateData.getInt("dayOfMonth"));
+
+				dateString = year + "-" + month + "-" + day;
+
+				// SetDate to edit text
+				DateTime dateTime = new DateTime(dateString);
+				TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
+				dateView.setText(dateTime.toLocaleDateString());
+				break;
+
+			case DIALOG_EDIT_TIME:
+				Bundle time = data.getExtras();
+				String hour = Integer.toString(time.getInt("hourOfDay"));
+				String minute = Integer.toString(time.getInt("minute"));
+
+				timeString = hour + ":" + minute;
+
+				// Set Time to EditText
+				TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
+				timeView.setText(timeString);
+
+				break;
 			default:
 				Log.i("Unknown dialog request code", Integer.toString(requestCode));
 				break;
 		}
 
-		
-		
+
+
 	}
 
 

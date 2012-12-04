@@ -9,7 +9,7 @@
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
         android:focusable="false" />
     
@@ -18,6 +18,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
         android:layout_weight="0.9"
         android:orientation="vertical" >
         

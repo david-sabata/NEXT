@@ -173,7 +173,9 @@ public class TasksModelService extends Service {
 	 */
 	public void saveTask(Task task) {
 
+
 		Project proj = mProjectsDataSource.getProjectById(task.getProject().getId());
+
 		ArrayList<TaskHistory> history = proj.getHistory();
 		
 		//Log.i("PREHIST", proj.getSerializedHistory());
@@ -279,6 +281,20 @@ public class TasksModelService extends Service {
 		mProjectsDataSource.saveProject(project);
 	}
 
+
+	/**
+	 * Delete project by its ID. Make sure the deletion has been confirmed 
+	 * by the user!
+	 * 
+	 * @param projectId
+	 */
+	public void deleteProject(String projectId) {
+		mProjectsDataSource.deleteProject(projectId);
+	}
+
+
+
+
 	/**
 	 * Returns localized date string
 	 */
@@ -299,8 +315,9 @@ public class TasksModelService extends Service {
 	 * Returns localized time string
 	 */
 	public String getLocalizedTime(Date d) {
-		return DateUtils.formatDateTime(mContext, d.getTime(),
-				DateUtils.FORMAT_SHOW_TIME);
+
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_TIME);
+
 	}
 
 	/**
