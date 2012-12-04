@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 
 /**
  * @author xsych_000
@@ -113,9 +115,9 @@ public class TaskHistory {
 	
 	public boolean headerequals(TaskHistory second) {
 		boolean res = true;
-		if (mTimeStamp != second.getTimeStamp()) res = false;
-		if (mAuthor != second.getAuthor()) res = false;
-		if (mTaskId != second.getTaskId()) res = false;
+		if (!mTimeStamp.equals(second.getTimeStamp())) res = false;
+		if (!mAuthor.equals(second.getAuthor())) res = false;
+		if (!mTaskId.equals(second.getTaskId())) res = false;
 		
 		return res;
 	}

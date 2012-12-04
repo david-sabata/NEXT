@@ -339,6 +339,9 @@ public class SyncService extends Service {
 			String pContext;
 			Boolean pIsCompleted;
 			
+			projdatasource.open();
+			datasource.open();
+			
 			for (HistoryProject regen2 : regenerate.values()) {
 				
 				pId = regen2.history.getTaskId();
@@ -368,31 +371,31 @@ public class SyncService extends Service {
 					
 				}
 				
-				projdatasource.open();
-				projdatasource.saveProject(regen2.project);
-				projdatasource.close();
 				
-				datasource.open();
+				projdatasource.saveProject(regen2.project);
 				datasource.saveTask(new Task(pId, pTitle, pDescription, pDate, pPriority, pProject, pContext, pIsCompleted));
-				datasource.close();
+				
 				
 			}
-			
+			projdatasource.close();
+			datasource.close();
 			
 			Log.i(TAG,"before upload");
 			// ============ UPDATE FILES ON REMOTE STORAGE ================
 			// TODO: Nenacitat z databaze !
 			
+			
+			datasource.open();
 			for (int i = 0; i < resultProjects.size(); i++) {
 				resultTasks.clear();
 				
-				datasource.open();
+				
 				cursor = datasource.getProjectTasksCursor(resultProjects.get(i).getId());
 				while(cursor.moveToNext()) {
 					Task uptask = new Task(cursor);
 					resultTasks.add(uptask);				
 				}
-				datasource.close();
+				
 				
 				// call serializer and uploader
 				JavaParser parser = new JavaParser();
@@ -413,6 +416,7 @@ public class SyncService extends Service {
 				
 				
 			}
+			datasource.close();
 			
 			
 			
@@ -468,6 +472,8 @@ public class SyncService extends Service {
 	public ArrayList<TaskHistory> mergeHistories(ArrayList<TaskHistory> h1, ArrayList<TaskHistory> h2) {
 		ArrayList<TaskHistory> res = new ArrayList<TaskHistory>();
 		
+		
+		
 		if ((h1 != null) && (h2 != null)) {
 			for (int i = 0; i < h1.size(); i++) {
 				for (int j = 0; j < h2.size(); j++) {
@@ -482,9 +488,10 @@ public class SyncService extends Service {
 				}
 			}
 		}
-		
 		if (h1 != null) res.addAll(h1);
 		if (h2 != null) res.addAll(h2);
+		
+		//Log.i("MERGE","Remote: " + h1.size() + " local: " + h2.size() + " result: " + res.size());
 		
 		return res;
 	}
