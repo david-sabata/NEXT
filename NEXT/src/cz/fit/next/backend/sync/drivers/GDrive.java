@@ -165,8 +165,12 @@ public class GDrive {
 	/**
 	 * Starts sharing of file to given google account
 	 */
-	public void share(String file, String user, int mode) {
-		setPermissions(file, user, mode);
+	public boolean share(String file, String user, int mode) {
+		
+		String fileid = getFileIdByName(file, mAppFolder);
+		if (fileid == null) return false;
+		
+		return setPermissions(fileid, user, mode);
 		
 		
 	}
@@ -400,6 +404,7 @@ public class GDrive {
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
+			return null;
 		}
 
 		return res;
@@ -682,7 +687,7 @@ public class GDrive {
 	 * Set/update permission on file
 	 */
 	
-	private void setPermissions(String fileid, String gmail, int mode) {
+	private boolean setPermissions(String fileid, String gmail, int mode) {
 		Permission newPermission = new Permission();
 
 	    newPermission.setValue(gmail);
@@ -695,9 +700,11 @@ public class GDrive {
 	    try {
 	      mService.permissions().insert(fileid, newPermission).execute();
 	    } catch (IOException e) {
-	    	// TODO Auto-generated catch block
 	    	e.printStackTrace();
+	    	return false;
 	    }
+	    
+	    return true;
 	  
 
 	}

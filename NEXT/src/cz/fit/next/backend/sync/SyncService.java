@@ -51,6 +51,9 @@ public class SyncService extends Service {
 
 	// Notification types
 	private static final int NOTIFICATION_NEW_SHARED = 100;
+	private static final int SHARING_ERROR = 101;
+	private static final int SYNC_ERROR = 102;
+	
 
 	// Self
 	private static SyncService sInstance = null;
@@ -109,6 +112,12 @@ public class SyncService extends Service {
 
 				if (b.getInt("SyncAlarm") == 1) {
 					synchronize();
+				}
+				
+				if (b.getInt("Share") == 1) {
+					String sid = b.getString("ShareID");
+					String gmail = b.getString("ShareGmail");
+					share(sid,gmail);
 				}
 			}
 
@@ -243,7 +252,7 @@ public class SyncService extends Service {
 							|| (users.get(j).mode == GDrive.WRITE))
 						shared = true;
 				}
-				// Log.i(TAG,"SH: " + Boolean.toString(shared));
+				Log.i(TAG,"SH: " + Boolean.toString(shared));
 				proj.setShared(shared);
 
 
@@ -566,6 +575,48 @@ public class SyncService extends Service {
 		SynchronizeClass cls = new SynchronizeClass();
 		cls.execute();
 	}
+	
+	/**
+	 * Shares a file
+	 */
+	private void share(String id, String user) {
+		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+		pds.open();
+		Project proj = pds.getProjectById(id);
+		String title = proj.getTitle();
+		pds.close();
+		
+		ShareClass cls = new ShareClass(id,title,user);
+		cls.execute();
+		
+		Log.i(TAG,"Sharing after execute");
+		
+	}
+	
+	private class ShareClass extends AsyncTask<Object, Void, Void> {
+
+		private String id;
+		private String user;
+		private String title;
+		
+		public ShareClass(String pId, String pTitle, String pUser) {
+			id = pId;
+			user = pUser;
+			title = pTitle;
+		}
+		
+		@Override
+		protected Void doInBackground(Object... param) {
+			String filename = title + "-" + id + ".nextproj.html";
+			Boolean res = drive.share(filename, user, GDrive.WRITE );
+			Log.i(TAG, "Sharing res" + res.toString());
+			if (!res) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			
+			return null;
+		}
+		
+		
+	}
 
 
 	/*
@@ -591,6 +642,18 @@ public class SyncService extends Service {
 			content = "New shared files found on your Drive.";
 			ticker = "NEXT: New shared files found.";
 		}
+		
+		if (type == SHARING_ERROR) {
+			title = "NEXT Sharing Error";
+			content = "Tap here to resolve.";
+			ticker = "NEXT: Sharing Error.";
+		}
+		
+		if (type == SYNC_ERROR) {
+			title = "NEXT Synchronization Error";
+			content = "Tap here to sync again.";
+			ticker = "NEXT: Synchronization Error.";
+		}
 
 
 
@@ -599,7 +662,7 @@ public class SyncService extends Service {
 				.setNumber(count).setTicker(ticker).setAutoCancel(true);
 
 		//		Intent resultIntent = new Intent(this, MainActivity.class);
-		//
+		
 		//		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		//		stackBuilder.addParentStack(MainActivity.class);
 		//		stackBuilder.addNextIntent(resultIntent);

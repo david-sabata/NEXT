@@ -64,7 +64,7 @@ public class ProjectListAdapter extends CursorAdapter {
 		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
 		String sharedStr = "";
 		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) sharedStr = " - shared"; 
-		ttl.setText(title + sharedStr);
+		title = title + sharedStr;
 
 
 		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {
