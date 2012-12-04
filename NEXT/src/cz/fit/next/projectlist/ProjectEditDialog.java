@@ -44,6 +44,7 @@ public class ProjectEditDialog extends DialogFragment {
 				.setView(v)
 				.setPositiveButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int whichButton) {
 								Fragment parent = getTargetFragment();
 
@@ -66,6 +67,7 @@ public class ProjectEditDialog extends DialogFragment {
 				)
 				.setNegativeButton(android.R.string.cancel,
 						new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int whichButton) {
 								// hide sw keyboard
 								EditText text = (EditText) v.findViewById(R.id.text);

@@ -40,16 +40,13 @@
     <string name="frag_title_today">Today tasks</string>
     <string name="someday">someday</string>
 
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+    <string-array name="priorityArray">
+        <item>No priority</item>
+        <item>Low</item>
+        <item>Normal</item>
+        <item>High</item>
     </string-array>
+    
     <string name="menuSyncNow">Sync Now</string>
     <string name="frag_title_someday">Someday tasks</string>
     <string name="project_share">Share project</string>
@@ -57,7 +54,13 @@
     <string name="cancel">Cancel</string>
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
+
     <string name="share_prompt">Google mail for new share</string>
+
+    <string name="TaskTimeTitle">TIME</string>
+    <string name="TaskSomeDay">Someday</string>
+    <string name="TaskWholeDay">All day</string>
+
     <string name="implicit_project">&lt;No project&gt;</string>
     <string name="project_title">Project title</string>
     <string name="project_delete">Delete project</string>

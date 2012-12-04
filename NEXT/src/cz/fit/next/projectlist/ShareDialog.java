@@ -33,6 +33,7 @@ public class ShareDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+
 		LayoutInflater factory = LayoutInflater.from(getActivity());
 		final View v = factory.inflate(R.layout.share, null);
 
@@ -69,6 +70,7 @@ public class ShareDialog extends DialogFragment {
 						}
 				)
 				.create();
+
 	}
 
 

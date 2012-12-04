@@ -21,4 +21,8 @@
     <dimen name="SpinnerPaddingText">4dp</dimen>
     <dimen name="TasklistItemMarginRight">10dp</dimen>
     <dimen name="FanItemPaddingLeft">15dp</dimen>
+    <dimen name="TaskDateEditMarginLeft">21dp</dimen>
+    <dimen name="TaskSubBodyMarginLeft">21dp</dimen>
+    <dimen name="TaskSubBodyMarginRight">21dp</dimen>
+    <dimen name="SideBarItemPaddingTopBottom">5dp</dimen>
 </resources>

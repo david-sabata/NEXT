@@ -4,17 +4,16 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.deaux.fan.FanView;
 import com.deaux.fan.SidebarListener;
@@ -32,11 +31,12 @@ public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
 	private View sideBarView;
+
 	/**
 	 * IDs of fixed menu items
 	 */
 	int menuFixedItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
 			R.id.Projects_ShowProjects
 	};
 
@@ -77,6 +77,80 @@ public class SidebarFragment extends Fragment {
 	}
 
 
+	/**
+	 * Init sidebar contexts and projects
+	 */
+	public void initSideBarContextProjects() {
+		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		// Load contexts from database
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+
+		// Get pointer to layout of contexts and clean it before adding new items
+		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
+		contextsLayout.removeAllViews();
+
+		// Adding new items to contexts layout
+		final Context c = sideBarView.getContext();
+		if (cursor != null && cursor.getCount() > 0) {
+			while (!cursor.isAfterLast()) {
+				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+
+				if (contextTitle != null && !contextTitle.equals("")) {
+					// Create new TextView
+					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+					newItem.setText(contextTitle);
+
+					// Set Action on Item click
+					newItem.setOnClickListener(mContextOnClickListener);
+					// Add final id to layout
+					contextsLayout.addView(itemLayout);
+				}
+				cursor.moveToNext();
+			}
+		}
+
+		// Load starred projects from database
+		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
+
+		// Get pointer to layout of projects and clean it before adding new starred projects
+		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
+		projectsLayout.removeAllViews();
+
+		if (starredProjects != null && starredProjects.getCount() > 0) {
+			// Adding new starred projects to projects layout
+			while (!starredProjects.isAfterLast()) {
+				final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
+				final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
+
+				if (projectId != null) {
+					// Create new TextView
+					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+					newItem.setTag(R.id.project, projectId);
+
+					// use localized string for default project
+					if (projectTitle.equals(Constants.IMPLICIT_PROJECT_NAME)) {
+						newItem.setText(R.string.implicit_project);
+					}
+					else {
+						newItem.setText(projectTitle);
+					}
+
+					// Set Action on Item click
+					newItem.setOnClickListener(mProjectOnClickListener);
+					// Add final id to layout
+					projectsLayout.addView(itemLayout);
+				}
+				starredProjects.moveToNext();
+			}
+		}
+	}
+
+
+
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -98,78 +172,6 @@ public class SidebarFragment extends Fragment {
 		});
 	}
 
-	/**
-	 * Init sidebar contexts and projects
-	 */
-	public void initSideBarContextProjects() {
-		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		// Load contexts from database
-		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-
-		// Get pointer to layout of contexts and clean it before adding new items
-		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
-		contextsLayout.removeAllViews();
-
-		// Adding new items to contexts layout
-		final Context c = sideBarView.getContext();
-
-		if(cursor != null && cursor.getCount() > 0) {
-			while (!cursor.isAfterLast()) {
-				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-				if (contextTitle != null) {
-					// Create new TextView
-					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-					newItem.setText(contextTitle);
-	
-					// Set Action on Item click
-					newItem.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-						}
-					});
-					// Add final id to layout
-					contextsLayout.addView(itemLayout);
-				}
-				cursor.moveToNext();
-
-			}
-		}
-
-		// Load starred projects from database
-		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
-
-		// Get pointer to layout of projects and clean it before adding new starred projects
-		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
-		projectsLayout.removeAllViews();
-
-		// Adding new starred projects to projects layout
-		while (!starredProjects.isAfterLast()) {
-			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
-			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
-
-			if (projectId != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(projectTitle);
-
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				projectsLayout.addView(itemLayout);
-			}
-			starredProjects.moveToNext();
-		}
-	}
 
 
 	/**
@@ -181,34 +183,26 @@ public class SidebarFragment extends Fragment {
 	protected void updateContentFromItemClick(int id) {
 		FanView fan = ((MainActivity) getActivity()).getFanView();
 
-		FragmentManager fragmentMgr = getActivity().getFragmentManager();
-		Fragment currentFragment = fragmentMgr.findFragmentById(R.id.appView);
-
 		switch (id) {
 			case R.id.Time_Next:
-				Log.i(LOG_TAG, "selection: Next");
-
 				// create new fragment to add to backstack
 				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
 				fan.replaceMainFragment(fragNext);
 
 				break;
 			case R.id.Time_Today:
-				Log.i(LOG_TAG, "selection: Today");
-
-				{
+				if (true) {
 					// create filter
 					Filter filterToday = new Filter();
 
-					GregorianCalendar from = new GregorianCalendar();
-					from.set(Calendar.HOUR_OF_DAY, 0);
-					from.set(Calendar.MINUTE, 0);
-					from.set(Calendar.SECOND, 0);
+					DateTime from = new DateTime();
+					from.setTime(0, 0);
 					filterToday.setDateFrom(from);
 
-					GregorianCalendar until = new GregorianCalendar();
-					until.setTimeInMillis(from.getTimeInMillis());
-					until.add(Calendar.HOUR_OF_DAY, 24);
+					GregorianCalendar untilCal = new GregorianCalendar();
+					untilCal.setTimeInMillis(from.toCalendar().getTimeInMillis());
+					untilCal.add(Calendar.HOUR_OF_DAY, 24);
+					DateTime until = new DateTime(untilCal.getTimeInMillis());
 					filterToday.setDateUntil(until);
 
 					// create new fragment to add to backstack
@@ -218,36 +212,37 @@ public class SidebarFragment extends Fragment {
 
 				break;
 			case R.id.Time_InPlan:
-				Log.i(LOG_TAG, "selection: In plan");
+				Log.i(LOG_TAG, "In plan - not implemented yet");
 				break;
+
 			case R.id.Time_Someday:
-				Log.i(LOG_TAG, "selection: Someday");
-				{
+				if (true) {
 					Filter filter = new Filter();
 
-					GregorianCalendar from = new GregorianCalendar();
-					from.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP);
+					DateTime from = new DateTime();
+					from.setIsSomeday(true);
 					filter.setDateFrom(from);
 
-					GregorianCalendar until = new GregorianCalendar();
-					until.setTimeInMillis(DateTime.SOMEDAY_TIMESTAMP + 1);
+					DateTime until = new DateTime();
+					until.setIsSomeday(true);
 					filter.setDateUntil(until);
 
 					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
 					fan.replaceMainFragment(frag);
 				}
 				break;
-			case R.id.Time_Blocked:
-				Log.i(LOG_TAG, "selection: Blocked");
-				break;
-			case R.id.Projects_ShowProjects:
-				Log.i(LOG_TAG, "selection: Show Projects");
 
+			case R.id.Time_Blocked:
+				Log.w(LOG_TAG, "Blocked - not implemented yet");
+				break;
+
+			case R.id.Projects_ShowProjects:
 				// replace current fragment
 				fan.replaceMainFragment(new ProjectListFragment());
-
 				break;
+
 			default:
+
 				break;
 		}
 
@@ -264,6 +259,56 @@ public class SidebarFragment extends Fragment {
 			getView().findViewById(viewId).setBackgroundResource(android.R.color.transparent);
 		}
 	}
+
+
+
+
+	/**
+	 * Project onclick
+	 */
+	protected OnClickListener mProjectOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			TextView item = (TextView) v.findViewById(R.id.sidebarItem);
+			String projectTitle = item.getText().toString();
+			String projectId = item.getTag(R.id.project).toString();
+
+			Filter f = new Filter();
+			f.setProjectId(projectId);
+
+			// open new fragment
+			TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
+			FanView fan = ((MainActivity) getActivity()).getFanView();
+			fan.replaceMainFragment(frag);
+
+			// hide sidebar
+			fan.showMenu();
+		}
+	};
+
+
+	/**
+	 * Context onclick
+	 */
+	protected OnClickListener mContextOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			TextView item = (TextView) v.findViewById(R.id.sidebarItem);
+			String contextTitle = item.getText().toString();
+
+			Filter f = new Filter();
+			f.setContext(contextTitle);
+
+			// open new fragment
+			TaskListFragment frag = TaskListFragment.newInstance(f, contextTitle);
+			FanView fan = ((MainActivity) getActivity()).getFanView();
+			fan.replaceMainFragment(frag);
+
+			// hide sidebar
+			fan.showMenu();
+		}
+	};
+
 
 
 

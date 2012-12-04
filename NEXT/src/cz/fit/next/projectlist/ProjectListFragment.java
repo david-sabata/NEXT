@@ -15,8 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.Project;
@@ -58,6 +58,7 @@ public class ProjectListFragment extends ListFragment {
 
 		// register long click events
 		registerForContextMenu(getListView());
+
 	}
 
 

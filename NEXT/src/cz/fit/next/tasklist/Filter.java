@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.GregorianCalendar;
 
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
+import cz.fit.next.backend.DateTime;
 
 /**
  * Task list filter representation
@@ -32,9 +32,9 @@ public class Filter implements Serializable {
 
 	protected String mDescription;
 
-	protected GregorianCalendar mDateFrom;
+	protected DateTime mDateFrom;
 
-	protected GregorianCalendar mDateUntil;
+	protected DateTime mDateUntil;
 
 	protected boolean mIncludeSomeday;
 
@@ -53,24 +53,44 @@ public class Filter implements Serializable {
 
 
 
-	public void setDateFrom(GregorianCalendar date) {
+	public void setDateFrom(DateTime date) {
 		mDateFrom = date;
 	}
 
-	public GregorianCalendar getDateFrom() {
+	public DateTime getDateFrom() {
 		return mDateFrom;
 	}
 
 
 
-	public void setDateUntil(GregorianCalendar date) {
+	public void setDateUntil(DateTime date) {
 		mDateUntil = date;
 	}
 
-	public GregorianCalendar getDateUntil() {
+	public DateTime getDateUntil() {
 		return mDateUntil;
 	}
 
+
+
+
+	public void setProjectId(String projectId) {
+		mProjectID = projectId;
+	}
+
+	public String getProjectId() {
+		return mProjectID;
+	}
+
+
+
+	public void setContext(String context) {
+		mContext = context;
+	}
+
+	public String getContext() {
+		return mContext;
+	}
 
 
 
@@ -111,5 +131,6 @@ public class Filter implements Serializable {
 
 		return null;
 	}
+
 
 }
