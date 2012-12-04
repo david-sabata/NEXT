@@ -13,7 +13,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
@@ -37,6 +41,8 @@ import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
 import com.google.api.services.drive.model.PermissionList;
 
+import cz.fit.next.R;
+import cz.fit.next.backend.sync.PermissionActivity;
 import cz.fit.next.backend.sync.SyncService;
 
 
@@ -128,7 +134,7 @@ public class GDrive {
 	 * 	 */
 	public void delete(String filename) {
 		String existing = getFileIdByName(filename, mAppFolder);
-		if (existing != null) Log.i(TAG,"EXISTS!");
+		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) deleteFile(existing);
 	}
 	
@@ -137,7 +143,7 @@ public class GDrive {
 	 */
 	public void upload(Context appcontext, String filename, String localname) {
 		String existing = getFileIdByName(filename, mAppFolder);
-		if (existing != null) Log.i(TAG,"EXISTS!");
+		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) updateFile(existing, localname);
 		else uploadFile(filename, localname, mAppFolder);
 		
@@ -206,11 +212,6 @@ public class GDrive {
 		
 		return result;
 	}
-
-	
-	
-	
-
 	
 	
 	
@@ -224,6 +225,7 @@ public class GDrive {
 	private boolean reauth(Context appcontext) {
 		AccountManager am = AccountManager.get(appcontext);
 		am.invalidateAuthToken("com.google", null);
+		if (mAccountName == null) return false;
 
 		Account account = new Account(mAccountName, "com.google");
 		mAuthToken = getGoogleAccessToken(null, appcontext, account);
@@ -246,6 +248,7 @@ public class GDrive {
 		} catch (UserRecoverableAuthException e) {
 			Log.e(TAG, "ERROR in authentication");
 			Log.e(TAG, e.toString());
+			handleAuthException(e.getIntent());
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -259,6 +262,41 @@ public class GDrive {
 		//if (main != null) main.finish();
 
 		return retval;
+	}
+	
+	private void handleAuthException(Intent intent) {
+		final Context context = mSyncService.getApplicationContext();
+	    
+	    final Intent secondaryIntent = new Intent(context, 
+	            PermissionActivity.class);
+
+	    secondaryIntent.putExtra("intent", intent);
+	    secondaryIntent.putExtra("account", mAccountName);
+	   
+	    final String title = "NEXT: Problem in authentication.";
+	    final String text = "Tap here to solve it.";
+	    
+
+	    
+	   /* Create the notification specifying the intent to use to start
+	    * the activity as a PendingIntent and show the notification.
+	    */
+	    final Notification notification =  new Notification.Builder(context)
+	            .setSmallIcon(R.drawable.menu_next)
+	            .setAutoCancel(true)
+	            .setContentTitle(title)
+	            .setTicker(title)
+	            .setContentText(text)
+	            .setContentIntent(PendingIntent.getActivity(
+	                    context,
+	                    0 /* requestCode*/,
+	                    secondaryIntent,
+	                    PendingIntent.FLAG_CANCEL_CURRENT))
+	            .getNotification();
+	    final NotificationManager manager = (NotificationManager) context
+	            .getSystemService(Context.NOTIFICATION_SERVICE);
+	    manager.notify("syncerr", 0, notification);
+	    
 	}
 	
 	
@@ -468,7 +506,7 @@ public class GDrive {
 			String token = mService.files().get(id).getOauthToken();
 			String name = dfile.getTitle();
 
-			Log.i(TAG, "URL: " + dfile.getDownloadUrl());
+			//Log.i(TAG, "URL: " + dfile.getDownloadUrl());
 
 			if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
 				OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);

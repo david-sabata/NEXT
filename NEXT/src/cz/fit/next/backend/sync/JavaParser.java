@@ -155,6 +155,7 @@ public class JavaParser {
 			Log.i("Project Title: ", projectName);
 
 			project = new Project(projectId, projectName);
+			
 
 			return project;
 		} catch (Throwable e) {

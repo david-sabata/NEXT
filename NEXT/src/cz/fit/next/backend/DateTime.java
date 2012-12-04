@@ -132,6 +132,18 @@ public class DateTime {
 				TasksModelService.getInstance().getLocalizedSomedayTime() :
 				TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
 	}
+	
+	/**
+	 * Returns localized time string
+	 * (Uses service to get localized DateFormatter)
+	 */
+	public String toLocaleTimeString() {
+		return isSomeday() ?
+				TasksModelService.getInstance().getLocalizedSomedayTime() :
+				TasksModelService.getInstance().getLocalizedTime(new Date(mTimestamp));
+	}
+	
+	
 
 
 	/**

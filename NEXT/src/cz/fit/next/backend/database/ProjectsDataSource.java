@@ -108,6 +108,8 @@ public class ProjectsDataSource {
 		ContentValues vals = new ContentValues();
 		Project existing = getProjectById(project.getId());
 
+		//		Log.i("PROJ HIST", project.getSerializedHistory());
+
 		// update
 		if (existing != null) {
 			vals.put(Constants.COLUMN_STARRED, project.isStarred() ? 1 : 0);
