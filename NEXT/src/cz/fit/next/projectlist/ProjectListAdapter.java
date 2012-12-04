@@ -61,6 +61,12 @@ public class ProjectListAdapter extends CursorAdapter {
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 
+		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
+		String sharedStr = "";
+		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) sharedStr = " - shared"; 
+		ttl.setText(title + sharedStr);
+
+
 		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {
 			// use localized string
 			ttl.setText(R.string.implicit_project);
@@ -71,6 +77,7 @@ public class ProjectListAdapter extends CursorAdapter {
 		else {
 			ttl.setText(title);
 		}
+
 	}
 
 

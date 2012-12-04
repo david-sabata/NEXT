@@ -172,7 +172,6 @@ public class SidebarFragment extends Fragment {
 		}
 	}
 
-
 	/**
 	 * ActivitySelector
 	 * 
