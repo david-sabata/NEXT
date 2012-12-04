@@ -68,17 +68,12 @@ public class TaskListAdapter extends CursorAdapter {
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
-		String showAs = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_DATETIME_TYPE));
 		DateTime datetime = new DateTime(date);
 
 		if (datetime.isSomeday()) {
 			dt.setVisibility(View.GONE);
-
-			//LinearLayout textParent = (LinearLayout) ttl.getParent();
-			//ttl.setHeight(textParent.getHeight());
-			//ttl.setGravity(Gravity.CENTER_VERTICAL);
 		}
-		else if (showAs != null && showAs.equals(DateTime.FLAG_DATE)) {
+		else if (datetime.isAllday()) {
 			dt.setText(datetime.toLocaleDateString());
 		}
 		else {

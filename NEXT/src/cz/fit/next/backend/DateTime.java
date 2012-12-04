@@ -216,12 +216,13 @@ public class DateTime {
 
 
 	/**
-	 * Convert DateTime to Calendar
+
+	 * Returns date/time as gregorian calendar
 	 */
-	public Calendar toCalendar() {
-		Date date = new Date(mTimestamp);
-		Calendar c = new GregorianCalendar();
-		c.setTime(date);
-		return c;
+	public GregorianCalendar toCalendar() {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(mTimestamp);
+		return cal;
 	}
+
 }

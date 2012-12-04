@@ -60,7 +60,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		database.insertOrThrow(Constants.TABLE_PROJECTS, null, implProject);
 
 
-//		// TEMP ========================================================
+
+		// TEMP ========================================================
 		String tmpUUID = UUID.randomUUID().toString();
 
 		database.execSQL("INSERT INTO " + Constants.TABLE_PROJECTS + "(" + Constants.COLUMN_ID + ", " + Constants.COLUMN_TITLE
@@ -112,11 +113,15 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues4.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues4);
 
+		DateTime somedayDate = new DateTime();
+		somedayDate.setIsSomeday(true);
 		ContentValues otherValues5 = new ContentValues();
 		otherValues5.put(Constants.COLUMN_ID, UUID.randomUUID().toString());
 		otherValues5.put(Constants.COLUMN_TITLE, "Someday task");
 		otherValues5.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues5.put(Constants.COLUMN_PRIORITY, 0);
+
+		otherValues5.put(Constants.COLUMN_DATETIME, somedayDate.toMiliseconds());
 		otherValues5.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues5);
 
@@ -125,6 +130,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		otherValues6.put(Constants.COLUMN_TITLE, "Someday task 2");
 		otherValues6.put(Constants.COLUMN_PROJECTS_ID, implUUID);
 		otherValues6.put(Constants.COLUMN_PRIORITY, 0);
+		otherValues6.put(Constants.COLUMN_DATETIME, somedayDate.toMiliseconds());
 		otherValues6.put(Constants.COLUMN_COMPLETED, 0);
 		database.insertOrThrow(Constants.TABLE_TASKS, null, otherValues6);
 	}
