@@ -53,8 +53,6 @@ public class TaskEditFragment extends Fragment {
 	/**
 	 * 	Setting details of date and time 
 	 */
-	private String dateString = null;
-	private String timeString = null;
 	private DateTime originalDateTime;
 	private Boolean wholeDay = false;
 	private Boolean someDay = false;
@@ -139,8 +137,7 @@ public class TaskEditFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				if(wholeDay) {
-					DateTime now = new DateTime();
-					originalDateTime = new DateTime(originalDateTime.toDateNumericalString() + " " + now.toLocaleTimeString());
+					originalDateTime.setIsAllday(true);
 				}
 				
 				Calendar c = originalDateTime.toCalendar();
@@ -388,17 +385,8 @@ public class TaskEditFragment extends Fragment {
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
 		int priority = Integer.parseInt(priorityBtn.getText().toString());		
 		
-			
-		DateTime dateTime = null;
-		if(someDay) {
-			dateTime = new DateTime(DateTime.SOMEDAY_TIMESTAMP);
-		} else if(!someDay && wholeDay) {
-			dateTime = new DateTime(
-					originalDateTime.toDateNumericalString() + " " + 
-					"00:00");
-		} else {
-			dateTime = originalDateTime;
-		}
+		// Set date
+		DateTime dateTime = originalDateTime;
 		
 		
 		// Create new changed task
@@ -426,29 +414,25 @@ public class TaskEditFragment extends Fragment {
 		switch(requestCode) {
 		case DIALOG_EDIT_DATE:		
 			Bundle dateData = data.getExtras();
-			String year = Integer.toString(dateData.getInt("year"));
-			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
-			String day = Integer.toString(dateData.getInt("dayOfMonth"));
-			
-			dateString = year + "-" + month + "-" + day;
-			// SetDate to edit text
-			DateTime dateTime = new DateTime(dateString);
+						
+			originalDateTime.setDate(
+					dateData.getInt("year"), 
+					dateData.getInt("monthOfYear") + 1, 
+					dateData.getInt("dayOfMonth"));
 			
 			// Assign new date to dateView
 			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
-			dateView.setText(dateTime.toLocaleDateString());
+			dateView.setText(originalDateTime.toLocaleDateString());
 			break;
 			
 		case DIALOG_EDIT_TIME:
 			Bundle time = data.getExtras();
-			String hour = Integer.toString(time.getInt("hourOfDay"));
-			String minute = Integer.toString(time.getInt("minute"));
 
-			timeString = hour + ":" + minute;
+			originalDateTime.setTime(time.getInt("hourOfDay"), time.getInt("minute"));
 			
 			// Assign new date to timeView
 			TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
-			timeView.setText(timeString);
+			timeView.setText(originalDateTime.toLocaleTimeString());
 			
 			break;
 
@@ -463,7 +447,7 @@ public class TaskEditFragment extends Fragment {
 			
 		// Date time
 		// We have to decide what was changed and value, that wasnt changed parse from originalDateTime
-		DateTime dateTime = null; 
+		/*DateTime dateTime = null; 
 		if(dateString != null && timeString != null) {
 			dateTime = new DateTime(dateString + " " + timeString);
 		} else if (dateString != null && timeString == null) {
@@ -472,10 +456,10 @@ public class TaskEditFragment extends Fragment {
 			dateTime = new DateTime(originalDateTime.toDateNumericalString() + " "+ timeString);
 		} else {
 			dateTime = originalDateTime;
-		}
+		}*/
 		
 		// Save new OriginalTime
-		originalDateTime = dateTime;
+		//originalDateTime = dateTime;
 
 	}
 

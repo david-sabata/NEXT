@@ -1,5 +1,6 @@
 package cz.fit.next.backend;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -214,6 +215,13 @@ public class DateTime {
 	}
 
 
-
-
+	/**
+	 * Convert DateTime to Calendar
+	 */
+	public Calendar toCalendar() {
+		Date date = new Date(mTimestamp);
+		Calendar c = new GregorianCalendar();
+		c.setTime(date);
+		return c;
+	}
 }
