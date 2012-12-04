@@ -3,11 +3,11 @@ package cz.fit.next.taskdetail;
 
 import java.util.UUID;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,7 +140,7 @@ public class TaskEditFragment extends Fragment {
 				// TODO Auto-generated method stub
 				DialogFragment newFragment = new TaskEditFragmentTimeDialog();
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
-				newFragment.show(getActivity().getSupportFragmentManager(), "DialogTime");
+				newFragment.show(getActivity().getFragmentManager(), "DialogTime");
 
 				Log.i("EditTime", "Click");
 			}
@@ -157,7 +157,7 @@ public class TaskEditFragment extends Fragment {
 				// TODO Auto-generated method stub
 				DialogFragment newFragment = new TaskEditFragmentDateDialog();
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
-				newFragment.show(getActivity().getSupportFragmentManager(), "DialogDate");
+				newFragment.show(getActivity().getFragmentManager(), "DialogDate");
 				Log.i("EditDate", "Click");
 			}
 		});
@@ -274,13 +274,13 @@ public class TaskEditFragment extends Fragment {
 		// save
 		if (item.getItemId() == R.id.action_save) {
 			onSaveItem();
-			getActivity().getSupportFragmentManager().popBackStack();
+			getActivity().getFragmentManager().popBackStack();
 			return true;
 		}
 
 		// cancel
 		if (item.getItemId() == R.id.action_cancel) {
-			getActivity().getSupportFragmentManager().popBackStackImmediate();
+			getActivity().getFragmentManager().popBackStackImmediate();
 			return true;
 		}
 

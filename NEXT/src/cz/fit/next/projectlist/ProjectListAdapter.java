@@ -60,7 +60,13 @@ public class ProjectListAdapter extends CursorAdapter {
 		// task title
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
-		ttl.setText(title);
+
+		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {
+			ttl.setText(R.string.implicit_project);
+		}
+		else {
+			ttl.setText(title);
+		}
 	}
 
 
