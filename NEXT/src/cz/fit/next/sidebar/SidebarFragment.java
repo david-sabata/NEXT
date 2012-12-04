@@ -128,26 +128,28 @@ public class SidebarFragment extends Fragment {
 		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
 		contextsLayout.removeAllViews();
 		final Context c = sideBarView.getContext();
-		while (!cursor.isAfterLast()) {
-			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			if (contextTitle != null) {
-				// Create new TextView
-				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
-				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-				newItem.setText(contextTitle);
-
-				// Set Action on Item click
-				newItem.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-					}
-				});
-				// Add final id to layout
-				contextsLayout.addView(itemLayout);
+		if(cursor != null && cursor.getCount() > 0) {
+			while (!cursor.isAfterLast()) {
+				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+				if (contextTitle != null) {
+					// Create new TextView
+					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
+					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
+					newItem.setText(contextTitle);
+	
+					// Set Action on Item click
+					newItem.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
+						}
+					});
+					// Add final id to layout
+					contextsLayout.addView(itemLayout);
+				}
+				cursor.moveToNext();
 			}
-			cursor.moveToNext();
 		}
 
 		// load starred projects

@@ -24,7 +24,6 @@ public class TasksModelService extends Service {
 
 	private static final String LOG_TAG = "TasksModelService";
 
-
 	/** Instance of self */
 	private static TasksModelService mInstance;
 
@@ -32,12 +31,10 @@ public class TasksModelService extends Service {
 
 	private TasksDataSource mTasksDataSource = null;
 
-
 	/**
 	 * Application context
 	 */
 	private Context mContext;
-
 
 	// ---------------------------------------------------------------------------------
 
@@ -48,7 +45,6 @@ public class TasksModelService extends Service {
 		return mInstance;
 	}
 
-
 	/**
 	 * Service has just been created
 	 */
@@ -58,7 +54,6 @@ public class TasksModelService extends Service {
 
 		mInstance = this;
 	}
-
 
 	/**
 	 * Service is shutting down
@@ -83,10 +78,9 @@ public class TasksModelService extends Service {
 		return false;
 	}
 
-
-
 	/**
 	 * Initialize projects datasource
+	 * 
 	 * @param context
 	 */
 	private void initProjectsDataSource(Context context) {
@@ -101,15 +95,14 @@ public class TasksModelService extends Service {
 		}
 	}
 
-
 	// ---------------------------------------------------------------------------------
-	// All public calls assumes that initDataSources has been 
+	// All public calls assumes that initDataSources has been
 	// called when activity was bound to the service
 	// --------------------------------------------------------
 
-
 	/**
 	 * Called from activity upon binding to prepare dataSource
+	 * 
 	 * @param context
 	 */
 	public void initDataSources(Context context) {
@@ -118,15 +111,12 @@ public class TasksModelService extends Service {
 		initProjectsDataSource(context);
 	}
 
-
 	/**
 	 * Erases all database data by calling its onUpgrade method
 	 */
 	public void wipeDatabaseData() {
 		mProjectsDataSource.wipeDatabaseData();
 	}
-
-
 
 	/**
 	 * Returns cursor to all tasks
@@ -136,16 +126,16 @@ public class TasksModelService extends Service {
 		return cursor;
 	}
 
-
 	/**
 	 * Returns single task with all data inicialized
 	 */
 	public Task getTaskById(String id) {
 		Cursor cursor = mTasksDataSource.getSingleTaskCursor(id);
+		if (cursor == null)
+			return null;
 		Task task = new Task(cursor);
 		return task;
 	}
-
 
 	/**
 	 * Returns cursor to all projects
@@ -176,74 +166,141 @@ public class TasksModelService extends Service {
 		return mProjectsDataSource.getProjectById(id);
 	}
 
-
-
-
 	/**
-	 * Saves task to db. If there is already saved a task
-	 * with same ID, it will be updated.
-	 * If the associated Project object doesn't exist in db, it will
+	 * Saves task to db. If there is already saved a task with same ID, it will
+	 * be updated. If the associated Project object doesn't exist in db, it will
 	 * be created.
 	 */
 	public void saveTask(Task task) {
-				
-		// add into history
-		Project proj = task.getProject();
+
+		Project proj = mProjectsDataSource.getProjectById(task.getProject().getId());
 		ArrayList<TaskHistory> history = proj.getHistory();
+		
+		//Log.i("PREHIST", proj.getSerializedHistory());
+
+		// generate history record
 		TaskHistory hist = new TaskHistory();
 		hist.setAuthor(SyncService.getInstance().getAccountName());
-		if (hist.getAuthor() == null) hist.setAuthor("");
+		if (hist.getAuthor() == null)
+			hist.setAuthor("");
 		hist.setTaskId(task.getId());
 		hist.setTimeStamp(new DateTime().toString());
-		hist.addChange(SyncService.const_title, "", task.getTitle());
-		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "true" : "false" );
-		hist.addChange(SyncService.const_context, "", (task.getContext() != null) ? task.getContext() : "");
-		hist.addChange(SyncService.const_date, "", task.getDate().toString());
-		hist.addChange(SyncService.const_description, "", (task.getDescription() != null) ? task.getDescription() : "");
-		hist.addChange(SyncService.const_priority, "", Integer.toString(task.getPriority()));
-		if (history == null) history = new ArrayList<TaskHistory>();
+
+		Task old = getTaskById(task.getId());
+		if (old == null) {
+
+			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
+			hist.addChange(TaskHistory.COMPLETED, "",
+					task.isCompleted() ? "true" : "false");
+			hist.addChange(TaskHistory.CONTEXT, "",
+					(task.getContext() != null) ? task.getContext() : "");
+			hist.addChange(TaskHistory.DATE, "", task.getDate().toString());
+			hist.addChange(TaskHistory.DESCRIPTION, "",
+					(task.getDescription() != null) ? task.getDescription()
+							: "");
+			hist.addChange(TaskHistory.PRIORITY, "",
+					Integer.toString(task.getPriority()));
+
+		} else {
+
+			// Task exists - use differential history
+
+			// TITLE
+			if (task.getTitle() != null) {
+				if (old.getTitle() == null && task.getTitle() != null) {
+					hist.addChange(TaskHistory.TITLE, "", task.getTitle());
+				} else if (!old.getTitle().equals(task.getTitle())) {
+					hist.addChange(TaskHistory.TITLE, old.getTitle(),
+							task.getTitle());
+				}
+			}
+
+			// DESCRIPTION
+			if (task.getDescription() != null) {
+				if (old.getDescription() == null
+						&& task.getDescription() != null) {
+					hist.addChange(TaskHistory.DESCRIPTION, "",
+							task.getDescription());
+				} else if (!old.getDescription().equals(task.getDescription())) {
+					hist.addChange(TaskHistory.DESCRIPTION, old.getTitle(),
+							task.getDescription());
+				}
+			}
+
+			// DATE
+			if (!old.getDate().toString().equals(task.getDate().toString())) {
+				hist.addChange(TaskHistory.DATE, old.getDate().toString(), task
+						.getDate().toString());
+			}
+
+			// PRIORITY
+			if (old.getPriority() != task.getPriority()) {
+				hist.addChange(TaskHistory.PRIORITY,
+						Integer.toString(old.getPriority()),
+						Integer.toString(task.getPriority()));
+			}
+
+			// CONTEXT
+			if (task.getContext() != null) {
+				if (old.getContext() == null && task.getContext() != null) {
+					hist.addChange(TaskHistory.CONTEXT, "", task.getContext());
+				} else if (!old.getContext().equals(task.getContext())) {
+					hist.addChange(TaskHistory.CONTEXT, old.getContext(),
+							task.getContext());
+				}
+			}
+
+			// COMPLETED
+			if (old.isCompleted() != task.isCompleted()) {
+				hist.addChange(TaskHistory.COMPLETED,
+						old.isCompleted() ? "true" : "false",
+						task.isCompleted() ? "true" : "false");
+			}
+
+		}
+
+		if (history == null)
+			history = new ArrayList<TaskHistory>();
 		history.add(hist);
 		proj.setHistory(history);
+
+		mProjectsDataSource.saveProject(proj);
 		
-		// save project first
-		if (task.getProject() != null) {
-			mProjectsDataSource.saveProject(task.getProject());
-		}
-		
+
 		// save task
 		mTasksDataSource.saveTask(task);
 	}
 
-
 	/**
-	 * Saves project to db. If there is already a project with 
-	 * the same ID, it will be updated.
+	 * Saves project to db. If there is already a project with the same ID, it
+	 * will be updated.
 	 */
 	public void saveProject(Project project) {
 		mProjectsDataSource.saveProject(project);
 	}
 
-
-
 	/**
 	 * Returns localized date string
 	 */
 	public String getLocalizedDate(Date d) {
-		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE);
+		return DateUtils.formatDateTime(mContext, d.getTime(),
+				DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	/**
 	 * Returns localized date and time string
 	 */
 	public String getLocalizedDateTime(Date d) {
-		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+		return DateUtils.formatDateTime(mContext, d.getTime(),
+				DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
-	
+
 	/**
 	 * Returns localized time string
 	 */
-	public String getLocalizedTime (Date d) {
-		return DateUtils.formatDateTime(mContext,  d.getTime(), DateUtils.FORMAT_SHOW_TIME);
+	public String getLocalizedTime(Date d) {
+		return DateUtils.formatDateTime(mContext, d.getTime(),
+				DateUtils.FORMAT_SHOW_TIME);
 	}
 
 	/**
@@ -253,7 +310,6 @@ public class TasksModelService extends Service {
 		return mContext.getResources().getString(R.string.someday);
 	}
 
-
 	/**
 	 * Returns tasks filter query provider used to filter tasks
 	 */
@@ -262,8 +318,6 @@ public class TasksModelService extends Service {
 	}
 
 	// ---------------------------------------------------------------------------------
-
-
 
 	// Bound Service
 	// ------------------------------------------------------------------
@@ -277,7 +331,6 @@ public class TasksModelService extends Service {
 
 	private final IBinder mBinder = new ModelServiceBinder();
 
-
 	@Override
 	public IBinder onBind(Intent arg0) {
 		Log.d(LOG_TAG, "onBind");
@@ -285,9 +338,6 @@ public class TasksModelService extends Service {
 		return mBinder;
 	}
 
-
 	// --------------------------------------------------------------------------------
-
-
 
 }

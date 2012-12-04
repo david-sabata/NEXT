@@ -13,7 +13,18 @@ import android.util.Log;
  * @author xsych_000
  *
  */
-public class TaskHistory {    		 
+public class TaskHistory {    
+	
+	// String definitions for History object
+	public final static String TITLE = "next_hist_title";
+	public final static String DESCRIPTION = "next_hist_description";
+	public final static String DATE = "next_hist_date";
+	public final static String PRIORITY = "next_hist_priority";
+	public final static String PROJECT = "next_hist_project";
+	public final static String CONTEXT = "next_hist_context";
+	public final static String COMPLETED = "next_hist_completed";
+	
+	
 	protected String mTimeStamp;
 	protected String mAuthor;
 	protected String mTaskId;
@@ -121,7 +132,6 @@ public class TaskHistory {
 		
 		return res;
 	}
-	
 	
 
 	/**
