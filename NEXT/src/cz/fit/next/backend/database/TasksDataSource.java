@@ -243,6 +243,14 @@ public class TasksDataSource {
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = '" + filter.getProjectId() + "'";
 				}
 
+				// context
+				if (filter != null && filter.getContext() != null) {
+					if (where.length() > 0)
+						where += " AND ";
+
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT + " = '" + filter.getContext() + "'";
+				}
+
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
 				Log.d(LOG_TAG, "after filter: " + cursor.getCount() + " items");
 				return cursor;

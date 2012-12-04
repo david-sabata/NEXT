@@ -84,6 +84,14 @@ public class Filter implements Serializable {
 
 
 
+	public void setContext(String context) {
+		mContext = context;
+	}
+
+	public String getContext() {
+		return mContext;
+	}
+
 
 
 	@Override

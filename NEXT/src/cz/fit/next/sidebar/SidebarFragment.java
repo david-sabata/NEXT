@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.deaux.fan.FanView;
 import com.deaux.fan.SidebarListener;
@@ -32,6 +31,7 @@ public class SidebarFragment extends Fragment {
 
 	private final static String LOG_TAG = "SidebarFragment";
 	private View sideBarView;
+
 	/**
 	 * IDs of fixed menu items
 	 */
@@ -77,28 +77,6 @@ public class SidebarFragment extends Fragment {
 	}
 
 
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		MainActivity activity = (MainActivity) getActivity();
-
-		FanView f = activity.getFanView();
-		f.setSidebarListener(new SidebarListener() {
-			@Override
-			public void onSidebarOpen() {
-
-				// Regenerate contexts and projects in sidebar menu
-				initSideBarContextProjects();
-			}
-
-			@Override
-			public void onSidebarClose() {
-			}
-		});
-	}
-
-
 	/**
 	 * Init sidebar contexts and projects
 	 */
@@ -125,12 +103,7 @@ public class SidebarFragment extends Fragment {
 					newItem.setText(contextTitle);
 
 					// Set Action on Item click
-					newItem.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							Toast.makeText(c, "Nastaven Context: " + contextTitle, 50).show();
-						}
-					});
+					newItem.setOnClickListener(mContextOnClickListener);
 					// Add final id to layout
 					contextsLayout.addView(itemLayout);
 				}
@@ -155,7 +128,7 @@ public class SidebarFragment extends Fragment {
 					// Create new TextView
 					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
 					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-					newItem.setTag(projectId);
+					newItem.setTag(R.id.project, projectId);
 
 					// use localized string for default project
 					if (projectTitle.equals(Constants.IMPLICIT_PROJECT_NAME)) {
@@ -174,6 +147,32 @@ public class SidebarFragment extends Fragment {
 			}
 		}
 	}
+
+
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		MainActivity activity = (MainActivity) getActivity();
+
+		FanView f = activity.getFanView();
+		f.setSidebarListener(new SidebarListener() {
+			@Override
+			public void onSidebarOpen() {
+
+				// Regenerate contexts and projects in sidebar menu
+				initSideBarContextProjects();
+			}
+
+			@Override
+			public void onSidebarClose() {
+			}
+		});
+	}
+
+
 
 	/**
 	 * ActivitySelector
@@ -276,15 +275,34 @@ public class SidebarFragment extends Fragment {
 		public void onClick(View v) {
 			TextView item = (TextView) v.findViewById(R.id.sidebarItem);
 			String projectTitle = item.getText().toString();
-			String projectId = item.getTag().toString();
+			String projectId = item.getTag(R.id.project).toString();
 
 			Filter f = new Filter();
 			f.setProjectId(projectId);
 
 			// open new fragment
-			TaskListFragment fragToday = TaskListFragment.newInstance(f, projectTitle);
+			TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
 			FanView fan = ((MainActivity) getActivity()).getFanView();
-			fan.replaceMainFragment(fragToday);
+			fan.replaceMainFragment(frag);
+		}
+	};
+
+	/**
+	 * Context onclick
+	 */
+	protected OnClickListener mContextOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			TextView item = (TextView) v.findViewById(R.id.sidebarItem);
+			String contextTitle = item.getText().toString();
+
+			Filter f = new Filter();
+			f.setContext(contextTitle);
+
+			// open new fragment
+			TaskListFragment frag = TaskListFragment.newInstance(f, contextTitle);
+			FanView fan = ((MainActivity) getActivity()).getFanView();
+			fan.replaceMainFragment(frag);
 		}
 	};
 
