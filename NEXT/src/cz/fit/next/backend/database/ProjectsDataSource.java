@@ -131,4 +131,20 @@ public class ProjectsDataSource {
 		database.insert(Constants.TABLE_PROJECTS, null, vals);
 	}
 
+
+	/**
+	 * Delete project by its ID. Make sure the deletion has been confirmed 
+	 * by the user!
+	 * 
+	 * @param projectId
+	 */
+	public void deleteProject(String projectId) {
+		String args[] = { projectId };
+
+		// delete tasks
+		database.delete(Constants.TABLE_TASKS, Constants.COLUMN_PROJECTS_ID + " = ?", args);
+
+		// delete the project
+		database.delete(Constants.TABLE_PROJECTS, Constants.COLUMN_ID + " = ?", args);
+	}
 }

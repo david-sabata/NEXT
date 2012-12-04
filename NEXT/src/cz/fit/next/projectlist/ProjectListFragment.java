@@ -1,6 +1,8 @@
 package cz.fit.next.projectlist;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
@@ -74,6 +76,16 @@ public class ProjectListFragment extends ListFragment {
 		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
 
+	/**
+	 * Reload projects from service if it is ready
+	 */
+	public void reloadItems() {
+		if (TasksModelService.getInstance() != null)
+			setItems(TasksModelService.getInstance().getAllProjectsCursor());
+	}
+
+
+
 
 	/**
 	 * Callback method called from 'add project' dialog
@@ -86,8 +98,7 @@ public class ProjectListFragment extends ListFragment {
 		Project project = new Project(title);
 		TasksModelService.getInstance().saveProject(project);
 
-		// reload items
-		setItems(TasksModelService.getInstance().getAllProjectsCursor());
+		reloadItems();
 	}
 
 
@@ -115,7 +126,6 @@ public class ProjectListFragment extends ListFragment {
 			return true;
 		}
 
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -124,16 +134,25 @@ public class ProjectListFragment extends ListFragment {
 
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
+	public void onCreateContextMenu(ContextMenu menu, View list, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, list, menuInfo);
 
-		if (v.getId() == android.R.id.list) {
-			menu.add(Menu.NONE, R.id.action_share, 0, R.string.proj_share);
-		}
-		else {
-			Log.e(LOG_TAG, "fail");
+		if (list.getId() == android.R.id.list) {
+			AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo) menuInfo;
+			View itemLayout = itemInfo.targetView;
+			String tag = itemLayout.getTag() == null ? null : itemLayout.getTag().toString();
+
+			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
+				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
+				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
+			}
+			else {
+				menu.add(Menu.NONE, 0, 0, R.string.no_actions);
+			}
 		}
 	}
+
+
 
 
 	@Override
@@ -141,15 +160,34 @@ public class ProjectListFragment extends ListFragment {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
-		String projId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		final String projId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		switch (item.getItemId()) {
 
+		// share - show sharing fragment
 			case R.id.action_share:
 				ShareDialog newFragment = new ShareDialog();
 				newFragment.setProjId(projId);
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
 				break;
+
+			// delete - show prompt dialog
+			case R.id.action_delete:
+				new AlertDialog.Builder(getActivity())
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setTitle(R.string.project_delete)
+						.setMessage(R.string.project_delete_confirm_msg)
+						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								TasksModelService.getInstance().deleteProject(projId);
+								reloadItems();
+							}
+						})
+						.setNegativeButton(android.R.string.no, null)
+						.show();
+				break;
+
 		}
 
 		return true;

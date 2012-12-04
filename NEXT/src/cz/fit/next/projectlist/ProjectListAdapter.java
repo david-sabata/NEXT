@@ -62,7 +62,11 @@ public class ProjectListAdapter extends CursorAdapter {
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 
 		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {
+			// use localized string
 			ttl.setText(R.string.implicit_project);
+
+			// set tag for the parent layout to be able create correct context menu
+			view.setTag(Constants.IMPLICIT_PROJECT_NAME);
 		}
 		else {
 			ttl.setText(title);
