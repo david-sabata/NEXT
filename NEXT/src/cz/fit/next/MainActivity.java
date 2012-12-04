@@ -5,10 +5,12 @@ package cz.fit.next;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -45,7 +47,9 @@ public class MainActivity extends Activity {
 
 	protected TasksModelService mModelService;
 
-
+	protected BroadcastReceiver mReloadReceiver;
+	protected BroadcastReceiver mSyncStartReceiver;
+	protected BroadcastReceiver mSyncStopReceiver;
 
 
 
@@ -122,6 +126,31 @@ public class MainActivity extends Activity {
 				return mGestureDetector.onTouchEvent(event);
 			}
 		};
+		
+		//prepare broadcast receivers	
+		mReloadReceiver = new ReloadReceiver();
+		IntentFilter filter = new IntentFilter();
+        filter.addAction(SyncService.BROADCAST_RELOAD);
+        registerReceiver(mReloadReceiver, filter);
+        
+        mSyncStartReceiver = new SyncStartReceiver();
+		IntentFilter filter2 = new IntentFilter();
+        filter2.addAction(SyncService.BROADCAST_SYNC_START);
+        registerReceiver(mSyncStartReceiver, filter2);
+        
+        mSyncStopReceiver = new SyncEndReceiver();
+		IntentFilter filter3 = new IntentFilter();
+        filter3.addAction(SyncService.BROADCAST_SYNC_END);
+        registerReceiver(mSyncStopReceiver, filter3);
+	}
+	
+	
+	@Override
+	protected void onPause() {
+		 unregisterReceiver(mReloadReceiver);
+		 unregisterReceiver(mSyncStartReceiver);
+		 unregisterReceiver(mSyncStopReceiver);
+	     super.onPause();
 	}
 
 
@@ -265,11 +294,9 @@ public class MainActivity extends Activity {
 			fan.replaceFanFragment(sidebar, false);
 		}
 	}
-
-
-
-
-
+	
+	
+	
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
 		@Override
@@ -291,6 +318,36 @@ public class MainActivity extends Activity {
 			Log.d(LOG_TAG, "Model service disconnected");
 		}
 	};
+	
+	
+	private class ReloadReceiver extends BroadcastReceiver {
+		@Override
+        public void onReceive(Context context, Intent intent) {
+            Fragment f = getFragmentManager().findFragmentById(R.id.appView);
+            
+            Log.i("BROADCAST", "RELOAD");
+            
+            if (f instanceof TaskListFragment)
+            	((TaskListFragment)f).reload();
 
+        }
+	}
+	
+	private class SyncStartReceiver extends BroadcastReceiver {
+		@Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("BROADCAST", "START");
+        }
+	}
+	
+	private class SyncEndReceiver extends BroadcastReceiver {
+		@Override
+        public void onReceive(Context context, Intent intent) {
+			Log.i("BROADCAST", "STOP");
+        }
+	}
+
+	
+	
 
 }

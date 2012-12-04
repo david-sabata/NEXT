@@ -44,6 +44,10 @@ public class SyncService extends Service {
 	private String TAG = "NEXT SyncService";
 	private static final String PREF_FILE_NAME = "SyncServicePref";
 	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
+	
+	public static final String BROADCAST_SYNC_START = "cz.fit.next.BROADCAST_SYNC_START";
+	public static final String BROADCAST_RELOAD = "cz.fit.next.BROADCAST_RELOAD";
+	public static final String BROADCAST_SYNC_END = "cz.fit.next.BROADCAST_SYNC_END";
 
 	// Notification types
 	private static final int NOTIFICATION_NEW_SHARED = 100;
@@ -391,6 +395,12 @@ public class SyncService extends Service {
 			datasource.close();
 
 			Log.i(TAG, "before upload");
+			
+			// Send broadcast to reload gui
+			Intent broadcast = new Intent();
+			broadcast.setAction(BROADCAST_RELOAD);
+			sendBroadcast(broadcast);
+			
 			// ============ UPDATE FILES ON REMOTE STORAGE ================
 
 			datasource.open();
@@ -472,7 +482,12 @@ public class SyncService extends Service {
 			// Plan next synchronization
 			// TODO: Variable interval
 			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 20);
-
+			
+			// Send broadcast for indicate end of sync
+			Intent broadcast = new Intent();
+			broadcast.setAction(BROADCAST_SYNC_END);
+			sendBroadcast(broadcast);
+			
 			// alarm.run();
 
 			// Log.i(TAG, "Killing SyncService.");
@@ -543,6 +558,11 @@ public class SyncService extends Service {
 	 */
 	public void synchronize() {
 
+		// Send broadcast for indicate sync
+		Intent broadcast = new Intent();
+		broadcast.setAction(BROADCAST_SYNC_START);
+		sendBroadcast(broadcast);
+		
 		SynchronizeClass cls = new SynchronizeClass();
 		cls.execute();
 	}

@@ -129,6 +129,13 @@ public class TaskListFragment extends ListFragment {
 	}
 
 
+	/**
+	 * Reloads tasklist
+	 */
+	public void reload() {
+		setFilter(mFilter);
+	}
+	
 
 	/**
 	 * Set filter to the adapter and reload items; pass null for all items
