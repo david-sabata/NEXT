@@ -2,7 +2,9 @@ package cz.fit.next;
 
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,8 +12,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -31,7 +31,7 @@ import cz.fit.next.tasklist.TaskListFragment;
 
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends Activity {
 
 	private static final String LOG_TAG = "FragmentActivity";
 
@@ -248,7 +248,8 @@ public class MainActivity extends FragmentActivity {
 	 */
 	public void hideLoadingFragment() {
 		FanView fan = (FanView) findViewById(R.id.fan_view);
-		Fragment currentFragment = self.getSupportFragmentManager().findFragmentById(R.id.appView);
+		Fragment currentFragment = self.getFragmentManager().findFragmentById(R.id.appView);
+
 
 		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
 			// default task list
@@ -258,7 +259,8 @@ public class MainActivity extends FragmentActivity {
 			fan.replaceMainFragment(frag, false);
 		}
 
-		Fragment currentFanFragment = self.getSupportFragmentManager().findFragmentById(R.id.fanView);
+
+		Fragment currentFanFragment = self.getFragmentManager().findFragmentById(R.id.fanView);
 		if (currentFanFragment != null && currentFragment instanceof LoadingFragment) {
 			//default sidebar
 			SidebarFragment sidebar = new SidebarFragment();

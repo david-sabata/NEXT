@@ -111,6 +111,16 @@ public class TaskHistory {
 		return mChanges;
 	}
 	
+	public boolean headerequals(TaskHistory second) {
+		boolean res = true;
+		if (mTimeStamp != second.getTimeStamp()) res = false;
+		if (mAuthor != second.getAuthor()) res = false;
+		if (mTaskId != second.getTaskId()) res = false;
+		
+		return res;
+	}
+	
+	
 
 	/**
 	 * Private class for storage "change" information
@@ -164,6 +174,7 @@ public class TaskHistory {
 		public void setNewValue(String mNewValue) {
 			this.mNewValue = mNewValue;
 		}
+		
 		
 		
 	}

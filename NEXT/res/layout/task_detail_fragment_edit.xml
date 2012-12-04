@@ -169,15 +169,32 @@
                     android:orientation="vertical" >
 
                 </LinearLayout>
-
-                <EditText
-                    android:id="@+id/editDate"
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:textSize="@dimen/TaskSubTextSize" />
+                    android:layout_height="wrap_content" >
+
+                    <EditText
+                        android:id="@+id/editTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
+                        android:layout_weight="2.1"
+                        android:ems="10"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:inputType="date" />
+
+                    <EditText
+                        android:id="@+id/editDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:inputType="date" />
+
+                </LinearLayout>
 
             </LinearLayout>
             

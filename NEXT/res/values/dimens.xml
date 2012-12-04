@@ -22,4 +22,5 @@
     <dimen name="TasklistItemMarginRight">10dp</dimen>
     <dimen name="WidgetMargin">8dp</dimen>
     <dimen name="AddButtonWidth">32dp</dimen>
+    <dimen name="FanItemPaddingLeft">15dp</dimen>
 </resources>
