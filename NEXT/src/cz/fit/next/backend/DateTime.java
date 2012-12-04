@@ -214,6 +214,13 @@ public class DateTime {
 	}
 
 
-
+	/**
+	 * Returns date/time as gregorian calendar
+	 */
+	public GregorianCalendar toCalendar() {
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(mTimestamp);
+		return cal;
+	}
 
 }

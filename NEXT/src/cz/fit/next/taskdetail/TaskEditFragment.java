@@ -3,6 +3,7 @@ package cz.fit.next.taskdetail;
 
 import java.util.Calendar;
 import java.util.UUID;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
@@ -138,18 +139,18 @@ public class TaskEditFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				if(wholeDay) {
+				if (wholeDay) {
 					DateTime now = new DateTime();
 					originalDateTime = new DateTime(originalDateTime.toDateNumericalString() + " " + now.toLocaleTimeString());
 				}
-				
+
 				Calendar c = originalDateTime.toCalendar();
 				TaskEditFragmentTimeDialog newFragment =
 						new TaskEditFragmentTimeDialog(
 								c.get(Calendar.MINUTE),
 								c.get(Calendar.HOUR_OF_DAY)
-								);
-				
+						);
+
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
 				newFragment.show(getActivity().getFragmentManager(), "DialogTime");
 			}
@@ -163,65 +164,65 @@ public class TaskEditFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				if(!someDay) {
+				if (!someDay) {
 					originalDateTime = new DateTime();
 				}
 
 				Calendar c = originalDateTime.toCalendar();
-				
-				
-				TaskEditFragmentDateDialog newFragment = 
+
+
+				TaskEditFragmentDateDialog newFragment =
 						new TaskEditFragmentDateDialog(
-								c.get(Calendar.YEAR), 
-								c.get(Calendar.MONTH), 
+								c.get(Calendar.YEAR),
+								c.get(Calendar.MONTH),
 								c.get(Calendar.DAY_OF_MONTH));
-				
+
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
 				newFragment.show(getActivity().getFragmentManager(), "DialogDate");
 			}
 		});
-		
+
 		// Someday switch button
-		Switch  someDayButton = (Switch ) taskDetailView.findViewById(R.id.somedaySwitch);
+		Switch someDayButton = (Switch) taskDetailView.findViewById(R.id.somedaySwitch);
 		someDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					someDay = true;				
-					
+					someDay = true;
+
 					// hide rest
 					taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).setVisibility(View.GONE);
 					taskDetailView.findViewById(R.id.wholeDaySwitch).setVisibility(View.GONE);
 					taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
 				} else {
 					someDay = false;
-					
+
 					// show rest
 					taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).setVisibility(View.VISIBLE);
 					taskDetailView.findViewById(R.id.wholeDaySwitch).setVisibility(View.VISIBLE);
-					if(!wholeDay) {
+					if (!wholeDay) {
 						taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
 					}
 				}
-				
-			}	
+
+			}
 		});
-		
+
 		// Someday switch button
-		Switch  wholeDayButton = (Switch ) taskDetailView.findViewById(R.id.wholeDaySwitch);
+		Switch wholeDayButton = (Switch) taskDetailView.findViewById(R.id.wholeDaySwitch);
 		wholeDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
-					wholeDay = true;					
+					wholeDay = true;
 					// hide rest
 					taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
 				} else {
 					wholeDay = false;
 					// show rest
 					taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
-				}			
-			}	
+				}
+			}
 		});
 		return taskDetailView;
 	}
@@ -262,7 +263,7 @@ public class TaskEditFragment extends Fragment {
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(task.getDate().toLocaleDateString());
 		originalDateTime = task.getDate();
-		
+
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
 		isCompleted.setChecked(task.isCompleted());
@@ -299,7 +300,7 @@ public class TaskEditFragment extends Fragment {
 				break;
 		}
 	}
-	
+
 
 	private void loadDefaults() {
 		// set date
@@ -386,21 +387,26 @@ public class TaskEditFragment extends Fragment {
 		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
 		int selected = priorityGroup.getCheckedRadioButtonId();
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
-		int priority = Integer.parseInt(priorityBtn.getText().toString());		
-		
-			
+		int priority = Integer.parseInt(priorityBtn.getText().toString());
+
+
 		DateTime dateTime = null;
-		if(someDay) {
+		if (someDay) {
 			dateTime = new DateTime(DateTime.SOMEDAY_TIMESTAMP);
-		} else if(!someDay && wholeDay) {
+		} else if (!someDay && wholeDay) {
+			dateTime = new DateTime();
+			dateTime.setTime();
+			dateTime.setDate();
+
+
 			dateTime = new DateTime(
-					originalDateTime.toDateNumericalString() + " " + 
-					"00:00");
+					originalDateTime.toDateNumericalString() + " " +
+							"00:00");
 		} else {
 			dateTime = originalDateTime;
 		}
-		
-		
+
+
 		// Create new changed task
 		Task editedTask =
 				new Task(taskId,
@@ -422,58 +428,58 @@ public class TaskEditFragment extends Fragment {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);	
-		switch(requestCode) {
-		case DIALOG_EDIT_DATE:		
-			Bundle dateData = data.getExtras();
-			String year = Integer.toString(dateData.getInt("year"));
-			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
-			String day = Integer.toString(dateData.getInt("dayOfMonth"));
-			
-			dateString = year + "-" + month + "-" + day;
-			// SetDate to edit text
-			DateTime dateTime = new DateTime(dateString);
-			
-			// Assign new date to dateView
-			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
-			dateView.setText(dateTime.toLocaleDateString());
-			break;
-			
-		case DIALOG_EDIT_TIME:
-			Bundle time = data.getExtras();
-			String hour = Integer.toString(time.getInt("hourOfDay"));
-			String minute = Integer.toString(time.getInt("minute"));
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case DIALOG_EDIT_DATE:
+				Bundle dateData = data.getExtras();
+				String year = Integer.toString(dateData.getInt("year"));
+				String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
+				String day = Integer.toString(dateData.getInt("dayOfMonth"));
 
-			timeString = hour + ":" + minute;
-			
-			// Assign new date to timeView
-			TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
-			timeView.setText(timeString);
-			
-			break;
+				dateString = year + "-" + month + "-" + day;
+				// SetDate to edit text
+				DateTime dateTime = new DateTime(dateString);
+
+				// Assign new date to dateView
+				TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
+				dateView.setText(dateTime.toLocaleDateString());
+				break;
+
+			case DIALOG_EDIT_TIME:
+				Bundle time = data.getExtras();
+				String hour = Integer.toString(time.getInt("hourOfDay"));
+				String minute = Integer.toString(time.getInt("minute"));
+
+				timeString = hour + ":" + minute;
+
+				// Assign new date to timeView
+				TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
+				timeView.setText(timeString);
+
+				break;
 
 			default:
 				Log.i("Unknown dialog request code", Integer.toString(requestCode));
 				break;
 		}
 
-	
+
 		// Actualize OriginalTime
 		Calendar c = originalDateTime.toCalendar();
-			
+
 		// Date time
 		// We have to decide what was changed and value, that wasnt changed parse from originalDateTime
-		DateTime dateTime = null; 
-		if(dateString != null && timeString != null) {
+		DateTime dateTime = null;
+		if (dateString != null && timeString != null) {
 			dateTime = new DateTime(dateString + " " + timeString);
 		} else if (dateString != null && timeString == null) {
 			dateTime = new DateTime(dateString + " " + originalDateTime.toLocaleTimeString());
-		} else  if (dateString == null && timeString != null){
-			dateTime = new DateTime(originalDateTime.toDateNumericalString() + " "+ timeString);
+		} else if (dateString == null && timeString != null) {
+			dateTime = new DateTime(originalDateTime.toDateNumericalString() + " " + timeString);
 		} else {
 			dateTime = originalDateTime;
 		}
-		
+
 		// Save new OriginalTime
 		originalDateTime = dateTime;
 
