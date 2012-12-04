@@ -155,8 +155,15 @@ public class SidebarFragment extends Fragment {
 					// Create new TextView
 					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
 					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
-					newItem.setText(projectTitle);
 					newItem.setTag(projectId);
+
+					// use localized string for default project
+					if (projectTitle.equals(Constants.IMPLICIT_PROJECT_NAME)) {
+						newItem.setText(R.string.implicit_project);
+					}
+					else {
+						newItem.setText(projectTitle);
+					}
 
 					// Set Action on Item click
 					newItem.setOnClickListener(mProjectOnClickListener);
