@@ -2,16 +2,16 @@ package cz.fit.next.taskdetail;
 
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 
 
-public class TaskEditFragmentTimeDialog extends DialogFragment  implements TimePickerDialog.OnTimeSetListener {
+public class TaskEditFragmentTimeDialog extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
 	private int minute;
 	private int hour;
@@ -38,6 +38,7 @@ public class TaskEditFragmentTimeDialog extends DialogFragment  implements TimeP
 		
 		// Call onActivityResult method in parent fragment
 		getTargetFragment().onActivityResult(getTargetRequestCode(), 0, i);
+
 	}
-	
+
 }

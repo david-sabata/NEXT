@@ -3,11 +3,11 @@ package cz.fit.next.sidebar;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,7 +178,7 @@ public class SidebarFragment extends Fragment {
 	protected void updateContentFromItemClick(int id) {
 		FanView fan = ((MainActivity) getActivity()).getFanView();
 
-		FragmentManager fragmentMgr = getActivity().getSupportFragmentManager();
+		FragmentManager fragmentMgr = getActivity().getFragmentManager();
 		Fragment currentFragment = fragmentMgr.findFragmentById(R.id.appView);
 
 		switch (id) {

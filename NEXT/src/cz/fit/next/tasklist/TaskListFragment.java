@@ -1,10 +1,9 @@
 package cz.fit.next.tasklist;
 
+import android.app.ListFragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -172,9 +171,6 @@ public class TaskListFragment extends ListFragment {
 		if (v.getId() == android.R.id.list) {
 			menu.add(Menu.NONE, R.id.action_edit, 0, R.string.action_edit_task);
 			menu.add(Menu.NONE, R.id.action_delete, 1, R.string.action_delete_task);
-		}
-		else {
-			Log.e(LOG_TAG, "fail");
 		}
 	}
 

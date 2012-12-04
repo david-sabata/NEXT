@@ -186,30 +186,32 @@ public class TasksModelService extends Service {
 	 * be created.
 	 */
 	public void saveTask(Task task) {
-				
+
 		// add into history
 		Project proj = task.getProject();
 		ArrayList<TaskHistory> history = proj.getHistory();
 		TaskHistory hist = new TaskHistory();
 		hist.setAuthor(SyncService.getInstance().getAccountName());
-		if (hist.getAuthor() == null) hist.setAuthor("");
+		if (hist.getAuthor() == null)
+			hist.setAuthor("");
 		hist.setTaskId(task.getId());
 		hist.setTimeStamp(new DateTime().toString());
 		hist.addChange(SyncService.const_title, "", task.getTitle());
-		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "true" : "false" );
+		hist.addChange(SyncService.const_completed, "", task.isCompleted() ? "true" : "false");
 		hist.addChange(SyncService.const_context, "", (task.getContext() != null) ? task.getContext() : "");
 		hist.addChange(SyncService.const_date, "", task.getDate().toString());
 		hist.addChange(SyncService.const_description, "", (task.getDescription() != null) ? task.getDescription() : "");
 		hist.addChange(SyncService.const_priority, "", Integer.toString(task.getPriority()));
-		if (history == null) history = new ArrayList<TaskHistory>();
+		if (history == null)
+			history = new ArrayList<TaskHistory>();
 		history.add(hist);
 		proj.setHistory(history);
-		
+
 		// save project first
 		if (task.getProject() != null) {
 			mProjectsDataSource.saveProject(task.getProject());
 		}
-		
+
 		// save task
 		mTasksDataSource.saveTask(task);
 	}
@@ -221,6 +223,16 @@ public class TasksModelService extends Service {
 	 */
 	public void saveProject(Project project) {
 		mProjectsDataSource.saveProject(project);
+	}
+
+	/**
+	 * Delete project by its ID. Make sure the deletion has been confirmed 
+	 * by the user!
+	 * 
+	 * @param projectId
+	 */
+	public void deleteProject(String projectId) {
+		mProjectsDataSource.deleteProject(projectId);
 	}
 
 
@@ -238,12 +250,12 @@ public class TasksModelService extends Service {
 	public String getLocalizedDateTime(Date d) {
 		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
-	
+
 	/**
 	 * Returns localized time string
 	 */
-	public String getLocalizedTime (Date d) {
-		return DateUtils.formatDateTime(mContext,  d.getTime(), DateUtils.FORMAT_SHOW_TIME);
+	public String getLocalizedTime(Date d) {
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_TIME);
 	}
 
 	/**

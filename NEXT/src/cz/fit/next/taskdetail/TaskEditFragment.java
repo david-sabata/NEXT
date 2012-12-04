@@ -2,14 +2,11 @@ package cz.fit.next.taskdetail;
 
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.UUID;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +22,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -155,7 +151,7 @@ public class TaskEditFragment extends Fragment {
 								);
 				
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
-			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogTime");
+				newFragment.show(getActivity().getFragmentManager(), "DialogTime");
 			}
 		});
 
@@ -181,7 +177,7 @@ public class TaskEditFragment extends Fragment {
 								c.get(Calendar.DAY_OF_MONTH));
 				
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
-			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogDate");
+				newFragment.show(getActivity().getFragmentManager(), "DialogDate");
 			}
 		});
 		
@@ -339,13 +335,13 @@ public class TaskEditFragment extends Fragment {
 		// save
 		if (item.getItemId() == R.id.action_save) {
 			onSaveItem();
-			getActivity().getSupportFragmentManager().popBackStack();
+			getActivity().getFragmentManager().popBackStack();
 			return true;
 		}
 
 		// cancel
 		if (item.getItemId() == R.id.action_cancel) {
-			getActivity().getSupportFragmentManager().popBackStackImmediate();
+			getActivity().getFragmentManager().popBackStackImmediate();
 			return true;
 		}
 

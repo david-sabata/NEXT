@@ -1,10 +1,11 @@
 package cz.fit.next.taskdetail;
 
+
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
 public class TaskEditFragmentDateDialog extends DialogFragment  implements DatePickerDialog.OnDateSetListener {
@@ -30,14 +31,14 @@ public class TaskEditFragmentDateDialog extends DialogFragment  implements DateP
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear,
 			int dayOfMonth) {
-		
+
 		Intent i = new Intent();
 		Bundle date = new Bundle();
 		date.putInt("year", year);
 		date.putInt("monthOfYear", monthOfYear);
 		date.putInt("dayOfMonth", dayOfMonth);
 		i.putExtras(date);
-		
+	
 		// Call onActivityResult method in parent fragment
 		getTargetFragment().onActivityResult(getTargetRequestCode(), 0, i);
 	}
