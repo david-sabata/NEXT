@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -123,6 +124,13 @@ public class TaskEditFragment extends Fragment {
 
 		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_edit, container, false);
 
+		// Init Spinner for priority
+		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
+		String[] priorityTexts = getResources().getStringArray(R.array.priorityArray);
+		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts );
+		spinnerPriority.setAdapter(spinnerAdapter);
+		
+		
 		// load the task data into view
 		if (mTask != null)
 			loadTaskToView(mTask);
@@ -215,6 +223,7 @@ public class TaskEditFragment extends Fragment {
 				}
 			}
 		});
+				
 		return taskDetailView;
 	}
 
@@ -276,20 +285,11 @@ public class TaskEditFragment extends Fragment {
 		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
 		context.setText(task.getContext());
 
-		// set priority
-		// Get value of selected RadioButton
-		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
-		switch (task.getPriority()) {
-			case 1:
-				priorityGroup.check(R.id.radio0);
-				break;
-			case 2:
-				priorityGroup.check(R.id.radio1);
-				break;
-			case 3:
-				priorityGroup.check(R.id.radio2);
-				break;
-		}
+
+		
+		// Set spinner default value from database
+		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
+		spinnerPriority.setSelection(task.getPriority());
 	}
 
 
@@ -308,6 +308,10 @@ public class TaskEditFragment extends Fragment {
 		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
 		ProjectsSpinnerAdapter spinnerAdapter = new ProjectsSpinnerAdapter(getActivity(), cursor, 0);
 		spinnerProject.setAdapter(spinnerAdapter);
+		
+		// Set spinner default value from database
+		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
+		spinnerPriority.setSelection(0);
 
 	}
 
@@ -375,10 +379,14 @@ public class TaskEditFragment extends Fragment {
 		}
 
 		// priority
-		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
+		/*RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
 		int selected = priorityGroup.getCheckedRadioButtonId();
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
 		int priority = Integer.parseInt(priorityBtn.getText().toString());		
+		*/
+		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
+		int priority = spinnerPriority.getSelectedItemPosition ();
+		
 		
 		// Set date
 		DateTime dateTime = originalDateTime;

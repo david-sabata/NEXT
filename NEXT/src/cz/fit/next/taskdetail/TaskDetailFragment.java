@@ -190,19 +190,10 @@ public class TaskDetailFragment extends Fragment {
 		}
 
 		// set priority
-		// Get value of selected RadioButton
-		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
-		switch (mTask.getPriority()) {
-			case 1:
-				priorityGroup.check(R.id.radio0);
-				break;
-			case 2:
-				priorityGroup.check(R.id.radio1);
-				break;
-			case 3:
-				priorityGroup.check(R.id.radio2);
-				break;
-		}
+		TextView priority = (TextView) taskDetailView.findViewById(R.id.showPriorityText);
+		String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
+		priority.setText(priorityStrings[mTask.getPriority()]);
+		
 	}
 
 

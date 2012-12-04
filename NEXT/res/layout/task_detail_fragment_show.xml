@@ -320,28 +320,13 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:orientation="horizontal" >
-
-<RadioButton
-                        android:id="@+id/radio0"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:clickable="false"
-                        android:text="1" />
-
-<RadioButton
-                        android:id="@+id/radio1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:text="2" />
-
-<RadioButton
-                        android:id="@+id/radio2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:text="3" />
+
+    <TextView
+        android:id="@+id/showPriorityText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 </RadioGroup>
             </LinearLayout>
