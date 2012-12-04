@@ -46,7 +46,7 @@
 			    	   android:resource="@xml/next_widget_provider" />
         </receiver>
         
-        <activity android:name=".widget.ClickAddActivity">
+        <activity android:name=".taskdetail.TaskEditFragment">
 			<intent-filter>
 				<action android:name="android.appwidget.action.ACTION_WIDGET_CONFIGURE"/>
 			</intent-filter>

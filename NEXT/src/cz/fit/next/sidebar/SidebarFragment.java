@@ -87,11 +87,9 @@ public class SidebarFragment extends Fragment {
 		f.setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {
-<<<<<<< HEAD
-=======
+
 
 				// Regenerate contexts and projects in sidebar menu
->>>>>>> master
 				initSideBarContextProjects();
 			}
 
@@ -101,15 +99,9 @@ public class SidebarFragment extends Fragment {
 		});
 	}
 
-<<<<<<< HEAD
-
-
-
-=======
 	/**
 	 * Init sidebar contexts and projects
 	 */
->>>>>>> master
 	public void initSideBarContextProjects() {
 		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

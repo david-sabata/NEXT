@@ -168,7 +168,7 @@
                     android:background="@color/TaskRuller"
                     android:orientation="vertical" >
 
-                </LinearLayout>
+             	</LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
