@@ -96,6 +96,22 @@ public class ProjectsDataSource {
 		else
 			return null;
 	}
+	
+	/**
+	 * Returns default project
+	 */
+	public Project getDefaultProject() {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_PROJECTS);
+
+		Cursor cursor = q.query(database, null, Constants.COLUMN_TITLE + " = ?", new String[] { Constants.IMPLICIT_PROJECT_NAME }, null, null, null);
+		cursor.moveToFirst();
+
+		if (cursor.getCount() > 0)
+			return new Project(cursor);
+		else
+			return null;
+	}
 
 
 

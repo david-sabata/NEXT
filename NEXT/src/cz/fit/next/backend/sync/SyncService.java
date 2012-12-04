@@ -33,6 +33,7 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
@@ -219,6 +220,14 @@ public class SyncService extends Service {
 				parser.setFile(getFilesDir() + "/" + lf.get(i).getTitle());
 
 				Project proj = parser.getProject();
+				
+				// Handle default project universally
+				if (proj.getTitle().equals(Constants.IMPLICIT_PROJECT_NAME)) {
+					projdatasource.open();
+					proj = projdatasource.getDefaultProject();
+					projdatasource.close();
+				}
+				
 				proj.setHistory(parser.getHistory());
 
 
@@ -412,11 +421,18 @@ public class SyncService extends Service {
 					e.printStackTrace();
 				}
 
-
+				String postfix;
+				if (resultProjects.get(i).getTitle().equals(Constants.IMPLICIT_PROJECT_NAME)) {
+					postfix = "";
+				} else {
+					postfix = resultProjects.get(i).getId();
+				}
+				
+				
 				drive.upload(getApplicationContext(), resultProjects.get(i)
 						.getTitle()
 						+ "-"
-						+ resultProjects.get(i).getId()
+						+ postfix
 						+ ".nextproj.html", resultProjects.get(i).getId());
 
 			}

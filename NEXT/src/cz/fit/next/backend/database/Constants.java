@@ -10,7 +10,7 @@ public interface Constants {
 
 
 	// project name used for tasks with no project set
-	public static final String IMPLICIT_PROJECT_NAME = "default-project";
+	public static final String IMPLICIT_PROJECT_NAME = "tasks-without-project";
 
 
 	// column names as stored in tables	
@@ -40,5 +40,5 @@ public interface Constants {
 
 	public static final String DATABASE_NAME = "NEXT.db";
 
-	public static final int DATABASE_VERSION = 17;
+	public static final int DATABASE_VERSION = 18;
 }
