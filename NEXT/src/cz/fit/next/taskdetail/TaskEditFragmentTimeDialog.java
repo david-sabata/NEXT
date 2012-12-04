@@ -1,11 +1,9 @@
 package cz.fit.next.taskdetail;
 
-import java.util.Calendar;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;

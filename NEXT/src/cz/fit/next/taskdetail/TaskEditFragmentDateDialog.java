@@ -1,6 +1,5 @@
 package cz.fit.next.taskdetail;
 
-import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;

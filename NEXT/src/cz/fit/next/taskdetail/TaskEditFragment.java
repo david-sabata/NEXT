@@ -8,7 +8,6 @@ import java.util.UUID;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
@@ -50,7 +49,7 @@ public class TaskEditFragment extends Fragment {
 	private Task mTask;
 	private Fragment editFragment;
 
-	
+
 	/**
 	 * 	Setting details of date and time 
 	 */
@@ -108,7 +107,7 @@ public class TaskEditFragment extends Fragment {
 			String taskId = args.getString(ARG_TASK_ID);
 			mTask = TasksModelService.getInstance().getTaskById(taskId);
 		}
-		
+
 		editFragment = this;
 	}
 
@@ -132,9 +131,9 @@ public class TaskEditFragment extends Fragment {
 		// set time
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		// We dont want keyboard
-		time.setInputType(InputType.TYPE_NULL); 
+		time.setInputType(InputType.TYPE_NULL);
 		time.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -152,13 +151,13 @@ public class TaskEditFragment extends Fragment {
 			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogTime");
 			}
 		});
-		
+
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		// We dont want keyboard
-		date.setInputType(InputType.TYPE_NULL); 
+		date.setInputType(InputType.TYPE_NULL);
 		date.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Date originalDate = new Date(originalDateTime.toMiliseconds());
@@ -175,7 +174,7 @@ public class TaskEditFragment extends Fragment {
 			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogDate");
 			}
 		});
-		
+
 		return taskDetailView;
 	}
 
@@ -206,11 +205,11 @@ public class TaskEditFragment extends Fragment {
 		TextView descripton = (TextView) taskDetailView.findViewById(R.id.editDescription);
 		descripton.setText(task.getDescription());
 
-		
+
 		// set time
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		time.setText(task.getDate().toLocaleTimeString());
-	
+
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(task.getDate().toLocaleDateString());
@@ -260,10 +259,10 @@ public class TaskEditFragment extends Fragment {
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toLocaleDateString());
 		originalDateTime = dateTime;
-		
+
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		time.setText(dateTime.toLocaleTimeString());
-		
+
 		// set project
 		Cursor cursor = TasksModelService.getInstance().getAllProjectsCursor();
 		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
@@ -339,7 +338,7 @@ public class TaskEditFragment extends Fragment {
 		RadioGroup priorityGroup = (RadioGroup) taskDetailView.findViewById(R.id.radioPriority);
 		int selected = priorityGroup.getCheckedRadioButtonId();
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
-		int priority = Integer.parseInt(priorityBtn.getText().toString());
+		int priority = Integer.parseInt(priorityBtn.getText().toString());		
 		
 		DateTime dateTime = originalDateTime;
 	
@@ -365,8 +364,7 @@ public class TaskEditFragment extends Fragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		
+		super.onActivityResult(requestCode, resultCode, data);	
 		switch(requestCode) {
 		case DIALOG_EDIT_DATE:		
 			Bundle dateData = data.getExtras();
@@ -395,11 +393,13 @@ public class TaskEditFragment extends Fragment {
 			timeView.setText(timeString);
 			
 			break;
+
 			default:
 				Log.i("Unknown dialog request code", Integer.toString(requestCode));
 				break;
 		}
-		
+
+	
 		// Actualize OriginalTime
 		Date originalDate = new Date(originalDateTime.toMiliseconds());
 		Calendar c = new GregorianCalendar();
@@ -421,6 +421,7 @@ public class TaskEditFragment extends Fragment {
 		
 		// Save new OriginalTime
 		originalDateTime = dateTime;
+
 	}
 
 

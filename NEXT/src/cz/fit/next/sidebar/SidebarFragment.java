@@ -5,20 +5,20 @@ import java.util.GregorianCalendar;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.deaux.fan.FanView;
 import com.deaux.fan.SidebarListener;
+
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -40,18 +40,19 @@ public class SidebarFragment extends Fragment {
 			R.id.Projects_ShowProjects
 	};
 
-	
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Load layout for sidebar
 		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
-	
+
 		// Generate fixed item in sidebar
 		sideBarView = setFixedItemsSidebar(sideBarView);
-		
+
 		// Generate context items in sidebar
 		initSideBarContextProjects();
+
 		return sideBarView;
 	}
 
@@ -63,9 +64,9 @@ public class SidebarFragment extends Fragment {
 	protected View setFixedItemsSidebar(View pSideBarView) {
 		for (final int id : menuFixedItemsId) {
 			final TextView item = (TextView) pSideBarView.findViewById(id);
-		
+
 			// Set onClickListener to item -> it will switch fragment
-			item.setOnClickListener(new View.OnClickListener() {				
+			item.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					updateContentFromItemClick(id);
@@ -86,6 +87,7 @@ public class SidebarFragment extends Fragment {
 		f.setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {			
+
 				// Regenerate contexts and projects in sidebar menu
 				initSideBarContextProjects();
 			}
@@ -105,16 +107,16 @@ public class SidebarFragment extends Fragment {
 
 		// Load contexts from database
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
-		
+
 		// Get pointer to layout of contexts and clean it before adding new items
 		LinearLayout contextsLayout = (LinearLayout) sideBarView.findViewById(R.id.ContextsLayout);
 		contextsLayout.removeAllViews();
-		
+
 		// Adding new items to contexts layout
 		final Context c = sideBarView.getContext();
 		while (!cursor.isAfterLast()) {
 			final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
-			
+
 			if (contextTitle != null && !contextTitle.equals("")) {
 				// Create new TextView
 				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
@@ -136,16 +138,16 @@ public class SidebarFragment extends Fragment {
 
 		// Load starred projects from database
 		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
-		
+
 		// Get pointer to layout of projects and clean it before adding new starred projects
 		LinearLayout projectsLayout = (LinearLayout) sideBarView.findViewById(R.id.projects);
 		projectsLayout.removeAllViews();
-		
+
 		// Adding new starred projects to projects layout
 		while (!starredProjects.isAfterLast()) {
 			final String projectTitle = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_TITLE));
 			final String projectId = starredProjects.getString(starredProjects.getColumnIndex(Constants.COLUMN_ID));
-		
+
 			if (projectId != null) {
 				// Create new TextView
 				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
