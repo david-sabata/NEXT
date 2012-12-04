@@ -58,5 +58,8 @@
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
     <string name="share_prompt">Google mail of your friend:</string>
+    <string name="TaskTimeTitle">TIME</string>
+    <string name="TaskSomeDay">Someday</string>
+    <string name="TaskWholeDay">All day</string>
     
 </resources>

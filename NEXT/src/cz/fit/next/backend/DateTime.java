@@ -2,7 +2,9 @@ package cz.fit.next.backend;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class DateTime {
@@ -152,5 +154,28 @@ public class DateTime {
 	public long toMiliseconds() {
 		return mTimestamp;
 	}
+	
+	/**
+	 * Convert our DateTime to Calendar with time from this dateTime
+	 * @return
+	 */
+	public Calendar toCalendar() {	
+		Date originalDate = new Date(this.toMiliseconds());
+		Calendar c = new GregorianCalendar();
+		c.setTime(originalDate);
+		return c;
+	}
+	
+	/**
+	 * Return date on format YYYY-MM-DD
+	 * @return
+	 */
+	public String toDateNumericalString() {
+		Calendar c = this.toCalendar();
+		String dateString = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);	
+		return dateString;
+	}
+	
+	
 
 }
