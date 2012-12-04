@@ -46,13 +46,12 @@ public class SidebarFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Load layout for sidebar
 		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
-		
+	
 		// Generate fixed item in sidebar
 		sideBarView = setFixedItemsSidebar(sideBarView);
 		
 		// Generate context items in sidebar
 		initSideBarContextProjects();
-	
 		return sideBarView;
 	}
 
@@ -80,22 +79,23 @@ public class SidebarFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		FanView f = ((MainActivity) getActivity()).getFanView();
-		f.setSidebarListener(new SidebarListener() {
 
+		MainActivity activity = (MainActivity) getActivity();
+
+		FanView f = activity.getFanView();
+		f.setSidebarListener(new SidebarListener() {
 			@Override
-			public void onSidebarOpen() {
-				
+			public void onSidebarOpen() {			
 				// Regenerate contexts and projects in sidebar menu
 				initSideBarContextProjects();
 			}
 
 			@Override
 			public void onSidebarClose() {
-
 			}
 		});
 	}
+
 
 	/**
 	 * Init sidebar contexts and projects
@@ -120,7 +120,7 @@ public class SidebarFragment extends Fragment {
 				LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
 				TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
 				newItem.setText(contextTitle);
-
+				
 				// Set Action on Item click
 				newItem.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -243,6 +243,7 @@ public class SidebarFragment extends Fragment {
 
 				break;
 			default:
+				
 				break;
 		}
 

@@ -1,9 +1,10 @@
 package cz.fit.next.taskdetail;
 
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
-
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
@@ -32,8 +34,6 @@ import cz.fit.next.backend.TasksModelService;
 
 
 public class TaskEditFragment extends Fragment {
-
-	private static final String LOG_TAG = "TaskEditFragment";
 	private View taskDetailView;
 
 	/**
@@ -56,7 +56,7 @@ public class TaskEditFragment extends Fragment {
 	 */
 	private String dateString = null;
 	private String timeString = null;
-
+	private DateTime originalDateTime;
 
 	/**
 	 * Create an empty instance of TaskEditFragment with 
@@ -167,6 +167,19 @@ public class TaskEditFragment extends Fragment {
 
 
 
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// register for gestures
+		View v = getView().findViewById(R.id.scrollView);
+		((MainActivity) getActivity()).attachGestureDetector(v);
+	}
+
+
+
+
 	/**
 	 * Sets up the (sub)views according to the task
 	 */
@@ -187,7 +200,7 @@ public class TaskEditFragment extends Fragment {
 		// set date
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(task.getDate().toLocaleDateString());
-	
+		originalDateTime = task.getDate();
 		
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
@@ -233,6 +246,7 @@ public class TaskEditFragment extends Fragment {
 		DateTime dateTime = new DateTime();
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(dateTime.toLocaleDateString());
+		originalDateTime = dateTime;
 		
 		TextView time = (TextView) taskDetailView.findViewById(R.id.editTime);
 		time.setText(dateTime.toLocaleTimeString());
@@ -314,14 +328,21 @@ public class TaskEditFragment extends Fragment {
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
 		int priority = Integer.parseInt(priorityBtn.getText().toString());
 
+		Date originalDate = new Date(originalDateTime.toMiliseconds());
+		Calendar c = new GregorianCalendar();
+		c.setTime(originalDate);
+		
 		// date time
+		// we have to decide what was changed and value, that wasnt changed parse from originalDateTime
 		DateTime dateTime = null; 
 		if(dateString != null && timeString != null) {
 			dateTime = new DateTime(dateString + " " + timeString);
-		} else if (mTask != null) {
-			dateTime = mTask.getDate();
+		} else if (dateString != null && timeString == null) {
+			dateTime = new DateTime(dateString + " " + c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE));
+		} else  if (dateString == null && timeString != null){
+			dateTime = new DateTime(c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + " "+ timeString);
 		} else {
-			dateTime = new DateTime();
+			dateTime = originalDateTime;
 		}
 	
 		// Create new changed task
@@ -350,15 +371,17 @@ public class TaskEditFragment extends Fragment {
 		
 		switch(requestCode) {
 		case DIALOG_EDIT_DATE:
+			
 			Bundle dateData = data.getExtras();
 			String year = Integer.toString(dateData.getInt("year"));
 			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
 			String day = Integer.toString(dateData.getInt("dayOfMonth"));
 			
 			dateString = year + "-" + month + "-" + day;
-			
 			// SetDate to edit text
 			DateTime dateTime = new DateTime(dateString);
+			
+			// Assign new date to dateView
 			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
 			dateView.setText(dateTime.toLocaleDateString());
 			break;
@@ -370,7 +393,7 @@ public class TaskEditFragment extends Fragment {
 
 			timeString = hour + ":" + minute;
 			
-			// Set Time to EditText
+			// Assign new date to timeView
 			TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
 			timeView.setText(timeString);
 			

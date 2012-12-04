@@ -49,10 +49,12 @@ public class ProjectListFragment extends ListFragment {
 		} catch (RuntimeException e) {
 			// ignore and wait for the next call
 		}
-		
-		
+			
 		// register long click events
-				registerForContextMenu(getListView());
+		registerForContextMenu(getListView());
+
+		// register for gestures
+		((MainActivity) getActivity()).attachGestureDetector(getListView());
 	}
 
 
