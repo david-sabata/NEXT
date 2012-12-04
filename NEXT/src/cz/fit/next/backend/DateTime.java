@@ -1,38 +1,35 @@
 package cz.fit.next.backend;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 public class DateTime {
 
 	/**
 	 * Format supported for parsing
 	 */
-	private static final String[] FORMATS = new String[] {
-			"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-			"yyyy-MM-dd HH:mm:ss.SSSZ",
-			"yyyy-MM-dd HH:mm:ss",
-			"yyyy-MM-dd HH:mmZ",
-			"yyyy-MM-dd HH:mm",
-			"yyyy-MM-dd",
-			"dd.MM.yyyy",
-			"dd. MM. yyyy"
-	};
+	//	private static final String[] FORMATS = new String[] {
+	//			"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+	//			"yyyy-MM-dd HH:mm:ss.SSSZ",
+	//			"yyyy-MM-dd HH:mm:ss",
+	//			"yyyy-MM-dd HH:mmZ",
+	//			"yyyy-MM-dd HH:mm",
+	//			"yyyy-MM-dd",
+	//			"dd.MM.yyyy",
+	//			"dd. MM. yyyy"
+	//	};
 
 	/**
 	 * Timestamp (in milis) used for 'someday'
 	 */
-	public static final long SOMEDAY_TIMESTAMP = 9999999999999l;
+	private static final long SOMEDAY_MILISECONDS = 333;
 
 	/**
-	 * Flags used in db as datetime_type
+	 * Amount of miliseconds to represent 'all day' date. We do not 
+	 * use miliseconds anywhere else, so it's safe to encode some 
+	 * data in them, in this case 'all day' flag
 	 */
-	public static final String FLAG_DATE = "date";
-	public static final String FLAG_DATETIME = "datetime";
+	private static final int ALLDAY_MILISECONDS = 666;
 
 
 	/**
@@ -41,57 +38,45 @@ public class DateTime {
 	protected long mTimestamp;
 
 
+
+
+
 	/**
-	 * Create from current time
+	 * Create from current time 
+	 * (miliseconds are reset)
 	 */
 	public DateTime() {
 		mTimestamp = new Date().getTime();
+		resetMilis();
 	}
 
 	/**
 	 * Create from timestamp in miliseconds
+	 * 
+	 * Be careful about miliseconds as they are used internally 
+	 * to represent various flags. If you want to set custom date/time 
+	 * use default constructor and setTime/setDate methods.
 	 */
 	public DateTime(long time) {
 		mTimestamp = time;
 	}
 
+
 	/**
-	 * Create from string in one of supported formats
+	 * Returns miliseconds part of the timestamp
 	 */
-	public DateTime(String s) {
-		boolean isOk = false;
-		long parsed = 0;
-		
-		
-		// someday
-		try {
-			parsed = Long.parseLong(s);
-		} catch (NumberFormatException e) {}
-		
-		if (parsed == SOMEDAY_TIMESTAMP) {
-			mTimestamp = SOMEDAY_TIMESTAMP;
-			isOk = true;
-		}
-		
-
-		// regular date(time)
-		else {
-			for (String format : FORMATS) {
-				try {
-					SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
-					Date d = sdf.parse(s);
-					mTimestamp = d.getTime();
-					isOk = true;
-					break;
-				} catch (ParseException e) {
-					// silently ignore
-				}
-			}
-		}
-
-		if (!isOk)
-			throw new RuntimeException("Unable to parse DateTime [" + s + "]");
+	private long getMilis() {
+		return mTimestamp % 1000;
 	}
+
+	/**
+	 * Reset miliseconds part of the timestamp, effectively 
+	 * removing all flags (e.g. SOMEDAY, ALLDAY) 
+	 */
+	private void resetMilis() {
+		mTimestamp -= getMilis();
+	}
+
 
 
 
@@ -99,20 +84,103 @@ public class DateTime {
 	 * Is this date someday?
 	 */
 	public boolean isSomeday() {
-		return mTimestamp == SOMEDAY_TIMESTAMP;
+		return getMilis() == SOMEDAY_MILISECONDS;
+	}
+
+	/**
+	 * Is this date all day?
+	 */
+	public boolean isAllday() {
+		return getMilis() == ALLDAY_MILISECONDS;
 	}
 
 
 
 	/**
-	 * Returns date in unified format suitable for saving into file
+	 * Set that this datetime is someday
+	 */
+	public void setIsSomeday(boolean set) {
+		if (set) {
+			resetMilis();
+			mTimestamp += SOMEDAY_MILISECONDS;
+		}
+		else if (isSomeday()) {
+			resetMilis();
+		}
+	}
+
+	/**
+	 * Set that this datetime is allday
+	 */
+	public void setIsAllday(boolean set) {
+		if (set) {
+			resetMilis();
+			mTimestamp += ALLDAY_MILISECONDS;
+		}
+		else if (isAllday()) {
+			resetMilis();
+		}
+	}
+
+
+
+	/**
+	 * Set date 
+	 * (removes SOMEDAY flag if set) 
 	 * 
-	 * If you need human readable format, use toLocaleString
+	 * @param year
+	 * @param month 1..12
+	 * @param day 1..30/31
+	 */
+	public void setDate(int year, int month, int day) {
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTimeInMillis(mTimestamp);
+
+		c.set(GregorianCalendar.YEAR, year);
+		c.set(GregorianCalendar.MONTH, month - 1); // JANUARY == 0
+		c.set(GregorianCalendar.DAY_OF_MONTH, day);
+
+		mTimestamp = c.getTimeInMillis();
+		setIsSomeday(false);
+	}
+
+	/**
+	 * Set time
+	 * (removes SOMEDAY or ALLDAY flags if set)
+	 * 
+	 * @param hour
+	 * @param minute
+	 */
+	public void setTime(int hour, int minute) {
+		GregorianCalendar c = new GregorianCalendar();
+		c.setTimeInMillis(mTimestamp);
+
+		c.set(GregorianCalendar.HOUR_OF_DAY, hour);
+		c.set(GregorianCalendar.MINUTE, minute);
+		c.set(GregorianCalendar.SECOND, 0);
+
+		mTimestamp = c.getTimeInMillis();
+		resetMilis();
+	}
+
+
+
+
+	/**
+	 * Returns time in miliseconds of GMT
+	 */
+	public long toMiliseconds() {
+		return mTimestamp;
+	}
+
+	/**
+	 * Returns timestamp in miliseconds of GMT
 	 */
 	@Override
 	public String toString() {
 		return String.valueOf(mTimestamp);
 	}
+
 
 
 	/**
@@ -134,7 +202,7 @@ public class DateTime {
 				TasksModelService.getInstance().getLocalizedSomedayTime() :
 				TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
 	}
-	
+
 	/**
 	 * Returns localized time string
 	 * (Uses service to get localized DateFormatter)
@@ -144,38 +212,8 @@ public class DateTime {
 				TasksModelService.getInstance().getLocalizedSomedayTime() :
 				TasksModelService.getInstance().getLocalizedTime(new Date(mTimestamp));
 	}
-	
-	
 
 
-	/**
-	 * Returns time in miliseconds of GMT
-	 */
-	public long toMiliseconds() {
-		return mTimestamp;
-	}
-	
-	/**
-	 * Convert our DateTime to Calendar with time from this dateTime
-	 * @return
-	 */
-	public Calendar toCalendar() {	
-		Date originalDate = new Date(this.toMiliseconds());
-		Calendar c = new GregorianCalendar();
-		c.setTime(originalDate);
-		return c;
-	}
-	
-	/**
-	 * Return date on format YYYY-MM-DD
-	 * @return
-	 */
-	public String toDateNumericalString() {
-		Calendar c = this.toCalendar();
-		String dateString = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);	
-		return dateString;
-	}
-	
-	
+
 
 }
