@@ -36,7 +36,7 @@ public class SidebarFragment extends Fragment {
 	 * IDs of fixed menu items
 	 */
 	int menuFixedItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, R.id.Time_Blocked,
+			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
 			R.id.Projects_ShowProjects
 	};
 
@@ -185,17 +185,13 @@ public class SidebarFragment extends Fragment {
 
 		switch (id) {
 			case R.id.Time_Next:
-				Log.i(LOG_TAG, "selection: Next");
-
 				// create new fragment to add to backstack
 				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
 				fan.replaceMainFragment(fragNext);
 
 				break;
 			case R.id.Time_Today:
-				Log.i(LOG_TAG, "selection: Today");
-
-				{
+				if (true) {
 					// create filter
 					Filter filterToday = new Filter();
 
@@ -216,11 +212,11 @@ public class SidebarFragment extends Fragment {
 
 				break;
 			case R.id.Time_InPlan:
-				Log.i(LOG_TAG, "selection: In plan");
+				Log.i(LOG_TAG, "In plan - not implemented yet");
 				break;
+
 			case R.id.Time_Someday:
-				Log.i(LOG_TAG, "selection: Someday");
-				{
+				if (true) {
 					Filter filter = new Filter();
 
 					DateTime from = new DateTime();
@@ -235,16 +231,16 @@ public class SidebarFragment extends Fragment {
 					fan.replaceMainFragment(frag);
 				}
 				break;
-			case R.id.Time_Blocked:
-				Log.i(LOG_TAG, "selection: Blocked");
-				break;
-			case R.id.Projects_ShowProjects:
-				Log.i(LOG_TAG, "selection: Show Projects");
 
+			case R.id.Time_Blocked:
+				Log.w(LOG_TAG, "Blocked - not implemented yet");
+				break;
+
+			case R.id.Projects_ShowProjects:
 				// replace current fragment
 				fan.replaceMainFragment(new ProjectListFragment());
-
 				break;
+
 			default:
 
 				break;
@@ -284,8 +280,12 @@ public class SidebarFragment extends Fragment {
 			TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
 			FanView fan = ((MainActivity) getActivity()).getFanView();
 			fan.replaceMainFragment(frag);
+
+			// hide sidebar
+			fan.showMenu();
 		}
 	};
+
 
 	/**
 	 * Context onclick
@@ -303,6 +303,9 @@ public class SidebarFragment extends Fragment {
 			TaskListFragment frag = TaskListFragment.newInstance(f, contextTitle);
 			FanView fan = ((MainActivity) getActivity()).getFanView();
 			fan.replaceMainFragment(frag);
+
+			// hide sidebar
+			fan.showMenu();
 		}
 	};
 
