@@ -425,13 +425,12 @@ public class SyncService extends Service {
 				if (resultProjects.get(i).getTitle().equals(Constants.IMPLICIT_PROJECT_NAME)) {
 					postfix = "";
 				} else {
-					postfix = resultProjects.get(i).getId();
+					postfix = "-" + resultProjects.get(i).getId();
 				}
 				
 				
 				drive.upload(getApplicationContext(), resultProjects.get(i)
 						.getTitle()
-						+ "-"
 						+ postfix
 						+ ".nextproj.html", resultProjects.get(i).getId());
 
