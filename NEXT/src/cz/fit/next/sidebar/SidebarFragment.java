@@ -4,13 +4,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -156,14 +156,10 @@ public class SidebarFragment extends Fragment {
 					LinearLayout itemLayout = (LinearLayout) inflater.inflate(R.layout.sidebar_item_layout, null);
 					TextView newItem = (TextView) itemLayout.findViewById(R.id.sidebarItem);
 					newItem.setText(projectTitle);
+					newItem.setTag(projectId);
 
 					// Set Action on Item click
-					newItem.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							Toast.makeText(c, "Projekt: " + projectTitle, 50).show();
-						}
-					});
+					newItem.setOnClickListener(mProjectOnClickListener);
 					// Add final id to layout
 					projectsLayout.addView(itemLayout);
 				}
@@ -180,9 +176,6 @@ public class SidebarFragment extends Fragment {
 	 */
 	protected void updateContentFromItemClick(int id) {
 		FanView fan = ((MainActivity) getActivity()).getFanView();
-
-		FragmentManager fragmentMgr = getActivity().getFragmentManager();
-		Fragment currentFragment = fragmentMgr.findFragmentById(R.id.appView);
 
 		switch (id) {
 			case R.id.Time_Next:
@@ -264,6 +257,30 @@ public class SidebarFragment extends Fragment {
 			getView().findViewById(viewId).setBackgroundResource(android.R.color.transparent);
 		}
 	}
+
+
+
+
+	/**
+	 * Project onclick
+	 */
+	protected OnClickListener mProjectOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			TextView item = (TextView) v.findViewById(R.id.sidebarItem);
+			String projectTitle = item.getText().toString();
+			String projectId = item.getTag().toString();
+
+			Filter f = new Filter();
+			f.setProjectId(projectId);
+
+			// open new fragment
+			TaskListFragment fragToday = TaskListFragment.newInstance(f, projectTitle);
+			FanView fan = ((MainActivity) getActivity()).getFanView();
+			fan.replaceMainFragment(fragToday);
+		}
+	};
+
 
 
 

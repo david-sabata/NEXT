@@ -223,7 +223,6 @@ public class TasksDataSource {
 						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-						Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY
 				};
 
@@ -234,6 +233,14 @@ public class TasksDataSource {
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().toMiliseconds();
 					where += " AND ";
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().toMiliseconds();
+				}
+
+				// project
+				if (filter != null && filter.getProjectId() != null) {
+					if (where.length() > 0)
+						where += " AND ";
+
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = '" + filter.getProjectId() + "'";
 				}
 
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
