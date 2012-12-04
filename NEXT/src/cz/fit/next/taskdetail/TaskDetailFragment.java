@@ -18,8 +18,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
 
 /**
  * @author Tomas Sychra
@@ -135,9 +137,19 @@ public class TaskDetailFragment extends Fragment {
 			} else if (itemType.equals("description")) {
 				text = mTask.getDescription();
 			} else if (itemType.equals("date")) {
-				text = mTask.getDate().toLocaleDateTimeString();
+				DateTime date = mTask.getDate();
+				if(date.isSomeday()) {
+					text = "Someday";
+				} else if (date.isAllday()) {
+					text = date.toLocaleDateString();
+				} else {
+					text = mTask.getDate().toLocaleDateTimeString();
+				}
 			} else if (itemType.equals("project")) {
-				text = mTask.getProject().getTitle();
+				String projectText = mTask.getProject().getTitle();
+				if(!(projectText.equals(Constants.IMPLICIT_PROJECT_NAME))) { 
+					text = mTask.getProject().getTitle();
+				}
 			} else if (itemType.equals("context")) {
 				text = mTask.getContext();
 			}
