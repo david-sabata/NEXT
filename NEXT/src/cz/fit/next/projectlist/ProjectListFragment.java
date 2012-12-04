@@ -108,7 +108,7 @@ public class ProjectListFragment extends ListFragment {
 		// add
 		if (item.getItemId() == R.id.action_add) {
 
-			ProjectEditDialog dlg = ProjectEditDialog.newInstance(null);
+			ProjectEditDialog dlg = ProjectEditDialog.newInstance();
 			dlg.setTargetFragment(this, 0);
 			dlg.show(getFragmentManager(), null);
 

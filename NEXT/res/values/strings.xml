@@ -59,6 +59,6 @@
     <string name="show_all_projects">Show all projects</string>
     <string name="share_prompt">Google mail of your friend:</string>
     <string name="implicit_project">&lt;No project&gt;</string>
-    <string name="enter_project_title">Enter project title</string>
+    <string name="project_title">Project title</string>
     
 </resources>
