@@ -74,6 +74,26 @@ public class Filter implements Serializable {
 
 
 
+	public void setProjectId(String projectId) {
+		mProjectID = projectId;
+	}
+
+	public String getProjectId() {
+		return mProjectID;
+	}
+
+
+
+	public void setContext(String context) {
+		mContext = context;
+	}
+
+	public String getContext() {
+		return mContext;
+	}
+
+
+
 	@Override
 	public String toString() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -111,5 +131,6 @@ public class Filter implements Serializable {
 
 		return null;
 	}
+
 
 }

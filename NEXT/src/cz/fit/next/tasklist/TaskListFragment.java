@@ -40,10 +40,14 @@ public class TaskListFragment extends ListFragment {
 	private static final String ARG_FILTER = "filter";
 
 	/**
-	 * Key to Budnle to store fragment title
+	 * Key to Bundle to store fragment title resource ID
+	 */
+	private static final String ARG_TITLE_RES = "title_res";
+
+	/**
+	 * Key to Bundle to store fragment title
 	 */
 	private static final String ARG_TITLE = "title";
-
 
 
 	/**
@@ -52,10 +56,16 @@ public class TaskListFragment extends ListFragment {
 	protected Filter mFilter;
 
 	/**
-	 * Title of this fragment - shown in action bar if set
+	 * Title of this fragment - shown in action bar if set.
+	 * Either this or mTitle should be set
 	 */
-	protected int mTitleResId;
+	protected int mTitleResId = 0;
 
+	/**
+	 * Title of this fragment - show in action bar if set.
+	 * Either this or mTitleResId should be set
+	 */
+	protected String mTitle;
 
 
 
@@ -66,12 +76,30 @@ public class TaskListFragment extends ListFragment {
 	 * 
 	 * Use ONLY this method to create a new instance!
 	 */
-	public static TaskListFragment newInstance(Filter filter, int title) {
+	public static TaskListFragment newInstance(Filter filter, int titleResId) {
 		TaskListFragment frag = new TaskListFragment();
 
 		Bundle b = new Bundle();
 		b.putString(ARG_FILTER, filter != null ? filter.toString() : null);
-		b.putInt(ARG_TITLE, title);
+		b.putInt(ARG_TITLE_RES, titleResId);
+
+		frag.setArguments(b);
+
+		return frag;
+	}
+
+	/**
+	 * Create a new instance of TaskListFragment that will
+	 * be initialized with given filter (where null means 'show all items')
+	 * 
+	 * Use ONLY this method to create a new instance!
+	 */
+	public static TaskListFragment newInstance(Filter filter, String title) {
+		TaskListFragment frag = new TaskListFragment();
+
+		Bundle b = new Bundle();
+		b.putString(ARG_FILTER, filter != null ? filter.toString() : null);
+		b.putString(ARG_TITLE, title);
 
 		frag.setArguments(b);
 
@@ -94,7 +122,8 @@ public class TaskListFragment extends ListFragment {
 
 		Bundle args = getArguments();
 		if (args != null) {
-			mTitleResId = args.getInt(ARG_TITLE);
+			mTitleResId = args.getInt(ARG_TITLE_RES); // value OR 0
+			mTitle = args.getString(ARG_TITLE); // value OR null
 			mFilter = Filter.fromString(args.getString(ARG_FILTER));
 		}
 	}
@@ -119,7 +148,12 @@ public class TaskListFragment extends ListFragment {
 		setFilter(mFilter);
 
 		// update actionbar title
-		getActivity().getActionBar().setTitle(mTitleResId);
+		if (mTitleResId > 0) {
+			getActivity().getActionBar().setTitle(mTitleResId);
+		}
+		else if (mTitle != null) {
+			getActivity().getActionBar().setTitle(mTitle);
+		}
 
 		// register long click events
 		registerForContextMenu(getListView());
