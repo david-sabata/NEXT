@@ -138,11 +138,18 @@ public class TaskEditFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				DialogFragment newFragment = new TaskEditFragmentTimeDialog();
+				Date originalDate = new Date(originalDateTime.toMiliseconds());
+				Calendar c = new GregorianCalendar();
+				c.setTime(originalDate);
+				
+				TaskEditFragmentTimeDialog newFragment =
+						new TaskEditFragmentTimeDialog(
+								c.get(Calendar.MINUTE),
+								c.get(Calendar.HOUR_OF_DAY)
+								);
+				
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
 			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogTime");
-			    
-			    Log.i("EditTime", "Click");
 			}
 		});
 		
@@ -154,11 +161,18 @@ public class TaskEditFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				DialogFragment newFragment = new TaskEditFragmentDateDialog();
+				Date originalDate = new Date(originalDateTime.toMiliseconds());
+				Calendar c = new GregorianCalendar();
+				c.setTime(originalDate);
+				
+				TaskEditFragmentDateDialog newFragment = 
+						new TaskEditFragmentDateDialog(
+								c.get(Calendar.YEAR), 
+								c.get(Calendar.MONTH), 
+								c.get(Calendar.DAY_OF_MONTH));
+				
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
 			    newFragment.show(getActivity().getSupportFragmentManager(), "DialogDate");
-			    Log.i("EditDate", "Click");
 			}
 		});
 		
@@ -238,8 +252,7 @@ public class TaskEditFragment extends Fragment {
 				break;
 		}
 	}
-
-
+	
 
 	private void loadDefaults() {
 		// set date
@@ -327,23 +340,8 @@ public class TaskEditFragment extends Fragment {
 		int selected = priorityGroup.getCheckedRadioButtonId();
 		RadioButton priorityBtn = (RadioButton) taskDetailView.findViewById(selected);
 		int priority = Integer.parseInt(priorityBtn.getText().toString());
-
-		Date originalDate = new Date(originalDateTime.toMiliseconds());
-		Calendar c = new GregorianCalendar();
-		c.setTime(originalDate);
 		
-		// date time
-		// we have to decide what was changed and value, that wasnt changed parse from originalDateTime
-		DateTime dateTime = null; 
-		if(dateString != null && timeString != null) {
-			dateTime = new DateTime(dateString + " " + timeString);
-		} else if (dateString != null && timeString == null) {
-			dateTime = new DateTime(dateString + " " + c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE));
-		} else  if (dateString == null && timeString != null){
-			dateTime = new DateTime(c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + " "+ timeString);
-		} else {
-			dateTime = originalDateTime;
-		}
+		DateTime dateTime = originalDateTime;
 	
 		// Create new changed task
 		Task editedTask =
@@ -370,8 +368,7 @@ public class TaskEditFragment extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		switch(requestCode) {
-		case DIALOG_EDIT_DATE:
-			
+		case DIALOG_EDIT_DATE:		
 			Bundle dateData = data.getExtras();
 			String year = Integer.toString(dateData.getInt("year"));
 			String month = Integer.toString(dateData.getInt("monthOfYear") + 1);
@@ -402,9 +399,28 @@ public class TaskEditFragment extends Fragment {
 				Log.i("Unknown dialog request code", Integer.toString(requestCode));
 				break;
 		}
-
+		
+		// Actualize OriginalTime
+		Date originalDate = new Date(originalDateTime.toMiliseconds());
+		Calendar c = new GregorianCalendar();
+		c.setTime(originalDate);
 		
 		
+		// date time
+		// we have to decide what was changed and value, that wasnt changed parse from originalDateTime
+		DateTime dateTime = null; 
+		if(dateString != null && timeString != null) {
+			dateTime = new DateTime(dateString + " " + timeString);
+		} else if (dateString != null && timeString == null) {
+			dateTime = new DateTime(dateString + " " + c.get(Calendar.HOUR_OF_DAY) + ":" + c.get(Calendar.MINUTE));
+		} else  if (dateString == null && timeString != null){
+			dateTime = new DateTime(c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH) + " "+ timeString);
+		} else {
+			dateTime = originalDateTime;
+		}
+		
+		// Save new OriginalTime
+		originalDateTime = dateTime;
 	}
 
 

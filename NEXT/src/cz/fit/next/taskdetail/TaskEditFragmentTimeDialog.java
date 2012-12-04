@@ -15,13 +15,17 @@ import android.widget.TimePicker;
 
 public class TaskEditFragmentTimeDialog extends DialogFragment  implements TimePickerDialog.OnTimeSetListener {
 
+	private int minute;
+	private int hour;
+	
+	public TaskEditFragmentTimeDialog(int minute, int hours) {
+		super();
+		this.minute = minute;
+		this.hour = hours;
+	}
+
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Get actual time 
-		final Calendar calendar = Calendar.getInstance();
-	    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-	    int minute = calendar.get(Calendar.MINUTE);
-	     
+	public Dialog onCreateDialog(Bundle savedInstanceState) {	     
 	    // Create new TimePickerDialog
 	    return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 	}
