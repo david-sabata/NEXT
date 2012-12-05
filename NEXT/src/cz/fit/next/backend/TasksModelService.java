@@ -189,7 +189,7 @@ public class TasksModelService extends Service {
 		hist.setTimeStamp(new DateTime().toString());
 
 		Task old = getTaskById(task.getId());
-		if (old == null) {
+		if ((old == null) || !old.getProject().getId().equals(proj.getId())) {
 
 			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
 			hist.addChange(TaskHistory.COMPLETED, "",
