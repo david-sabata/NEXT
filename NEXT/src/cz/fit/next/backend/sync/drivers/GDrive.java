@@ -23,7 +23,6 @@ import android.util.Log;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpResponseException;
@@ -53,7 +52,6 @@ public class GDrive {
 	private String AUTH_TOKEN_TYPE = "oauth2:https://www.googleapis.com/auth/drive";
 	private String API_KEY = "457762972644.apps.googleusercontent.com";
 	private String FOLDER_NAME = "NEXT";
-	private String LOCK_PREFIX = "nextlock-";
 
 	/* Constants to identify activities called by startActivityForResult */
 	public int CHOOSE_ACCOUNT = 100;
@@ -76,7 +74,7 @@ public class GDrive {
 	 * Initializes synchronization, performs reauth and 
 	 * determines id of application folder
 	 */
-	public boolean initSync(Context appcontext, SyncService syncserv, String account) {
+	public boolean initSync(Context appcontext, SyncService syncserv, String account) throws IOException,GoogleAuthException {
 		
 		
 		mSyncService = syncserv;
@@ -93,7 +91,7 @@ public class GDrive {
 	/**
 	 * Gets list of files in application folder
 	 */
-	public List<File> list(Context appcontext, SyncService syncserv) {
+	public List<File> list(Context appcontext, SyncService syncserv) throws IOException {
 		//mSyncService = syncserv;
 		//mCallback = cb;
 		
@@ -105,27 +103,18 @@ public class GDrive {
 	/**
 	 * Gets list of files in shared folder
 	 */
-	public List<File> listShared(Context appcontext) {
+	public List<File> listShared(Context appcontext) throws IOException {
 		
 		List<File> res = getSharedFileList(mAppFolder);
 		return res;
 		
 	}
 	
-	/**
-	 * Locks file with given id
-	 */
-	public Boolean lock(String ident) {
-		uploadFile(LOCK_PREFIX + ident,null, mAppFolder);
-		
-		// TODO: Wait some time and check older locks
-		return true;
-	}
 	
 	/**
 	 * Download file with given filename to local storage
 	 */
-	public void download(Context appcontext, String id) {
+	public void download(Context appcontext, String id) throws IOException,GoogleJsonResponseException,HttpResponseException {
 		downloadFile(id, mAppFolder);		
 		
 	}
@@ -133,7 +122,7 @@ public class GDrive {
 	/**
 	 * Deletes file on storage 
 	 * 	 */
-	public void delete(String filename) {
+	public void delete(String filename) throws IOException {
 		String existing = getFileIdByName(filename, mAppFolder);
 		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) deleteFile(existing);
@@ -142,7 +131,7 @@ public class GDrive {
 	/**
 	 * Upload file with given local name to storage with other name
 	 */
-	public void upload(Context appcontext, String filename, String localname) {
+	public void upload(Context appcontext, String filename, String localname) throws IOException {
 		String existing = getFileIdByName(filename, mAppFolder);
 		//if (existing != null) Log.i(TAG,"EXISTS!");
 		if (existing != null) updateFile(existing, localname);
@@ -153,19 +142,12 @@ public class GDrive {
 		if (!f.delete()) Log.e(TAG, "DELETING ERROR!!!!");
 	}
 	
-	/**
-	 * Unlocks file with given id
-	 */
-	public void unlock(String ident) {
-		String id = getFileIdByName(LOCK_PREFIX + ident, mAppFolder);
-		deleteFile(id);
-	}
 	
 	
 	/**
 	 * Starts sharing of file to given google account
 	 */
-	public boolean share(String file, String user, int mode) {
+	public boolean share(String file, String user, int mode) throws IOException {
 		
 		String fileid = getFileIdByName(file, mAppFolder);
 		if (fileid == null) return false;
@@ -190,7 +172,7 @@ public class GDrive {
 	 * Move file on remote storage to my folder
 	 */
 	
-	public void move(String fileid) {
+	public void move(String fileid) throws IOException {
 		moveFile(fileid, mAppFolder);
 	}
 	
@@ -198,7 +180,7 @@ public class GDrive {
 	/**
 	 * Get userlist of one file
 	 */
-	public List<UserPerm> getUserList(String fileid) {
+	public List<UserPerm> getUserList(String fileid) throws IOException {
 		List<UserPerm> result = new ArrayList<UserPerm>();
 		List<Permission> perms = getPermissions(fileid);
 		
@@ -229,7 +211,7 @@ public class GDrive {
 	/**
 	 * Invalidates token and makes new one
 	 */
-	private boolean reauth(Context appcontext) {
+	private boolean reauth(Context appcontext) throws IOException,GoogleAuthException,IllegalArgumentException {
 		AccountManager am = AccountManager.get(appcontext);
 		am.invalidateAuthToken("com.google", null);
 		if (mAccountName == null) return false;
@@ -246,7 +228,7 @@ public class GDrive {
 	/**
 	 * Gets Access Token to Google Drive
 	 */
-	private String getGoogleAccessToken(Activity main, Context appcontext, Account account) {
+	private String getGoogleAccessToken(Activity main, Context appcontext, Account account) throws IOException,GoogleAuthException,IllegalArgumentException {
 		String retval = null;
 
 		try {
@@ -257,12 +239,6 @@ public class GDrive {
 			Log.e(TAG, e.toString());
 			handleAuthException(e.getIntent());
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (GoogleAuthException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			retval = null;
 		}
 		
 		// Finish login activity, if exists
@@ -337,39 +313,36 @@ public class GDrive {
 	 * Returns id of app folder in storage 
 	 * 
 	 */
-	private String getAppFolderId() {
+	private String getAppFolderId() throws IOException {
 		
 		
 		FileList flist = null;
 		Files.List request = null;
 		String nextDirId = new String();
 		
-		try {
-			// Determine the folder id
-			request = mService.files().list();
-			String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
-			request = request.setQ(q);
+	
+		// Determine the folder id
+		request = mService.files().list();
+		String q = "mimeType = 'application/vnd.google-apps.folder' and title = '" + FOLDER_NAME + "'";
+		request = request.setQ(q);
 
-			flist = request.execute();
-			if (flist.getItems().size() > 0) {
-				nextDirId = flist.getItems().get(0).getId();
-				Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
-			} else // Create new NEXT folder
-			{
-				Log.e(TAG, "NEXT folder not found, creating.");
+		flist = request.execute();
+		if (flist.getItems().size() > 0) {
+			nextDirId = flist.getItems().get(0).getId();
+			Log.e(TAG, "ID of NEXT directory is: " + nextDirId);
+		} else // Create new NEXT folder
+		{
+			Log.e(TAG, "NEXT folder not found, creating.");
 
-				File body = new File();
-				body.setTitle(FOLDER_NAME);
-				// body.setDescription("");
-				body.setMimeType("application/vnd.google-apps.folder");
-				mService.files().insert(body).execute();
-				getAppFolderId();				
-			}
-			
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			File body = new File();
+			body.setTitle(FOLDER_NAME);
+			// body.setDescription("");
+			body.setMimeType("application/vnd.google-apps.folder");
+			mService.files().insert(body).execute();
+			getAppFolderId();				
 		}
+
+		
 		mAppFolder = nextDirId;
 		return nextDirId;
 		
@@ -379,33 +352,29 @@ public class GDrive {
 	/**
 	 * Returns file id by its name
 	 */
-	private String getFileIdByName(String name, String appFolder) {
+	private String getFileIdByName(String name, String appFolder) throws IOException {
 		
 		String res = null;
 		
 		FileList flist = null;
 		Files.List request = null;
 				
-		try {
-						
-			// Get File By Name
-			request = mService.files().list();
-			String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false";
-			request = request.setQ(q);
-
-			flist = request.execute();
 		
-			if (flist.getItems().size() > 0) {
-				res = flist.getItems().get(0).getId();
-			} else {
-				res = null;
-			}
-			
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-			return null;
+					
+		// Get File By Name
+		request = mService.files().list();
+		String q = "title = '" + name + "' and '" + appFolder + "' in parents and trashed = false";
+		request = request.setQ(q);
+
+		flist = request.execute();
+	
+		if (flist.getItems().size() > 0) {
+			res = flist.getItems().get(0).getId();
+		} else {
+			res = null;
 		}
+			
+		
 
 		return res;
 	}
@@ -414,39 +383,34 @@ public class GDrive {
 	/**
 	 * Returns filelist of application folder
 	 */
-	private List<File> getFileList(String appFolder) {
+	private List<File> getFileList(String appFolder) throws IOException {
 
-				FileList flist = null;
-				Files.List request = null;
-		
-				List<File> res = new ArrayList<File>();
+		FileList flist = null;
+		Files.List request = null;
 
-				try {
-					
-					// Download filelist
-					flist = null;
-					request = null;
-					;
-					request = mService.files().list();
-					String q = "'" + appFolder + "' in parents and trashed = false";
-					// q = "not 'me' in owners";
-					request = request.setQ(q);
+		List<File> res = new ArrayList<File>();
 
-					do {
-						flist = request.execute();
-						res.addAll(flist.getItems());
-						request = request.setPageToken(flist.getNextPageToken());
-						//Log.e(TAG, "New page token: " + flist.getNextPageToken());
-					} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
+		// Download filelist
+		flist = null;
+		request = null;
+		;
+		request = mService.files().list();
+		String q = "'" + appFolder + "' in parents and trashed = false";
+		// q = "not 'me' in owners";
+		request = request.setQ(q);
 
-					//Log.e(TAG, "Pocet souboru: " + res.size());
+		do {
+			flist = request.execute();
+			res.addAll(flist.getItems());
+			request = request.setPageToken(flist.getNextPageToken());
+			//Log.e(TAG, "New page token: " + flist.getNextPageToken());
+		} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-				} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+		//Log.e(TAG, "Pocet souboru: " + res.size());
 
-				return res;
+	
+
+		return res;
 
 
 	}
@@ -455,46 +419,40 @@ public class GDrive {
 	/**
 	 * Returns list of shared files, which are not in application folder
 	 */
-	private List<File> getSharedFileList(String appFolder) {
+	private List<File> getSharedFileList(String appFolder) throws IOException {
 
 		FileList flist = null;
 		Files.List request = null;
 		List<File> res = new ArrayList<File>();
 		List<File> filtered = new ArrayList<File>();
 
-		try {
+	
+		// Download filelist
+		flist = null;
+		request = null;
 
-			// Download filelist
-			flist = null;
-			request = null;
+		request = mService.files().list();
+		String q = "not 'me' in owners and not '" + appFolder + "' in parents and trashed = false";
+		// Log.i(TAG, q);
+		request = request.setQ(q);
 
-			request = mService.files().list();
-			String q = "not 'me' in owners and not '" + appFolder + "' in parents and trashed = false";
-			// Log.i(TAG, q);
-			request = request.setQ(q);
+		do {
+			flist = request.execute();
+			res.addAll(flist.getItems());
+			request = request.setPageToken(flist.getNextPageToken());
+			//Log.e(TAG, "New page token: " + flist.getNextPageToken());
+		} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
 
-			do {
-				flist = request.execute();
-				res.addAll(flist.getItems());
-				request = request.setPageToken(flist.getNextPageToken());
-				//Log.e(TAG, "New page token: " + flist.getNextPageToken());
-			} while (flist.getNextPageToken() != null && flist.getNextPageToken().length() > 0);
-
-			//Log.e(TAG, "Pocet sdilenych souboru: " + res.size());
-			
-			// Exclude files with bad names
-			for (int i = 0; i < res.size(); i++) {
-				String title = res.get(i).getTitle();
-				Log.i(TAG, title);
-				if (title.contains(".nextproj.html")) 
-				{
-					filtered.add(res.get(i));
-				}
+		//Log.e(TAG, "Pocet sdilenych souboru: " + res.size());
+		
+		// Exclude files with bad names
+		for (int i = 0; i < res.size(); i++) {
+			String title = res.get(i).getTitle();
+			Log.i(TAG, title);
+			if (title.contains(".nextproj.html")) 
+			{
+				filtered.add(res.get(i));
 			}
-
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
 		}
 
 		return filtered;
@@ -506,58 +464,38 @@ public class GDrive {
 	/*
 	 * Downloads file
 	 */
-	private void downloadFile(String id, String appFolder) {
+	private void downloadFile(String id, String appFolder) throws IOException,GoogleJsonResponseException,HttpResponseException {
 
 		File dfile;
-		try {
-			dfile = mService.files().get(id).execute();
-			String token = mService.files().get(id).getOauthToken();
-			String name = dfile.getTitle();
+		dfile = mService.files().get(id).execute();
+		String token = mService.files().get(id).getOauthToken();
+		String name = dfile.getTitle();
 
-			//Log.i(TAG, "URL: " + dfile.getDownloadUrl());
+		//Log.i(TAG, "URL: " + dfile.getDownloadUrl());
 
-			if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
-				OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);
+		if (dfile.getDownloadUrl() != null && dfile.getDownloadUrl().length() > 0) {
+			OutputStream os = mSyncService.openFileOutput(name, Context.MODE_PRIVATE);
 
-				// HttpResponse resp = mService.getRequestFactory()
-				// .buildGetRequest(new
-				// GenericUrl(dfile.getDownloadUrl())).execute();
+			// HttpResponse resp = mService.getRequestFactory()
+			// .buildGetRequest(new
+			// GenericUrl(dfile.getDownloadUrl())).execute();
 
-				HttpClient client = new DefaultHttpClient();
-				HttpGet get = new HttpGet(dfile.getDownloadUrl());
-				get.setHeader("Authorization", "Bearer " + token);
-				org.apache.http.HttpResponse response = client.execute(get);
+			HttpClient client = new DefaultHttpClient();
+			HttpGet get = new HttpGet(dfile.getDownloadUrl());
+			get.setHeader("Authorization", "Bearer " + token);
+			org.apache.http.HttpResponse response = client.execute(get);
 
 
-				InputStream is = response.getEntity().getContent();
+			InputStream is = response.getEntity().getContent();
 
-				byte[] buffer = new byte[1024];
-				int bytesRead;
-				while ((bytesRead = is.read(buffer)) != -1) {
-					os.write(buffer, 0, bytesRead);
-				}
-
-				os.close();
-
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = is.read(buffer)) != -1) {
+				os.write(buffer, 0, bytesRead);
 			}
 
+			os.close();
 
-
-		} catch (GoogleJsonResponseException e) {
-			GoogleJsonError error = e.getDetails();
-
-			Log.e(TAG, "Error code" + error.getCode());
-			Log.e(TAG, "Error message: " + error.getMessage());
-			// More error information can be retrieved with
-			// error.getErrors().
-		} catch (HttpResponseException e) {
-			// No Json body was returned by the API.
-			Log.e(TAG, "HTTP Status code: " + e.getStatusCode());
-			Log.e(TAG, "HTTP Reason: " + e.getLocalizedMessage());
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 
@@ -567,40 +505,31 @@ public class GDrive {
 	/**
 	 * Uploads file from "localname" to "appfolder"/"name" on storage
 	 */
-	private void uploadFile(String name, String localname, String appFolder) {
+	private void uploadFile(String name, String localname, String appFolder) throws IOException {
 
 				
-		try {
-			
-			// Upload file
-
-			// File's metadata.
-			File body = new File();
-			body.setTitle(name);
-			// body.setDescription("");
-			body.setMimeType("text/plain");
-			List<ParentReference> parents = new ArrayList<ParentReference>();
-			parents.add((new ParentReference()).setId(mAppFolder));
-			body.setParents(parents);
-
-			java.io.File fileContent = null;
-			FileContent mediaContent = null;
-			
-			// File's content.
-			if (localname != null) {
-				fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
-				mediaContent = new FileContent("text/plain", fileContent);
-				mService.files().insert(body,mediaContent).execute();
-			} else {			
-
-				mService.files().insert(body).execute();
-			}
-
-
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// Upload file
+	
+		// File's metadata.
+		File body = new File();
+		body.setTitle(name);
+		// body.setDescription("");
+		body.setMimeType("text/plain");
+		List<ParentReference> parents = new ArrayList<ParentReference>();
+		parents.add((new ParentReference()).setId(mAppFolder));
+		body.setParents(parents);
+	
+		java.io.File fileContent = null;
+		FileContent mediaContent = null;
+		
+		// File's content.
+		if (localname != null) {
+			fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+			mediaContent = new FileContent("text/plain", fileContent);
+			mService.files().insert(body,mediaContent).execute();
+		} else {			
+	
+			mService.files().insert(body).execute();
 		}
 
 	}
@@ -609,29 +538,24 @@ public class GDrive {
 	/**
 	 * Uploads file from "localname" to "appfolder"/"name" on storage
 	 */
-	private void updateFile(String fileid, String localname) {
+	private void updateFile(String fileid, String localname) throws IOException {
 
 				
-		try {
+	
 			
-			// Update file
+		// Update file
 
-			java.io.File fileContent = null;
-			FileContent mediaContent = null;
-			
-			// File's content.
-			if (localname != null) {
-				fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
-				mediaContent = new FileContent("text/plain", fileContent);
-				mService.files().update(fileid, null, mediaContent).execute();
-			}
-
-
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		java.io.File fileContent = null;
+		FileContent mediaContent = null;
+		
+		// File's content.
+		if (localname != null) {
+			fileContent = new java.io.File(mSyncService.getFilesDir() + "/" + localname);
+			mediaContent = new FileContent("text/plain", fileContent);
+			mService.files().update(fileid, null, mediaContent).execute();
 		}
+
+
 
 	}
 	
@@ -639,24 +563,21 @@ public class GDrive {
 	/**
 	 * Moves file to "appfolder"-id on storage
 	 */
-	private void moveFile(String fileid, String appfolder) {
+	private void moveFile(String fileid, String appfolder)  throws IOException {
 
 				
-		try {
-			// get old file
-			File dfile = mService.files().get(fileid).execute();
-			
-			// Change file's metadata.
-			List<ParentReference> parents = dfile.getParents();
-			parents.add((new ParentReference()).setId(appfolder));
-			dfile.setParents(parents);
-			
-			mService.files().update(fileid, dfile).execute();
+	
+		// get old file
+		File dfile = mService.files().get(fileid).execute();
+		
+		// Change file's metadata.
+		List<ParentReference> parents = dfile.getParents();
+		parents.add((new ParentReference()).setId(appfolder));
+		dfile.setParents(parents);
+		
+		mService.files().update(fileid, dfile).execute();
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
 
 	}
 	
@@ -665,21 +586,13 @@ public class GDrive {
 	/**
 	 * Delete file in app folder
 	 */
-	private void deleteFile(String id) {
+	private void deleteFile(String id) throws IOException {
 
 				
-		try {
 			// Delete file
 			mService.files().delete(id).execute();
 			
 			Log.i(TAG, "Deleted ");
-
-
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 	
@@ -687,7 +600,7 @@ public class GDrive {
 	 * Set/update permission on file
 	 */
 	
-	private boolean setPermissions(String fileid, String gmail, int mode) {
+	private boolean setPermissions(String fileid, String gmail, int mode) throws IOException {
 		Permission newPermission = new Permission();
 
 	    newPermission.setValue(gmail);
@@ -697,12 +610,9 @@ public class GDrive {
 	    } else {
 	    	newPermission.setRole("writer"); //owner,writer,reader
 	    }
-	    try {
-	      mService.permissions().insert(fileid, newPermission).execute();
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    	return false;
-	    }
+	    
+	    mService.permissions().insert(fileid, newPermission).execute();
+	   
 	    
 	    return true;
 	  
@@ -713,18 +623,13 @@ public class GDrive {
 	 * Get permissions of file
 	 */
 	
-	List<Permission> getPermissions(String fileid) {
+	List<Permission> getPermissions(String fileid) throws IOException {
 		PermissionList permissions = null;
 		
-		try {
-			permissions = mService.permissions().list(fileid).execute();
-			return permissions.getItems();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		return null;
+		permissions = mService.permissions().list(fileid).execute();
+		return permissions.getItems();
+		
 
 	}
 	

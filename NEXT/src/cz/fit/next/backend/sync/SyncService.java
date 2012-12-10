@@ -26,6 +26,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.api.services.drive.model.File;
 
 import cz.fit.next.R;
@@ -185,7 +186,7 @@ public class SyncService extends Service {
 
 		@Override
 		protected Object doInBackground(Void... params) {
-
+			try {
 
 			boolean retval = drive.initSync(getApplicationContext(),
 					getInstance(), mAccountName);
@@ -433,10 +434,10 @@ public class SyncService extends Service {
 					parser.writeFile(getApplicationContext(), getFilesDir()
 							+ "/" + resultProjects.get(i).getId());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
 					e.printStackTrace();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
 					e.printStackTrace();
 				}
 
@@ -472,6 +473,15 @@ public class SyncService extends Service {
 			} else
 
 				return null;
+			
+			
+			} catch (IOException e) {
+				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
+				return null;
+			} catch (GoogleAuthException e) {
+				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
+				return null;	
+			}
 		}
 
 		@Override
@@ -608,7 +618,12 @@ public class SyncService extends Service {
 		@Override
 		protected Void doInBackground(Object... param) {
 			String filename = title + "-" + id + ".nextproj.html";
-			Boolean res = drive.share(filename, user, GDrive.WRITE );
+			Boolean res = false;
+			try {
+				res = drive.share(filename, user, GDrive.WRITE );
+			} catch (IOException e) {
+				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			}
 			Log.i(TAG, "Sharing res" + res.toString());
 			if (!res) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			
