@@ -1,10 +1,10 @@
 package cz.fit.next.backend;
 
-import java.util.Calendar;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class DateTime {
+public class DateTime implements Serializable {
 
 	/**
 	 * Format supported for parsing
