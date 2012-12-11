@@ -495,12 +495,14 @@ public class SyncService extends Service {
 			if (param != null) {
 				if (((returnObject) param).sharedCount > 0) {
 					displaySharedNotification(((returnObject) param).sharedCount);
+					AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 5);
+					alarm.run();
 				}
 			}
 
 			// Plan next synchronization
 			// TODO: Variable interval
-			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 20);
+			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
 			
 			// Send broadcast for indicate end of sync
 			Intent broadcast = new Intent();
