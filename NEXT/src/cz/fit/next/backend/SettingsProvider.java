@@ -5,9 +5,14 @@ import android.content.Context;
 
 public class SettingsProvider {
 
-	private static final String PREF_FILE_NAME = "NextPreferences";
-	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
+	/* KEYS */
+	public static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
+	public static final String PREF_SYNC_ENABLED = "PREF_SYNC_ENABLED";
+	public static final String PREF_SYNC_INTERVAL = "PREF_SYNC_INTERVAL";
 	
+	
+	private static final String PREF_FILE_NAME = "NextPreferences";
+		
 	private Context mContext;
 	
 	public SettingsProvider(Context context) {
@@ -39,7 +44,7 @@ public class SettingsProvider {
 	
 	
 	/*
-	 * Wrappers to store or get another types of data
+	 * Wrappers to store another types of data
 	 */
 	
 	public void storeBoolean(String key, Boolean content) {
@@ -55,16 +60,44 @@ public class SettingsProvider {
 	}
 	
 	
-	public String getString(String key) {
+	
+	/**
+	 * Gets string from given key, if not exists, returns default
+	 * @param key
+	 * @param def Default value
+	 * @return
+	 */
+	public String getString(String key, String def) {
+		String val = getPreference(key);
+		if (val != null) return val;
+		else return def;
+		
 		
 	}	
 	
-	public Boolean getBoolean(String key) {
+	/**
+	 * Gets bool from given key, if not exists, returns default
+	 * @param key
+	 * @param def Default value
+	 * @return
+	 */
+	public boolean getBoolean(String key, boolean def) {
+		String val = getPreference(key);
+		if (val != null) return Boolean.valueOf(val);
+		else return def;
 		
 	}
 	
-	public int getNum(String key) {
-		
+	/**
+	 * Gets int from given key, if not exists, returns default
+	 * @param key
+	 * @param def Default value
+	 * @return
+	 */
+	public int getNum(String key, int def) {
+		String val = getPreference(key);
+		if (val != null) return Integer.parseInt(val);
+		else return def;
 	}
 	
 }
