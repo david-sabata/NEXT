@@ -32,6 +32,7 @@ import com.google.api.services.drive.model.File;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
+import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.database.Constants;
@@ -77,11 +78,8 @@ public class SyncService extends Service {
 
 		Log.i(TAG, "onStart");
 
-
-		// Reload stored preferences
-		SharedPreferences settings = getSharedPreferences(PREF_FILE_NAME,
-				MODE_PRIVATE);
-		mAccountName = settings.getString(PREF_ACCOUNT_NAME, null);
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		mAccountName = sp.getString(SettingsProvider.PREF_ACCOUNT_NAME, null);
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
