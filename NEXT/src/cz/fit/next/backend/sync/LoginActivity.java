@@ -3,6 +3,8 @@ package cz.fit.next.backend.sync;
 
 import com.google.android.gms.common.AccountPicker;
 
+import cz.fit.next.backend.SettingsProvider;
+
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -64,11 +66,8 @@ public class LoginActivity extends Activity {
 			//AuthorizeGoogleDriveClass auth = new AuthorizeGoogleDriveClass();
     		//auth.execute((Void)null); 
 			
-			// save username into permanent storage
-			SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-			SharedPreferences.Editor editor = preferences.edit();
-			editor.putString(PREF_ACCOUNT_NAME, mAccountName);
-			editor.commit();
+			SettingsProvider sp = new SettingsProvider(getApplicationContext());
+			sp.storeString(SettingsProvider.PREF_ACCOUNT_NAME, mAccountName);
 			
 			Intent i = new Intent(LoginActivity.this, SyncService.class);
 			Bundle b = new Bundle();

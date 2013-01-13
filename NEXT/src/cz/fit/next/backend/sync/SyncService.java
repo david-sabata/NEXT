@@ -18,7 +18,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,8 +44,6 @@ import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
 public class SyncService extends Service {
 
 	private String TAG = "NEXT SyncService";
-	private static final String PREF_FILE_NAME = "SyncServicePref";
-	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
 	
 	public static final String BROADCAST_SYNC_START = "cz.fit.next.BROADCAST_SYNC_START";
 	public static final String BROADCAST_RELOAD = "cz.fit.next.BROADCAST_RELOAD";
