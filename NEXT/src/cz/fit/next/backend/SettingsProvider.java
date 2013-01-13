@@ -4,6 +4,20 @@ import android.content.SharedPreferences;
 import android.content.Context;
 
 public class SettingsProvider {
+	
+	/* USAGE:
+	 * 
+	 * (PREF_ACCOUNT_NAME is example of key used for google account storage)
+	 * 
+	 * SettingsProvider sp = new SettingsProvider(getApplicationContext());
+	 * 
+	 * get:
+	 * 		String s = sp.getString(SettingsProvider.PREF_ACCOUNT_NAME, default_string_if_key_not_found);
+	 * 
+	 * set:
+	 * 		sp.storeString(SettingsProvider.PREF_ACCOUNT_NAME, string_to_store);
+	 * 
+	 */
 
 	/* KEYS */
 	public static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
