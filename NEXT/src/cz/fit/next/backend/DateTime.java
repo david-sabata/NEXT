@@ -1,6 +1,7 @@
 package cz.fit.next.backend;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -137,9 +138,9 @@ public class DateTime implements Serializable {
 		GregorianCalendar c = new GregorianCalendar();
 		c.setTimeInMillis(mTimestamp);
 
-		c.set(GregorianCalendar.YEAR, year);
-		c.set(GregorianCalendar.MONTH, month - 1); // JANUARY == 0
-		c.set(GregorianCalendar.DAY_OF_MONTH, day);
+		c.set(Calendar.YEAR, year);
+		c.set(Calendar.MONTH, month - 1); // JANUARY == 0
+		c.set(Calendar.DAY_OF_MONTH, day);
 
 		mTimestamp = c.getTimeInMillis();
 		setIsSomeday(false);
@@ -156,9 +157,9 @@ public class DateTime implements Serializable {
 		GregorianCalendar c = new GregorianCalendar();
 		c.setTimeInMillis(mTimestamp);
 
-		c.set(GregorianCalendar.HOUR_OF_DAY, hour);
-		c.set(GregorianCalendar.MINUTE, minute);
-		c.set(GregorianCalendar.SECOND, 0);
+		c.set(Calendar.HOUR_OF_DAY, hour);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, 0);
 
 		mTimestamp = c.getTimeInMillis();
 		resetMilis();

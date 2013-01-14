@@ -6,6 +6,5 @@
         
     </item>
     <item android:id="@+id/setting_connect_drive" android:title="@string/SettingsConnectToDrive"></item>
-    <item android:id="@+id/setting_read_file" android:title="@string/SettingsReadFile"></item>
     <item android:id="@+id/menu_sync_now" android:title="@string/menuSyncNow"></item>
 </menu>

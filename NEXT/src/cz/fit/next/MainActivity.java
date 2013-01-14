@@ -188,12 +188,20 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
+		FanView fan = (FanView) findViewById(R.id.fan_view);
+		
 		switch (item.getItemId()) {
+		
 			case android.R.id.home:
-				FanView fan = (FanView) findViewById(R.id.fan_view);
 				fan.showMenu();
 				break;
 
+			// Switch to settings fragment
+			case R.id.menu_settings:
+				Fragment settingsFragment = new SettingsFragment();
+				fan.replaceMainFragment(settingsFragment);	
+				break;
+				
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
 
@@ -208,18 +216,6 @@ public class MainActivity extends Activity {
 
 				break;
 
-			case R.id.setting_read_file:
-				Log.i(LOG_TAG, "JSON Read File");
-
-				// Just for debugging
-				//JavaParser parser = new JavaParser();
-				//parser.setFile("file.html");
-				//Project project = parser.getProject();
-				//ArrayList<Task> tasks = parser.getTasks(project);
-
-				//ArrayList<TaskHistory> histories = parser.getHistory();
-
-				break;
 
 			case R.id.menu_sync_now:
 				// tell synchronization service to start sync

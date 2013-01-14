@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/SettingsSynchronizationTitle"
+        android:key="pref_key_synchro_setting">
+        <SwitchPreference 
+            android:key="PREF_SYNC_ENABLED"
+            android:title="@string/SettingsSynchronizationActiveTitle"
+            android:summary="@string/SettingsSynchronizationActiveSummary"
+            android:defaultValue="off"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>
