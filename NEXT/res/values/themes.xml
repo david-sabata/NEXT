@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
+    <style name="ThemeNext"  parent="android:Theme.Holo.Light">
+    </style>
+    
+    <style name="ThemeNext.Light" >
 	    <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Light</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Light</item>

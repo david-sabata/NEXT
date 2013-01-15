@@ -40,7 +40,9 @@
 
                 <LinearLayout style="?taskLineSeparatorCategories" />
 
-                <CheckBox style="?taskCompleted"/>
+                <CheckBox
+                     android:id="@+id/IsCompleted"
+                     style="?taskCompleted"/>
             </LinearLayout>
 
             <LinearLayout
