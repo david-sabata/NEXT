@@ -129,6 +129,68 @@
          <item name="android:layout_marginTop">@dimen/TaskBodySubLayout</item>
 	</style>
 	
+	<!-- GENERAL  Title layout GENERAL -->
+	<style name="Next.Task.TitleLayout">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2.10</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/TaskTittlePadding</item>
+        <item name="android:paddingTop">@dimen/TaskTitlePaddingTop</item>
+	</style>
+	
+		<style name="Next.Task.TitleLayout.ShowFragment">
+			<!-- FOR FUTURE -->
+		</style>
+		<style name="Next.Task.TitleLayout.EditFragment">
+			<!-- FOR FUTURE -->
+		</style>
+	    
+		<!-- GENERAL STYLE OF TITLE TEXT -->
+		<style name="Next.Task.Title">
+	        <item name="android:layout_width">wrap_content</item>
+	        <item name="android:layout_height">wrap_content</item>
+	        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+	        <item name="android:hint">Task title</item>
+	        <item name="android:inputType">textMultiLine</item>
+	        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+	        <item name="android:textSize">@dimen/TaskTitleSize</item>
+		</style>
+		
+			<style name="Next.Task.Title.ShowFragment">
+				<!-- FOR FUTURE -->
+			</style>
+			<style name="Next.Task.Title.EditFragment">
+				<!-- FOR FUTURE -->
+			</style>
+			
+	<!--  GENERAL HUGE LINE UNDER TITLE -->
+	<style name="Next.Task.LineUnderTitle">
+	     <item name="android:layout_width">match_parent</item>
+         <item name="android:layout_height">3dp</item>
+         <item name="android:layout_weight">2.10</item>
+         <item name="android:orientation">vertical</item>
+	</style>
+	
+	<!-- GENERAL LINE SEPARATOR BETWEEN CATEGORIES (COMPLETED, DATE, ETC..  -->
+	<style name="Next.Task.LineSeparatorCatagories">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:layout_marginRight">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:orientation">vertical</item>
+	</style>
+	
+	<!-- GENERAL CHECKBOX IF COMPLETED -->
+	<style name="Next.Task.CheckboxCompleted">
+	    <item name="android:id">@+id/IsCompleted</item>
+        <item name="android:layout_width">123dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/TaskBodyPadding</item>
+        <item name="android:clickable">false</item>
+        <item name="android:text">@string/TaskCompleted</item>
+	</style>
+	
 	<!--  ******************************************************* -->
 	<!--  *** Style for light design - ONE TASK DETAIL (EDIT) *** -->
 	<!--  ******************************************************* -->		
@@ -140,6 +202,33 @@
 			<item name="android:background">@android:color/background_light</item>
 		</style>    
 		
+		<!-- Title Layout -->
+		<style name="Next.Task.TitleLayout.ShowFragment.Light">
+		    <item name="android:background">@color/TaskTitleBackground</item>
+		</style>
+		
+			<style name="Next.Task.TitleLayout.EditFragment.Light">	
+			    <!-- FOR FUTURE -->
+			</style>
+		
+				<style name="Next.Task.Title.ShowFragment.Light">
+				    <item name="android:background">@color/TaskTitleBackground</item>
+				    <item name="android:textColor">@color/TaskTitleColor</item>
+				</style>
+				
+				<style name="Next.Task.Title.EditFragment.Light">
+				    <item name="android:textColor">@android:color/holo_blue_light</item>
+				</style>
+		
+		<!-- Line under title -->
+		<style name="Next.Task.LineUnderTitle.Light">
+		    <item name="android:background">@color/TaskRuller</item>
+		</style>
+		
+		<!-- Lena separator between categories -->
+		<style name="Next.Task.LineSeparatorCatagories.Light">
+		     <item name="android:background">@color/TaskRuller</item>
+		</style>
 		
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
     <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">

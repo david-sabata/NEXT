@@ -69,5 +69,6 @@
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
     <string name="SettingsSynchronizationActiveTitle">Synchronization</string>
     <string name="SettingsSynchronizationActiveSummary">Turn on / off synchronization with Google Drive</string>
+    <string name="TaskCompleted">Completed</string>
     
 </resources>

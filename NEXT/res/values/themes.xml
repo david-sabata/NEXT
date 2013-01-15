@@ -8,9 +8,16 @@
 	    <item name="sidebarHorizontalLine">@style/Next.Sidebar.HorizontalLine.Light</item>
 	    <item name="sidebarSubtitle">@style/Next.Sidebar.Subtitle.Light</item>
         
-	    <!-- Task Edit references to style -->
+	    <!-- Task Show(Edit) references to style -->
 	    <item name="capsText">@style/Next.Task.Capstext.Light</item>
 	    <item name="taskScrollView">@style/Next.Task.ScrollView.Light</item>
 	    <item name="taskSubLayout">@style/Next.Task.SubLayout</item>
-    </style>
+	    <item name="taskTitleLayoutShowFragment">@style/Next.Task.TitleLayout.ShowFragment.Light</item>
+	    <item name="taskTitleLayoutEditFragment">@style/Next.Task.TitleLayout.EditFragment.Light</item>
+   		<item name="taskTitleShowFragment">@style/Next.Task.Title.ShowFragment.Light</item>
+	    <item name="taskTitleEditFragment">@style/Next.Task.Title.EditFragment.Light</item>
+   		<item name="taskLineUnderTitle">@style/Next.Task.LineUnderTitle.Light</item>
+   		<item name="taskLineSeparatorCategories">@style/Next.Task.LineSeparatorCatagories.Light</item>
+   		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
+	    </style>
 </resources>

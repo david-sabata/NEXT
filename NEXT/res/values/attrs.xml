@@ -12,12 +12,19 @@
     <!--  Task detail (edit) references to styles -->
     <attr name="taskScrollView" format="reference" />
     <attr name="taskSubLayout" format="reference" />
-    <!--  <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />  -->
+    <attr name="taskTitleLayoutShowFragment" format="reference" />
+    <attr name="taskTitleLayoutEditFragment" format="reference" />
+    <attr name="taskTitleShowFragment" format="reference" />
+    <attr name="taskTitleEditFragment" format="reference" />
+    <attr name="taskLineUnderTitle" format="reference" />
+    <attr name="taskLineSeparatorCategories" format="reference" />
+    <attr name="taskCompleted" format="reference" /> 
+    <!-- <attr name="" format="reference" />
+     <attr name="" format="reference" />
+     <attr name="" format="reference" />
+     <attr name="" format="reference" /> 
+     <attr name="" format="reference" />
+     <attr name="" format="reference" />
+     <attr name="" format="reference" />-->
      
 </resources>
