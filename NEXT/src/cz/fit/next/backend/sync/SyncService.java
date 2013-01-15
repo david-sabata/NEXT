@@ -1,6 +1,8 @@
 package cz.fit.next.backend.sync;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -575,13 +579,22 @@ public class SyncService extends Service {
 	 */
 	public void synchronize() {
 
-		// Send broadcast for indicate sync
-		Intent broadcast = new Intent();
-		broadcast.setAction(BROADCAST_SYNC_START);
-		sendBroadcast(broadcast);
-		
-		SynchronizeClass cls = new SynchronizeClass();
-		cls.execute();
+		if (!isNetworkAvailable()) {
+			// Plan next synchronization only
+			// TODO: Variable interval
+			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
+			// alarm.run();
+		}
+		else
+		{
+			// Send broadcast for indicate sync
+			Intent broadcast = new Intent();
+			broadcast.setAction(BROADCAST_SYNC_START);
+			sendBroadcast(broadcast);
+			
+			SynchronizeClass cls = new SynchronizeClass();
+			cls.execute();
+		}
 	}
 	
 	/**
@@ -689,5 +702,16 @@ public class SyncService extends Service {
 		mNotificationManager.notify(notid, mBuilder.getNotification());
 	}
 
-
+	
+	/**
+	 * Determines, if there is functional network connection
+	 * @return boolean state
+	 */
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
+	}
+	
 }
