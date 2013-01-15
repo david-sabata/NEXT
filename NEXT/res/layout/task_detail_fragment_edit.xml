@@ -57,13 +57,9 @@
 
                 <EditText
                     android:id="@+id/editDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:ems="10"
-                    android:hint="Fill some description"
-                    android:inputType="textMultiLine"
-                    android:textSize="@dimen/TaskSubTextSize" />
+                    style="?taskCategoriesText"
+                    android:inputType="text"
+                    android:hint="Fill some description" />
             </LinearLayout>
 
             <LinearLayout
@@ -186,13 +182,9 @@
 
                 <EditText
                     android:id="@+id/editContext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:ems="10"
+                    style="?taskCategoriesText"
                     android:hint="Fill some context"
-                    android:inputType="text"
-                    android:textSize="@dimen/TaskSubTextSize" />
+                    android:inputType="text" />
             </LinearLayout>
 
             <LinearLayout

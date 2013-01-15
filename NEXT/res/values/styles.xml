@@ -191,6 +191,17 @@
         <item name="android:text">@string/TaskCompleted</item>
 	</style>
 	
+	<!-- GENERAL LAYOUT FOR TEXT OF CATEGORIES IN SHOW FRAGMENT -->
+	<style name="Next.Task.CategoriesText">
+    	<item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:ems">10</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:textSize">@dimen/TaskSubTextSize</item> 
+        
+	</style>
 	<!--  ******************************************************* -->
 	<!--  *** Style for light design - ONE TASK DETAIL (EDIT) *** -->
 	<!--  ******************************************************* -->		
@@ -228,7 +239,7 @@
 		<!-- Lena separator between categories -->
 		<style name="Next.Task.LineSeparatorCatagories.Light">
 		     <item name="android:background">@color/TaskRuller</item>
-		</style>
+		</style> 
 		
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
     <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">

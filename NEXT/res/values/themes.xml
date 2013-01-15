@@ -19,5 +19,6 @@
    		<item name="taskLineUnderTitle">@style/Next.Task.LineUnderTitle.Light</item>
    		<item name="taskLineSeparatorCategories">@style/Next.Task.LineSeparatorCatagories.Light</item>
    		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
-	    </style>
+   		<item name="taskCategoriesText">@style/Next.Task.CategoriesText</item>
+	  </style>
 </resources>

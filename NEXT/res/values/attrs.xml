@@ -19,8 +19,8 @@
     <attr name="taskLineUnderTitle" format="reference" />
     <attr name="taskLineSeparatorCategories" format="reference" />
     <attr name="taskCompleted" format="reference" /> 
-    <!-- <attr name="" format="reference" />
-     <attr name="" format="reference" />
+    <attr name="taskCategoriesText" format="reference" />
+    <!--  <attr name="" format="reference" />
      <attr name="" format="reference" />
      <attr name="" format="reference" /> 
      <attr name="" format="reference" />
