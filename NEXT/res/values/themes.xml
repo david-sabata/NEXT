@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     
     <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
 	    <!-- Sidebar references to styles -->
@@ -8,5 +8,9 @@
 	    <item name="sidebarHorizontalLine">@style/Next.Sidebar.HorizontalLine.Light</item>
 	    <item name="sidebarSubtitle">@style/Next.Sidebar.Subtitle.Light</item>
         
+	    <!-- Task Edit references to style -->
+	    <item name="capsText">@style/Next.Task.Capstext.Light</item>
+	    <item name="taskScrollView">@style/Next.Task.ScrollView.Light</item>
+	    <item name="taskSubLayout">@style/Next.Task.SubLayout</item>
     </style>
 </resources>

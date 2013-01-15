@@ -5,15 +5,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="top"
-    android:background="@color/FanItemsText"
     android:orientation="vertical"
     tools:context=".TaskDetailFragment" >
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@android:color/background_light" >
+        style="?taskScrollView" >
 
         <LinearLayout
             android:id="@+id/taskBody"
@@ -53,26 +50,12 @@
 
             <LinearLayout
                 android:id="@+id/taskIsCompletedLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/TextView01"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskIsCompletedTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskIsCompletedTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -94,26 +77,12 @@
 
             <LinearLayout
                 android:id="@+id/taskDescriptionLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="1"
-                android:orientation="vertical" >
+                style="?taskSubLayout">
 
                 <TextView
                     android:id="@+id/taskDescriptionTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskDescriptionTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskDescriptionTitle"  />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -138,27 +107,12 @@
 
             <LinearLayout
                 android:id="@+id/taskDateLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskSubBodyItemMarginTop"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/taskDateTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskDateTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskDateTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -182,26 +136,12 @@
 
             <LinearLayout
                 android:id="@+id/taskProjectLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/taskProjectTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskProjectTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskProjectTitle"  />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -225,25 +165,12 @@
 
             <LinearLayout
                 android:id="@+id/taskContextLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/textContextTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskContextTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskContextTitle"  />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -267,26 +194,12 @@
 
             <LinearLayout
                 android:id="@+id/taskImportantLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout">
 
                 <TextView
                     android:id="@+id/textImportantTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskPriorityTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskPriorityTitle"  />
 
                 <LinearLayout
                     android:layout_width="fill_parent"

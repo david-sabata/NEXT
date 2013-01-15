@@ -55,7 +55,7 @@
         <item name="android:textSize">@dimen/FanItemTextSize</item>
 	</style>
 	<!--  ******************************************************* -->
-	<!--  Style for light design - Sidebar is dark; rest is white -->
+	<!--  Style for light design - SIDEBAR ********************** -->
 	<!--  ******************************************************* -->	
     <style name="Next.Light">
         
@@ -85,37 +85,62 @@
 		    
 		    
 	
-	<!-- *************** SIDEBAR DARK ****************************** -->
+	<!--  ******************************************************* -->
+	<!--  Style for dark design - SIDEBAR *********************** -->
+	<!--  ******************************************************* -->	
 	
 		    
 	<!-- ********************************************************** -->
     <!-- ********************************************************** -->
-    <!-- ****************** TASK DETAIL FRAGMENT ****************** -->
+    <!-- **************** TASK DETAIL (EDIT) FRAGMENT ************* -->
     <!-- ********************************************************** -->
     <!-- ********************************************************** -->   
-    
-	<style name="Next.Light.Taskfragment">
+
+	<!--  Main body of task fragment -->    
+	<style name="Next.Task">
 	    
 	</style>
-		<!-- Subbody layout -->
 		
-		<!-- Caps BLUE text -->
-		<style name="Next.Light.Capstext">
-			<item name="android:layout_width">wrap_content</item>
-            <item name="android:layout_height">wrap_content</item>
-            <item name="android:layout_gravity">left</item>
-            <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
-            <item name="android:gravity">left</item>
-            <item name="android:paddingLeft">@dimen/TaskSubBodyTitlePaddingLeft</item>
-            <item name="android:paddingRight">5dp</item>
-            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-            <item name="android:textColor">@android:color/holo_blue_light</item>
-            <item name="android:textSize">@dimen/TaskSubtitleSize</item>
-            <item name="android:textStyle">normal</item>
-		</style>
-    
+	<!-- Caps BLUE text -->
+	<style name="Next.Task.Capstext">
+		<item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">@dimen/TaskSubBodyTitlePaddingLeft</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textSize">@dimen/TaskSubtitleSize</item>
+        <item name="android:textStyle">normal</item>
+	</style>
+   
+	<style name="Next.Task.ScrollView">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+	</style>
 	
-    
+	<style name="Next.Task.SubLayout">
+         <item name="android:layout_width">fill_parent</item>
+         <item name="android:layout_height">wrap_content</item>
+         <item name="android:layout_marginRight">@dimen/TaskSubtitleMarginBoth</item>
+         <item name="android:layout_weight">2.10</item>
+         <item name="android:orientation">vertical</item>
+         <item name="android:layout_marginTop">@dimen/TaskBodySubLayout</item>
+	</style>
+	
+	<!--  ******************************************************* -->
+	<!--  *** Style for light design - ONE TASK DETAIL (EDIT) *** -->
+	<!--  ******************************************************* -->		
+		<style name="Next.Task.Capstext.Light">
+	        <item name="android:textColor">@android:color/holo_blue_light</item>
+    	</style>
+    	
+		<style name="Next.Task.ScrollView.Light">
+			<item name="android:background">@android:color/background_light</item>
+		</style>    
+		
+		
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
     <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">
         <item name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>

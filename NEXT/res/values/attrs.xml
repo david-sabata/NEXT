@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Global  -->
+    <attr name="capsText" format="reference" />
+    
     <!-- Sidebar references to styles -->
     <attr name="sidebarBackground" format="reference" />
     <attr name="sidebarTitle" format="reference" />
     <attr name="sidebarHorizontalLine" format="reference" />
     <attr name="sidebarSubtitle" format="reference" />
     
+    <!--  Task detail (edit) references to styles -->
+    <attr name="taskScrollView" format="reference" />
+    <attr name="taskSubLayout" format="reference" />
     <!--  <attr name="" format="reference" />
-    <attr name="" format="reference" />
-    <attr name="" format="reference" />
     <attr name="" format="reference" />
     <attr name="" format="reference" />
     <attr name="" format="reference" />
