@@ -60,18 +60,8 @@
 
                 <TextView
                     android:id="@+id/TextView01"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskIsCompletedTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="@style/Next.Light.Capstext"
+                    android:text="@string/TaskIsCompletedTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -100,18 +90,9 @@
 
                 <TextView
                     android:id="@+id/TextView02"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
+                    style="@style/Next.Light.Capstext"
                     android:text="@string/TaskDescriptionTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -143,18 +124,8 @@
 
                 <TextView
                     android:id="@+id/taskDateTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskDateTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="@style/Next.Light.Capstext"
+                    android:text="@string/TaskDateTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -254,17 +225,8 @@
 
                 <TextView
                     android:id="@+id/taskProjectTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskProjectTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="@style/Next.Light.Capstext"
+                    android:text="@string/TaskProjectTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -293,17 +255,8 @@
 
                 <TextView
                     android:id="@+id/textContextTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskContextTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="@style/Next.Light.Capstext"
+                    android:text="@string/TaskContextTitle" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -336,17 +289,8 @@
 
                 <TextView
                     android:id="@+id/textImportantTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskPriorityTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="@style/Next.Light.Capstext"
+                    android:text="@string/TaskPriorityTitle"  />
 
                 <LinearLayout
                     android:layout_width="fill_parent"

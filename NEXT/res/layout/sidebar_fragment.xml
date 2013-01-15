@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Next.Light.Sidebar"
+    style="?sidebarBackground"
     android:layout_width="wrap_content"
     android:layout_height="match_parent" >
 
@@ -8,7 +8,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="200dip"
         android:layout_height="wrap_content"
-        android:background="@color/FanBackgroundDark"
+        style="?sidebarBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical" >
@@ -19,11 +19,11 @@
 
             <TextView
                 android:id="@+id/TitleByTime"
-                style="@style/Next.Light.Sidebar.Title"
+                style="?sidebarTitle"
                 android:text="@string/TitleByTime" />
 
             <LinearLayout
-                style="@style/Next.Light.Sidebar.HorizontalLine"
+                style="?sidebarHorizontalLine"
             />
 
             <LinearLayout
@@ -35,31 +35,31 @@
                 
                 <TextView
                     android:id="@+id/Time_Next"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:drawableLeft="@drawable/menu_next"
                     android:text="@string/TitleByTime_Next" />
 
                 <TextView
                     android:id="@+id/Time_Today"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:drawableLeft="@drawable/menu_today"
                     android:text="@string/TitleByTime_Today" />
 
                 <TextView
                     android:id="@+id/Time_InPlan"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:drawableLeft="@drawable/menu_inplan"
                     android:text="@string/TitleByTime_InPlan" />
 
                 <TextView
                     android:id="@+id/Time_Someday"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:drawableLeft="@drawable/menu_sometimes"
                     android:text="@string/TitleByTime_Someday" />
 
                 <TextView
                     android:id="@+id/Time_Blocked"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:drawableLeft="@drawable/menu_blocked"
                     android:text="@string/TityleByTime_Blocked"
                     android:visibility="gone" />
@@ -84,15 +84,12 @@
 
             <TextView
                 android:id="@+id/TitleByContext"
-                style="@style/Next.Light.Sidebar.Title"
+                style="?sidebarTitle"
                 android:text="@string/TitleByContext" />
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@color/FanTitleColor"
-                android:orientation="vertical" >
-            </LinearLayout>
+                style="?sidebarHorizontalLine" />
+            
             
         </FrameLayout>
 
@@ -101,16 +98,12 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                style="@style/Next.Light.Sidebar.Title"
+                style="?sidebarTitle"
                 android:id="@+id/TitleByProject"
                 android:text="@string/TitleByProject"/>
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@color/FanTitleColor"
-                android:orientation="vertical" >
-            </LinearLayout>
+                style="?sidebarHorizontalLine" />
 
 	<LinearLayout
                 android:id="@+id/projectsAll"
@@ -130,7 +123,7 @@
 
 				<TextView
                     android:id="@+id/Projects_ShowProjects"
-                    style="@style/Next.Light.Sidebar.Subtitle"
+                    style="?sidebarSubtitle"
                     android:layout_weight="0.1"
                     android:paddingLeft="@dimen/FanItemPaddingLeft"
                     android:text="@string/show_all_projects" />

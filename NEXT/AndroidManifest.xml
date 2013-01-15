@@ -16,6 +16,7 @@
         android:theme="@style/Next">
         <activity
             android:name=".MainActivity"
+            android:theme="@style/ThemeNext.Light"
             android:label="@string/title_activity_main" 
             android:windowSoftInputMode="stateUnchanged">
             <intent-filter>

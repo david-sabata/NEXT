@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sidebar references to styles -->
+    <attr name="sidebarBackground" format="reference" />
+    <attr name="sidebarTitle" format="reference" />
+    <attr name="sidebarHorizontalLine" format="reference" />
+    <attr name="sidebarSubtitle" format="reference" />
+    
+    <!--  <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />
+    <attr name="" format="reference" />  -->
+     
+</resources>

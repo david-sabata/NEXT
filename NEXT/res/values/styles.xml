@@ -14,12 +14,46 @@
     <color name="priority_1">#93BF00</color>
     <color name="priority_2">#BF9600</color>
     
-    <!-- Main STYLE -->
-
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************* SIDEBAR STYLE ********************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
 	<style name="Next" parent="@style/Theme.Holo.Light.Hack">
 	    
 	</style>
 	
+	<style name="Next.Sidebar">
+    	<item name="android:layout_width">wrap_content</item>
+    	<item name="android:layout_height">match_parent</item>
+	</style>
+	
+	<style name="Next.Sidebar.Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>	    
+	    <item name="android:textSize">@dimen/FanTitleSize</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">normal</item>   
+        <item name="android:gravity">center_horizontal</item> 
+	</style>
+	
+	<style name="Next.Sidebar.HorizontalLine">
+	    <item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">2dp</item>
+		<item name="android:orientation">vertical</item> 
+	</style>
+	 
+	<style name="Next.Sidebar.Subtitle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:clickable">True</item>
+        <item name="android:drawablePadding">@dimen/FanItemDrawablePadding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:height">@dimen/FainItemHeight</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textSize">@dimen/FanItemTextSize</item>
+	</style>
 	<!--  ******************************************************* -->
 	<!--  Style for light design - Sidebar is dark; rest is white -->
 	<!--  ******************************************************* -->	
@@ -29,56 +63,58 @@
 	
     <!--  **************** SIDEBAR LIGHT ************************ -->
     <!-- Sidebar style for light -->
-	    <style name="Next.Light.Sidebar">
-	        <!-- TODO Text Color to white-->
-	        <!-- TODO Background to dark grey-->
-			<item name="android:layout_width">wrap_content</item>
-	    	<item name="android:layout_height">match_parent</item>
+	    <style name="Next.Sidebar.Light">
 	    	<item name="android:background">@color/FanBackgroundDark</item>
 	    	<item name="android:textColor">@color/FanItemsText</item>
 	    </style>
 	
 	    <!--  This is style for blue main titles in sidebar -->
-	    <style name="Next.Light.Sidebar.Title">
-	        <!--  TODO  Title Margin to center-->
-	        <item name="android:layout_width">match_parent</item>
-	        <item name="android:layout_height">wrap_content</item>
-	        <item name="android:gravity">center_horizontal</item>
+	    <style name="Next.Sidebar.Title.Light">
 	        <item name="android:textColor">@color/FanTitleColor</item>
-	        <item name="android:textSize">@dimen/FanTitleSize</item>
-	        <item name="android:textStyle">bold</item>
-	        <item name="android:typeface">normal</item>
 	    </style>
 	    	
 	    	<!--  This is style for blue horizontal line in sidebar -->
-		    <style name="Next.Light.Sidebar.HorizontalLine">
-		        <item name="android:layout_width">fill_parent</item>
-		        <item name="android:layout_height">2dp</item>
+		    <style name="Next.Sidebar.HorizontalLine.Light">
 		        <item name="android:background">@color/FanTitleColor</item>
-		        <item name="android:orientation">vertical</item> 
 		    </style>
 		    
 		    <!--  This is style for subtitle text in one layout -->
-		    <style name="Next.Light.Sidebar.Subtitle">
-		        <item name="android:id">@+id/Time_Next</item>
-		        <item name="android:layout_width">fill_parent</item>
-		        <item name="android:layout_height">wrap_content</item>
-		        <item name="android:layout_gravity">fill_horizontal</item>
-		        <item name="android:clickable">True</item>
-		        <item name="android:drawablePadding">@dimen/FanItemDrawablePadding</item>
-		        <item name="android:gravity">center_vertical</item>
-		        <item name="android:height">@dimen/FainItemHeight</item>
-		        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+		    <style name="Next.Sidebar.Subtitle.Light">
 		        <item name="android:textColor">@color/FanItemsText</item>
-		        <item name="android:textSize">@dimen/FanItemTextSize</item>
 		    </style>
+		    
+		    
+	
+	<!-- *************** SIDEBAR DARK ****************************** -->
 	
 		    
-	<!--  **************** TASK DETAIL FRAGMENT LIGHT ************************ -->	    
+	<!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+    <!-- ****************** TASK DETAIL FRAGMENT ****************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->   
+    
 	<style name="Next.Light.Taskfragment">
 	    
 	</style>
+		<!-- Subbody layout -->
+		
+		<!-- Caps BLUE text -->
+		<style name="Next.Light.Capstext">
+			<item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:layout_gravity">left</item>
+            <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+            <item name="android:gravity">left</item>
+            <item name="android:paddingLeft">@dimen/TaskSubBodyTitlePaddingLeft</item>
+            <item name="android:paddingRight">5dp</item>
+            <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+            <item name="android:textColor">@android:color/holo_blue_light</item>
+            <item name="android:textSize">@dimen/TaskSubtitleSize</item>
+            <item name="android:textStyle">normal</item>
+		</style>
     
+	
     
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
     <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">
