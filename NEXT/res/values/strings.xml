@@ -66,5 +66,6 @@
     <string name="project_delete">Delete project</string>
     <string name="project_delete_confirm_msg">Do you really want to delete this project? All its tasks will be lost.</string>
     <string name="no_actions">No actions available</string>
+    <string name="sync_in_progress">Synchronization in progress</string>
     
 </resources>

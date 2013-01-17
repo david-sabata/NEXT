@@ -52,6 +52,19 @@ public class MainActivity extends Activity {
 	protected BroadcastReceiver mSyncStopReceiver;
 
 
+	/**
+	 * Used to show/hide sync icon in options menu
+	 */
+	protected boolean isSyncInProgress = false;
+
+	protected boolean isAnimationSet = false;
+
+	/**
+	 * To only allow single menu inflation
+	 */
+	protected boolean isMenuInflated = false;
+
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -126,31 +139,31 @@ public class MainActivity extends Activity {
 				return mGestureDetector.onTouchEvent(event);
 			}
 		};
-		
+
 		//prepare broadcast receivers	
 		mReloadReceiver = new ReloadReceiver();
 		IntentFilter filter = new IntentFilter();
-        filter.addAction(SyncService.BROADCAST_RELOAD);
-        registerReceiver(mReloadReceiver, filter);
-        
-        mSyncStartReceiver = new SyncStartReceiver();
+		filter.addAction(SyncService.BROADCAST_RELOAD);
+		registerReceiver(mReloadReceiver, filter);
+
+		mSyncStartReceiver = new SyncStartReceiver();
 		IntentFilter filter2 = new IntentFilter();
-        filter2.addAction(SyncService.BROADCAST_SYNC_START);
-        registerReceiver(mSyncStartReceiver, filter2);
-        
-        mSyncStopReceiver = new SyncEndReceiver();
+		filter2.addAction(SyncService.BROADCAST_SYNC_START);
+		registerReceiver(mSyncStartReceiver, filter2);
+
+		mSyncStopReceiver = new SyncEndReceiver();
 		IntentFilter filter3 = new IntentFilter();
-        filter3.addAction(SyncService.BROADCAST_SYNC_END);
-        registerReceiver(mSyncStopReceiver, filter3);
+		filter3.addAction(SyncService.BROADCAST_SYNC_END);
+		registerReceiver(mSyncStopReceiver, filter3);
 	}
-	
-	
+
+
 	@Override
 	protected void onPause() {
-		 unregisterReceiver(mReloadReceiver);
-		 unregisterReceiver(mSyncStartReceiver);
-		 unregisterReceiver(mSyncStopReceiver);
-	     super.onPause();
+		unregisterReceiver(mReloadReceiver);
+		unregisterReceiver(mSyncStartReceiver);
+		unregisterReceiver(mSyncStopReceiver);
+		super.onPause();
 	}
 
 
@@ -175,9 +188,25 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+
+
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		Log.d(LOG_TAG, "onPrepareOptionsMenu");
+		super.onPrepareOptionsMenu(menu);
+
+		MenuItem item = menu.findItem(R.id.menu_sync_icon);
+		if (item != null) {
+			item.setVisible(isSyncInProgress);
+		}
 
 		return true;
 	}
+
 
 
 	/**
@@ -231,27 +260,18 @@ public class MainActivity extends Activity {
 
 			case R.id.menu_wipe_db:
 				// TODO: temporary, hardcoded
-				new AlertDialog.Builder(this)
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setTitle("Wipe database")
-						.setMessage("Do you really want to erase all stored data?")
-						.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("Wipe database")
+						.setMessage("Do you really want to erase all stored data?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								TasksModelService.getInstance().wipeDatabaseData();
 							}
-						})
-						.setNegativeButton("No", null)
-						.show();
+						}).setNegativeButton("No", null).show();
 				break;
-
-			default:
-				Log.i(LOG_TAG, "onOptionsItemSelected Item " + item.getTitle());
 		}
 
 		return false;
 	}
-
 
 
 	/**
@@ -284,6 +304,7 @@ public class MainActivity extends Activity {
 			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
 
 			// replace without history
+			// FIXME: IllegalStateException: 'Can not perform this action after onSaveInstanceState'
 			fan.replaceMainFragment(frag, false);
 		}
 
@@ -294,9 +315,9 @@ public class MainActivity extends Activity {
 			fan.replaceFanFragment(sidebar, false);
 		}
 	}
-	
-	
-	
+
+
+
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
 		@Override
@@ -318,36 +339,40 @@ public class MainActivity extends Activity {
 			Log.d(LOG_TAG, "Model service disconnected");
 		}
 	};
-	
-	
+
+
 	private class ReloadReceiver extends BroadcastReceiver {
 		@Override
-        public void onReceive(Context context, Intent intent) {
-            Fragment f = getFragmentManager().findFragmentById(R.id.appView);
-            
-            Log.i("BROADCAST", "RELOAD");
-            
-            if (f instanceof TaskListFragment)
-            	((TaskListFragment)f).reload();
+		public void onReceive(Context context, Intent intent) {
+			Fragment f = getFragmentManager().findFragmentById(R.id.appView);
 
-        }
+			Log.i("BROADCAST", "RELOAD");
+
+			if (f instanceof TaskListFragment)
+				((TaskListFragment) f).reload();
+
+		}
 	}
-	
+
 	private class SyncStartReceiver extends BroadcastReceiver {
 		@Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("BROADCAST", "START");
-        }
-	}
-	
-	private class SyncEndReceiver extends BroadcastReceiver {
-		@Override
-        public void onReceive(Context context, Intent intent) {
-			Log.i("BROADCAST", "STOP");
-        }
+		public void onReceive(Context context, Intent intent) {
+			Log.i("BROADCAST", "START");
+			isSyncInProgress = true;
+			invalidateOptionsMenu();
+		}
 	}
 
-	
-	
+	private class SyncEndReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i("BROADCAST", "STOP");
+			isSyncInProgress = false;
+			invalidateOptionsMenu();
+		}
+	}
+
+
+
 
 }
