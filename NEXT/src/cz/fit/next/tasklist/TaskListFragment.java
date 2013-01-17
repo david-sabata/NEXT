@@ -1,6 +1,8 @@
 package cz.fit.next.tasklist;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
@@ -221,7 +223,7 @@ public class TaskListFragment extends ListFragment {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
-		String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		final String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		switch (item.getItemId()) {
 
@@ -233,7 +235,19 @@ public class TaskListFragment extends ListFragment {
 				break;
 
 			case R.id.action_delete:
-				Toast.makeText(getActivity(), "Task deletion not implemented yet", Toast.LENGTH_SHORT).show();
+				new AlertDialog.Builder(getActivity())
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setTitle(R.string.task_delete)
+				.setMessage(R.string.task_delete_confirm_msg)
+				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						TasksModelService.getInstance().deleteTask(taskId);
+						//reloadItems();
+					}
+				})
+				.setNegativeButton(android.R.string.no, null)
+				.show();
 				break;
 		}
 

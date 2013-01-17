@@ -39,6 +39,7 @@ import cz.fit.next.backend.Project;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -372,6 +373,9 @@ public class SyncService extends Service {
 
 				pTitle = getLastValInHistory(pair.getValue().getHistory(),
 						pair.getKey(), TaskHistory.TITLE);
+				
+				// throw out deleted tasks
+				if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*")) continue;
 
 				pDescription = getLastValInHistory(
 						pair.getValue().getHistory(), pair.getKey(),
