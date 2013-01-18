@@ -67,8 +67,9 @@
     <string name="no_actions">No actions available</string>
     <string name="settings">Settings</string>
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
-    <string name="SettingsSynchronizationActiveTitle">Synchronization</string>
-    <string name="SettingsSynchronizationActiveSummary">Turn on / off synchronization with Google Drive</string>
+    <string name="SettingsSynchronizationActiveTitle">Google Drive</string>
     <string name="TaskCompleted">Completed</string>
+    <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
+    <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     
 </resources>

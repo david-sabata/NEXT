@@ -27,6 +27,10 @@
         </activity>
         
         <activity
+            android:name="cz.fit.next.SettingsActivity"
+            android:theme="@style/ThemeNext.Light">
+        </activity>
+        <activity
             android:name=".backend.sync.LoginActivity"
             android:label="@string/title_activity_main" >
         </activity>

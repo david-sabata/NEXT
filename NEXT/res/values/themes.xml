@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <style name="ThemeNext"  parent="android:Theme.Holo.Light">
+    <style name="ThemeNext"  >
     </style>
     
-    <style name="ThemeNext.Light" >
+    <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
 	    <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Light</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Light</item>
@@ -23,5 +23,8 @@
    		<item name="taskLineSeparatorCategories">@style/Next.Task.LineSeparatorCatagories.Light</item>
    		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
    		<item name="taskCategoriesText">@style/Next.Task.CategoriesText</item>
+   		
+   		<!-- Preference screen references to style -->
+   		<item name="preferenceScreen">@style/Next.PreferenceScreen.Light</item>
 	  </style>
 </resources>

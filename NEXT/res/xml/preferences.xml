@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory 
         android:title="@string/SettingsSynchronizationTitle"
         android:key="pref_key_synchro_setting">
@@ -7,7 +8,12 @@
             android:key="PREF_SYNC_ENABLED"
             android:title="@string/SettingsSynchronizationActiveTitle"
             android:summary="@string/SettingsSynchronizationActiveSummary"
-            android:defaultValue="off"
+            android:defaultValue="on"
+            android:switchTextOff="0"
+            android:switchTextOn="I"
             />
+        <ListPreference
+            android:key="PREF_SYNC_INTERVAL"
+            android:title="@string/SettingsSynchronizationIntervalTitle"/>
     </PreferenceCategory>
 </PreferenceScreen>

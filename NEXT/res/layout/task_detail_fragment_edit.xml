@@ -42,7 +42,8 @@
 
                 <CheckBox
                      android:id="@+id/IsCompleted"
-                     style="?taskCompleted"/>
+                     style="?taskCompleted"
+                     android:clickable="true" />
             </LinearLayout>
 
             <LinearLayout

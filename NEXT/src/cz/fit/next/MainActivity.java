@@ -198,8 +198,8 @@ public class MainActivity extends Activity {
 
 			// Switch to settings fragment
 			case R.id.menu_settings:
-				Fragment settingsFragment = new SettingsFragment();
-				fan.replaceMainFragment(settingsFragment);	
+				Intent prefIntent = new Intent(this,SettingsActivity.class);
+				startActivity(prefIntent);	
 				break;
 				
 			case R.id.setting_connect_drive:

@@ -20,11 +20,17 @@
     <attr name="taskLineSeparatorCategories" format="reference" />
     <attr name="taskCompleted" format="reference" /> 
     <attr name="taskCategoriesText" format="reference" />
+    
+    <!-- Preference screen reference to style -->
+    <attr name="preferenceScreen" format="reference" />
+     
     <!--  <attr name="" format="reference" />
      <attr name="" format="reference" />
      <attr name="" format="reference" /> 
      <attr name="" format="reference" />
      <attr name="" format="reference" />
      <attr name="" format="reference" />-->
+     
+
      
 </resources>
