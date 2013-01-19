@@ -15,18 +15,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 
-public class ProjectListFragment extends ListFragment {
+public class ProjectListFragment extends ListFragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "ProjectListFragment";
 
+
+	protected boolean mIsServiceReady = false;
 
 
 
@@ -43,12 +46,9 @@ public class ProjectListFragment extends ListFragment {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
 
-		// try to reload items; if the call fails, reload will be
-		// called by the activity when the service will be running again
-		try {
-			setItems(TasksModelService.getInstance().getAllProjectsCursor());
-		} catch (RuntimeException e) {
-			// ignore and wait for the next call
+
+		if (mIsServiceReady) {
+			reloadItems();
 		}
 
 		setHasOptionsMenu(true);
@@ -81,7 +81,7 @@ public class ProjectListFragment extends ListFragment {
 	 * Reload projects from service if it is ready
 	 */
 	public void reloadItems() {
-		if (TasksModelService.getInstance() != null)
+		if (mIsServiceReady)
 			setItems(TasksModelService.getInstance().getAllProjectsCursor());
 	}
 
@@ -146,8 +146,7 @@ public class ProjectListFragment extends ListFragment {
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
 				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
 				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
-			}
-			else {
+			} else {
 				menu.add(Menu.NONE, 0, 0, R.string.no_actions);
 			}
 		}
@@ -174,19 +173,14 @@ public class ProjectListFragment extends ListFragment {
 
 			// delete - show prompt dialog
 			case R.id.action_delete:
-				new AlertDialog.Builder(getActivity())
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setTitle(R.string.project_delete)
-						.setMessage(R.string.project_delete_confirm_msg)
-						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.project_delete)
+						.setMessage(R.string.project_delete_confirm_msg).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								TasksModelService.getInstance().deleteProject(projId);
 								reloadItems();
 							}
-						})
-						.setNegativeButton(android.R.string.no, null)
-						.show();
+						}).setNegativeButton(android.R.string.no, null).show();
 				break;
 
 		}
@@ -194,6 +188,14 @@ public class ProjectListFragment extends ListFragment {
 		return true;
 	}
 
+
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+		reloadItems();
+	}
 
 
 

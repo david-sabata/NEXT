@@ -6,18 +6,17 @@ import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.Toast;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.taskdetail.TaskDetailFragment;
@@ -25,12 +24,9 @@ import cz.fit.next.taskdetail.TaskEditFragment;
 
 
 /**
- * This fragment is guaranteed to be instantiated only after 
- * the service has started, so all service calls should be safe
- * 
  * @author David
  */
-public class TaskListFragment extends ListFragment {
+public class TaskListFragment extends ListFragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "ContentFragment";
 
@@ -67,6 +63,8 @@ public class TaskListFragment extends ListFragment {
 	 */
 	protected String mTitle;
 
+
+	protected boolean mIsServiceReady = false;
 
 
 
@@ -116,10 +114,6 @@ public class TaskListFragment extends ListFragment {
 
 		setHasOptionsMenu(true);
 
-		// create deafult adapter - all items
-		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
-		setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
-
 		Bundle args = getArguments();
 		if (args != null) {
 			mTitleResId = args.getInt(ARG_TITLE_RES); // value OR 0
@@ -131,12 +125,13 @@ public class TaskListFragment extends ListFragment {
 	/**
 	 * Load custom layout
 	 */
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-
-		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	}
+	// TODO: disabled to use default layout with
+	//	@Override
+	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	//		super.onCreateView(inflater, container, savedInstanceState);
+	//
+	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
+	//	}
 
 
 
@@ -144,16 +139,16 @@ public class TaskListFragment extends ListFragment {
 	public void onResume() {
 		super.onResume();
 
-		// re-apply filter
-		setFilter(mFilter);
+		// re-apply filter if service is ready (else wait for event)
+		if (mIsServiceReady)
+			reload();
 
 		// update actionbar title
-		if (mTitleResId > 0) {
-			getActivity().getActionBar().setTitle(mTitleResId);
-		}
-		else if (mTitle != null) {
-			getActivity().getActionBar().setTitle(mTitle);
-		}
+		//		if (mTitleResId > 0) {
+		//			getActivity().getActionBar().setTitle(mTitleResId);
+		//		} else if (mTitle != null) {
+		//			getActivity().getActionBar().setTitle(mTitle);
+		//		}
 
 		// register long click events
 		registerForContextMenu(getListView());
@@ -164,12 +159,17 @@ public class TaskListFragment extends ListFragment {
 
 
 	/**
-	 * Reloads tasklist
+	 * Reloads tasklist according to current filter
 	 */
 	public void reload() {
 		setFilter(mFilter);
+
+		if (mTitleResId > 0) {
+			getActivity().getActionBar().setTitle(mTitleResId);
+		} else if (mTitle != null) {
+			getActivity().getActionBar().setTitle(mTitle);
+		}
 	}
-	
 
 	/**
 	 * Set filter to the adapter and reload items; pass null for all items
@@ -180,6 +180,14 @@ public class TaskListFragment extends ListFragment {
 		FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
 
 		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
+
+		// initial adapter set
+		if (adapter == null) {
+			Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
+			setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
+			adapter = (TaskListAdapter) getListAdapter();
+		}
+
 		adapter.setFilterQueryProvider(provider);
 		adapter.getFilter().filter(mFilter != null ? mFilter.toString() : null);
 	}
@@ -271,6 +279,18 @@ public class TaskListFragment extends ListFragment {
 
 		return super.onOptionsItemSelected(item);
 	}
+
+
+
+	/**
+	 * Reload data only; the title and other stuff should already be set
+	 */
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+		reload();
+	}
+
 
 
 

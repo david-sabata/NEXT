@@ -79,9 +79,10 @@ public class MainActivity extends Activity {
 		fan.setAnimationDuration(200); // 200ms
 
 		if (savedInstanceState == null) {
-			//Fragment fanFrag = new SidebarFragment();
-			LoadingFragment fanFrag = LoadingFragment.newInstance();
-			LoadingFragment contentFrag = LoadingFragment.newInstance();
+			//			LoadingFragment fanFrag = LoadingFragment.newInstance();
+			//			LoadingFragment contentFrag = LoadingFragment.newInstance();
+			Fragment fanFrag = new SidebarFragment();
+			TaskListFragment contentFrag = TaskListFragment.newInstance(null, R.string.frag_title_next);
 
 			fan.setFragments(contentFrag, fanFrag);
 		} else {
@@ -127,9 +128,12 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		// hide loading fragment if the service is already ready
-		if (mModelService != null)
-			hideLoadingFragment();
+		// notify the current fragment if the service is already ready
+		if (mModelService != null) {
+			Fragment current = getCurrentFragment();
+			if (current instanceof ServiceReadyListener)
+				((ServiceReadyListener) current).onServiceReady(mModelService);
+		}
 
 		// prepare gesture listener for fragments
 		mGestureDetector = new GestureDetector(this, new MyGestureDetector(getFanView()));
@@ -281,6 +285,10 @@ public class MainActivity extends Activity {
 		return (FanView) findViewById(R.id.fan_view);
 	}
 
+	public Fragment getCurrentFragment() {
+		return getFragmentManager().findFragmentById(R.id.appView);
+	}
+
 
 	/**
 	 * Setup gesture detection for given view
@@ -330,7 +338,12 @@ public class MainActivity extends Activity {
 			binder.getService().initDataSources(self);
 
 			// reload content if the current fragment is LoadingFragment
-			hideLoadingFragment();
+			//hideLoadingFragment();
+
+			// notify current fragment (if supported)
+			Fragment current = getCurrentFragment();
+			if (current instanceof ServiceReadyListener)
+				((ServiceReadyListener) current).onServiceReady(binder.getService());
 		}
 
 

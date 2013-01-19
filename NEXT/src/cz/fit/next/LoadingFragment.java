@@ -22,14 +22,16 @@ public class LoadingFragment extends ListFragment {
 	 * Use ONLY this method to create a new instance!
 	 */
 	public static LoadingFragment newInstance() {
-		LoadingFragment frag = new LoadingFragment();
+		throw new RuntimeException("Dont use me, I'm obsolete");
+
+		//		LoadingFragment frag = new LoadingFragment();
 
 		//		Bundle b = new Bundle();
 		//		b.putString(ARG_FILTER, filter != null ? filter.toString() : null);
 		//
 		//		frag.setArguments(b);
 
-		return frag;
+		//		return frag;
 	}
 
 	@Override

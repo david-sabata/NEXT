@@ -20,6 +20,7 @@ import com.deaux.fan.SidebarListener;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
@@ -27,18 +28,18 @@ import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
 
-public class SidebarFragment extends Fragment {
+public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "SidebarFragment";
 	private View sideBarView;
 
+	protected boolean mIsServiceReady = false;
+
 	/**
 	 * IDs of fixed menu items
 	 */
-	int menuFixedItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
-			R.id.Projects_ShowProjects
-	};
+	int menuFixedItemsId[] = { R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
+	R.id.Projects_ShowProjects };
 
 
 
@@ -51,7 +52,7 @@ public class SidebarFragment extends Fragment {
 		sideBarView = setFixedItemsSidebar(sideBarView);
 
 		// Generate context items in sidebar
-		initSideBarContextProjects();
+		//		initSideBarContextProjects();
 
 		return sideBarView;
 	}
@@ -133,8 +134,7 @@ public class SidebarFragment extends Fragment {
 					// use localized string for default project
 					if (projectTitle.equals(Constants.IMPLICIT_PROJECT_NAME)) {
 						newItem.setText(R.string.implicit_project);
-					}
-					else {
+					} else {
 						newItem.setText(projectTitle);
 					}
 
@@ -308,6 +308,15 @@ public class SidebarFragment extends Fragment {
 			fan.showMenu();
 		}
 	};
+
+
+
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+	}
 
 
 
