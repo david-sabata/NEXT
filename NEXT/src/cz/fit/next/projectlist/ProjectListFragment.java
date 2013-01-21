@@ -2,6 +2,7 @@ package cz.fit.next.projectlist;
 
 import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
@@ -16,12 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.backend.sync.SyncService;
 
 public class ProjectListFragment extends ListFragment {
 
@@ -181,7 +184,17 @@ public class ProjectListFragment extends ListFragment {
 						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								TasksModelService.getInstance().deleteProject(projId);
+								boolean ret = SyncService.getInstance().deleteProject(projId);
+								if (ret) { 
+									TasksModelService.getInstance().deleteProject(projId);
+								} else {
+									Context context = SyncService.getInstance().getApplicationContext();
+									CharSequence text = "Error while project deleting, check your connection.";
+									int duration = Toast.LENGTH_SHORT;
+									Toast toast = Toast.makeText(context, text, duration);
+									toast.show();
+								}
+										
 								reloadItems();
 							}
 						})
