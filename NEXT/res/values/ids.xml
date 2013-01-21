@@ -5,4 +5,5 @@
     <item type="id" name="fragment_edit_task"/>
     <item type="id" name="project"></item>
     <item type="id" name="context"/>
+    <item name="menu_sync_icon" type="id"/>
 </resources>

@@ -68,5 +68,6 @@
     <string name="task_delete">Delete task</string>
     <string name="task_delete_confirm_msg">Do you really want to delete this task?</string>
     <string name="no_actions">No actions available</string>
+    <string name="sync_in_progress">Synchronization in progress</string>
     
 </resources>
