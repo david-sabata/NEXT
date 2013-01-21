@@ -1,11 +1,13 @@
 package cz.fit.next.tasklist;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -243,7 +245,10 @@ public class TaskListFragment extends ListFragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						TasksModelService.getInstance().deleteTask(taskId);
-						//reloadItems();
+						//Reload Items
+						Fragment f = getFragmentManager().findFragmentById(R.id.appView);
+						if (f instanceof TaskListFragment)
+							((TaskListFragment) f).reload();
 					}
 				})
 				.setNegativeButton(android.R.string.no, null)
