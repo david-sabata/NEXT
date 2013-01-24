@@ -1,5 +1,7 @@
 package cz.fit.next.tasklist;
 
+import com.deaux.fan.FanView;
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ListFragment;
@@ -24,6 +26,7 @@ import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.history.HistoryFragment;
 import cz.fit.next.taskdetail.TaskDetailFragment;
 import cz.fit.next.taskdetail.TaskEditFragment;
 
@@ -215,6 +218,7 @@ public class TaskListFragment extends ListFragment {
 
 		if (v.getId() == android.R.id.list) {
 			menu.add(Menu.NONE, R.id.action_edit, 0, R.string.action_edit_task);
+			menu.add(Menu.NONE, R.id.action_showhistory, 0, R.string.show_history);
 			menu.add(Menu.NONE, R.id.action_delete, 1, R.string.action_delete_task);
 		}
 	}
@@ -234,6 +238,12 @@ public class TaskListFragment extends ListFragment {
 				TaskEditFragment fTask = TaskEditFragment.newInstance(taskId);
 				MainActivity activity = (MainActivity) getActivity();
 				activity.getFanView().replaceMainFragment(fTask);
+				break;
+				
+			case R.id.action_showhistory:
+				FanView fan = ((MainActivity) getActivity()).getFanView();
+				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.TASK, taskId);
+				fan.replaceMainFragment(fraghist);
 				break;
 
 			case R.id.action_delete:

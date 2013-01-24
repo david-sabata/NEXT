@@ -1,5 +1,7 @@
 package cz.fit.next.projectlist;
 
+import com.deaux.fan.FanView;
+
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
@@ -25,6 +27,8 @@ import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.history.HistoryFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 public class ProjectListFragment extends ListFragment {
 
@@ -149,6 +153,7 @@ public class ProjectListFragment extends ListFragment {
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
 				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
 				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
+				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
 			}
 			else {
 				menu.add(Menu.NONE, 0, 0, R.string.no_actions);
@@ -173,6 +178,12 @@ public class ProjectListFragment extends ListFragment {
 				ShareDialog newFragment = new ShareDialog();
 				newFragment.setProjId(projId);
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
+				break;
+				
+			case R.id.action_showhistory:
+				FanView fan = ((MainActivity) getActivity()).getFanView();
+				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.PROJECT, projId);
+				fan.replaceMainFragment(fraghist);
 				break;
 
 			// delete - show prompt dialog
