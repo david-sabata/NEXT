@@ -34,7 +34,17 @@ public class HistoryAdapter extends ArrayAdapter<TaskHistory> {
         if (convertView == null)
         	vi = inflater.inflate(R.layout.task_list_item, parent, false);
         TextView title = (TextView) vi.findViewById(R.id.title);
+        TextView subtitle = (TextView) vi.findViewById(R.id.subtitle);
         title.setText(mData.get(position).getAuthor());
+        
+        String sub = "";
+        for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
+        	sub = sub + mData.get(position).getChanges().get(i).getName() + ":" +
+        			mData.get(position).getChanges().get(i).getOldValue() + " -> " +
+        			mData.get(position).getChanges().get(i).getNewValue() + "\n";
+        }
+        
+        subtitle.setText(sub);
         return vi;
 	}
 	
