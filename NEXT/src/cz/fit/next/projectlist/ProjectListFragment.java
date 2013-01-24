@@ -65,6 +65,9 @@ public class ProjectListFragment extends ListFragment {
 
 		// register long click events
 		registerForContextMenu(getListView());
+		
+		// reload title
+		getActivity().getActionBar().setTitle(getResources().getString(R.string.projects));
 
 	}
 
