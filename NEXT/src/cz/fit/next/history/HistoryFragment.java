@@ -1,10 +1,13 @@
 package cz.fit.next.history;
 
 
+import java.util.ArrayList;
+
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
+import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.tasklist.Filter;
@@ -61,17 +64,26 @@ public class HistoryFragment extends ListFragment {
 		}
 		
 		setHasOptionsMenu(true);
+		ArrayList<TaskHistory> adapterData;
+		
 		
 		// get project from database
 		Project proj;
 		if (mType == PROJECT) {
 			proj = TasksModelService.getInstance().getProjectById(mId);
+			adapterData = proj.getHistory();
 		} else {
 			Task t = TasksModelService.getInstance().getTaskById(mId);
 			proj = t.getProject();
+			adapterData = new ArrayList<TaskHistory>();
+			for (int i = 0; i < proj.getHistory().size(); i++) {
+				if (proj.getHistory().get(i).getTaskId().equals(t.getId()))
+					adapterData.add(proj.getHistory().get(i));
+			}
 		}
+				
 		
-		setListAdapter(new HistoryAdapter(getActivity(), 0, proj.getHistory()));
+		setListAdapter(new HistoryAdapter(getActivity(), 0, adapterData));
 
 		
 		

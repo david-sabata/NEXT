@@ -1,6 +1,7 @@
 package cz.fit.next.history;
 
 import cz.fit.next.R;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TaskHistory;
 import java.util.ArrayList;
 
@@ -38,6 +39,10 @@ public class HistoryAdapter extends ArrayAdapter<TaskHistory> {
         title.setText(mData.get(position).getAuthor());
         
         String sub = "";
+        
+        // add timestamp
+        sub = sub + "@ " + new DateTime(Long.parseLong(mData.get(position).getTimeStamp())).toLocaleDateTimeString() + "\n";
+        
         for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
         	sub = sub + mData.get(position).getChanges().get(i).getName() + ":" +
         			mData.get(position).getChanges().get(i).getOldValue() + " -> " +
