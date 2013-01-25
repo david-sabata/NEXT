@@ -6,6 +6,7 @@
     <string name="title_activity_main">NEXT</string>
     <string name="TitleByTime">Time</string>
     <string name="TitleByTime_Today">Today</string>
+    <string name="status_image">Status Image</string>
     
     <string name="TitleByTime_Next">Next</string>
     <string name="TitleByTime_InPlan">In plan</string>
@@ -82,6 +83,10 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
-
-    
+    <string name="history_title">Title</string>
+    <string name="history_priority">Priority</string>
+    <string name="history_context">Context</string>
+    <string name="history_date">Date</string>
+    <string name="history_description">Description</string>
+        
 </resources>

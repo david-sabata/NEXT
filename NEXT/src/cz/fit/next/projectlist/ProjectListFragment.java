@@ -28,7 +28,6 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.history.HistoryFragment;
-import cz.fit.next.tasklist.TaskListFragment;
 
 public class ProjectListFragment extends ListFragment {
 

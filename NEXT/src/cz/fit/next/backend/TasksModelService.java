@@ -13,7 +13,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
-import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.SyncService;
