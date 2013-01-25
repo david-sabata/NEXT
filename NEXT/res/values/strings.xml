@@ -71,5 +71,6 @@
     <string name="TaskCompleted">Completed</string>
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
+    <string name="SettingsAppTitle">Application Settings</string>
     
 </resources>

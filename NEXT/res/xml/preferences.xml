@@ -16,4 +16,11 @@
             android:key="PREF_SYNC_INTERVAL"
             android:title="@string/SettingsSynchronizationIntervalTitle"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/SettingsAppTitle"
+        android:key="pref_key_app_setting">
+        <ListPreference 
+            android:key=""
+            />
+    </PreferenceCategory>
 </PreferenceScreen>
