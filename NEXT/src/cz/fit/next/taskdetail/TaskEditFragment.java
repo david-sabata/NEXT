@@ -308,7 +308,7 @@ public class TaskEditFragment extends Fragment {
 		}
 		
 		// Set IsCompleted
-		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.editIsCompleted);
+		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
 		isCompleted.setChecked(task.isCompleted());
 
 		// Set project
@@ -408,7 +408,7 @@ public class TaskEditFragment extends Fragment {
 		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(
 				R.id.taskSpinnerText)).getTag().toString();
 		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
-		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.editIsCompleted)).isChecked();
+		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked();
 
 		// Task id
 		String taskId = null;

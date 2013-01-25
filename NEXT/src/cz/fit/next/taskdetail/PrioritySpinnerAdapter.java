@@ -22,12 +22,12 @@ public class PrioritySpinnerAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		return (View) getCustomView(position, convertView, parent);
+		return getCustomView(position, convertView, parent);
 	}
 	
 	@Override
 	public View getDropDownView(int position, View convertView, ViewGroup parent) {
-		return (View) getCustomView(position, convertView, parent);
+		return getCustomView(position, convertView, parent);
 	}
 
 	private RelativeLayout getCustomView(int position, View convertView, ViewGroup parent) {

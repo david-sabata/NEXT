@@ -5,15 +5,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="top"
-    android:background="@color/FanItemsText"
     android:orientation="vertical"
     tools:context=".TaskDetailFragment" >
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@android:color/background_light" >
+		style="?taskScrollView" >
 
         <LinearLayout
             android:id="@+id/taskBody"
@@ -23,150 +20,62 @@
 
             <LinearLayout
                 android:id="@+id/titleLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2.10"
-                android:orientation="vertical"
-                android:padding="@dimen/TaskTittlePadding"
-                android:paddingTop="@dimen/TaskTitlePaddingTop" >
-
+                style="?taskTitleLayoutEditFragment" >
+
                 <EditText
                     android:id="@+id/titleTask"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:hint="Task title"
-                    android:inputType="textMultiLine"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskTitleSize" />
-
+                    style="?taskTitleEditFragment" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_weight="2.10"
-                android:background="@color/TaskRuller"
-                android:orientation="vertical" >
-            </LinearLayout>
-
+            <LinearLayout style="?taskLineUnderTitle" />
+           
             <LinearLayout
                 android:id="@+id/taskIsCompletedLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/TextView01"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskIsCompletedTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskIsCompletedTitle" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
+                <LinearLayout style="?taskLineSeparatorCategories" />
 
                 <CheckBox
-                    android:id="@+id/editIsCompleted"
-                    android:layout_width="123dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskBodyPadding"
-                    android:text="Completed" />
+                     android:id="@+id/IsCompleted"
+                     style="?taskCompleted"
+                     android:clickable="true" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/taskDescriptionLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/TextView02"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
+                    style="?capsText"
                     android:text="@string/TaskDescriptionTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
-
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
                 <EditText
                     android:id="@+id/editDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:ems="10"
-                    android:hint="Fill some description"
-                    android:inputType="textMultiLine"
-                    android:textSize="@dimen/TaskSubTextSize" />
-
+                    style="?taskCategoriesText"
+                    android:inputType="text"
+                    android:hint="Fill some description" />
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/taskDateLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/TaskSubBodyItemMarginTop"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/taskDateTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskDateTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskDateTitle" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
-
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
                 <LinearLayout
                     android:id="@+id/LinearLayout1"
                     android:layout_width="match_parent"
@@ -174,7 +83,7 @@
                     android:layout_marginLeft="@dimen/TaskSubBodyMarginLeft"
                     android:layout_marginRight="@dimen/TaskSubBodyMarginRight"
                     android:orientation="vertical" >
-
+
                     <Switch
                         android:id="@+id/somedaySwitch"
                         android:layout_width="fill_parent"
@@ -182,12 +91,12 @@
                         android:text="@string/TaskSomeDay"
                         android:textOff="0"
                         android:textOn="1" />
-
+
                     <LinearLayout
                         android:id="@+id/TaskSubBodyEditDateLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
-
+
                         <TextView
                             android:id="@+id/textView1"
                             android:layout_width="wrap_content"
@@ -195,7 +104,7 @@
                             android:layout_gravity="left|center"
                             android:text="@string/TaskDateTitle"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
                         <EditText
                             android:id="@+id/editDate"
                             android:layout_width="fill_parent"
@@ -205,9 +114,8 @@
                             android:focusableInTouchMode="false"
                             android:gravity="center_vertical|center_horizontal"
                             android:inputType="date" />
-
                     </LinearLayout>
-
+
                     <Switch
                         android:id="@+id/wholeDaySwitch"
                         android:layout_width="fill_parent"
@@ -215,12 +123,12 @@
                         android:text="@string/TaskWholeDay"
                         android:textOff="0"
                         android:textOn="1" />
-
+
                     <LinearLayout
                         android:id="@+id/TaskSubBodyEditTimeLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
-
+
                         <TextView
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
@@ -228,7 +136,7 @@
                             android:layout_gravity="left|center"
                             android:text="@string/TaskTimeTitle"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
                         <EditText
                             android:id="@+id/editTime"
                             android:layout_width="fill_parent"
@@ -242,42 +150,20 @@
 
                             <requestFocus />
                         </EditText>
-
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/taskProjectLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskSubtitleMarginBoth"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/taskProjectTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskProjectTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskProjectTitle" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
+                <LinearLayout style="?taskLineSeparatorCategories" />
 
                 <Spinner
                     android:id="@+id/spinnerProject"
@@ -288,79 +174,32 @@
 
             <LinearLayout
                 android:id="@+id/taskContextLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/textContextTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskContextTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskContextTitle" />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
-
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
                 <EditText
                     android:id="@+id/editContext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:ems="10"
+                    style="?taskCategoriesText"
                     android:hint="Fill some context"
-                    android:inputType="text"
-                    android:textSize="@dimen/TaskSubTextSize" />
-
+                    android:inputType="text" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/taskImportantLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                android:layout_marginTop="@dimen/TaskBodySubLayout"
-                android:layout_weight="2.10"
-                android:orientation="vertical" >
+                style="?taskSubLayout" >
 
                 <TextView
                     android:id="@+id/textImportantTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:gravity="left"
-                    android:paddingLeft="@dimen/TaskSubBodyTitlePaddingLeft"
-                    android:paddingRight="5dp"
-                    android:text="@string/TaskPriorityTitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="@dimen/TaskSubtitleSize"
-                    android:textStyle="normal" />
+                    style="?capsText"
+                    android:text="@string/TaskPriorityTitle"  />
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
-                    android:layout_marginRight="@dimen/TaskSubtitleMarginBoth"
-                    android:background="@color/TaskRuller"
-                    android:orientation="vertical" >
-                </LinearLayout>
+                <LinearLayout style="?taskLineSeparatorCategories" />
 
                 <RadioGroup
                     android:id="@+id/radioPriority"
@@ -369,13 +208,12 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/TaskSubtitleMarginBoth"
                     android:orientation="horizontal" >
-
+
                     <Spinner
                         android:id="@+id/spinnerPriority"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
-
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>

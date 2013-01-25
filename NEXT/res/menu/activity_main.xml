@@ -1,12 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@+id/menu_settings"
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100" />
     <item android:id="@+id/menu_wipe_db" android:title="@string/WipeDatabase">
         
     </item>
     <item android:id="@+id/setting_connect_drive" android:title="@string/SettingsConnectToDrive"></item>
-    <item android:id="@+id/setting_read_file" android:title="@string/SettingsReadFile"></item>
     <item android:id="@+id/menu_sync_now" android:title="@string/menuSyncNow"></item>
-    <item android:id="@+id/menu_sync_icon" android:orderInCategory="0" android:showAsAction="always" android:icon="@drawable/action_sync" android:title="@string/sync_in_progress"></item>
-    
 </menu>
