@@ -88,6 +88,9 @@
     <string name="history_context">Context</string>
     <string name="history_date">Date</string>
     <string name="history_description">Description</string>
+    <string name="task_created">TASK CREATED</string>
+    <string name="task_completed">TASK MARKED AS COMPLETE</string>
+    <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
     
 
     

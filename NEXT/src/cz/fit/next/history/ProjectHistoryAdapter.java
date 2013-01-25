@@ -94,7 +94,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 					.equals(TaskHistory.TITLE))
 					&& (mData.get(position).getChanges().get(i).getOldValue()
 							.isEmpty())) {
-				sub = sub + "TASK CREATED" + "\n";
+				sub = sub + getContext().getResources().getString(R.string.task_created) + "\n";
 
 				isCreated = true;
 				
@@ -104,7 +104,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("true"))) {
-				sub = sub + "TASK MARKED AS COMPLETE" + "\n";
+				sub = sub + getContext().getResources().getString(R.string.task_completed) + "\n";
 
 				isCompleted = true;
 				
@@ -114,7 +114,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("false"))) {
-				sub = sub + "TASK MARKED AS UNCOMPLETE" + "\n";
+				sub = sub + getContext().getResources().getString(R.string.task_uncompleted) + "\n";
 
 				isUncompleted = true;
 				
