@@ -38,6 +38,7 @@
     <string name="frag_title_next">Next tasks</string>
     <string name="frag_title_today">Today tasks</string>
     <string name="someday">someday</string>
+    <string name="projects">Projects</string>
 
     <string-array name="priorityArray">
         <item>No priority</item>
@@ -53,6 +54,10 @@
     <string name="cancel">Cancel</string>
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
+    
+    <string name="empty_history">History is empty.</string>
+    <string name="project_history">Project history</string>
+    <string name="task_history">Task history</string>
 
     <string name="share_prompt">Google mail for new share</string>
 
@@ -63,8 +68,13 @@
     <string name="implicit_project">&lt;No project&gt;</string>
     <string name="project_title">Project title</string>
     <string name="project_delete">Delete project</string>
+    <string name="show_history">Show history</string>
     <string name="project_delete_confirm_msg">Do you really want to delete this project? All its tasks will be lost.</string>
+    <string name="task_delete">Delete task</string>
+    <string name="task_delete_confirm_msg">Do you really want to delete this task?</string>
     <string name="no_actions">No actions available</string>
+
+    <string name="sync_in_progress">Synchronization in progress</string>
     <string name="settings">Settings</string>
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
     <string name="SettingsSynchronizationActiveTitle">Google Drive</string>
@@ -72,5 +82,6 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
+
     
 </resources>

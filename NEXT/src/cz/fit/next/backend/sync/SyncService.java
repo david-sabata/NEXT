@@ -1,6 +1,8 @@
 package cz.fit.next.backend.sync;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 
@@ -20,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,6 +40,7 @@ import cz.fit.next.backend.Project;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -368,6 +374,9 @@ public class SyncService extends Service {
 
 				pTitle = getLastValInHistory(pair.getValue().getHistory(),
 						pair.getKey(), TaskHistory.TITLE);
+				
+				// throw out deleted tasks
+				if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*")) continue;
 
 				pDescription = getLastValInHistory(
 						pair.getValue().getHistory(), pair.getKey(),
@@ -575,13 +584,22 @@ public class SyncService extends Service {
 	 */
 	public void synchronize() {
 
-		// Send broadcast for indicate sync
-		Intent broadcast = new Intent();
-		broadcast.setAction(BROADCAST_SYNC_START);
-		sendBroadcast(broadcast);
-		
-		SynchronizeClass cls = new SynchronizeClass();
-		cls.execute();
+		if (!isNetworkAvailable()) {
+			// Plan next synchronization only
+			// TODO: Variable interval
+			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
+			// alarm.run();
+		}
+		else
+		{
+			// Send broadcast for indicate sync
+			Intent broadcast = new Intent();
+			broadcast.setAction(BROADCAST_SYNC_START);
+			sendBroadcast(broadcast);
+			
+			SynchronizeClass cls = new SynchronizeClass();
+			cls.execute();
+		}
 	}
 	
 	/**
@@ -630,6 +648,71 @@ public class SyncService extends Service {
 		
 		
 	}
+	
+	/**
+	 * Deletes project
+	 */
+	public boolean deleteProject(String id) {
+		
+		if (!isNetworkAvailable()) return false;
+		
+		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+		pds.open();
+		Project proj = pds.getProjectById(id);
+		String title = proj.getTitle();
+		pds.close();
+		
+		DeleteProjectClass cls = new DeleteProjectClass(id,title);
+		cls.execute();
+		try {
+			return cls.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	//	Log.i(TAG,"Project deleting after execute");
+		
+	}
+	
+	private class DeleteProjectClass extends AsyncTask<Void, Void, Boolean> {
+
+		private String id;
+		private String title;
+		
+		public DeleteProjectClass(String pId, String pTitle) {
+			id = pId;
+			title = pTitle;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... param) {
+			
+			String filename = title + "-" + id + ".nextproj.html";
+			
+			try {
+				drive.delete(filename);
+			} catch (IOException e) {
+				//displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				return false;
+			}
+			return true;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean status) {
+			
+			//return status;
+		}
+		
+		
+	}
+	
+	
+	
 
 
 	/*
@@ -689,5 +772,16 @@ public class SyncService extends Service {
 		mNotificationManager.notify(notid, mBuilder.getNotification());
 	}
 
-
+	
+	/**
+	 * Determines, if there is functional network connection
+	 * @return boolean state
+	 */
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
+	}
+	
 }

@@ -199,6 +199,18 @@ public class TasksDataSource {
 		vals.put(Constants.COLUMN_ID, task.getId());
 		database.insert(Constants.TABLE_TASKS, null, vals);
 	}
+	
+	/**
+	 * Delete task identified by ID.
+	 * 
+	 * @param taskId
+	 */
+	public void deleteTask(String taskId) {
+		String args[] = { taskId };
+
+		// delete tasks
+		database.delete(Constants.TABLE_TASKS, Constants.COLUMN_ID + " = ?", args);
+	}
 
 
 

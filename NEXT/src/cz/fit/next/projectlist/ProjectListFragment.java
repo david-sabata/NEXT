@@ -1,7 +1,10 @@
 package cz.fit.next.projectlist;
 
+import com.deaux.fan.FanView;
+
 import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
@@ -16,12 +19,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.history.HistoryFragment;
+import cz.fit.next.tasklist.TaskListFragment;
 
 public class ProjectListFragment extends ListFragment {
 
@@ -58,6 +65,9 @@ public class ProjectListFragment extends ListFragment {
 
 		// register long click events
 		registerForContextMenu(getListView());
+		
+		// reload title
+		getActivity().getActionBar().setTitle(getResources().getString(R.string.projects));
 
 	}
 
@@ -146,6 +156,7 @@ public class ProjectListFragment extends ListFragment {
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
 				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
 				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
+				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
 			}
 			else {
 				menu.add(Menu.NONE, 0, 0, R.string.no_actions);
@@ -171,6 +182,12 @@ public class ProjectListFragment extends ListFragment {
 				newFragment.setProjId(projId);
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
 				break;
+				
+			case R.id.action_showhistory:
+				FanView fan = ((MainActivity) getActivity()).getFanView();
+				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.PROJECT, projId);
+				fan.replaceMainFragment(fraghist);
+				break;
 
 			// delete - show prompt dialog
 			case R.id.action_delete:
@@ -181,7 +198,17 @@ public class ProjectListFragment extends ListFragment {
 						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								TasksModelService.getInstance().deleteProject(projId);
+								boolean ret = SyncService.getInstance().deleteProject(projId);
+								if (ret) { 
+									TasksModelService.getInstance().deleteProject(projId);
+								} else {
+									Context context = SyncService.getInstance().getApplicationContext();
+									CharSequence text = "Error while project deleting, check your connection.";
+									int duration = Toast.LENGTH_SHORT;
+									Toast toast = Toast.makeText(context, text, duration);
+									toast.show();
+								}
+										
 								reloadItems();
 							}
 						})
