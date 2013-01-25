@@ -38,7 +38,7 @@
     <string name="action_add_task">Add task</string>
     <string name="frag_title_next">Next tasks</string>
     <string name="frag_title_today">Today tasks</string>
-    <string name="someday">someday</string>
+    <string name="someday">Someday</string>
     <string name="projects">Projects</string>
 
     <string-array name="priorityArray">

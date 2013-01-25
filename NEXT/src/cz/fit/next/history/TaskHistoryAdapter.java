@@ -31,8 +31,8 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		mContext = context;
 
 		// fill in field names translator
-		fieldnames = new HashMap<String,String>();
-		
+		fieldnames = new HashMap<String, String>();
+
 		fieldnames.put(TaskHistory.TITLE, getContext().getResources()
 				.getString(R.string.history_title));
 		fieldnames.put(TaskHistory.CONTEXT, getContext().getResources()
@@ -67,48 +67,51 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		// Image
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
-		
+
 		String sub = "";
 
 		for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
-					
+
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.TITLE))
 					&& (mData.get(position).getChanges().get(i).getOldValue()
 							.isEmpty())) {
 				sub = sub + "TASK CREATED" + "\n";
-				
+
 				img.setImageResource(R.drawable.action_add);
-				
+
 				break;
 			}
-			
+
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("true"))) {
 				sub = sub + "TASK MARKED AS COMPLETE" + "\n";
-				
+
 				img.setImageResource(R.drawable.action_accept);
 			}
-			
+
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("false"))) {
 				sub = sub + "TASK MARKED AS UNCOMPLETE" + "\n";
-				
+
 				img.setImageResource(R.drawable.action_cancel);
 			}
-			
-			
-			
-			
+
+			if (mData.get(position).getChanges().get(i).getName()
+					.equals(TaskHistory.DATE)) {
+				sub = sub
+						+ fieldnames.get(mData.get(position).getChanges()
+								.get(i).getName()) + " -> "		
+						+ new DateTime(Long.parseLong(mData.get(position).getChanges().get(i).getNewValue())).toLocaleDateTimeString()
+						+ "\n";
+			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.CONTEXT))
-					|| (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.DATE))
 					|| (mData.get(position).getChanges().get(i).getName()
 							.equals(TaskHistory.PRIORITY))
 					|| (mData.get(position).getChanges().get(i).getName()
