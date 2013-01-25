@@ -72,6 +72,8 @@ public class HistoryFragment extends ListFragment {
 		if (mType == PROJECT) {
 			proj = TasksModelService.getInstance().getProjectById(mId);
 			adapterData = proj.getHistory();
+			
+			setListAdapter(new ProjectHistoryAdapter(getActivity(), 0, adapterData));
 		} else {
 			Task t = TasksModelService.getInstance().getTaskById(mId);
 			proj = t.getProject();
@@ -80,10 +82,12 @@ public class HistoryFragment extends ListFragment {
 				if (proj.getHistory().get(i).getTaskId().equals(t.getId()))
 					adapterData.add(proj.getHistory().get(i));
 			}
+			
+			setListAdapter(new TaskHistoryAdapter(getActivity(), 0, adapterData));
 		}
 				
 		
-		setListAdapter(new HistoryAdapter(getActivity(), 0, adapterData));
+		
 
 		
 		
