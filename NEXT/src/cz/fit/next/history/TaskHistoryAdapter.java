@@ -65,8 +65,10 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		author.setText(mData.get(position).getAuthor());
 
-		// Image
-		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
+		boolean isCreated = false;
+		boolean isCompleted = false;
+		boolean isUncompleted = false;
+		boolean isDeleted = false;
 
 		String sub = "";
 
@@ -78,7 +80,7 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.isEmpty())) {
 				sub = sub + "TASK CREATED" + "\n";
 
-				img.setImageResource(R.drawable.action_add);
+				isCreated = true;
 
 				break;
 			}
@@ -89,7 +91,7 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.equals("true"))) {
 				sub = sub + "TASK MARKED AS COMPLETE" + "\n";
 
-				img.setImageResource(R.drawable.action_accept);
+				isCompleted = true;
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
@@ -98,16 +100,18 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.equals("false"))) {
 				sub = sub + "TASK MARKED AS UNCOMPLETE" + "\n";
 
-				img.setImageResource(R.drawable.action_cancel);
+				isUncompleted = true;
 			}
 
 			if (mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.DATE)) {
 				sub = sub
 						+ fieldnames.get(mData.get(position).getChanges()
-								.get(i).getName()) + " -> "		
-						+ new DateTime(Long.parseLong(mData.get(position).getChanges().get(i).getNewValue())).toLocaleDateTimeString()
-						+ "\n";
+								.get(i).getName())
+						+ " -> "
+						+ new DateTime(Long.parseLong(mData.get(position)
+								.getChanges().get(i).getNewValue()))
+								.toLocaleDateTimeString() + "\n";
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
@@ -126,6 +130,21 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		}
 
 		subtitle.setText(sub);
+
+		// Image
+		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
+
+		if (isCreated)
+			img.setImageResource(R.drawable.action_add);
+		else if (isDeleted)
+			img.setImageResource(R.drawable.action_discard);
+		else if (isCompleted)
+			img.setImageResource(R.drawable.action_accept);
+		else if (isUncompleted)
+			img.setImageResource(R.drawable.action_cancel);
+		else
+			img.setImageResource(R.drawable.action_edit);
+
 		return vi;
 	}
 

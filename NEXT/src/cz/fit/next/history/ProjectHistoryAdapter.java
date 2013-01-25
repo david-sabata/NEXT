@@ -81,10 +81,12 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		author.setText(sub);
 
 		// Changes in tasks
-		// Image
-		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
-
 		sub = "";
+		
+		boolean isCreated = false;
+		boolean isCompleted = false;
+		boolean isUncompleted = false;
+		boolean isDeleted = false;
 
 		for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
 
@@ -94,9 +96,8 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.isEmpty())) {
 				sub = sub + "TASK CREATED" + "\n";
 
-				img.setImageResource(R.drawable.action_add);
-
-				break;
+				isCreated = true;
+				
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
@@ -105,7 +106,8 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.equals("true"))) {
 				sub = sub + "TASK MARKED AS COMPLETE" + "\n";
 
-				img.setImageResource(R.drawable.action_accept);
+				isCompleted = true;
+				
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
@@ -114,7 +116,8 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 							.equals("false"))) {
 				sub = sub + "TASK MARKED AS UNCOMPLETE" + "\n";
 
-				img.setImageResource(R.drawable.action_cancel);
+				isUncompleted = true;
+				
 			}
 
 			if (mData.get(position).getChanges().get(i).getName()
@@ -144,6 +147,21 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		}
 
 		subtitle.setText(sub);
+		
+		// Image
+		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
+
+		if (isCreated)
+			img.setImageResource(R.drawable.action_add);
+		else if (isDeleted)
+			img.setImageResource(R.drawable.action_discard);
+		else if (isCompleted)
+			img.setImageResource(R.drawable.action_accept);
+		else if (isUncompleted)
+			img.setImageResource(R.drawable.action_cancel);
+		else
+			img.setImageResource(R.drawable.action_edit);
+		
 		return vi;
 	}
 }
