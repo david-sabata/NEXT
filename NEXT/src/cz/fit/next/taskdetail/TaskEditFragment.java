@@ -23,6 +23,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
@@ -31,7 +32,7 @@ import cz.fit.next.backend.TasksModelService;
 
 
 
-public class TaskEditFragment extends Fragment {
+public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	private View taskDetailView;
 
 	/**
@@ -41,6 +42,14 @@ public class TaskEditFragment extends Fragment {
 	protected static final int DIALOG_EDIT_DATE = 1;
 	protected static final int DIALOG_EDIT_TIME = 2;
 
+
+	private boolean mIsServiceReady = false;
+
+	/**
+	 * In case we are editing a task, but service is not ready yet,
+	 * so we need to remember ID to load it later
+	 */
+	private String mTaskId;
 
 	/**
 	 * Task whose details are showing or NULL when adding a new one
@@ -98,11 +107,10 @@ public class TaskEditFragment extends Fragment {
 
 		Bundle args = getArguments();
 		if (args != null) {
-			if (TasksModelService.getInstance() == null)
-				throw new RuntimeException("TaskModelService.getInstance() == null");
+			mTaskId = args.getString(ARG_TASK_ID);
 
-			String taskId = args.getString(ARG_TASK_ID);
-			mTask = TasksModelService.getInstance().getTaskById(taskId);
+			if (mIsServiceReady && mTaskId != null)
+				mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 		}
 
 		editFragment = this;
@@ -124,16 +132,20 @@ public class TaskEditFragment extends Fragment {
 		 */
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		String[] priorityTexts = getResources().getStringArray(R.array.priorityArray);
-		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts );
+		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts);
 		spinnerPriority.setAdapter(spinnerAdapter);
-		
-		
-		/**
-		 * Load the task data into view
-		 */
-		if (mTask != null)
-			loadTaskToView(mTask);
-		else
+
+
+		//		/**
+		//		 * Load the task data into view
+		//		 */
+		//		if (mTask != null)
+		//			loadTaskToView(mTask);
+		//		else
+		//			loadDefaults();
+
+		// load only defaults now
+		if (mTaskId == null)
 			loadDefaults();
 
 		/**
@@ -147,11 +159,7 @@ public class TaskEditFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Calendar c = originalDateTime.toCalendar();
-				TaskEditFragmentTimeDialog newFragment =
-						new TaskEditFragmentTimeDialog(
-								c.get(Calendar.MINUTE),
-								c.get(Calendar.HOUR_OF_DAY)
-						);
+				TaskEditFragmentTimeDialog newFragment = new TaskEditFragmentTimeDialog(c.get(Calendar.MINUTE), c.get(Calendar.HOUR_OF_DAY));
 
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_TIME);
 				newFragment.show(getActivity().getFragmentManager(), "DialogTime");
@@ -170,11 +178,8 @@ public class TaskEditFragment extends Fragment {
 			public void onClick(View v) {
 				Calendar c = originalDateTime.toCalendar();
 
-				TaskEditFragmentDateDialog newFragment =
-						new TaskEditFragmentDateDialog(
-								c.get(Calendar.YEAR),
-								c.get(Calendar.MONTH),
-								c.get(Calendar.DAY_OF_MONTH));
+				TaskEditFragmentDateDialog newFragment = new TaskEditFragmentDateDialog(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c
+						.get(Calendar.DAY_OF_MONTH));
 
 				newFragment.setTargetFragment(editFragment, DIALOG_EDIT_DATE);
 				newFragment.show(getActivity().getFragmentManager(), "DialogDate");
@@ -188,16 +193,18 @@ public class TaskEditFragment extends Fragment {
 		someDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					if(!isChecked) {
-						Boolean allDay = originalDateTime.isAllday();
-						originalDateTime = new DateTime();
-						originalDateTime.setIsSomeday(false);
-						originalDateTime.setIsAllday(allDay);
-					}
-					
-					((TextView)taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).findViewById(R.id.editDate)).setText(originalDateTime.toLocaleDateString());
-					((TextView)taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).findViewById(R.id.editTime)).setText(originalDateTime.toLocaleTimeString());		
-					somedayChecked(isChecked);
+				if (!isChecked) {
+					Boolean allDay = originalDateTime.isAllday();
+					originalDateTime = new DateTime();
+					originalDateTime.setIsSomeday(false);
+					originalDateTime.setIsAllday(allDay);
+				}
+
+				((TextView) taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).findViewById(R.id.editDate)).setText(originalDateTime
+						.toLocaleDateString());
+				((TextView) taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).findViewById(R.id.editTime)).setText(originalDateTime
+						.toLocaleTimeString());
+				somedayChecked(isChecked);
 			}
 		});
 
@@ -208,16 +215,17 @@ public class TaskEditFragment extends Fragment {
 		wholeDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(!isChecked) {
+				if (!isChecked) {
 					originalDateTime.setIsAllday(false);
 					originalDateTime = new DateTime();
 				}
-				
-				((TextView)taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).findViewById(R.id.editTime)).setText(originalDateTime.toLocaleTimeString());		
+
+				((TextView) taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).findViewById(R.id.editTime)).setText(originalDateTime
+						.toLocaleTimeString());
 				alldayChecked(isChecked);
 			}
 		});
-				
+
 		return taskDetailView;
 	}
 
@@ -226,14 +234,14 @@ public class TaskEditFragment extends Fragment {
 	 * @param isChecked
 	 */
 	private void somedayChecked(Boolean isChecked) {
-		if(isChecked) {	
+		if (isChecked) {
 			originalDateTime.setIsSomeday(true);
 			// Hide rest
 			taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).setVisibility(View.GONE);
 			taskDetailView.findViewById(R.id.wholeDaySwitch).setVisibility(View.GONE);
 			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
-			
-		} else {	
+
+		} else {
 			// Show rest
 			taskDetailView.findViewById(R.id.TaskSubBodyEditDateLayout).setVisibility(View.VISIBLE);
 			taskDetailView.findViewById(R.id.wholeDaySwitch).setVisibility(View.VISIBLE);
@@ -242,25 +250,25 @@ public class TaskEditFragment extends Fragment {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set content, if allday switch is checked
 	 * @param isChecked
 	 */
 	private void alldayChecked(Boolean isChecked) {
-		if (isChecked) {		
+		if (isChecked) {
 			originalDateTime.setIsAllday(true);
-			
+
 			// Hide rest
 			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
-		} else {		
+		} else {
 			// Restore all date witch actual time
 			DateTime newDateTime = new DateTime();
 			Calendar c = originalDateTime.toCalendar();
 			newDateTime.setDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-			originalDateTime = newDateTime;			
+			originalDateTime = newDateTime;
 			originalDateTime.setIsAllday(false);
-			
+
 			// Show rest
 			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
 		}
@@ -286,27 +294,27 @@ public class TaskEditFragment extends Fragment {
 		TextView date = (TextView) taskDetailView.findViewById(R.id.editDate);
 		date.setText(task.getDate().toLocaleDateString());
 		originalDateTime = task.getDate();
-		
+
 		// Set AllDaySwitch and content
 		Switch allDayButton = (Switch) taskDetailView.findViewById(R.id.wholeDaySwitch);
-		if(originalDateTime.isAllday()) {
+		if (originalDateTime.isAllday()) {
 			allDayButton.setChecked(true);
-			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);		
+			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
 		} else {
 			allDayButton.setChecked(false);
 			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
 		}
-		
+
 		// Set SomeDaySwitch and content
 		Switch someDayButton = (Switch) taskDetailView.findViewById(R.id.somedaySwitch);
-		if(originalDateTime.isSomeday()) {
+		if (originalDateTime.isSomeday()) {
 			somedayChecked(true);
 			someDayButton.setChecked(true);
 		} else {
 			somedayChecked(false);
 			someDayButton.setChecked(false);
 		}
-		
+
 		// Set IsCompleted
 		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
 		isCompleted.setChecked(task.isCompleted());
@@ -350,7 +358,7 @@ public class TaskEditFragment extends Fragment {
 		Spinner spinnerProject = (Spinner) taskDetailView.findViewById(R.id.spinnerProject);
 		ProjectsSpinnerAdapter spinnerAdapter = new ProjectsSpinnerAdapter(getActivity(), cursor, 0);
 		spinnerProject.setAdapter(spinnerAdapter);
-		
+
 		// Set spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(0);
@@ -363,11 +371,16 @@ public class TaskEditFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
+		if (mIsServiceReady && mTaskId != null) {
+			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			loadTaskToView(mTask);
+		}
+
 		// Register for gestures
 		View v = getView().findViewById(R.id.scrollView);
 		((MainActivity) getActivity()).attachGestureDetector(v);
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
@@ -403,10 +416,10 @@ public class TaskEditFragment extends Fragment {
 	private void onSaveItem() {
 		String title = ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString();
 		String description = ((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString();
-		String projectTitle = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(
-				R.id.taskSpinnerText)).getText().toString();
-		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(
-				R.id.taskSpinnerText)).getTag().toString();
+		String projectTitle = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
+				.getText().toString();
+		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
+				.getTag().toString();
 		String context = ((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString();
 		boolean isCompleted = ((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked();
 
@@ -414,8 +427,7 @@ public class TaskEditFragment extends Fragment {
 		String taskId = null;
 		if (mTask == null) {
 			taskId = UUID.randomUUID().toString();
-		}
-		else {
+		} else {
 			taskId = mTask.getId();
 		}
 
@@ -423,30 +435,20 @@ public class TaskEditFragment extends Fragment {
 		Project project = null;
 		if (projectId == null || projectId.isEmpty()) {
 			project = new Project(projectTitle);
-		}
-		else {
+		} else {
 			project = new Project(projectId, projectTitle);
 		}
 
 		// Save priority
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
-		int priority = spinnerPriority.getSelectedItemPosition ();
-		
-		
+		int priority = spinnerPriority.getSelectedItemPosition();
+
+
 		// Set date
 		DateTime dateTime = originalDateTime;
 
 		// Create new changed task
-		Task editedTask =
-				new Task(taskId,
-						title,
-						description,
-						dateTime,
-						priority,
-						project,
-						context,
-						isCompleted
-				);
+		Task editedTask = new Task(taskId, title, description, dateTime, priority, project, context, isCompleted);
 
 		TasksModelService.getInstance().saveTask(editedTask);
 	}
@@ -457,35 +459,45 @@ public class TaskEditFragment extends Fragment {
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);	
-		switch(requestCode) {
-		case DIALOG_EDIT_DATE:		
-			Bundle dateData = data.getExtras();
-						
-			originalDateTime.setDate(
-					dateData.getInt("year"), 
-					dateData.getInt("monthOfYear") + 1, 
-					dateData.getInt("dayOfMonth"));
-			
-			// Assign new date to dateView
-			TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
-			dateView.setText(originalDateTime.toLocaleDateString());
-			break;
-			
-		case DIALOG_EDIT_TIME:
-			Bundle time = data.getExtras();
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case DIALOG_EDIT_DATE:
+				Bundle dateData = data.getExtras();
 
-			originalDateTime.setTime(time.getInt("hourOfDay"), time.getInt("minute"));
-			
-			// Assign new date to timeView
-			TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
-			timeView.setText(originalDateTime.toLocaleTimeString());
-			
-			break;
+				originalDateTime.setDate(dateData.getInt("year"), dateData.getInt("monthOfYear") + 1, dateData.getInt("dayOfMonth"));
+
+				// Assign new date to dateView
+				TextView dateView = (TextView) taskDetailView.findViewById(R.id.editDate);
+				dateView.setText(originalDateTime.toLocaleDateString());
+				break;
+
+			case DIALOG_EDIT_TIME:
+				Bundle time = data.getExtras();
+
+				originalDateTime.setTime(time.getInt("hourOfDay"), time.getInt("minute"));
+
+				// Assign new date to timeView
+				TextView timeView = (TextView) taskDetailView.findViewById(R.id.editTime);
+				timeView.setText(originalDateTime.toLocaleTimeString());
+
+				break;
 
 			default:
 				Log.i("Unknown dialog request code", Integer.toString(requestCode));
 				break;
 		}
 	}
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+
+		if (mTaskId != null) {
+			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			loadTaskToView(mTask);
+		}
+	}
+
+
 }

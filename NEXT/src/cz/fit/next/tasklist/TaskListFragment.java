@@ -113,9 +113,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.i(LOG_TAG, "onCreate");
-		Log.d(LOG_TAG, "activity " + (getActivity() == null ? "IS" : "IS NOT") + " null");
-
 		setHasOptionsMenu(true);
 
 		Bundle args = getArguments();
@@ -144,8 +141,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		Log.i(LOG_TAG, "onResume");
 
 		// re-apply filter if service is ready (else wait for event)
 		if (mIsServiceReady && getListAdapter() == null) {
@@ -215,7 +210,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 
 		// replace main fragment with task detail fragment
 		MainActivity activity = (MainActivity) getActivity();
-		activity.getFanView().replaceMainFragment(fTask);
+		activity.replaceMainFragment(fTask);
 	}
 
 

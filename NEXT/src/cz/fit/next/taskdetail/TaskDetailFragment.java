@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
@@ -26,7 +27,7 @@ import cz.fit.next.backend.database.Constants;
  * @author Tomas Sychra
  * 
  */
-public class TaskDetailFragment extends Fragment {
+public class TaskDetailFragment extends Fragment implements ServiceReadyListener {
 
 	private static final String LOG_TAG = "TaskDetailFragment";
 
@@ -37,11 +38,16 @@ public class TaskDetailFragment extends Fragment {
 	private static final String ARG_TASK_ID = "taskID";
 
 	/**
+	 * In case we know only ID and service was not ready to load data yet
+	 */
+	private String mTaskId;
+
+	/**
 	 * Task whose details are showing
 	 */
 	private Task mTask;
 
-	private View taskDetailView;
+	private boolean mIsServiceReady = false;
 
 
 
@@ -78,13 +84,8 @@ public class TaskDetailFragment extends Fragment {
 
 		Bundle args = getArguments();
 		if (args != null) {
-			if (TasksModelService.getInstance() == null)
-				throw new RuntimeException("TaskModelService.getInstance() == null");
-
-			String taskId = args.getString(ARG_TASK_ID);
-			mTask = TasksModelService.getInstance().getTaskById(taskId);
-		}
-		else {
+			mTaskId = args.getString(ARG_TASK_ID);
+		} else {
 			Log.e(LOG_TAG, "onCreate with no arguments (getArguments==null)");
 		}
 	}
@@ -98,27 +99,21 @@ public class TaskDetailFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_show, container, false);
-
-		// load the task data into view
-		setDetailTask();
-
-		return taskDetailView;
+		return inflater.inflate(R.layout.task_detail_fragment_show, container, false);
 	}
 
 
 
 
 	/**
-	 * Reload Task data if data in DB has changed
+	 * Always reload Task data - we might be resuming from edit fragment
 	 */
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		Task task = TasksModelService.getInstance().getTaskById(mTask.getId());
-		if (!mTask.equals(task)) {
-			mTask = task;
+		if (mTaskId != null && mIsServiceReady) {
+			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			setDetailTask();
 		}
 
@@ -137,7 +132,7 @@ public class TaskDetailFragment extends Fragment {
 				text = mTask.getDescription();
 			} else if (itemType.equals("date")) {
 				DateTime date = mTask.getDate();
-				if(date.isSomeday()) {
+				if (date.isSomeday()) {
 					text = "Someday";
 				} else if (date.isAllday()) {
 					text = date.toLocaleDateString();
@@ -146,7 +141,7 @@ public class TaskDetailFragment extends Fragment {
 				}
 			} else if (itemType.equals("project")) {
 				String projectText = mTask.getProject().getTitle();
-				if(!(projectText.equals(Constants.IMPLICIT_PROJECT_NAME))) { 
+				if (!(projectText.equals(Constants.IMPLICIT_PROJECT_NAME))) {
 					text = mTask.getProject().getTitle();
 				}
 			} else if (itemType.equals("context")) {
@@ -169,42 +164,42 @@ public class TaskDetailFragment extends Fragment {
 	 */
 	private void setDetailTask() {
 		// set Title
-		TextView title = (TextView) taskDetailView.findViewById(R.id.titleTask);
+		TextView title = (TextView) getView().findViewById(R.id.titleTask);
 		if (title != null) {
 			title.setText(mTask.getTitle());
 		}
 
 		// set description
-		TextView description = (TextView) taskDetailView.findViewById(R.id.textDescriptionShow);
-		LinearLayout descriptionLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskDescriptionLayout);
+		TextView description = (TextView) getView().findViewById(R.id.textDescriptionShow);
+		LinearLayout descriptionLayout = (LinearLayout) getView().findViewById(R.id.taskDescriptionLayout);
 		setTitleLayout(descriptionLayout, description, "description");
 
 		// set date
-		TextView date = (TextView) taskDetailView.findViewById(R.id.textDateShow);
-		LinearLayout dateLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskDateLayout);
+		TextView date = (TextView) getView().findViewById(R.id.textDateShow);
+		LinearLayout dateLayout = (LinearLayout) getView().findViewById(R.id.taskDateLayout);
 		setTitleLayout(dateLayout, date, "date");
 
 		// set project
-		TextView project = (TextView) taskDetailView.findViewById(R.id.textProjectShow);
-		LinearLayout projectLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskProjectLayout);
+		TextView project = (TextView) getView().findViewById(R.id.textProjectShow);
+		LinearLayout projectLayout = (LinearLayout) getView().findViewById(R.id.taskProjectLayout);
 		setTitleLayout(projectLayout, project, "project");
 
 		// set context
-		TextView context = (TextView) taskDetailView.findViewById(R.id.textContextShow);
-		LinearLayout contextLayout = (LinearLayout) taskDetailView.findViewById(R.id.taskContextLayout);
+		TextView context = (TextView) getView().findViewById(R.id.textContextShow);
+		LinearLayout contextLayout = (LinearLayout) getView().findViewById(R.id.taskContextLayout);
 		setTitleLayout(contextLayout, context, "context");
 
 		// Set IsCompleted
-		CheckBox isCompleted = (CheckBox) taskDetailView.findViewById(R.id.IsCompleted);
+		CheckBox isCompleted = (CheckBox) getView().findViewById(R.id.IsCompleted);
 		if (isCompleted != null) {
 			isCompleted.setChecked(mTask.isCompleted());
 		}
 
 		// set priority
-		TextView priority = (TextView) taskDetailView.findViewById(R.id.showPriorityText);
+		TextView priority = (TextView) getView().findViewById(R.id.showPriorityText);
 		String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
 		priority.setText(priorityStrings[mTask.getPriority()]);
-		
+
 	}
 
 
@@ -229,7 +224,7 @@ public class TaskDetailFragment extends Fragment {
 
 			// replace main fragment with task detail fragment
 			MainActivity activity = (MainActivity) getActivity();
-			activity.getFanView().replaceMainFragment(fTask);
+			activity.replaceMainFragment(fTask);
 
 			return true;
 		}
@@ -240,6 +235,15 @@ public class TaskDetailFragment extends Fragment {
 
 
 
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+
+		if (mTask == null && mTaskId != null) {
+			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			setDetailTask();
+		}
+	}
 
 
 }

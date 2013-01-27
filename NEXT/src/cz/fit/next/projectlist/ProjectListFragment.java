@@ -5,16 +5,13 @@ import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import cz.fit.next.MainActivity;
@@ -33,12 +30,12 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 
 
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-
-		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	}
+	//	@Override
+	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	//		super.onCreateView(inflater, container, savedInstanceState);
+	//
+	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
+	//	}
 
 
 	@Override
@@ -73,7 +70,7 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 	 * Load projects from given adapter
 	 * @param cursor
 	 */
-	public void setItems(Cursor cursor) {
+	private void setItems(Cursor cursor) {
 		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
 
@@ -81,8 +78,7 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 	 * Reload projects from service if it is ready
 	 */
 	public void reloadItems() {
-		if (mIsServiceReady)
-			setItems(TasksModelService.getInstance().getAllProjectsCursor());
+		setItems(TasksModelService.getInstance().getAllProjectsCursor());
 	}
 
 
@@ -194,7 +190,11 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 	@Override
 	public void onServiceReady(TasksModelService s) {
 		mIsServiceReady = true;
-		reloadItems();
+
+		// need to check if activity exists - because of async fragment switching 
+		// onAttached might not be called yet
+		if (getActivity() != null)
+			reloadItems();
 	}
 
 

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.deaux.fan.FanView;
 import com.deaux.fan.SidebarListener;
 
 import cz.fit.next.MainActivity;
@@ -277,11 +276,11 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 			// open new fragment
 			TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
-			FanView fan = ((MainActivity) getActivity()).getFanView();
-			fan.replaceMainFragment(frag);
+			MainActivity activity = ((MainActivity) getActivity());
+			activity.replaceMainFragment(frag);
 
 			// hide sidebar
-			fan.showMenu();
+			activity.getFanView().showMenu();
 		}
 	};
 
@@ -300,11 +299,11 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 			// open new fragment
 			TaskListFragment frag = TaskListFragment.newInstance(f, contextTitle);
-			FanView fan = ((MainActivity) getActivity()).getFanView();
-			fan.replaceMainFragment(frag);
+			MainActivity activity = ((MainActivity) getActivity());
+			activity.replaceMainFragment(frag);
 
 			// hide sidebar
-			fan.showMenu();
+			activity.getFanView().showMenu();
 		}
 	};
 
@@ -316,10 +315,9 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	public void onServiceReady(TasksModelService s) {
 		mIsServiceReady = true;
 
-		if (getView() != null)
+		if (getActivity() != null)
 			loadDynamicItems();
 	}
-
 
 
 
