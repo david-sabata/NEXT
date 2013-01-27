@@ -5,6 +5,7 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.sync.SyncService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -130,6 +131,19 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 								R.string.task_created) + "\n";
 
 				isCreated = true;
+
+			}
+			
+			if ((mData.get(position).getChanges().get(i).getName()
+					.equals(TaskHistory.TITLE))
+					&& (mData.get(position).getChanges().get(i).getNewValue()
+							.matches(TasksModelService.deletedTitlePrefix + ".*"))) {
+				sub = sub
+						+ getContext().getResources().getString(
+								R.string.task_deleted) + "\n";
+
+				isDeleted = true;
+				break;
 
 			}
 

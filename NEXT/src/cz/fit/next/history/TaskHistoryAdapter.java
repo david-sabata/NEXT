@@ -82,7 +82,7 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 				isCreated = true;
 
-				break;
+				//break;
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
