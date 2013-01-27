@@ -1,6 +1,9 @@
 package cz.fit.next.tasklist;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
@@ -14,12 +17,15 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.deaux.fan.FanView;
+
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.history.HistoryFragment;
 import cz.fit.next.taskdetail.TaskDetailFragment;
 import cz.fit.next.taskdetail.TaskEditFragment;
 
@@ -143,7 +149,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		super.onResume();
 
 		// re-apply filter if service is ready (else wait for event)
-		if (mIsServiceReady && getListAdapter() == null) {
+		if (mIsServiceReady) {
 			reload();
 		}
 
@@ -223,6 +229,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 
 		if (v.getId() == android.R.id.list) {
 			menu.add(Menu.NONE, R.id.action_edit, 0, R.string.action_edit_task);
+			menu.add(Menu.NONE, R.id.action_showhistory, 0, R.string.show_history);
 			menu.add(Menu.NONE, R.id.action_delete, 1, R.string.action_delete_task);
 		}
 	}
@@ -233,7 +240,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
-		String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		final String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		switch (item.getItemId()) {
 
@@ -244,8 +251,24 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 				activity.getFanView().replaceMainFragment(fTask);
 				break;
 
+			case R.id.action_showhistory:
+				FanView fan = ((MainActivity) getActivity()).getFanView();
+				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.TASK, taskId);
+				fan.replaceMainFragment(fraghist);
+				break;
+
 			case R.id.action_delete:
-				Toast.makeText(getActivity(), "Task deletion not implemented yet", Toast.LENGTH_SHORT).show();
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.task_delete)
+						.setMessage(R.string.task_delete_confirm_msg).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								TasksModelService.getInstance().deleteTask(taskId);
+								//Reload Items
+								Fragment f = getFragmentManager().findFragmentById(R.id.appView);
+								if (f instanceof TaskListFragment)
+									((TaskListFragment) f).reload();
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
 				break;
 		}
 

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 
@@ -39,6 +40,7 @@ import cz.fit.next.backend.Project;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -372,6 +374,9 @@ public class SyncService extends Service {
 
 				pTitle = getLastValInHistory(pair.getValue().getHistory(),
 						pair.getKey(), TaskHistory.TITLE);
+				
+				// throw out deleted tasks
+				if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*")) continue;
 
 				pDescription = getLastValInHistory(
 						pair.getValue().getHistory(), pair.getKey(),
@@ -643,6 +648,71 @@ public class SyncService extends Service {
 		
 		
 	}
+	
+	/**
+	 * Deletes project
+	 */
+	public boolean deleteProject(String id) {
+		
+		if (!isNetworkAvailable()) return false;
+		
+		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+		pds.open();
+		Project proj = pds.getProjectById(id);
+		String title = proj.getTitle();
+		pds.close();
+		
+		DeleteProjectClass cls = new DeleteProjectClass(id,title);
+		cls.execute();
+		try {
+			return cls.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return false;
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+	//	Log.i(TAG,"Project deleting after execute");
+		
+	}
+	
+	private class DeleteProjectClass extends AsyncTask<Void, Void, Boolean> {
+
+		private String id;
+		private String title;
+		
+		public DeleteProjectClass(String pId, String pTitle) {
+			id = pId;
+			title = pTitle;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... param) {
+			
+			String filename = title + "-" + id + ".nextproj.html";
+			
+			try {
+				drive.delete(filename);
+			} catch (IOException e) {
+				//displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				return false;
+			}
+			return true;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean status) {
+			
+			//return status;
+		}
+		
+		
+	}
+	
+	
+	
 
 
 	/*

@@ -13,6 +13,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
+import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.SyncService;
@@ -22,6 +23,7 @@ import cz.fit.next.backend.sync.SyncService;
  */
 public class TasksModelService extends Service {
 
+	public static final String deletedTitlePrefix = "@%deleted_";
 	private static final String LOG_TAG = "TasksModelService";
 
 	/** Instance of self */
@@ -275,6 +277,42 @@ public class TasksModelService extends Service {
 	 */
 	public void deleteProject(String projectId) {
 		mProjectsDataSource.deleteProject(projectId);
+	}
+	
+	/**
+	 * Delete task identified by ID.
+	 * 
+	 * @param taskId
+	 */
+	public void deleteTask(String taskId) {
+		
+		Task deleting = getTaskById(taskId);
+		
+		// write deletion to the project history
+		Project proj = mProjectsDataSource.getProjectById(deleting.getProject().getId());
+
+		ArrayList<TaskHistory> history = proj.getHistory();
+		
+		// generate history record
+		TaskHistory hist = new TaskHistory();
+		hist.setAuthor(SyncService.getInstance().getAccountName());
+		if (hist.getAuthor() == null)
+			hist.setAuthor("");
+		hist.setTaskId(deleting.getId());
+		hist.setTimeStamp(new DateTime().toString());
+		
+		hist.addChange(TaskHistory.TITLE, deleting.getTitle(), deletedTitlePrefix + deleting.getTitle());
+		
+		if (history == null)
+			history = new ArrayList<TaskHistory>();
+		history.add(hist);
+		proj.setHistory(history);
+
+		mProjectsDataSource.saveProject(proj);
+		
+		
+		// delete task from database
+		mTasksDataSource.deleteTask(taskId);
 	}
 
 
