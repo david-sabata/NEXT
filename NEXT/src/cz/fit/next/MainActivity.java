@@ -307,35 +307,6 @@ public class MainActivity extends Activity {
 
 
 
-	/**
-	 * Hides the loading fragment if it is visible and replaces it
-	 * with default task list fragment, else does nothing
-	 */
-	public void hideLoadingFragment() {
-		throw new RuntimeException("DO NOT CALL ME, I AM OBSOLETE AND TO BE REMOVED");
-
-		//		FanView fan = (FanView) findViewById(R.id.fan_view);
-		//		Fragment currentFragment = self.getFragmentManager().findFragmentById(R.id.appView);
-		//
-		//		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
-		//			// default task list
-		//			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
-		//
-		//			// replace without history
-		//			// FIXME: IllegalStateException: 'Can not perform this action after onSaveInstanceState'
-		//			fan.replaceMainFragment(frag, false);
-		//		}
-		//
-		//		Fragment currentFanFragment = self.getFragmentManager().findFragmentById(R.id.fanView);
-		//		if (currentFanFragment != null && currentFragment instanceof LoadingFragment) {
-		//			//default sidebar
-		//			SidebarFragment sidebar = new SidebarFragment();
-		//			fan.replaceFanFragment(sidebar, false);
-		//		}
-	}
-
-
-
 	private ServiceConnection modelServiceConnection = new ServiceConnection() {
 
 		@Override

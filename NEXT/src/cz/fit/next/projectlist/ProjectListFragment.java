@@ -16,9 +16,6 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.deaux.fan.FanView;
-
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.ServiceReadyListener;
@@ -178,9 +175,9 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 				break;
 
 			case R.id.action_showhistory:
-				FanView fan = ((MainActivity) getActivity()).getFanView();
+				MainActivity activity = (MainActivity) getActivity();
 				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.PROJECT, projId);
-				fan.replaceMainFragment(fraghist);
+				activity.replaceMainFragment(fraghist);
 				break;
 
 			// delete - show prompt dialog
