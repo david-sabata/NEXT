@@ -654,6 +654,7 @@ public class SyncService extends Service {
 	 */
 	public boolean deleteProject(String id) {
 		
+		if (!isUserLoggedIn()) return true;
 		if (!isNetworkAvailable()) return false;
 		
 		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
@@ -777,11 +778,23 @@ public class SyncService extends Service {
 	 * Determines, if there is functional network connection
 	 * @return boolean state
 	 */
-	private boolean isNetworkAvailable() {
+	public boolean isNetworkAvailable() {
 	    ConnectivityManager connectivityManager 
 	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null;
+	}
+	
+	/**
+	 * Determines, if there is stored username in preferences
+	 * @return boolean state
+	 */
+	public boolean isUserLoggedIn() {
+				
+		if (getAccountName() != null)
+			return true;
+		else
+			return false;
 	}
 	
 }

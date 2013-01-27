@@ -154,7 +154,9 @@ public class ProjectListFragment extends ListFragment {
 			String tag = itemLayout.getTag() == null ? null : itemLayout.getTag().toString();
 
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
-				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
+				if (SyncService.getInstance().isUserLoggedIn()) {
+					menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
+				}
 				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
 				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
 				

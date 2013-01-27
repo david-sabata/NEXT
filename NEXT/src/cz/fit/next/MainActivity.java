@@ -188,6 +188,8 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+		if (!SyncService.getInstance().isUserLoggedIn())
+			menu.removeItem(R.id.menu_sync_now);
 		return true;
 	}
 

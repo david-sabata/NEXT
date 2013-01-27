@@ -3,6 +3,8 @@ package cz.fit.next.history;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.sync.SyncService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,7 +65,12 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		title.setText(new DateTime(Long.parseLong(mData.get(position)
 				.getTimeStamp())).toLocaleDateTimeString());
 
-		author.setText(mData.get(position).getAuthor());
+		if (SyncService.getInstance().isUserLoggedIn())
+			author.setText(mData.get(position).getAuthor());
+		else
+			author.setVisibility(0);
+		
+		
 
 		boolean isCreated = false;
 		boolean isCompleted = false;

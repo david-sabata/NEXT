@@ -104,8 +104,10 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		// Author + timestamp
 		String sub = "";
-
-		sub = mData.get(position).getAuthor()
+		if (SyncService.getInstance().isUserLoggedIn())
+			sub = mData.get(position).getAuthor();
+		
+		sub = sub
 				+ "\n"
 				+ new DateTime(Long.parseLong(mData.get(position)
 						.getTimeStamp())).toLocaleDateTimeString();

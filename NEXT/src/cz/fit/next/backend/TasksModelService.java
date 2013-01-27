@@ -186,7 +186,7 @@ public class TasksModelService extends Service {
 		TaskHistory hist = new TaskHistory();
 		hist.setAuthor(SyncService.getInstance().getAccountName());
 		if (hist.getAuthor() == null)
-			hist.setAuthor("");
+			hist.setAuthor(getResources().getString(R.string.me));
 		hist.setTaskId(task.getId());
 		hist.setTimeStamp(new DateTime().toString());
 
