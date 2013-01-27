@@ -365,7 +365,7 @@ public class SyncService extends Service {
 
 			while (it.hasNext()) {
 
-				Map.Entry<String, Project> pair = (Map.Entry<String, Project>) it
+				Map.Entry<String, Project> pair = it
 						.next(); // move to next position
 
 				pId = pair.getKey();

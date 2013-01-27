@@ -1,27 +1,256 @@
-<resources>
-
-    <!-- <style name="AppTheme" parent="@android:Theme.Holo.Light" /> -->
-
-    <style name="AppTheme" parent="@style/Theme.Holo.Light.Hack" />
-
-    <color name="FanBackgroundDark">#2c2c2c</color>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- Colors used in styles -->
+	<color name="BasicLightBackground">@android:color/background_light</color>
+   	<color name="FanBackgroundDark">#2c2c2c</color>
     <color name="FanItemsText">#FFFFFF</color>
     <color name="FanItemsBackgroundColor">#8FB5D0</color>
     <color name="FanTitleColor">#33b6ea</color>
     <color name="TaskTitleColor">#FFFFFF</color>
     <color name="TaskTitleBackground">#000000</color>
     <color name="TaskCheckBoxBackground">#FFFFFF</color>
+	<color name="TaskSubtitleColor">#FFFFFF</color>
+    <color name="TaskSubtitleBackground">#33b6ea</color>
+    <color name="TaskRuller">#33b6ea</color>
+    <color name="priority_3">#BF3000</color>
+    <color name="priority_1">#93BF00</color>
+    <color name="priority_2">#BF9600</color>
+    
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************* SIDEBAR STYLE ********************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+	<style name="Next" parent="@style/Theme.Holo.Light.Hack">
+	    
+	</style>
+	
+	<style name="Next.Sidebar">
+    	<item name="android:layout_width">wrap_content</item>
+    	<item name="android:layout_height">match_parent</item>
+	</style>
+	
+	<style name="Next.Sidebar.Title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>	    
+	    <item name="android:textSize">@dimen/FanTitleSize</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">normal</item>   
+        <item name="android:gravity">center_horizontal</item> 
+	</style>
+	
+	<style name="Next.Sidebar.HorizontalLine">
+	    <item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">2dp</item>
+		<item name="android:orientation">vertical</item> 
+	</style>
+	 
+	<style name="Next.Sidebar.Subtitle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:clickable">True</item>
+        <item name="android:drawablePadding">@dimen/FanItemDrawablePadding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:height">@dimen/FainItemHeight</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textSize">@dimen/FanItemTextSize</item>
+	</style>
+	<!--  ******************************************************* -->
+	<!--  Style for light design - SIDEBAR ********************** -->
+	<!--  ******************************************************* -->	
+    <style name="Next.Light">
+        
+	</style>
+	
+    <!--  **************** SIDEBAR LIGHT ************************ -->
+    <!-- Sidebar style for light -->
+	    <style name="Next.Sidebar.Light">
+	    	<item name="android:background">@color/FanBackgroundDark</item>
+	    	<item name="android:textColor">@color/FanItemsText</item>
+	    </style>
+	
+	    <!--  This is style for blue main titles in sidebar -->
+	    <style name="Next.Sidebar.Title.Light">
+	        <item name="android:textColor">@color/FanTitleColor</item>
+	    </style>
+	    	
+	    	<!--  This is style for blue horizontal line in sidebar -->
+		    <style name="Next.Sidebar.HorizontalLine.Light">
+		        <item name="android:background">@color/FanTitleColor</item>
+		    </style>
+		    
+		    <!--  This is style for subtitle text in one layout -->
+		    <style name="Next.Sidebar.Subtitle.Light">
+		        <item name="android:textColor">@color/FanItemsText</item>
+		    </style>
+		    
+		    
+	
+	<!--  ******************************************************* -->
+	<!--  Style for dark design - SIDEBAR *********************** -->
+	<!--  ******************************************************* -->	
+	
+		    
+	<!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+    <!-- **************** TASK DETAIL (EDIT) FRAGMENT ************* -->
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->   
 
+	<!--  Main body of task fragment -->    
+	<style name="Next.Task">
+	    
+	</style>
+		
+	<!-- Caps BLUE text -->
+	<style name="Next.Task.Capstext">
+		<item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">@dimen/TaskSubBodyTitlePaddingLeft</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textSize">@dimen/TaskSubtitleSize</item>
+        <item name="android:textStyle">normal</item>
+	</style>
+   
+	<style name="Next.Task.ScrollView">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+	</style>
+	
+	<style name="Next.Task.SubLayout">
+         <item name="android:layout_width">fill_parent</item>
+         <item name="android:layout_height">wrap_content</item>
+         <item name="android:layout_marginRight">@dimen/TaskSubtitleMarginBoth</item>
+         <item name="android:layout_weight">2.10</item>
+         <item name="android:orientation">vertical</item>
+         <item name="android:layout_marginTop">@dimen/TaskBodySubLayout</item>
+	</style>
+	
+	<!-- GENERAL  Title layout GENERAL -->
+	<style name="Next.Task.TitleLayout">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2.10</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/TaskTittlePadding</item>
+        <item name="android:paddingTop">@dimen/TaskTitlePaddingTop</item>
+	</style>
+	
+		<style name="Next.Task.TitleLayout.ShowFragment">
+			<!-- FOR FUTURE -->
+		</style>
+		<style name="Next.Task.TitleLayout.EditFragment">
+			<!-- FOR FUTURE -->
+		</style>
+	    
+		<!-- GENERAL STYLE OF TITLE TEXT -->
+		<style name="Next.Task.Title">
+	        <item name="android:layout_width">wrap_content</item>
+	        <item name="android:layout_height">wrap_content</item>
+	        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+	        <item name="android:hint">Task title</item>
+	        <item name="android:inputType">textMultiLine</item>
+	        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+	        <item name="android:textSize">@dimen/TaskTitleSize</item>
+		</style>
+		
+			<style name="Next.Task.Title.ShowFragment">
+				<!-- FOR FUTURE -->
+			</style>
+			<style name="Next.Task.Title.EditFragment">
+				<!-- FOR FUTURE -->
+			</style>
+			
+	<!--  GENERAL HUGE LINE UNDER TITLE -->
+	<style name="Next.Task.LineUnderTitle">
+	     <item name="android:layout_width">match_parent</item>
+         <item name="android:layout_height">3dp</item>
+         <item name="android:layout_weight">2.10</item>
+         <item name="android:orientation">vertical</item>
+	</style>
+	
+	<!-- GENERAL LINE SEPARATOR BETWEEN CATEGORIES (COMPLETED, DATE, ETC..  -->
+	<style name="Next.Task.LineSeparatorCatagories">
+	    <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:layout_marginRight">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:orientation">vertical</item>
+	</style>
+	
+	<!-- GENERAL CHECKBOX IF COMPLETED -->
+	<style name="Next.Task.CheckboxCompleted">
+        <item name="android:layout_width">123dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/TaskBodyPadding</item>
+        <item name="android:clickable">false</item>
+        <item name="android:text">@string/TaskCompleted</item>
+	</style>
+	
+	<!-- GENERAL LAYOUT FOR TEXT OF CATEGORIES IN SHOW FRAGMENT -->
+	<style name="Next.Task.CategoriesText">
+    	<item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_marginLeft">@dimen/TaskSubtitleMarginBoth</item>
+        <item name="android:ems">10</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:textSize">@dimen/TaskSubTextSize</item> 
+        
+	</style>
+	<!--  ******************************************************* -->
+	<!--  *** Style for light design - ONE TASK DETAIL (EDIT) *** -->
+	<!--  ******************************************************* -->		
+		<style name="Next.Task.Capstext.Light">
+	        <item name="android:textColor">@android:color/holo_blue_light</item>
+    	</style>
+    	
+		<style name="Next.Task.ScrollView.Light">
+			<item name="android:background">@android:color/background_light</item>
+		</style>    
+		
+		<!-- Title Layout -->
+		<style name="Next.Task.TitleLayout.ShowFragment.Light">
+		    <item name="android:background">@color/TaskTitleBackground</item>
+		</style>
+		
+			<style name="Next.Task.TitleLayout.EditFragment.Light">	
+			    <!-- FOR FUTURE -->
+			</style>
+		
+				<style name="Next.Task.Title.ShowFragment.Light">
+				    <item name="android:background">@color/TaskTitleBackground</item>
+				    <item name="android:textColor">@color/TaskTitleColor</item>
+				</style>
+				
+				<style name="Next.Task.Title.EditFragment.Light">
+				    <item name="android:textColor">@android:color/holo_blue_light</item>
+				</style>
+		
+		<!-- Line under title -->
+		<style name="Next.Task.LineUnderTitle.Light">
+		    <item name="android:background">@color/TaskRuller</item>
+		</style>
+		
+		<!-- Lena separator between categories -->
+		<style name="Next.Task.LineSeparatorCatagories.Light">
+		     <item name="android:background">@color/TaskRuller</item>
+		</style> 
+		
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
     <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">
         <item name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
     </style>
 
-    <color name="TaskSubtitleColor">#FFFFFF</color>
-    <color name="TaskSubtitleBackground">#33b6ea</color>
-    <color name="TaskRuller">#33b6ea</color>
+	
 
-    
+    <!--  ************************************************************ -->
+    <!--  ********************** Loading Screen ********************** -->
+    <!--  ************************************************************ -->
     <style name="GenericProgressBackground" parent="android:Theme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
@@ -33,8 +262,16 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:indeterminate">true</item>
     </style>
-    <color name="priority_3">#BF3000</color>
-    <color name="priority_1">#93BF00</color>
-    <color name="priority_2">#BF9600</color>
+    
+    <!--  ************************************************************ -->
+    <!--  ****************** Preferences Screen ********************** -->
+    <!--  ************************************************************ -->   
+    <style name="Next.PreferenceScreen">
+    </style>
+    
+    <style name="Next.PreferenceScreen.Light">
+    	<item name="android:background">#ffaabb00</item>
+    </style>
+
 
 </resources>

@@ -5,18 +5,15 @@ package cz.fit.next.projectlist;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import cz.fit.next.R;
 import cz.fit.next.backend.sync.SyncService;
 
@@ -43,6 +40,7 @@ public class ShareDialog extends DialogFragment {
 				.setView(v)
 				.setPositiveButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int whichButton) {
 								// set sharing
 								//Toast.makeText(getActivity(), projId + ((TextView) v.findViewById(R.id.share_textedit)).getText(), Toast.LENGTH_SHORT).show();
@@ -61,6 +59,7 @@ public class ShareDialog extends DialogFragment {
 				)
 				.setNegativeButton(android.R.string.cancel,
 						new DialogInterface.OnClickListener() {
+							@Override
 							public void onClick(DialogInterface dialog, int whichButton) {
 								// hide sw keyboard
 								EditText text = (EditText) v.findViewById(R.id.share_textedit);
