@@ -190,11 +190,24 @@ public class ProjectListFragment extends ListFragment {
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
 				break;
 				
-			case R.id.action_sharing:
-				
+		case R.id.action_sharing:
+
+			if ((SyncService.getInstance().isNetworkAvailable())
+					&& (SyncService.getInstance().isUserLoggedIn())) {
 				SharingFragment fragshare = SharingFragment.newInstance(projId);
 				fan.replaceMainFragment(fragshare);
-				break;
+			} else {
+				Context context = SyncService.getInstance()
+						.getApplicationContext();
+				CharSequence text = getResources().getString(R.string.sharing_no_conection);
+				int duration = Toast.LENGTH_SHORT;
+				Toast toast = Toast.makeText(context, text, duration);
+				toast.show();
+			}
+
+			
+
+			break;
 				
 			case R.id.action_showhistory:
 				
