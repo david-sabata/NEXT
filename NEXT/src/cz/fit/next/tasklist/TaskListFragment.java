@@ -4,6 +4,7 @@ import android.app.ListFragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -28,7 +29,7 @@ import cz.fit.next.taskdetail.TaskEditFragment;
  */
 public class TaskListFragment extends ListFragment implements ServiceReadyListener {
 
-	private final static String LOG_TAG = "ContentFragment";
+	private final static String LOG_TAG = "TaskListFragment";
 
 	/**
 	 * Key to Bundle to store serialized Filter state
@@ -112,6 +113,9 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Log.i(LOG_TAG, "onCreate");
+		Log.d(LOG_TAG, "activity " + (getActivity() == null ? "IS" : "IS NOT") + " null");
+
 		setHasOptionsMenu(true);
 
 		Bundle args = getArguments();
@@ -135,20 +139,18 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 
 
 
+
+
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		// re-apply filter if service is ready (else wait for event)
-		if (mIsServiceReady)
-			reload();
+		Log.i(LOG_TAG, "onResume");
 
-		// update actionbar title
-		//		if (mTitleResId > 0) {
-		//			getActivity().getActionBar().setTitle(mTitleResId);
-		//		} else if (mTitle != null) {
-		//			getActivity().getActionBar().setTitle(mTitle);
-		//		}
+		// re-apply filter if service is ready (else wait for event)
+		if (mIsServiceReady && getListAdapter() == null) {
+			reload();
+		}
 
 		// register long click events
 		registerForContextMenu(getListView());
@@ -162,6 +164,13 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	 * Reloads tasklist according to current filter
 	 */
 	public void reload() {
+		if (!mIsServiceReady || getActivity() == null) {
+			Log.w(LOG_TAG, "cannot reload items, " + (!mIsServiceReady ? "service, " : "") + (getActivity() == null ? "activity" : "") + " is not ready");
+			return;
+		}
+
+		Log.d(LOG_TAG, "reloading items");
+
 		setFilter(mFilter);
 
 		if (mTitleResId > 0) {
@@ -174,7 +183,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	/**
 	 * Set filter to the adapter and reload items; pass null for all items
 	 */
-	public void setFilter(Filter filter) {
+	private void setFilter(Filter filter) {
 		mFilter = filter;
 
 		FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
@@ -287,8 +296,14 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	 */
 	@Override
 	public void onServiceReady(TasksModelService s) {
+		Log.i(LOG_TAG, "onServiceReady");
+
 		mIsServiceReady = true;
-		reload();
+
+		// need to check if activity exists - because of async fragment switching 
+		// onAttached might not be called yet
+		if (getActivity() != null)
+			reload();
 	}
 
 

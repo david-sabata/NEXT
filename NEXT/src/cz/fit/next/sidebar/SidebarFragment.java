@@ -49,10 +49,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 
 		// Generate fixed item in sidebar
-		sideBarView = setFixedItemsSidebar(sideBarView);
-
-		// Generate context items in sidebar
-		//		initSideBarContextProjects();
+		sideBarView = initStaticItems(sideBarView);
 
 		return sideBarView;
 	}
@@ -62,7 +59,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	 * @param sideBarView View of menu sidebar
 	 * @return sideBar - layout changed with new items
 	 */
-	protected View setFixedItemsSidebar(View pSideBarView) {
+	protected View initStaticItems(View pSideBarView) {
 		for (final int id : menuFixedItemsId) {
 			final TextView item = (TextView) pSideBarView.findViewById(id);
 
@@ -80,8 +77,9 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 	/**
 	 * Init sidebar contexts and projects
+	 * Assumes the service is ready
 	 */
-	public void initSideBarContextProjects() {
+	public void loadDynamicItems() {
 		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		// Load contexts from database
@@ -150,20 +148,21 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 
 
-
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		MainActivity activity = (MainActivity) getActivity();
+		if (mIsServiceReady)
+			loadDynamicItems();
 
-		FanView f = activity.getFanView();
-		f.setSidebarListener(new SidebarListener() {
+		MainActivity activity = (MainActivity) getActivity();
+		activity.getFanView().setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {
 
 				// Regenerate contexts and projects in sidebar menu
-				initSideBarContextProjects();
+				if (mIsServiceReady)
+					loadDynamicItems();
 			}
 
 			@Override
@@ -173,7 +172,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	}
 
 
-
 	/**
 	 * ActivitySelector
 	 * 
@@ -181,13 +179,14 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	 * @param id
 	 */
 	protected void updateContentFromItemClick(int id) {
-		FanView fan = ((MainActivity) getActivity()).getFanView();
+		MainActivity activity = (MainActivity) getActivity();
 
 		switch (id) {
 			case R.id.Time_Next:
 				// create new fragment to add to backstack
 				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
-				fan.replaceMainFragment(fragNext);
+				//fan.replaceMainFragment(fragNext);
+				activity.replaceMainFragment(fragNext);
 
 				break;
 			case R.id.Time_Today:
@@ -207,7 +206,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 					// create new fragment to add to backstack
 					TaskListFragment fragToday = TaskListFragment.newInstance(filterToday, R.string.frag_title_today);
-					fan.replaceMainFragment(fragToday);
+					activity.replaceMainFragment(fragToday);
 				}
 
 				break;
@@ -228,7 +227,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 					filter.setDateUntil(until);
 
 					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
-					fan.replaceMainFragment(frag);
+					activity.replaceMainFragment(frag);
 				}
 				break;
 
@@ -238,7 +237,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 			case R.id.Projects_ShowProjects:
 				// replace current fragment
-				fan.replaceMainFragment(new ProjectListFragment());
+				activity.replaceMainFragment(new ProjectListFragment());
 				break;
 
 			default:
@@ -247,7 +246,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 		}
 
 		// always toggle sidebar
-		fan.showMenu();
+		activity.getFanView().showMenu();
 	}
 
 
@@ -316,6 +315,9 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	@Override
 	public void onServiceReady(TasksModelService s) {
 		mIsServiceReady = true;
+
+		if (getView() != null)
+			loadDynamicItems();
 	}
 
 

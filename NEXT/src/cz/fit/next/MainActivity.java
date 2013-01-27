@@ -59,10 +59,8 @@ public class MainActivity extends Activity {
 
 	protected boolean isAnimationSet = false;
 
-	/**
-	 * To only allow single menu inflation
-	 */
-	protected boolean isMenuInflated = false;
+
+	protected boolean mIsServiceReady = false;
 
 
 
@@ -79,8 +77,6 @@ public class MainActivity extends Activity {
 		fan.setAnimationDuration(200); // 200ms
 
 		if (savedInstanceState == null) {
-			//			LoadingFragment fanFrag = LoadingFragment.newInstance();
-			//			LoadingFragment contentFrag = LoadingFragment.newInstance();
 			Fragment fanFrag = new SidebarFragment();
 			TaskListFragment contentFrag = TaskListFragment.newInstance(null, R.string.frag_title_next);
 
@@ -200,7 +196,6 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		Log.d(LOG_TAG, "onPrepareOptionsMenu");
 		super.onPrepareOptionsMenu(menu);
 
 		MenuItem item = menu.findItem(R.id.menu_sync_icon);
@@ -221,20 +216,18 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		FanView fan = (FanView) findViewById(R.id.fan_view);
-		
 		switch (item.getItemId()) {
-		
+
 			case android.R.id.home:
-				fan.showMenu();
+				getFanView().showMenu();
 				break;
 
 			// Switch to settings fragment
 			case R.id.menu_settings:
-				Intent prefIntent = new Intent(this,SettingsActivity.class);
-				startActivity(prefIntent);	
+				Intent prefIntent = new Intent(this, SettingsActivity.class);
+				startActivity(prefIntent);
 				break;
-				
+
 			case R.id.setting_connect_drive:
 				// Log.i("Setting", "Google Login");
 
@@ -285,6 +278,25 @@ public class MainActivity extends Activity {
 		return getFragmentManager().findFragmentById(R.id.appView);
 	}
 
+	public SidebarFragment getSidebarFragment() {
+		return (SidebarFragment) getFragmentManager().findFragmentById(R.id.fanView);
+	}
+
+
+	/**
+	 * USE THIS INSTEAD OF FanView.replaceMainFragment
+	 */
+	public void replaceMainFragment(Fragment frag) {
+		getFanView().replaceMainFragment(frag);
+
+		if (mIsServiceReady && frag instanceof ServiceReadyListener)
+			((ServiceReadyListener) frag).onServiceReady(mModelService);
+
+		Log.d(LOG_TAG, "replace frag to " + frag.getClass().getSimpleName());
+	}
+
+
+
 
 	/**
 	 * Setup gesture detection for given view
@@ -300,24 +312,26 @@ public class MainActivity extends Activity {
 	 * with default task list fragment, else does nothing
 	 */
 	public void hideLoadingFragment() {
-		FanView fan = (FanView) findViewById(R.id.fan_view);
-		Fragment currentFragment = self.getFragmentManager().findFragmentById(R.id.appView);
+		throw new RuntimeException("DO NOT CALL ME, I AM OBSOLETE AND TO BE REMOVED");
 
-		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
-			// default task list
-			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
-
-			// replace without history
-			// FIXME: IllegalStateException: 'Can not perform this action after onSaveInstanceState'
-			fan.replaceMainFragment(frag, false);
-		}
-
-		Fragment currentFanFragment = self.getFragmentManager().findFragmentById(R.id.fanView);
-		if (currentFanFragment != null && currentFragment instanceof LoadingFragment) {
-			//default sidebar
-			SidebarFragment sidebar = new SidebarFragment();
-			fan.replaceFanFragment(sidebar, false);
-		}
+		//		FanView fan = (FanView) findViewById(R.id.fan_view);
+		//		Fragment currentFragment = self.getFragmentManager().findFragmentById(R.id.appView);
+		//
+		//		if (currentFragment != null && currentFragment instanceof LoadingFragment) {
+		//			// default task list
+		//			TaskListFragment frag = TaskListFragment.newInstance(null, R.string.frag_title_next);
+		//
+		//			// replace without history
+		//			// FIXME: IllegalStateException: 'Can not perform this action after onSaveInstanceState'
+		//			fan.replaceMainFragment(frag, false);
+		//		}
+		//
+		//		Fragment currentFanFragment = self.getFragmentManager().findFragmentById(R.id.fanView);
+		//		if (currentFanFragment != null && currentFragment instanceof LoadingFragment) {
+		//			//default sidebar
+		//			SidebarFragment sidebar = new SidebarFragment();
+		//			fan.replaceFanFragment(sidebar, false);
+		//		}
 	}
 
 
@@ -327,6 +341,8 @@ public class MainActivity extends Activity {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			ModelServiceBinder binder = (ModelServiceBinder) service;
+
+			mIsServiceReady = true;
 
 			Log.d(LOG_TAG, "Model service connected");
 
@@ -340,14 +356,21 @@ public class MainActivity extends Activity {
 			Fragment current = getCurrentFragment();
 			if (current instanceof ServiceReadyListener)
 				((ServiceReadyListener) current).onServiceReady(binder.getService());
+
+			// notify sidebar fragment
+			getSidebarFragment().onServiceReady(binder.getService());
 		}
 
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			Log.d(LOG_TAG, "Model service disconnected");
+
+			mIsServiceReady = false;
 		}
 	};
+
+
 
 
 	private class ReloadReceiver extends BroadcastReceiver {
@@ -363,6 +386,8 @@ public class MainActivity extends Activity {
 		}
 	}
 
+
+
 	private class SyncStartReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -371,6 +396,8 @@ public class MainActivity extends Activity {
 			invalidateOptionsMenu();
 		}
 	}
+
+
 
 	private class SyncEndReceiver extends BroadcastReceiver {
 		@Override
