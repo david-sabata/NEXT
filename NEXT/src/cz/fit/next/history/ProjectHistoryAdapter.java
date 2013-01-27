@@ -23,8 +23,9 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 	ArrayList<TaskHistory> mData;
 	Context mContext;
-	
+
 	private HashMap<String, String> fieldnames;
+	private HashMap<String, String> titlecache;
 
 	public ProjectHistoryAdapter(Context context, int textViewResourceId,
 			ArrayList<TaskHistory> history) {
@@ -32,6 +33,9 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		mData = history;
 		mContext = context;
+
+		// init titlecache
+		titlecache = new HashMap<String, String>();
 
 		// fill in field names translator
 		fieldnames = new HashMap<String, String>();
@@ -67,7 +71,34 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		if (t != null) {
 			title.setText(t.getTitle());
 		} else {
-			title.setText("*DELETED TASK*");
+			// deleted task - we cant find any info in DB - lets inspect history
+			// for some titles
+			if (titlecache.get(mData.get(position).getTaskId()) != null) {
+				title.setText(titlecache.get(mData.get(position).getTaskId())
+						+ " ("
+						+ getContext().getResources().getString(
+								R.string.deleted) + ")");
+			} else {
+				// can´t find it in title cache - search in current record
+				String tit = null;
+				for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
+					if (mData.get(position).getChanges().get(i).getName()
+							.equals(TaskHistory.TITLE))
+						tit = mData.get(position).getChanges().get(i)
+								.getNewValue();
+				}
+
+				if (tit != null) {
+					title.setText(tit
+							+ " ("
+							+ getContext().getResources().getString(
+									R.string.deleted) + ")");
+				} else {
+					// not found -> fallback
+					title.setText("*DELETED TASK*");
+				}
+
+			}
 		}
 
 		// Author + timestamp
@@ -82,7 +113,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		// Changes in tasks
 		sub = "";
-		
+
 		boolean isCreated = false;
 		boolean isCompleted = false;
 		boolean isUncompleted = false;
@@ -94,30 +125,36 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 					.equals(TaskHistory.TITLE))
 					&& (mData.get(position).getChanges().get(i).getOldValue()
 							.isEmpty())) {
-				sub = sub + getContext().getResources().getString(R.string.task_created) + "\n";
+				sub = sub
+						+ getContext().getResources().getString(
+								R.string.task_created) + "\n";
 
 				isCreated = true;
-				
+
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("true"))) {
-				sub = sub + getContext().getResources().getString(R.string.task_completed) + "\n";
+				sub = sub
+						+ getContext().getResources().getString(
+								R.string.task_completed) + "\n";
 
 				isCompleted = true;
-				
+
 			}
 
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("false"))) {
-				sub = sub + getContext().getResources().getString(R.string.task_uncompleted) + "\n";
+				sub = sub
+						+ getContext().getResources().getString(
+								R.string.task_uncompleted) + "\n";
 
 				isUncompleted = true;
-				
+
 			}
 
 			if (mData.get(position).getChanges().get(i).getName()
@@ -144,10 +181,18 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 						+ mData.get(position).getChanges().get(i).getNewValue()
 						+ "\n";
 			}
+
+			// fill in title in cache
+			if ((mData.get(position).getChanges().get(i).getName()
+					.equals(TaskHistory.TITLE))) {
+				titlecache.put(mData.get(position).getTaskId(),
+						mData.get(position).getChanges().get(i).getNewValue());
+			}
+
 		}
 
 		subtitle.setText(sub);
-		
+
 		// Image
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
 
@@ -161,7 +206,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 			img.setImageResource(R.drawable.action_cancel);
 		else
 			img.setImageResource(R.drawable.action_edit);
-		
+
 		return vi;
 	}
 }

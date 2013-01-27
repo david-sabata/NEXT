@@ -155,8 +155,9 @@ public class ProjectListFragment extends ListFragment {
 
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
 				menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
-				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
 				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
+				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
+				
 			}
 			else {
 				menu.add(Menu.NONE, 0, 0, R.string.no_actions);

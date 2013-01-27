@@ -91,6 +91,8 @@
     <string name="task_created">TASK CREATED</string>
     <string name="task_completed">TASK MARKED AS COMPLETE</string>
     <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
+    <string name="task_deleted">TASK DELETED</string>
+    <string name="deleted">deleted</string>
     
 
     
