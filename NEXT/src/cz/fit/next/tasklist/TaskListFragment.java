@@ -17,9 +17,6 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
-
-import com.deaux.fan.FanView;
-
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.ServiceReadyListener;
@@ -242,19 +239,19 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
 		final String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
+		MainActivity activity = (MainActivity) getActivity();
+
 		switch (item.getItemId()) {
 
 			case R.id.action_edit:
 				// switch to edit fragment (skipping the detail fragment)
 				TaskEditFragment fTask = TaskEditFragment.newInstance(taskId);
-				MainActivity activity = (MainActivity) getActivity();
-				activity.getFanView().replaceMainFragment(fTask);
+				activity.replaceMainFragment(fTask);
 				break;
 
 			case R.id.action_showhistory:
-				FanView fan = ((MainActivity) getActivity()).getFanView();
 				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.TASK, taskId);
-				fan.replaceMainFragment(fraghist);
+				activity.replaceMainFragment(fraghist);
 				break;
 
 			case R.id.action_delete:
@@ -298,7 +295,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 
 			// replace main fragment with task detail fragment
 			MainActivity activity = (MainActivity) getActivity();
-			activity.getFanView().replaceMainFragment(fTask);
+			activity.replaceMainFragment(fTask);
 
 			return true;
 		}
