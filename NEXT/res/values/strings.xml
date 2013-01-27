@@ -51,7 +51,7 @@
     
     <string name="menuSyncNow">Sync Now</string>
     <string name="frag_title_someday">Someday tasks</string>
-    <string name="project_share">Share project</string>
+    <string name="project_share">Share project - DEPRECATED</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="all_done">All tasks completed!</string>
@@ -94,6 +94,9 @@
     <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
     <string name="task_deleted">TASK DELETED</string>
     <string name="deleted">deleted</string>
+    
+   	<string name="sharing">Sharing</string>
+    <string name="sharing_no_shares">Not shared</string>
     
 
     
