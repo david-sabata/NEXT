@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.tasklist.Filter;
 
@@ -68,19 +69,14 @@ public class TasksDataSource {
 	 */
 	public Cursor getAllTasksCursor() {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
-		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
-				+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID
+				+ " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
 
-		String[] selectColumns = new String[] {
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID, Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
-				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
-		};
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
 
 		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null);
 
@@ -92,18 +88,14 @@ public class TasksDataSource {
 	 */
 	public Cursor getProjectTasksCursor(String projectId) {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
-		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
-				+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID
+				+ " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
 
-		String[] selectColumns = new String[] {
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_TASKS_TITLE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY, Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
@@ -122,22 +114,17 @@ public class TasksDataSource {
 	 */
 	public Cursor getSingleTaskCursor(String id) {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
-		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
-				+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID
+				+ " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
 
-		String[] selectColumns = new String[] {
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_TASKS_TITLE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY, Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
-				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY,
-		};
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
 
 		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_ID + " = ?";
 		String[] args = new String[] { id };
@@ -199,7 +186,7 @@ public class TasksDataSource {
 		vals.put(Constants.COLUMN_ID, task.getId());
 		database.insert(Constants.TABLE_TASKS, null, vals);
 	}
-	
+
 	/**
 	 * Delete task identified by ID.
 	 * 
@@ -229,22 +216,25 @@ public class TasksDataSource {
 				q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "."
 						+ Constants.COLUMN_PROJECTS_ID + " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
 
-				String[] selectColumns = new String[] {
-						Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+				String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
 						Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
 						Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
-						Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
-						Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-						Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY
-				};
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+						Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY };
 
 				String where = "";
 
-				// datetime
+				// datetime				
 				if (filter != null && filter.getDateFrom() != null && filter.getDateUntil() != null) {
-					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().toMiliseconds();
-					where += " AND ";
-					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().toMiliseconds();
+
+					// someday should be consistently set in both dateFrom and dateUntil
+					if (filter.getDateFrom().isSomeday() || filter.getDateUntil().isSomeday()) {
+						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 = " + DateTime.SOMEDAY_MILISECONDS;
+					} else {
+						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().toMiliseconds();
+						where += " AND ";
+						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().toMiliseconds();
+					}
 				}
 
 				// project
@@ -264,7 +254,7 @@ public class TasksDataSource {
 				}
 
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
-				Log.d(LOG_TAG, "after filter: " + cursor.getCount() + " items");
+				Log.i(LOG_TAG, "after filter: " + cursor.getCount() + " items");
 				return cursor;
 			}
 		};
@@ -279,9 +269,7 @@ public class TasksDataSource {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
 		q.setTables(Constants.TABLE_TASKS);
 		q.setDistinct(true);
-		String[] selectColumns = new String[] {
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT
-		};
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT };
 
 		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null, null);
 		cursor.moveToFirst();
