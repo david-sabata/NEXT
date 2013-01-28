@@ -28,13 +28,13 @@
 	<style name="Next.Widget">
 	</style>
 
-	<style name="Next.Widget.ScrollView" parent="android:Widget.ScrollView">
+	<style name="Next.Widget.ScrollView" parent="android:Widget.Holo.Light.ScrollView">
 	</style>
 	<style name="Next.Widget.ScrollView.Light">
 	 	<item name="android:background">@color/BasicLightBackground</item>
 	</style>
 	
-	<style name="Next.Widget.ListView" parent="android:Widget.ListView">
+	<style name="Next.Widget.ListView" parent="android:Widget.Holo.Light.ListView">
 	</style>
 	<style name="Next.Widget.ListView.Light">
 	     <item name="android:background">@color/BasicLightBackground</item>
