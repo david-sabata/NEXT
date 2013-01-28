@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.deaux.fan.FanView;
 import com.deaux.fan.SidebarListener;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
@@ -27,18 +27,18 @@ import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
 
-public class SidebarFragment extends Fragment {
+public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "SidebarFragment";
 	private View sideBarView;
 
+	protected boolean mIsServiceReady = false;
+
 	/**
 	 * IDs of fixed menu items
 	 */
-	int menuFixedItemsId[] = {
-			R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
-			R.id.Projects_ShowProjects
-	};
+	int menuFixedItemsId[] = { R.id.Time_Next, R.id.Time_Today, R.id.Time_InPlan, R.id.Time_Someday, /*R.id.Time_Blocked,*/
+	R.id.Projects_ShowProjects };
 
 
 
@@ -48,10 +48,7 @@ public class SidebarFragment extends Fragment {
 		sideBarView = inflater.inflate(R.layout.sidebar_fragment, container, false);
 
 		// Generate fixed item in sidebar
-		sideBarView = setFixedItemsSidebar(sideBarView);
-
-		// Generate context items in sidebar
-		initSideBarContextProjects();
+		sideBarView = initStaticItems(sideBarView);
 
 		return sideBarView;
 	}
@@ -61,7 +58,7 @@ public class SidebarFragment extends Fragment {
 	 * @param sideBarView View of menu sidebar
 	 * @return sideBar - layout changed with new items
 	 */
-	protected View setFixedItemsSidebar(View pSideBarView) {
+	protected View initStaticItems(View pSideBarView) {
 		for (final int id : menuFixedItemsId) {
 			final TextView item = (TextView) pSideBarView.findViewById(id);
 
@@ -79,8 +76,9 @@ public class SidebarFragment extends Fragment {
 
 	/**
 	 * Init sidebar contexts and projects
+	 * Assumes the service is ready
 	 */
-	public void initSideBarContextProjects() {
+	public void loadDynamicItems() {
 		LayoutInflater inflater = (LayoutInflater) sideBarView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		// Load contexts from database
@@ -133,8 +131,7 @@ public class SidebarFragment extends Fragment {
 					// use localized string for default project
 					if (projectTitle.equals(Constants.IMPLICIT_PROJECT_NAME)) {
 						newItem.setText(R.string.implicit_project);
-					}
-					else {
+					} else {
 						newItem.setText(projectTitle);
 					}
 
@@ -150,20 +147,21 @@ public class SidebarFragment extends Fragment {
 
 
 
-
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		MainActivity activity = (MainActivity) getActivity();
+		if (mIsServiceReady)
+			loadDynamicItems();
 
-		FanView f = activity.getFanView();
-		f.setSidebarListener(new SidebarListener() {
+		MainActivity activity = (MainActivity) getActivity();
+		activity.getFanView().setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {
 
 				// Regenerate contexts and projects in sidebar menu
-				initSideBarContextProjects();
+				if (mIsServiceReady)
+					loadDynamicItems();
 			}
 
 			@Override
@@ -173,7 +171,6 @@ public class SidebarFragment extends Fragment {
 	}
 
 
-
 	/**
 	 * ActivitySelector
 	 * 
@@ -181,13 +178,14 @@ public class SidebarFragment extends Fragment {
 	 * @param id
 	 */
 	protected void updateContentFromItemClick(int id) {
-		FanView fan = ((MainActivity) getActivity()).getFanView();
+		MainActivity activity = (MainActivity) getActivity();
 
 		switch (id) {
 			case R.id.Time_Next:
 				// create new fragment to add to backstack
 				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
-				fan.replaceMainFragment(fragNext);
+				//fan.replaceMainFragment(fragNext);
+				activity.replaceMainFragment(fragNext);
 
 				break;
 			case R.id.Time_Today:
@@ -207,7 +205,7 @@ public class SidebarFragment extends Fragment {
 
 					// create new fragment to add to backstack
 					TaskListFragment fragToday = TaskListFragment.newInstance(filterToday, R.string.frag_title_today);
-					fan.replaceMainFragment(fragToday);
+					activity.replaceMainFragment(fragToday);
 				}
 
 				break;
@@ -228,7 +226,7 @@ public class SidebarFragment extends Fragment {
 					filter.setDateUntil(until);
 
 					TaskListFragment frag = TaskListFragment.newInstance(filter, R.string.frag_title_someday);
-					fan.replaceMainFragment(frag);
+					activity.replaceMainFragment(frag);
 				}
 				break;
 
@@ -238,7 +236,7 @@ public class SidebarFragment extends Fragment {
 
 			case R.id.Projects_ShowProjects:
 				// replace current fragment
-				fan.replaceMainFragment(new ProjectListFragment());
+				activity.replaceMainFragment(new ProjectListFragment());
 				break;
 
 			default:
@@ -247,7 +245,7 @@ public class SidebarFragment extends Fragment {
 		}
 
 		// always toggle sidebar
-		fan.showMenu();
+		activity.getFanView().showMenu();
 	}
 
 
@@ -278,11 +276,11 @@ public class SidebarFragment extends Fragment {
 
 			// open new fragment
 			TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
-			FanView fan = ((MainActivity) getActivity()).getFanView();
-			fan.replaceMainFragment(frag);
+			MainActivity activity = ((MainActivity) getActivity());
+			activity.replaceMainFragment(frag);
 
 			// hide sidebar
-			fan.showMenu();
+			activity.getFanView().showMenu();
 		}
 	};
 
@@ -301,14 +299,25 @@ public class SidebarFragment extends Fragment {
 
 			// open new fragment
 			TaskListFragment frag = TaskListFragment.newInstance(f, contextTitle);
-			FanView fan = ((MainActivity) getActivity()).getFanView();
-			fan.replaceMainFragment(frag);
+			MainActivity activity = ((MainActivity) getActivity());
+			activity.replaceMainFragment(frag);
 
 			// hide sidebar
-			fan.showMenu();
+			activity.getFanView().showMenu();
 		}
 	};
 
+
+
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+
+		if (getActivity() != null)
+			loadDynamicItems();
+	}
 
 
 

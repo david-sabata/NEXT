@@ -5,7 +5,10 @@
     </style>
     
     <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
-	    <!-- Sidebar references to styles -->
+        <!-- Basic preferences for light style -->
+        <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Light</item>
+	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Light</item>
+        <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Light</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Light</item>
 	    <item name="sidebarHorizontalLine">@style/Next.Sidebar.HorizontalLine.Light</item>

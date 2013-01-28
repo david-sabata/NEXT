@@ -38,7 +38,7 @@
     <string name="action_add_task">Add task</string>
     <string name="frag_title_next">Next tasks</string>
     <string name="frag_title_today">Today tasks</string>
-    <string name="someday">someday</string>
+    <string name="someday">Someday</string>
     <string name="projects">Projects</string>
 
     <string-array name="priorityArray">
@@ -74,7 +74,6 @@
     <string name="task_delete">Delete task</string>
     <string name="task_delete_confirm_msg">Do you really want to delete this task?</string>
     <string name="no_actions">No actions available</string>
-
     <string name="sync_in_progress">Synchronization in progress</string>
     <string name="settings">Settings</string>
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
@@ -88,5 +87,10 @@
     <string name="history_context">Context</string>
     <string name="history_date">Date</string>
     <string name="history_description">Description</string>
-        
+    <string name="task_created">TASK CREATED</string>
+    <string name="task_completed">TASK MARKED AS COMPLETE</string>
+    <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
+    <string name="task_deleted">TASK DELETED</string>
+    <string name="deleted">deleted</string>
+ 
 </resources>

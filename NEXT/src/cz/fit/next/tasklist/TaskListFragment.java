@@ -1,7 +1,5 @@
 package cz.fit.next.tasklist;
 
-import com.deaux.fan.FanView;
-
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ListFragment;
@@ -9,19 +7,19 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.history.HistoryFragment;
@@ -30,14 +28,11 @@ import cz.fit.next.taskdetail.TaskEditFragment;
 
 
 /**
- * This fragment is guaranteed to be instantiated only after 
- * the service has started, so all service calls should be safe
- * 
  * @author David
  */
-public class TaskListFragment extends ListFragment {
+public class TaskListFragment extends ListFragment implements ServiceReadyListener {
 
-	private final static String LOG_TAG = "ContentFragment";
+	private final static String LOG_TAG = "TaskListFragment";
 
 	/**
 	 * Key to Bundle to store serialized Filter state
@@ -72,6 +67,8 @@ public class TaskListFragment extends ListFragment {
 	 */
 	protected String mTitle;
 
+
+	protected boolean mIsServiceReady = false;
 
 
 
@@ -121,10 +118,6 @@ public class TaskListFragment extends ListFragment {
 
 		setHasOptionsMenu(true);
 
-		// create deafult adapter - all items
-		Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
-		setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
-
 		Bundle args = getArguments();
 		if (args != null) {
 			mTitleResId = args.getInt(ARG_TITLE_RES); // value OR 0
@@ -136,12 +129,15 @@ public class TaskListFragment extends ListFragment {
 	/**
 	 * Load custom layout
 	 */
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
+	// TODO: disabled to use default layout with
+	//	@Override
+	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	//		super.onCreateView(inflater, container, savedInstanceState);
+	//
+	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
+	//	}
 
-		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	}
+
 
 
 
@@ -149,15 +145,9 @@ public class TaskListFragment extends ListFragment {
 	public void onResume() {
 		super.onResume();
 
-		// re-apply filter
-		setFilter(mFilter);
-
-		// update actionbar title
-		if (mTitleResId > 0) {
-			getActivity().getActionBar().setTitle(mTitleResId);
-		}
-		else if (mTitle != null) {
-			getActivity().getActionBar().setTitle(mTitle);
+		// re-apply filter if service is ready (else wait for event)
+		if (mIsServiceReady) {
+			reload();
 		}
 
 		// register long click events
@@ -169,22 +159,42 @@ public class TaskListFragment extends ListFragment {
 
 
 	/**
-	 * Reloads tasklist
+	 * Reloads tasklist according to current filter
 	 */
 	public void reload() {
+		if (!mIsServiceReady || getActivity() == null) {
+			Log.w(LOG_TAG, "cannot reload items, " + (!mIsServiceReady ? "service, " : "") + (getActivity() == null ? "activity" : "") + " is not ready");
+			return;
+		}
+
+		Log.d(LOG_TAG, "reloading items");
+
 		setFilter(mFilter);
+
+		if (mTitleResId > 0) {
+			getActivity().getActionBar().setTitle(mTitleResId);
+		} else if (mTitle != null) {
+			getActivity().getActionBar().setTitle(mTitle);
+		}
 	}
-	
 
 	/**
 	 * Set filter to the adapter and reload items; pass null for all items
 	 */
-	public void setFilter(Filter filter) {
+	private void setFilter(Filter filter) {
 		mFilter = filter;
 
 		FilterQueryProvider provider = TasksModelService.getInstance().getTasksFilterQueryProvider();
 
 		TaskListAdapter adapter = (TaskListAdapter) getListAdapter();
+
+		// initial adapter set
+		if (adapter == null) {
+			Cursor cursor = TasksModelService.getInstance().getAllTasksCursor();
+			setListAdapter(new TaskListAdapter(getActivity(), cursor, 0));
+			adapter = (TaskListAdapter) getListAdapter();
+		}
+
 		adapter.setFilterQueryProvider(provider);
 		adapter.getFilter().filter(mFilter != null ? mFilter.toString() : null);
 	}
@@ -203,7 +213,7 @@ public class TaskListFragment extends ListFragment {
 
 		// replace main fragment with task detail fragment
 		MainActivity activity = (MainActivity) getActivity();
-		activity.getFanView().replaceMainFragment(fTask);
+		activity.replaceMainFragment(fTask);
 	}
 
 
@@ -229,38 +239,33 @@ public class TaskListFragment extends ListFragment {
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
 		final String taskId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
+		MainActivity activity = (MainActivity) getActivity();
+
 		switch (item.getItemId()) {
 
 			case R.id.action_edit:
 				// switch to edit fragment (skipping the detail fragment)
 				TaskEditFragment fTask = TaskEditFragment.newInstance(taskId);
-				MainActivity activity = (MainActivity) getActivity();
-				activity.getFanView().replaceMainFragment(fTask);
+				activity.replaceMainFragment(fTask);
 				break;
-				
+
 			case R.id.action_showhistory:
-				FanView fan = ((MainActivity) getActivity()).getFanView();
 				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.TASK, taskId);
-				fan.replaceMainFragment(fraghist);
+				activity.replaceMainFragment(fraghist);
 				break;
 
 			case R.id.action_delete:
-				new AlertDialog.Builder(getActivity())
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setTitle(R.string.task_delete)
-				.setMessage(R.string.task_delete_confirm_msg)
-				.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						TasksModelService.getInstance().deleteTask(taskId);
-						//Reload Items
-						Fragment f = getFragmentManager().findFragmentById(R.id.appView);
-						if (f instanceof TaskListFragment)
-							((TaskListFragment) f).reload();
-					}
-				})
-				.setNegativeButton(android.R.string.no, null)
-				.show();
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.task_delete)
+						.setMessage(R.string.task_delete_confirm_msg).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								TasksModelService.getInstance().deleteTask(taskId);
+								//Reload Items
+								Fragment f = getFragmentManager().findFragmentById(R.id.appView);
+								if (f instanceof TaskListFragment)
+									((TaskListFragment) f).reload();
+							}
+						}).setNegativeButton(android.R.string.no, null).show();
 				break;
 		}
 
@@ -290,7 +295,7 @@ public class TaskListFragment extends ListFragment {
 
 			// replace main fragment with task detail fragment
 			MainActivity activity = (MainActivity) getActivity();
-			activity.getFanView().replaceMainFragment(fTask);
+			activity.replaceMainFragment(fTask);
 
 			return true;
 		}
@@ -298,6 +303,24 @@ public class TaskListFragment extends ListFragment {
 
 		return super.onOptionsItemSelected(item);
 	}
+
+
+
+	/**
+	 * Reload data only; the title and other stuff should already be set
+	 */
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		Log.i(LOG_TAG, "onServiceReady");
+
+		mIsServiceReady = true;
+
+		// need to check if activity exists - because of async fragment switching 
+		// onAttached might not be called yet
+		if (getActivity() != null)
+			reload();
+	}
+
 
 
 

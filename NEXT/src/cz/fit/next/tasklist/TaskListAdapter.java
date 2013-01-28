@@ -71,7 +71,8 @@ public class TaskListAdapter extends CursorAdapter {
 		DateTime datetime = new DateTime(date);
 
 		if (datetime.isSomeday()) {
-			dt.setVisibility(View.GONE);
+			//dt.setVisibility(View.GONE);
+			dt.setText(datetime.toLocaleDateTimeString());
 		}
 		else if (datetime.isAllday()) {
 			dt.setText(datetime.toLocaleDateString());
