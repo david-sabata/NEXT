@@ -186,12 +186,13 @@ public class ProjectListFragment extends ListFragment {
 		switch (item.getItemId()) {
 
 		// share - show sharing fragment
+		/*
 			case R.id.action_share:
 				ShareDialog newFragment = new ShareDialog();
 				newFragment.setProjId(projId);
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
 				break;
-				
+		*/		
 		case R.id.action_sharing:
 
 			if ((SyncService.getInstance().isNetworkAvailable())
