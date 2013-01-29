@@ -33,6 +33,7 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.api.services.drive.model.File;
 
 import cz.fit.next.R;
+import cz.fit.next.SettingsFragment;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.SettingsProvider;
@@ -81,7 +82,7 @@ public class SyncService extends Service {
 		Log.i(TAG, "onStart");
 
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
-		mAccountName = sp.getString(SettingsProvider.PREF_ACCOUNT_NAME, null);
+		mAccountName = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
