@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -33,8 +34,38 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				
 	
 		addPreferencesFromResource(R.xml.preferences);
+
+		// Initialize prefference
+		SharedPreferences sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(getActivity());	
+		Preference pref = null;
+		
+		// Array of settings, we would like to initialize
+		String[] summaryPref = {PREF_DESIGN,PREF_SYNC_INTERVAL};
+		Integer indexToStringArray = null;
+		Integer idOfStringArray = -1;
+		for(int i = 0; i < summaryPref.length; i++) {
+			pref = findPreference(summaryPref[i]);
+			
+			// If preference wasnt found, than go to next
+			if(pref == null) {
+				continue;
+			}	
+			
+			// Settings to initialize 
+			if (summaryPref[i].equals(PREF_ACCOUNT_NAME)) {
+	        } else if (summaryPref[i].equals(PREF_SYNC_ENABLED)) {
+	        } else if (summaryPref[i].equals(PREF_SYNC_INTERVAL)) {
+	    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
+	            idOfStringArray = R.array.preferenceIntervalEntries;
+	        } else if (summaryPref[i].equals(PREF_DESIGN)) {
+	    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
+	            idOfStringArray = R.array.preferenceDesignEntries;             
+	        }
+			loadSummary(pref,indexToStringArray, idOfStringArray );	
+		}
 	}
 	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -57,12 +88,9 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	 */
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		Resources res = getResources();
-		
 		Preference pref = null;
 		Integer idOfStringArray = null;
 		Integer indexToStringArray = -1;
-		String summary = "";
 		
 		pref = findPreference(key);
 		if(pref == null) {
@@ -81,20 +109,26 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         } else if (key.equals(PREF_DESIGN)) {
     		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
             idOfStringArray = R.array.preferenceDesignEntries;
-            
-         getActivity().recreate();
-               
+            getActivity().recreate();               
         }
+		// Reload summary
+		loadSummary(pref, indexToStringArray, idOfStringArray);
+	}
 
+	/**
+	 * This method load summary on preference fragment created
+	 */
+	private void loadSummary(Preference pref, Integer index, Integer id) {
+		Resources res = getResources();
 		// Set new summary to settings
-		if(pref != null && indexToStringArray!= -1) {
+		if(pref != null && index!= -1) {
             // Get String from array from resources
-            String[] entries = res.getStringArray(idOfStringArray);
+            String[] entries = res.getStringArray(id);
             // Find String in resources for selected item
-            summary = entries[indexToStringArray - 1];
+            String summary = entries[index - 1];
             // Set new summary for setting
 			pref.setSummary(summary);
 		}
 	}
-
+	
 }
