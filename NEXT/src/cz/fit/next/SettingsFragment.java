@@ -69,6 +69,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
         } else if (key.equals(PREF_SYNC_ENABLED)) {
+        	Boolean syncOn = sharedPreferences.getBoolean(key, false);
         	// TODO TURN ON SYNC
         } else if (key.equals(PREF_SYNC_INTERVAL)) {
     		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
