@@ -4,6 +4,7 @@
     <style name="ThemeNext"  >
     </style>
     
+    <!-- Theme NEXT Light -->
     <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Light</item>
@@ -30,4 +31,35 @@
    		<!-- Preference screen references to style -->
    		<item name="preferenceScreen">@style/Next.PreferenceScreen.Light</item>
 	  </style>
+	  
+    <!-- Theme NEXT Dark -->
+      <style name="ThemeNext.Dark" parent="android:Theme.Holo">
+        <!-- Basic preferences for light style -->
+        <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Dark</item>
+	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Dark</item>
+        <!-- Sidebar references to styles -->
+	    <item name="sidebarBackground">@style/Next.Sidebar.Dark</item>
+	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Dark</item>
+	    <item name="sidebarHorizontalLine">@style/Next.Sidebar.HorizontalLine.Dark</item>
+	    <item name="sidebarSubtitle">@style/Next.Sidebar.Subtitle.Dark</item>
+        
+	    <!-- Task Show(Edit) references to style -->
+	    <item name="capsText">@style/Next.Task.Capstext.Dark</item>
+	    <item name="taskScrollView">@style/Next.Task.ScrollView.Dark</item>
+	    <item name="taskSubLayout">@style/Next.Task.SubLayout</item>
+	    <item name="taskTitleLayoutShowFragment">@style/Next.Task.TitleLayout.ShowFragment.Dark</item>
+	    <item name="taskTitleLayoutEditFragment">@style/Next.Task.TitleLayout.EditFragment.Dark</item>
+   		<item name="taskTitleShowFragment">@style/Next.Task.Title.ShowFragment.Dark</item>
+	    <item name="taskTitleEditFragment">@style/Next.Task.Title.EditFragment.Dark</item>
+   		<item name="taskLineUnderTitle">@style/Next.Task.LineUnderTitle.Dark</item>
+   		<item name="taskLineSeparatorCategories">@style/Next.Task.LineSeparatorCatagories.Dark</item>
+   		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
+   		<item name="taskCategoriesText">@style/Next.Task.CategoriesText</item>
+   		
+   		<!-- Preference screen references to style -->
+   		<item name="preferenceScreen">@style/Next.PreferenceScreen.Light</item>
+	  </style>
+	  
+        
+        
 </resources>

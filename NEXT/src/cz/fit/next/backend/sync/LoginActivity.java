@@ -1,9 +1,10 @@
 package cz.fit.next.backend.sync;
 
 
+import preferences.SettingsFragment;
+
 import com.google.android.gms.common.AccountPicker;
 
-import cz.fit.next.SettingsFragment;
 import cz.fit.next.backend.SettingsProvider;
 
 

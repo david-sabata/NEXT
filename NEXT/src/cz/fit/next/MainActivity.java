@@ -2,6 +2,7 @@ package cz.fit.next;
 
 
 
+import preferences.SettingsFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;

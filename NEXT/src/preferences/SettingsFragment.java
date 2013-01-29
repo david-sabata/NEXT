@@ -1,5 +1,8 @@
-package cz.fit.next;
+package preferences;
 
+import cz.fit.next.R;
+import cz.fit.next.R.array;
+import cz.fit.next.R.xml;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

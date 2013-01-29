@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 
+import preferences.SettingsFragment;
+
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,7 +35,6 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.api.services.drive.model.File;
 
 import cz.fit.next.R;
-import cz.fit.next.SettingsFragment;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.SettingsProvider;
