@@ -202,6 +202,15 @@ public class GDrive {
 		return result;
 	}
 	
+	/**
+	 * Get userlist of one file by filename
+	 */
+	public ArrayList<UserPerm> getUserListByFilename(String filename) throws IOException {
+		String fileId = getFileIdByName(filename, mAppFolder);
+				
+		return new ArrayList<UserPerm> (getUserList(fileId));
+	}
+	
 	
 	
 	/***************************************/

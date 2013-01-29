@@ -178,6 +178,7 @@ public class ProjectListFragment extends ListFragment {
 
 		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(info.position);
 		final String projId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		final String projTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 
 		FanView fan = ((MainActivity) getActivity()).getFanView();
 		
@@ -194,7 +195,7 @@ public class ProjectListFragment extends ListFragment {
 
 			if ((SyncService.getInstance().isNetworkAvailable())
 					&& (SyncService.getInstance().isUserLoggedIn())) {
-				SharingFragment fragshare = SharingFragment.newInstance(projId);
+				SharingFragment fragshare = SharingFragment.newInstance(projId,projTitle);
 				fan.replaceMainFragment(fragshare);
 			} else {
 				Context context = SyncService.getInstance()

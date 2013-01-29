@@ -649,6 +649,18 @@ public class SyncService extends Service {
 		
 	}
 	
+	
+	/**
+	 * Returns sharing list, be sure to run in asynctask
+	 * @throws IOException 
+	 */
+	public ArrayList<UserPerm> getSharingList(String projId, String projTitle) throws IOException {
+		String filename = projTitle + "-" + projId + ".nextproj.html";		
+		ArrayList<UserPerm> users = drive.getUserListByFilename(filename);
+		return users;
+	}
+	
+		
 	/**
 	 * Deletes project
 	 */
