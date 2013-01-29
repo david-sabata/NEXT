@@ -23,6 +23,7 @@ import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
+import cz.fit.next.inplan.InplanFragment;
 import cz.fit.next.projectlist.ProjectListFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -184,7 +185,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 			case R.id.Time_Next:
 				// create new fragment to add to backstack
 				TaskListFragment fragNext = TaskListFragment.newInstance(null, R.string.frag_title_next);
-				//fan.replaceMainFragment(fragNext);
 				activity.replaceMainFragment(fragNext);
 
 				break;
@@ -210,7 +210,9 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 				break;
 			case R.id.Time_InPlan:
-				Log.i(LOG_TAG, "In plan - not implemented yet");
+				InplanFragment fragInplan = InplanFragment.newInstance();
+				activity.replaceMainFragment(fragInplan);
+
 				break;
 
 			case R.id.Time_Someday:

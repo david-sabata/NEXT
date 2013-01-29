@@ -24,14 +24,14 @@ public class DateTime implements Serializable {
 	/**
 	 * Timestamp (in milis) used for 'someday'
 	 */
-	private static final long SOMEDAY_MILISECONDS = 333;
+	public static final long SOMEDAY_MILISECONDS = 333;
 
 	/**
 	 * Amount of miliseconds to represent 'all day' date. We do not 
 	 * use miliseconds anywhere else, so it's safe to encode some 
 	 * data in them, in this case 'all day' flag
 	 */
-	private static final int ALLDAY_MILISECONDS = 666;
+	public static final int ALLDAY_MILISECONDS = 666;
 
 
 	/**
@@ -105,8 +105,7 @@ public class DateTime implements Serializable {
 		if (set) {
 			resetMilis();
 			mTimestamp += SOMEDAY_MILISECONDS;
-		}
-		else if (isSomeday()) {
+		} else if (isSomeday()) {
 			resetMilis();
 		}
 	}
@@ -118,8 +117,7 @@ public class DateTime implements Serializable {
 		if (set) {
 			resetMilis();
 			mTimestamp += ALLDAY_MILISECONDS;
-		}
-		else if (isAllday()) {
+		} else if (isAllday()) {
 			resetMilis();
 		}
 	}
@@ -190,9 +188,8 @@ public class DateTime implements Serializable {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleDateTimeString() {
-		return isSomeday() ?
-				TasksModelService.getInstance().getLocalizedSomedayTime() :
-				TasksModelService.getInstance().getLocalizedDateTime(new Date(mTimestamp));
+		return isSomeday() ? TasksModelService.getInstance().getLocalizedSomedayTime() : TasksModelService.getInstance().getLocalizedDateTime(
+				new Date(mTimestamp));
 	}
 
 	/**
@@ -200,9 +197,7 @@ public class DateTime implements Serializable {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleDateString() {
-		return isSomeday() ?
-				TasksModelService.getInstance().getLocalizedSomedayTime() :
-				TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
+		return isSomeday() ? TasksModelService.getInstance().getLocalizedSomedayTime() : TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
 	}
 
 	/**
@@ -210,9 +205,7 @@ public class DateTime implements Serializable {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleTimeString() {
-		return isSomeday() ?
-				TasksModelService.getInstance().getLocalizedSomedayTime() :
-				TasksModelService.getInstance().getLocalizedTime(new Date(mTimestamp));
+		return isSomeday() ? TasksModelService.getInstance().getLocalizedSomedayTime() : TasksModelService.getInstance().getLocalizedTime(new Date(mTimestamp));
 	}
 
 
