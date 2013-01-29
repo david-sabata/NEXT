@@ -28,6 +28,7 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.history.HistoryFragment;
+import cz.fit.next.sharing.ShareDialog;
 import cz.fit.next.sharing.SharingFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
@@ -156,7 +157,7 @@ public class ProjectListFragment extends ListFragment {
 
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
 				if (SyncService.getInstance().isUserLoggedIn()) {
-					menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
+					//menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
 					menu.add(Menu.NONE, R.id.action_sharing, 0, R.string.sharing);
 				}
 				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);

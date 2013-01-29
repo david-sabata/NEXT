@@ -655,6 +655,14 @@ public class SyncService extends Service {
 	 * @throws IOException 
 	 */
 	public ArrayList<UserPerm> getSharingList(String projId, String projTitle) throws IOException {
+		try {
+			boolean retval = drive.initSync(getApplicationContext(),
+					getInstance(), mAccountName);
+			if (!retval) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+		} catch (GoogleAuthException e) {
+			displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+		}
+		
 		String filename = projTitle + "-" + projId + ".nextproj.html";		
 		ArrayList<UserPerm> users = drive.getUserListByFilename(filename);
 		return users;
