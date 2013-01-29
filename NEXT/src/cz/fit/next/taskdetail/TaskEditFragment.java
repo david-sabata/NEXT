@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -390,17 +392,22 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		// Save
 		if (item.getItemId() == R.id.action_save) {
 			onSaveItem();
+			imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 			getActivity().getFragmentManager().popBackStack();
+
 			return true;
 		}
 
 		// Cancel
 		if (item.getItemId() == R.id.action_cancel) {
+			imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
 			getActivity().getFragmentManager().popBackStackImmediate();
+
 			return true;
 		}
 
