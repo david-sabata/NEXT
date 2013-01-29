@@ -110,8 +110,10 @@ public class MainActivity extends Activity {
 		super.onStart();
 
 		// restore singleton service reference
-		if (mModelService == null && TasksModelService.getInstance() != null)
+		if (mModelService == null && TasksModelService.getInstance() != null) {
 			mModelService = TasksModelService.getInstance();
+			mIsServiceReady = true;
+		}
 
 		// restore service if needed
 		bindModelService();
@@ -155,6 +157,16 @@ public class MainActivity extends Activity {
 		IntentFilter filter3 = new IntentFilter();
 		filter3.addAction(SyncService.BROADCAST_SYNC_END);
 		registerReceiver(mSyncStopReceiver, filter3);
+
+		// re-notify fragments about service being ready if so
+		if (mIsServiceReady) {
+			Log.d(LOG_TAG, "onResume: notifying fragments onServiceReady");
+
+			Fragment side = getSidebarFragment();
+
+			if (side instanceof ServiceReadyListener)
+				((ServiceReadyListener) side).onServiceReady(mModelService);
+		}
 	}
 
 
