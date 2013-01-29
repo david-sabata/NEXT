@@ -2,7 +2,6 @@ package cz.fit.next;
 
 
 
-import preferences.SettingsFragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -29,6 +28,8 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.preferences.SettingsFragment;
+import cz.fit.next.preferences.SettingsUtil;
 import cz.fit.next.sidebar.SidebarFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
@@ -67,8 +68,10 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.test);
 
 
@@ -108,8 +111,11 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onStart();
-
+		
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null)
 			mModelService = TasksModelService.getInstance();
@@ -123,6 +129,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onResume();
 
 		// notify the current fragment if the service is already ready

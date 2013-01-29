@@ -19,8 +19,8 @@
    </string-array>
    
    <string-array name="preferenceDesignValuesForAndroid">
-   		<item>1</item>
-   		<item>2</item>
+   		<item>holo_light</item>
+   		<item>holo_dark</item>
    </string-array>
         
    <!-- Prefereces Interval ListPreference -->

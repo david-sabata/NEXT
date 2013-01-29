@@ -13,7 +13,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 
-import preferences.SettingsFragment;
 
 
 import android.app.Notification;
@@ -46,6 +45,7 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
+import cz.fit.next.preferences.SettingsFragment;
 
 public class SyncService extends Service {
 
