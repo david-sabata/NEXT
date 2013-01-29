@@ -161,10 +161,28 @@ public class GDrive {
 	/**
 	 * Stops sharing of file to given google account
 	 */
-	public void unshare(String file, String user, int mode) {
-		
-		
-		
+	public boolean unshare(String file, String user) {
+		Log.i("GDRIVE", "Unsharing " + file + " for " + user);
+
+		try {
+			String fileid = getFileIdByName(file, mAppFolder);
+			if (fileid == null)
+				return false;
+			
+			PermissionList list = mService.permissions().list(fileid).execute();
+			
+			for (int i = 0; i < list.size(); i ++) {
+				if (list.getItems().get(i).getName().equals(user))
+					mService.permissions().delete(file, list.getItems().get(i).getId());
+			}
+
+			
+		} catch (IOException e) {
+			return false;
+		}
+
+		return true;
+				
 	}
 	
 	
@@ -620,8 +638,7 @@ public class GDrive {
 	    	newPermission.setRole("writer"); //owner,writer,reader
 	    }
 	    
-	    mService.permissions().insert(fileid, newPermission).execute();
-	   
+	    mService.permissions().insert(fileid, newPermission).execute();	   
 	    
 	    return true;
 	  
