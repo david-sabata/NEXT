@@ -65,6 +65,14 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {

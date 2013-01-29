@@ -52,6 +52,16 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 
 
 
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
+
+
 
 	/**
 	 * Reloads tasklist according to current filter
