@@ -3,43 +3,38 @@ package cz.fit.next.history;
 
 import java.util.ArrayList;
 
+import android.app.ListFragment;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.database.ProjectsDataSource;
-import cz.fit.next.tasklist.Filter;
-import cz.fit.next.tasklist.TaskListFragment;
-
-import android.app.ListFragment;
-import android.content.Context;
-
-import android.os.Bundle;
-
-import android.view.LayoutInflater;
-
-import android.view.View;
-import android.view.ViewGroup;
 
 
-public class HistoryFragment extends ListFragment {
-	
+public class HistoryFragment extends ListFragment implements ServiceReadyListener {
+
 	// History types
 	public static final int PROJECT = 0;
 	public static final int TASK = 1;
-	
+
 	// Bundle identifiers
 	private static final String ARG_TYPE = "bundle_type";
 	private static final String ARG_ID = "bundle_id";
-	
+
 	// Global parameters
 	private int mType = PROJECT;
 	private String mId;
 	private String mTitle;
-	
-	
+	private boolean mIsServiceReady = false;
+	private boolean mIsResumeDone = false;
+
+
 	public static HistoryFragment newInstance(int type, String id) {
 		HistoryFragment frag = new HistoryFragment();
 
@@ -51,8 +46,8 @@ public class HistoryFragment extends ListFragment {
 
 		return frag;
 	}
-	
-	
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,11 +57,65 @@ public class HistoryFragment extends ListFragment {
 			mType = args.getInt(ARG_TYPE); // value OR 0
 			mId = args.getString(ARG_ID); // value OR null
 		}
-		
+
 		setHasOptionsMenu(true);
+
+		// set title
+		if (mType == PROJECT)
+			mTitle = getResources().getString(R.string.project_history);
+		else
+			mTitle = getResources().getString(R.string.task_history);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		super.onCreateView(inflater, container, savedInstanceState);
+
+		return inflater.inflate(R.layout.history_list, container, false);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		getActivity().getActionBar().setTitle(mTitle);
+
+		if (mIsServiceReady)
+			loadData();
+
+		// register long click events
+		registerForContextMenu(getListView());
+
+		// register for gestures
+		((MainActivity) getActivity()).attachGestureDetector(getListView());
+
+		mIsResumeDone = true;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		mIsResumeDone = false;
+	}
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+
+		// did we miss the onResume?
+		if (mIsResumeDone)
+			loadData();
+	}
+
+
+	/**
+	 * Assumes the service is ready
+	 */
+	private void loadData() {
 		ArrayList<TaskHistory> adapterData;
-		
-		
+
 		// get project from database
 		Project proj;
 		if (mType == PROJECT) {
@@ -78,7 +127,7 @@ public class HistoryFragment extends ListFragment {
 					i--;
 				}
 			}
-			
+
 			setListAdapter(new ProjectHistoryAdapter(getActivity(), 0, adapterData));
 		} else {
 			Task t = TasksModelService.getInstance().getTaskById(mId);
@@ -89,40 +138,8 @@ public class HistoryFragment extends ListFragment {
 					if (proj.getHistory().get(i).getChanges().size() > 0)
 						adapterData.add(proj.getHistory().get(i));
 			}
-			
+
 			setListAdapter(new TaskHistoryAdapter(getActivity(), 0, adapterData));
 		}
-				
-		
-		
-
-		
-		
-		// set title
-		if (mType == PROJECT) mTitle = getResources().getString(R.string.project_history);
-		else mTitle = getResources().getString(R.string.task_history);
 	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-
-		return inflater.inflate(R.layout.sharing_list, container, false);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		
-		getActivity().getActionBar().setTitle(mTitle);
-
-		// register long click events
-		registerForContextMenu(getListView());
-
-		// register for gestures
-		((MainActivity) getActivity()).attachGestureDetector(getListView());
-	}
-	
-	
-	
 }

@@ -7,4 +7,6 @@
     </item>
     <item android:id="@+id/setting_connect_drive" android:title="@string/SettingsConnectToDrive"></item>
     <item android:id="@+id/menu_sync_now" android:title="@string/menuSyncNow"></item>
+    <item android:id="@+id/menu_sync_icon" android:orderInCategory="0" android:showAsAction="always" android:icon="@drawable/action_sync" android:title="@string/sync_in_progress"></item>
 </menu>
+

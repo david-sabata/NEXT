@@ -20,11 +20,27 @@
     <!-- ********************* SIDEBAR STYLE ********************** -->
     <!-- ********************************************************** -->
     <!-- ********************************************************** -->
-	<style name="Next" parent="@style/Theme.Holo.Light.Hack">
-	    
+	<style name="Next" parent="@style/Theme.Holo.Light.Hack">    
+	</style>
+	<!-- ***********************************************************-->
+	<!-- ************** Basic design for widgets *******************-->
+	<!-- ***********************************************************-->
+	<style name="Next.Widget">
+	</style>
+
+	<style name="Next.Widget.ScrollView" parent="android:Widget.Holo.Light.ScrollView">
+	</style>
+	<style name="Next.Widget.ScrollView.Light">
+	 	<item name="android:background">@color/BasicLightBackground</item>
 	</style>
 	
-	<style name="Next.Sidebar">
+	<style name="Next.Widget.ListView" parent="android:Widget.Holo.Light.ListView">
+	</style>
+	<style name="Next.Widget.ListView.Light">
+	     <item name="android:background">@color/BasicLightBackground</item>
+	</style>
+	
+    <style name="Next.Sidebar">
     	<item name="android:layout_width">wrap_content</item>
     	<item name="android:layout_height">match_parent</item>
 	</style>

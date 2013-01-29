@@ -1,28 +1,24 @@
 package cz.fit.next.projectlist;
 
-import com.deaux.fan.FanView;
-
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
@@ -32,19 +28,22 @@ import cz.fit.next.sharing.ShareDialog;
 import cz.fit.next.sharing.SharingFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
-public class ProjectListFragment extends ListFragment {
+
+public class ProjectListFragment extends ListFragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "ProjectListFragment";
 
 
+	protected boolean mIsServiceReady = false;
 
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
 
-		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	}
+	//	@Override
+	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	//		super.onCreateView(inflater, container, savedInstanceState);
+	//
+	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
+	//	}
 
 
 	@Override
@@ -52,12 +51,9 @@ public class ProjectListFragment extends ListFragment {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
 
-		// try to reload items; if the call fails, reload will be
-		// called by the activity when the service will be running again
-		try {
-			setItems(TasksModelService.getInstance().getAllProjectsCursor());
-		} catch (RuntimeException e) {
-			// ignore and wait for the next call
+
+		if (mIsServiceReady) {
+			reloadItems();
 		}
 
 		setHasOptionsMenu(true);
@@ -67,7 +63,7 @@ public class ProjectListFragment extends ListFragment {
 
 		// register long click events
 		registerForContextMenu(getListView());
-		
+
 		// reload title
 		getActivity().getActionBar().setTitle(getResources().getString(R.string.projects));
 
@@ -85,7 +81,7 @@ public class ProjectListFragment extends ListFragment {
 	 * Load projects from given adapter
 	 * @param cursor
 	 */
-	public void setItems(Cursor cursor) {
+	private void setItems(Cursor cursor) {
 		setListAdapter(new ProjectListAdapter(getActivity(), cursor, 0));
 	}
 
@@ -93,8 +89,7 @@ public class ProjectListFragment extends ListFragment {
 	 * Reload projects from service if it is ready
 	 */
 	public void reloadItems() {
-		if (TasksModelService.getInstance() != null)
-			setItems(TasksModelService.getInstance().getAllProjectsCursor());
+		setItems(TasksModelService.getInstance().getAllProjectsCursor());
 	}
 
 
@@ -162,14 +157,11 @@ public class ProjectListFragment extends ListFragment {
 				}
 				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
 				menu.add(Menu.NONE, R.id.action_delete, 1, R.string.project_delete);
-				
-			}
-			else {
+			} else {
 				menu.add(Menu.NONE, 0, 0, R.string.no_actions);
 			}
 		}
 	}
-
 
 
 
@@ -181,8 +173,6 @@ public class ProjectListFragment extends ListFragment {
 		final String projId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 		final String projTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 
-		FanView fan = ((MainActivity) getActivity()).getFanView();
-		
 		switch (item.getItemId()) {
 
 		// share - show sharing fragment
@@ -197,8 +187,9 @@ public class ProjectListFragment extends ListFragment {
 
 			if ((SyncService.getInstance().isNetworkAvailable())
 					&& (SyncService.getInstance().isUserLoggedIn())) {
+				MainActivity activity = (MainActivity) getActivity();
 				SharingFragment fragshare = SharingFragment.newInstance(projId,projTitle);
-				fan.replaceMainFragment(fragshare);
+				activity.replaceMainFragment(fragshare);
 			} else {
 				Context context = SyncService.getInstance()
 						.getApplicationContext();
@@ -208,27 +199,23 @@ public class ProjectListFragment extends ListFragment {
 				toast.show();
 			}
 
-			
-
 			break;
 				
+
 			case R.id.action_showhistory:
-				
+				MainActivity activity = (MainActivity) getActivity();
 				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.PROJECT, projId);
-				fan.replaceMainFragment(fraghist);
+				activity.replaceMainFragment(fraghist);
 				break;
 
 			// delete - show prompt dialog
 			case R.id.action_delete:
-				new AlertDialog.Builder(getActivity())
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setTitle(R.string.project_delete)
-						.setMessage(R.string.project_delete_confirm_msg)
-						.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(getActivity()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.project_delete)
+						.setMessage(R.string.project_delete_confirm_msg).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								boolean ret = SyncService.getInstance().deleteProject(projId);
-								if (ret) { 
+								if (ret) {
 									TasksModelService.getInstance().deleteProject(projId);
 								} else {
 									Context context = SyncService.getInstance().getApplicationContext();
@@ -237,12 +224,10 @@ public class ProjectListFragment extends ListFragment {
 									Toast toast = Toast.makeText(context, text, duration);
 									toast.show();
 								}
-										
+
 								reloadItems();
 							}
-						})
-						.setNegativeButton(android.R.string.no, null)
-						.show();
+						}).setNegativeButton(android.R.string.no, null).show();
 				break;
 
 		}
@@ -250,6 +235,18 @@ public class ProjectListFragment extends ListFragment {
 		return true;
 	}
 
+
+
+
+	@Override
+	public void onServiceReady(TasksModelService s) {
+		mIsServiceReady = true;
+
+		// need to check if activity exists - because of async fragment switching 
+		// onAttached might not be called yet
+		if (getActivity() != null)
+			reloadItems();
+	}
 
 
 

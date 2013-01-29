@@ -13,7 +13,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
-import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.SyncService;
@@ -128,6 +127,10 @@ public class TasksModelService extends Service {
 		return cursor;
 	}
 
+	public Cursor getTasksInplanCursor() {
+		return mTasksDataSource.getTasksInplan();
+	}
+
 	/**
 	 * Returns single task with all data inicialized
 	 */
@@ -179,7 +182,7 @@ public class TasksModelService extends Service {
 		Project proj = mProjectsDataSource.getProjectById(task.getProject().getId());
 
 		ArrayList<TaskHistory> history = proj.getHistory();
-		
+
 		//Log.i("PREHIST", proj.getSerializedHistory());
 
 		// generate history record
@@ -194,16 +197,11 @@ public class TasksModelService extends Service {
 		if ((old == null) || !old.getProject().getId().equals(proj.getId())) {
 
 			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
-			hist.addChange(TaskHistory.COMPLETED, "",
-					task.isCompleted() ? "true" : "false");
-			hist.addChange(TaskHistory.CONTEXT, "",
-					(task.getContext() != null) ? task.getContext() : "");
+			hist.addChange(TaskHistory.COMPLETED, "", task.isCompleted() ? "true" : "false");
+			hist.addChange(TaskHistory.CONTEXT, "", (task.getContext() != null) ? task.getContext() : "");
 			hist.addChange(TaskHistory.DATE, "", task.getDate().toString());
-			hist.addChange(TaskHistory.DESCRIPTION, "",
-					(task.getDescription() != null) ? task.getDescription()
-							: "");
-			hist.addChange(TaskHistory.PRIORITY, "",
-					Integer.toString(task.getPriority()));
+			hist.addChange(TaskHistory.DESCRIPTION, "", (task.getDescription() != null) ? task.getDescription() : "");
+			hist.addChange(TaskHistory.PRIORITY, "", Integer.toString(task.getPriority()));
 
 		} else {
 
@@ -214,34 +212,27 @@ public class TasksModelService extends Service {
 				if (old.getTitle() == null && task.getTitle() != null) {
 					hist.addChange(TaskHistory.TITLE, "", task.getTitle());
 				} else if (!old.getTitle().equals(task.getTitle())) {
-					hist.addChange(TaskHistory.TITLE, old.getTitle(),
-							task.getTitle());
+					hist.addChange(TaskHistory.TITLE, old.getTitle(), task.getTitle());
 				}
 			}
 
 			// DESCRIPTION
 			if (task.getDescription() != null) {
-				if (old.getDescription() == null
-						&& task.getDescription() != null) {
-					hist.addChange(TaskHistory.DESCRIPTION, "",
-							task.getDescription());
+				if (old.getDescription() == null && task.getDescription() != null) {
+					hist.addChange(TaskHistory.DESCRIPTION, "", task.getDescription());
 				} else if (!old.getDescription().equals(task.getDescription())) {
-					hist.addChange(TaskHistory.DESCRIPTION, old.getTitle(),
-							task.getDescription());
+					hist.addChange(TaskHistory.DESCRIPTION, old.getTitle(), task.getDescription());
 				}
 			}
 
 			// DATE
 			if (!old.getDate().toString().equals(task.getDate().toString())) {
-				hist.addChange(TaskHistory.DATE, old.getDate().toString(), task
-						.getDate().toString());
+				hist.addChange(TaskHistory.DATE, old.getDate().toString(), task.getDate().toString());
 			}
 
 			// PRIORITY
 			if (old.getPriority() != task.getPriority()) {
-				hist.addChange(TaskHistory.PRIORITY,
-						Integer.toString(old.getPriority()),
-						Integer.toString(task.getPriority()));
+				hist.addChange(TaskHistory.PRIORITY, Integer.toString(old.getPriority()), Integer.toString(task.getPriority()));
 			}
 
 			// CONTEXT
@@ -249,16 +240,13 @@ public class TasksModelService extends Service {
 				if (old.getContext() == null && task.getContext() != null) {
 					hist.addChange(TaskHistory.CONTEXT, "", task.getContext());
 				} else if (!old.getContext().equals(task.getContext())) {
-					hist.addChange(TaskHistory.CONTEXT, old.getContext(),
-							task.getContext());
+					hist.addChange(TaskHistory.CONTEXT, old.getContext(), task.getContext());
 				}
 			}
 
 			// COMPLETED
 			if (old.isCompleted() != task.isCompleted()) {
-				hist.addChange(TaskHistory.COMPLETED,
-						old.isCompleted() ? "true" : "false",
-						task.isCompleted() ? "true" : "false");
+				hist.addChange(TaskHistory.COMPLETED, old.isCompleted() ? "true" : "false", task.isCompleted() ? "true" : "false");
 			}
 
 		}
@@ -269,7 +257,7 @@ public class TasksModelService extends Service {
 		proj.setHistory(history);
 
 		mProjectsDataSource.saveProject(proj);
-		
+
 
 		// save task
 		mTasksDataSource.saveTask(task);
@@ -293,21 +281,21 @@ public class TasksModelService extends Service {
 	public void deleteProject(String projectId) {
 		mProjectsDataSource.deleteProject(projectId);
 	}
-	
+
 	/**
 	 * Delete task identified by ID.
 	 * 
 	 * @param taskId
 	 */
 	public void deleteTask(String taskId) {
-		
+
 		Task deleting = getTaskById(taskId);
-		
+
 		// write deletion to the project history
 		Project proj = mProjectsDataSource.getProjectById(deleting.getProject().getId());
 
 		ArrayList<TaskHistory> history = proj.getHistory();
-		
+
 		// generate history record
 		TaskHistory hist = new TaskHistory();
 		hist.setAuthor(SyncService.getInstance().getAccountName());
@@ -315,17 +303,17 @@ public class TasksModelService extends Service {
 			hist.setAuthor("");
 		hist.setTaskId(deleting.getId());
 		hist.setTimeStamp(new DateTime().toString());
-		
+
 		hist.addChange(TaskHistory.TITLE, deleting.getTitle(), deletedTitlePrefix + deleting.getTitle());
-		
+
 		if (history == null)
 			history = new ArrayList<TaskHistory>();
 		history.add(hist);
 		proj.setHistory(history);
 
 		mProjectsDataSource.saveProject(proj);
-		
-		
+
+
 		// delete task from database
 		mTasksDataSource.deleteTask(taskId);
 	}
@@ -337,16 +325,14 @@ public class TasksModelService extends Service {
 	 * Returns localized date string
 	 */
 	public String getLocalizedDate(Date d) {
-		return DateUtils.formatDateTime(mContext, d.getTime(),
-				DateUtils.FORMAT_SHOW_DATE);
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE);
 	}
 
 	/**
 	 * Returns localized date and time string
 	 */
 	public String getLocalizedDateTime(Date d) {
-		return DateUtils.formatDateTime(mContext, d.getTime(),
-				DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+		return DateUtils.formatDateTime(mContext, d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
 
 	/**
@@ -379,7 +365,6 @@ public class TasksModelService extends Service {
 
 	public class ModelServiceBinder extends Binder {
 		public TasksModelService getService() {
-			Log.d("ModelServiceBinder", "getService");
 			return TasksModelService.this;
 		}
 	};

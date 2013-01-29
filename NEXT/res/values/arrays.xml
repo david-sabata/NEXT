@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string-array name="priorityArray">
+        <item>No priority</item>
+        <item>Low</item>
+        <item>Normal</item>
+        <item>High</item>
+    </string-array>
+   
+   <!-- Prefereces Design ListPreference  -->
+   <string-array name="preferenceDesignEntries">
+   		<item>Holo Light</item>
+   		<item>Holo Dark</item>
+   </string-array>
+
+   <string-array name="preferenceDesignValues">
+   		<item>holo_light</item>
+   		<item>holo_dark</item>
+   </string-array>
+        
+   <!-- Prefereces Interval ListPreference -->
+   <string-array name="preferenceIntervalEntries">
+   		<item>30 secons</item>
+   		<item>1 minute</item>
+   		<item>5 minutes</item>
+   		<item>10 minutes</item>
+   		<item>30 minutes</item>
+   		<item>1 hour</item>
+   		<item>3 hours</item>
+   		<item>6 hours</item>
+   		<item>12 hours</item>
+   		<item>24 hours</item>
+   </string-array>
+
+   <string-array name="preferenceIntervalValues">
+   		<item>30</item>
+   		<item>60</item>
+   		<item>300</item>
+   		<item>600</item>
+   		<item>1800</item>
+   		<item>3600</item>
+   		<item>10800</item>
+   		<item>21600</item>
+   		<item>43200</item>
+   		<item>86400</item>
+   </string-array>
+   
+</resources>

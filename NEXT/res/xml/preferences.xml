@@ -14,6 +14,19 @@
             />
         <ListPreference
             android:key="PREF_SYNC_INTERVAL"
-            android:title="@string/SettingsSynchronizationIntervalTitle"/>
+            android:title="@string/SettingsSynchronizationIntervalTitle"
+            android:entries="@array/preferenceIntervalEntries"
+            android:entryValues="@array/preferenceIntervalValues"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/SettingsAppTitle"
+        android:key="pref_key_app_setting">
+        <ListPreference 
+            android:key="PREF_DESIGN"
+            android:title="@string/SettingsDesignTitle"
+            android:entries="@array/preferenceDesignEntries"
+            android:entryValues="@array/preferenceIntervalValues"
+            />
     </PreferenceCategory>
 </PreferenceScreen>
