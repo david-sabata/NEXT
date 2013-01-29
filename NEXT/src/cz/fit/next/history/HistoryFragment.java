@@ -97,6 +97,7 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 		super.onPause();
 
 		mIsResumeDone = false;
+		mIsServiceReady = false;
 	}
 
 

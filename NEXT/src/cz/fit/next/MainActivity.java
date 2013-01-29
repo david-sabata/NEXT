@@ -173,9 +173,12 @@ public class MainActivity extends Activity {
 			Log.d(LOG_TAG, "onResume: notifying fragments onServiceReady");
 
 			Fragment side = getSidebarFragment();
-
 			if (side instanceof ServiceReadyListener)
 				((ServiceReadyListener) side).onServiceReady(mModelService);
+
+			Fragment curr = getCurrentFragment();
+			if (curr instanceof ServiceReadyListener)
+				((ServiceReadyListener) curr).onServiceReady(mModelService);
 		}
 	}
 
