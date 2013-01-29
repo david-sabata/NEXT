@@ -2,6 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <item type="id" name="action_delete"/>
     <item type="id" name="action_share"/>
+    <item type="id" name="action_unshare"/>
     <item type="id" name="action_sharing"/>
     <item type="id" name="action_showhistory"/>
     <item type="id" name="fragment_edit_task"/>

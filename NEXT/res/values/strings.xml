@@ -98,7 +98,7 @@
    	<string name="sharing">Sharing</string>
     <string name="sharing_no_shares">Loading shares ...</string>
     <string name="sharing_no_conection">There is no connection to Google Drive, unable to share.</string>
-    
+    <string name="sharing_unshare">Unshare</string>
 
     
     <string name="SettingsDesignTitle">Design</string>
