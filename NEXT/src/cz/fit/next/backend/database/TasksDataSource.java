@@ -83,6 +83,30 @@ public class TasksDataSource {
 		return cursor;
 	}
 
+
+
+	public Cursor getTasksInplan() {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID
+				+ " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID, Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
+
+		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 != " + DateTime.SOMEDAY_MILISECONDS;
+
+		String order = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
+
+		Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
+
+		return cursor;
+	}
+
+
+
 	/**
 	 * Returns complete tasks from one project
 	 */
@@ -278,4 +302,6 @@ public class TasksDataSource {
 			return null;
 		return cursor;
 	}
+
+
 }

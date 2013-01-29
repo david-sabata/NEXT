@@ -127,6 +127,10 @@ public class TasksModelService extends Service {
 		return cursor;
 	}
 
+	public Cursor getTasksInplanCursor() {
+		return mTasksDataSource.getTasksInplan();
+	}
+
 	/**
 	 * Returns single task with all data inicialized
 	 */
@@ -277,21 +281,21 @@ public class TasksModelService extends Service {
 	public void deleteProject(String projectId) {
 		mProjectsDataSource.deleteProject(projectId);
 	}
-	
+
 	/**
 	 * Delete task identified by ID.
 	 * 
 	 * @param taskId
 	 */
 	public void deleteTask(String taskId) {
-		
+
 		Task deleting = getTaskById(taskId);
-		
+
 		// write deletion to the project history
 		Project proj = mProjectsDataSource.getProjectById(deleting.getProject().getId());
 
 		ArrayList<TaskHistory> history = proj.getHistory();
-		
+
 		// generate history record
 		TaskHistory hist = new TaskHistory();
 		hist.setAuthor(SyncService.getInstance().getAccountName());
@@ -299,17 +303,17 @@ public class TasksModelService extends Service {
 			hist.setAuthor("");
 		hist.setTaskId(deleting.getId());
 		hist.setTimeStamp(new DateTime().toString());
-		
+
 		hist.addChange(TaskHistory.TITLE, deleting.getTitle(), deletedTitlePrefix + deleting.getTitle());
-		
+
 		if (history == null)
 			history = new ArrayList<TaskHistory>();
 		history.add(hist);
 		proj.setHistory(history);
 
 		mProjectsDataSource.saveProject(proj);
-		
-		
+
+
 		// delete task from database
 		mTasksDataSource.deleteTask(taskId);
 	}
