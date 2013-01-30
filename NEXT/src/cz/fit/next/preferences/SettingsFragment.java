@@ -1,23 +1,13 @@
 package cz.fit.next.preferences;
 
 import cz.fit.next.R;
-import cz.fit.next.R.array;
-import cz.fit.next.R.xml;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
@@ -61,7 +51,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
 	            idOfStringArray = R.array.preferenceDesignEntries;             
 	        }
-			loadSummary(pref,indexToStringArray, idOfStringArray );	
+			refreshSummary(pref,indexToStringArray, idOfStringArray );	
 		}
 	}
 	
@@ -112,14 +102,15 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             getActivity().recreate();               
         }
 		// Reload summary
-		loadSummary(pref, indexToStringArray, idOfStringArray);
+		refreshSummary(pref, indexToStringArray, idOfStringArray);
 	}
 
 	/**
 	 * This method load summary on preference fragment created
 	 */
-	private void loadSummary(Preference pref, Integer index, Integer id) {
+	private void refreshSummary(Preference pref, Integer index, Integer id) {
 		Resources res = getResources();
+		
 		// Set new summary to settings
 		if(pref != null && index!= -1) {
             // Get String from array from resources

@@ -17,6 +17,7 @@
             android:title="@string/SettingsSynchronizationIntervalTitle"
             android:entries="@array/preferenceIntervalEntries"
             android:entryValues="@array/preferenceIntervalValuesIndex"
+            android:defaultValue="3"
             />
     </PreferenceCategory>
     <PreferenceCategory
@@ -27,6 +28,7 @@
             android:title="@string/SettingsDesignTitle"
             android:entries="@array/preferenceDesignEntries"
             android:entryValues="@array/preferenceIntervalValuesIndex"
+            android:defaultValue="1"
             />
     </PreferenceCategory>
 </PreferenceScreen>
