@@ -183,7 +183,7 @@ public class SharingFragment extends ListFragment {
 	
 				if ((SyncService.getInstance().isNetworkAvailable())
 						&& (SyncService.getInstance().isUserLoggedIn())) {
-					// TODO: Unshare
+					SyncService.getInstance().unshare(mProjId, up.id);
 				} else {
 					Context context = SyncService.getInstance()
 							.getApplicationContext();

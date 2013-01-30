@@ -157,12 +157,12 @@ public class SyncService extends Service {
 			mAccountName = name;
 			Log.e(TAG, "Authorized");
 
-			Context context = getApplicationContext();
+			/*Context context = getApplicationContext();
 			CharSequence text = "Logged into GDrive as " + mAccountName;
 			int duration = Toast.LENGTH_SHORT;
 			Toast toast = Toast.makeText(context, text, duration);
 			toast.show();
-
+			*/
 			synchronize();
 		}
 
@@ -649,6 +649,53 @@ public class SyncService extends Service {
 			Boolean res = false;
 			try {
 				res = drive.share(filename, user, GDrive.WRITE );
+			} catch (IOException e) {
+				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			}
+			Log.i(TAG, "Sharing res" + res.toString());
+			if (!res) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			
+			return null;
+		}
+		
+		
+	}
+	
+	/**
+	 * Unshares a file
+	 */
+	public void unshare(String projId, String permid) {
+		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+		pds.open();
+		Project proj = pds.getProjectById(projId);
+		String title = proj.getTitle();
+		pds.close();
+		
+		UnshareClass cls = new UnshareClass(projId,title,permid);
+		cls.execute();
+		
+		Log.i(TAG,"Sharing after execute");
+		
+	}
+	
+	private class UnshareClass extends AsyncTask<Object, Void, Void> {
+
+		private String id;
+		private String permId;
+		private String title;
+		
+		public UnshareClass(String pId, String pTitle, String pPermId) {
+			id = pId;
+			permId = pPermId;
+			title = pTitle;
+		}
+		
+		@Override
+		protected Void doInBackground(Object... param) {
+			String filename = title + "-" + id + ".nextproj.html";
+			Boolean res = false;
+			try {
+				res = drive.unshare(filename, permId);
 			} catch (IOException e) {
 				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			}

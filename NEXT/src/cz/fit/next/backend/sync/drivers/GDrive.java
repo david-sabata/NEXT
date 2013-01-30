@@ -161,25 +161,14 @@ public class GDrive {
 	/**
 	 * Stops sharing of file to given google account
 	 */
-	public boolean unshare(String file, String user) {
-		Log.i("GDRIVE", "Unsharing " + file + " for " + user);
+	public boolean unshare(String file, String id) throws IOException {
+		Log.i("GDRIVE", "Unsharing " + file + " id " + id);
 
-		try {
-			String fileid = getFileIdByName(file, mAppFolder);
-			if (fileid == null)
-				return false;
-			
-			PermissionList list = mService.permissions().list(fileid).execute();
-			
-			for (int i = 0; i < list.size(); i ++) {
-				if (list.getItems().get(i).getName().equals(user))
-					mService.permissions().delete(file, list.getItems().get(i).getId());
-			}
-
-			
-		} catch (IOException e) {
+		String fileid = getFileIdByName(file, mAppFolder);
+		if (fileid == null)
 			return false;
-		}
+		
+		mService.permissions().delete(file, id);
 
 		return true;
 				
@@ -204,6 +193,8 @@ public class GDrive {
 		
 		for (int i = 0; i < perms.size(); i++) {
 			UserPerm up = new UserPerm();
+			up.id = perms.get(i).getId();
+			up.fileid = fileid;
 			up.username = perms.get(i).getName();
 			//Log.i("PERM","Name: " + perms.get(i).getName() + ", perm: " + perms.get(i).getRole());
 			if (perms.get(i).getRole().equals("writer"))
@@ -668,6 +659,8 @@ public class GDrive {
 	/***************************************/
 	
 	public class UserPerm {
+		public String id;
+		public String fileid;
 		public String username;
 		public int mode;
 	}
