@@ -312,6 +312,11 @@ public class MainActivity extends Activity {
 
 
 
+	public boolean isServiceReady() {
+		return mIsServiceReady;
+	}
+
+
 
 	/**
 	 * Setup gesture detection for given view

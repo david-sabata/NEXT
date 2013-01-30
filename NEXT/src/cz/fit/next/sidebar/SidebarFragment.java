@@ -33,7 +33,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	private final static String LOG_TAG = "SidebarFragment";
 	private View sideBarView;
 
-	protected boolean mIsServiceReady = false;
 
 	/**
 	 * IDs of fixed menu items
@@ -152,16 +151,17 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	public void onResume() {
 		super.onResume();
 
-		if (mIsServiceReady)
+		final MainActivity activity = (MainActivity) getActivity();
+
+		if (activity.isServiceReady())
 			loadDynamicItems();
 
-		MainActivity activity = (MainActivity) getActivity();
 		activity.getFanView().setSidebarListener(new SidebarListener() {
 			@Override
 			public void onSidebarOpen() {
 
 				// Regenerate contexts and projects in sidebar menu
-				if (mIsServiceReady)
+				if (activity.isServiceReady())
 					loadDynamicItems();
 			}
 
@@ -172,14 +172,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	}
 
 
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
-	}
 
 
 	/**
@@ -325,8 +317,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
-
 		if (getActivity() != null)
 			loadDynamicItems();
 	}

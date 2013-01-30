@@ -68,8 +68,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	protected String mTitle;
 
 
-	protected boolean mIsServiceReady = false;
-
 
 
 	/**
@@ -126,18 +124,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		}
 	}
 
-	/**
-	 * Load custom layout
-	 */
-	// TODO: disabled to use default layout with
-	//	@Override
-	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	//		super.onCreateView(inflater, container, savedInstanceState);
-	//
-	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	//	}
-
-
 
 
 
@@ -145,8 +131,10 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	public void onResume() {
 		super.onResume();
 
+		MainActivity activity = (MainActivity) getActivity();
+
 		// re-apply filter if service is ready (else wait for event)
-		if (mIsServiceReady) {
+		if (activity.isServiceReady()) {
 			reload();
 		}
 
@@ -154,7 +142,7 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		registerForContextMenu(getListView());
 
 		// register for gestures
-		((MainActivity) getActivity()).attachGestureDetector(getListView());
+		activity.attachGestureDetector(getListView());
 	}
 
 
@@ -162,8 +150,10 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	 * Reloads tasklist according to current filter
 	 */
 	public void reload() {
-		if (!mIsServiceReady || getActivity() == null) {
-			Log.w(LOG_TAG, "cannot reload items, " + (!mIsServiceReady ? "service, " : "") + (getActivity() == null ? "activity" : "") + " is not ready");
+		MainActivity activity = (MainActivity) getActivity();
+
+		if (activity == null || !activity.isServiceReady()) {
+			Log.w(LOG_TAG, "cannot reload items, " + (!activity.isServiceReady() ? "service, " : "") + (activity == null ? "activity" : "") + " is not ready");
 			return;
 		}
 
@@ -172,20 +162,10 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		setFilter(mFilter);
 
 		if (mTitleResId > 0) {
-			getActivity().getActionBar().setTitle(mTitleResId);
+			activity.getActionBar().setTitle(mTitleResId);
 		} else if (mTitle != null) {
-			getActivity().getActionBar().setTitle(mTitle);
+			activity.getActionBar().setTitle(mTitle);
 		}
-	}
-
-
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
 	}
 
 
@@ -323,10 +303,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	 */
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		Log.i(LOG_TAG, "onServiceReady");
-
-		mIsServiceReady = true;
-
 		// need to check if activity exists - because of async fragment switching 
 		// onAttached might not be called yet
 		if (getActivity() != null)

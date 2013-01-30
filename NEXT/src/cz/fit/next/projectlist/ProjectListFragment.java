@@ -30,48 +30,31 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 	private final static String LOG_TAG = "ProjectListFragment";
 
 
-	protected boolean mIsServiceReady = false;
-
-
-
-	//	@Override
-	//	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	//		super.onCreateView(inflater, container, savedInstanceState);
-	//
-	//		return inflater.inflate(R.layout.content_list_fragment, container, false);
-	//	}
-
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
 
+		MainActivity activity = (MainActivity) getActivity();
 
-		if (mIsServiceReady) {
+		if (activity.isServiceReady()) {
 			reloadItems();
 		}
 
 		setHasOptionsMenu(true);
 
 		// register for gestures
-		((MainActivity) getActivity()).attachGestureDetector(getListView());
+		activity.attachGestureDetector(getListView());
 
 		// register long click events
 		registerForContextMenu(getListView());
 
 		// reload title
-		getActivity().getActionBar().setTitle(getResources().getString(R.string.projects));
+		activity.getActionBar().setTitle(getResources().getString(R.string.projects));
 
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
-	}
 
 
 	@Override
@@ -220,8 +203,6 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
-
 		// need to check if activity exists - because of async fragment switching 
 		// onAttached might not be called yet
 		if (getActivity() != null)
