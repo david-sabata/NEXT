@@ -188,7 +188,10 @@ public class DateTime implements Serializable {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleDateTimeString() {
-		return isSomeday() ? TasksModelService.getInstance().getLocalizedSomedayTime() : TasksModelService.getInstance().getLocalizedDateTime(
+		if (isSomeday()) return TasksModelService.getInstance().getLocalizedSomedayTime();
+		else if (isAllday()) return TasksModelService.getInstance().getLocalizedDate(
+				new Date(mTimestamp));
+		else return TasksModelService.getInstance().getLocalizedDateTime(
 				new Date(mTimestamp));
 	}
 
