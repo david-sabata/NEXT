@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -40,6 +41,7 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -71,10 +73,17 @@ public class SyncService extends Service {
 	// private boolean mAuthorized = false;
 	private String mAccountName;
 
+	public class ServiceBinder extends Binder {
+		public SyncService getService() {
+			return SyncService.this;
+		}
+	};
+
+	private final IBinder mBinder = new ServiceBinder();
+
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// Don't use binding
-		return null;
+		return mBinder;
 	}
 
 	@Override
