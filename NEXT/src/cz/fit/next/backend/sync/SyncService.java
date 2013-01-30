@@ -87,12 +87,9 @@ public class SyncService extends Service {
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
-			synchronize();
-			//if (sInstanceOld == null) {
-			//	AlarmReceiver alarm = new AlarmReceiver(
-			//			getApplicationContext(), 10);
-			//	alarm.run();
-			//}
+			if (sInstanceOld == null) {
+				synchronize();
+			}
 		}
 
 		sInstanceOld = sInstance;
@@ -126,7 +123,7 @@ public class SyncService extends Service {
 
 		}
 		
-		Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
+		//Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
 
 		return START_STICKY;
 		// return START_NOT_STICKY;
@@ -504,8 +501,7 @@ public class SyncService extends Service {
 			if (param != null) {
 				if (((returnObject) param).sharedCount > 0) {
 					displaySharedNotification(((returnObject) param).sharedCount);
-					AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 5);
-					alarm.run();
+					synchronize();
 				}
 			}
 			
@@ -588,9 +584,13 @@ public class SyncService extends Service {
 			// Plan next synchronization only
 			// TODO: Variable interval
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
-				Log.i(TAG, "Alarm set by pref.");
-				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
-				// alarm.run();
+				
+				int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
+				String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it-1];
+				int t = Integer.parseInt(ts);
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
+				alarm.run();
+				Log.i(TAG, "Alarm set by pref to " + it + "-->" + t);
 			}
 		}
 		else
@@ -605,8 +605,11 @@ public class SyncService extends Service {
 			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
 				Log.i(TAG, "Alarm set by pref.");
-				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
-				// alarm.run();
+				int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
+				String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it];
+				int t = Integer.parseInt(ts);
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
+				alarm.run();
 			}
 		}
 	}
