@@ -87,12 +87,12 @@ public class SyncService extends Service {
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
-			// synchronize();
-			if (sInstanceOld == null) {
-				AlarmReceiver alarm = new AlarmReceiver(
-						getApplicationContext(), 10);
-				alarm.run();
-			}
+			synchronize();
+			//if (sInstanceOld == null) {
+			//	AlarmReceiver alarm = new AlarmReceiver(
+			//			getApplicationContext(), 10);
+			//	alarm.run();
+			//}
 		}
 
 		sInstanceOld = sInstance;
@@ -125,6 +125,8 @@ public class SyncService extends Service {
 			}
 
 		}
+		
+		Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
 
 		return START_STICKY;
 		// return START_NOT_STICKY;
@@ -494,7 +496,9 @@ public class SyncService extends Service {
 			super.onPostExecute(param);
 
 			if (param == null) {
-				Log.i(TAG, "Bad username");
+				Log.i(TAG, "Sync error");
+				// TODO: Display notitfication after 10 errors, not for each one
+				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
 				return;
 			}
 			if (param != null) {
@@ -504,17 +508,11 @@ public class SyncService extends Service {
 					alarm.run();
 				}
 			}
-
-			// Plan next synchronization
-			// TODO: Variable interval
-			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
 			
 			// Send broadcast for indicate end of sync
 			Intent broadcast = new Intent();
 			broadcast.setAction(BROADCAST_SYNC_END);
 			sendBroadcast(broadcast);
-			
-			// alarm.run();
 
 			// Log.i(TAG, "Killing SyncService.");
 			// stopSelf();
@@ -584,11 +582,16 @@ public class SyncService extends Service {
 	 */
 	public void synchronize() {
 
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		
 		if (!isNetworkAvailable()) {
 			// Plan next synchronization only
 			// TODO: Variable interval
-			AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
-			// alarm.run();
+			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+				Log.i(TAG, "Alarm set by pref.");
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
+				// alarm.run();
+			}
 		}
 		else
 		{
@@ -599,6 +602,12 @@ public class SyncService extends Service {
 			
 			SynchronizeClass cls = new SynchronizeClass();
 			cls.execute();
+			
+			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+				Log.i(TAG, "Alarm set by pref.");
+				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 1200);
+				// alarm.run();
+			}
 		}
 	}
 	
@@ -752,7 +761,7 @@ public class SyncService extends Service {
 		String content = "";
 		String ticker = "";
 
-		// TODO: More languages
+		// TODO: More languages, move strings to string.xml !
 
 		if (type == NOTIFICATION_NEW_SHARED) {
 			title = "NEXT Sharing";
