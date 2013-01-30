@@ -24,8 +24,13 @@ public class SettingsUtil  {
 	 * @param actContext
 	 */
 	public void setTheme(Context actContext) {
-		String themeStringIndex = preferences.getString(SettingsFragment.PREF_DESIGN, "1");
-	    String theme = (res.getStringArray(R.array.preferenceDesignValuesForAndroid))[Integer.parseInt(themeStringIndex) - 1];
+		Integer themeStringIndex = Integer.parseInt(preferences.getString(SettingsFragment.PREF_DESIGN, "1"));
+		String[] themeStrings = res.getStringArray(R.array.preferenceDesignValuesForAndroid);
+		
+		if(themeStringIndex > themeStrings.length) {
+			themeStringIndex = 1;
+		}
+		String theme = themeStrings[themeStringIndex - 1];
 	    
         if(theme.equals("holo_light")) {
         	actContext.setTheme(R.style.ThemeNext_Light);
