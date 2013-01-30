@@ -1,10 +1,19 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 	<!-- Colors used in styles -->
 	<color name="BasicLightBackground">@android:color/background_light</color>
-   	<color name="FanBackgroundDark">#2c2c2c</color>
-    <color name="FanItemsText">#FFFFFF</color>
+	<color name="BasicDarkBackground">@android:color/background_dark</color>
+   	
+   	<color name="FanBackgroundLight">#2c2c2c</color>
+   	<color name="FanBackgroundDark">#0f0f0f</color>
+    
+    <color name="FanItemsTextLight">#FFFFFF</color>
+    <color name="FanItemsTextDark">#FFFFFF</color>
+    
+    <color name="FanTitleColorLight">#33b6ea</color>
+    <color name="FanTitleColorDark">#33b6ea</color>
+    
+    
     <color name="FanItemsBackgroundColor">#8FB5D0</color>
-    <color name="FanTitleColor">#33b6ea</color>
     <color name="TaskTitleColor">#FFFFFF</color>
     <color name="TaskTitleBackground">#000000</color>
     <color name="TaskCheckBoxBackground">#FFFFFF</color>
@@ -15,11 +24,7 @@
     <color name="priority_1">#93BF00</color>
     <color name="priority_2">#BF9600</color>
     
-    <!-- ********************************************************** -->
-    <!-- ********************************************************** -->
-    <!-- ********************* SIDEBAR STYLE ********************** -->
-    <!-- ********************************************************** -->
-    <!-- ********************************************************** -->
+
 	<style name="Next" parent="@style/Theme.Holo.Light.Hack">    
 	</style>
 	<!-- ***********************************************************-->
@@ -28,18 +33,35 @@
 	<style name="Next.Widget">
 	</style>
 
+	<!--  ScrollView -->
 	<style name="Next.Widget.ScrollView" parent="android:Widget.Holo.Light.ScrollView">
 	</style>
+	
+	<!-- ListView -->
+	<style name="Next.Widget.ListView" parent="android:Widget.Holo.Light.ListView">
+	</style>
+
+	<!--  LIGHT STYLE -->
 	<style name="Next.Widget.ScrollView.Light">
 	 	<item name="android:background">@color/BasicLightBackground</item>
-	</style>
-	
-	<style name="Next.Widget.ListView" parent="android:Widget.Holo.Light.ListView">
 	</style>
 	<style name="Next.Widget.ListView.Light">
 	     <item name="android:background">@color/BasicLightBackground</item>
 	</style>
 	
+	<!--  DARK STYLE -->
+	<style name="Next.Widget.ScrollView.Dark">
+	 	<item name="android:background">@color/BasicDarkBackground</item>
+	</style>
+	<style name="Next.Widget.ListView.Dark">
+	     <item name="android:background">@color/BasicDarkBackground</item>
+	</style>
+	
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************* SIDEBAR STYLE ********************** -->
+    <!-- ********************************************************** -->
+    <!-- ********************************************************** -->
     <style name="Next.Sidebar">
     	<item name="android:layout_width">wrap_content</item>
     	<item name="android:layout_height">match_parent</item>
@@ -81,23 +103,23 @@
     <!--  **************** SIDEBAR LIGHT ************************ -->
     <!-- Sidebar style for light -->
 	    <style name="Next.Sidebar.Light">
-	    	<item name="android:background">@color/FanBackgroundDark</item>
-	    	<item name="android:textColor">@color/FanItemsText</item>
+	    	<item name="android:background">@color/FanBackgroundLight</item>
+	    	<item name="android:textColor">@color/FanItemsTextLight</item>
 	    </style>
 	
 	    <!--  This is style for blue main titles in sidebar -->
 	    <style name="Next.Sidebar.Title.Light">
-	        <item name="android:textColor">@color/FanTitleColor</item>
+	        <item name="android:textColor">@color/FanTitleColorLight</item>
 	    </style>
 	    	
 	    	<!--  This is style for blue horizontal line in sidebar -->
 		    <style name="Next.Sidebar.HorizontalLine.Light">
-		        <item name="android:background">@color/FanTitleColor</item>
+		        <item name="android:background">@color/FanTitleColorLight</item>
 		    </style>
 		    
 		    <!--  This is style for subtitle text in one layout -->
 		    <style name="Next.Sidebar.Subtitle.Light">
-		        <item name="android:textColor">@color/FanItemsText</item>
+		        <item name="android:textColor">@color/FanItemsTextLight</item>
 		    </style>
 		    
 		    
@@ -105,7 +127,26 @@
 	<!--  ******************************************************* -->
 	<!--  Style for dark design - SIDEBAR *********************** -->
 	<!--  ******************************************************* -->	
+	    <!-- Sidebar style for dark -->
+	    <style name="Next.Sidebar.Dark">
+	    	<item name="android:background">@color/FanBackgroundDark</item>
+	    	<item name="android:textColor">@color/FanItemsTextDark</item>
+	    </style>
 	
+	    <!--  This is style for blue main titles in sidebar -->
+	    <style name="Next.Sidebar.Title.Dark">
+	        <item name="android:textColor">@color/FanTitleColorDark</item>
+	    </style>
+	    	
+	    	<!--  This is style for blue horizontal line in sidebar -->
+		    <style name="Next.Sidebar.HorizontalLine.Dark">
+		        <item name="android:background">@color/FanTitleColorDark</item>
+		    </style>
+		    
+		    <!--  This is style for subtitle text in one layout -->
+		    <style name="Next.Sidebar.Subtitle.Dark">
+		        <item name="android:textColor">@color/FanItemsTextDark</item>
+		    </style>
 		    
 	<!-- ********************************************************** -->
     <!-- ********************************************************** -->
@@ -256,10 +297,48 @@
 		<style name="Next.Task.LineSeparatorCatagories.Light">
 		     <item name="android:background">@color/TaskRuller</item>
 		</style> 
+	<!--  ******************************************************* -->
+	<!--  *** Style for dark design - ONE TASK DETAIL (EDIT) *** -->
+	<!--  ******************************************************* -->		
+		<style name="Next.Task.Capstext.Dark">
+	        <item name="android:textColor">@android:color/holo_blue_dark</item>
+    	</style>
+    	
+		<style name="Next.Task.ScrollView.Dark">
+			<item name="android:background">@android:color/background_dark</item>
+		</style>    
+		
+		<!-- Title Layout -->
+		<style name="Next.Task.TitleLayout.ShowFragment.Dark">
+		    <item name="android:background">@color/TaskTitleBackground</item>
+		</style>
+		
+			<style name="Next.Task.TitleLayout.EditFragment.Dark">	
+			    <!-- FOR FUTURE -->
+			</style>
+		
+				<style name="Next.Task.Title.ShowFragment.Dark">
+				    <item name="android:background">@color/TaskTitleBackground</item>
+				    <item name="android:textColor">@color/TaskTitleColor</item>
+				</style>
+				
+				<style name="Next.Task.Title.EditFragment.Dark">
+				    <item name="android:textColor">@android:color/holo_blue_dark</item>
+				</style>
+		
+		<!-- Line under title -->
+		<style name="Next.Task.LineUnderTitle.Dark">
+		    <item name="android:background">@color/TaskRuller</item>
+		</style>
+		
+		<!-- Lena separator between categories -->
+		<style name="Next.Task.LineSeparatorCatagories.Dark">
+		     <item name="android:background">@color/TaskRuller</item>
+		</style> 
 		
     <!-- because of issue #922 : http://code.google.com/p/android/issues/detail?id=922 -->
-    <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo.Light">
-        <item name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
+    <style name="Theme.Holo.Light.Hack" parent="@android:Theme.Holo">
+        <item name="android:textColorPrimaryInverse">@android:color/primary_text_dark</item>
     </style>
 
 	

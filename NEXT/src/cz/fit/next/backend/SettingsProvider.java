@@ -19,12 +19,8 @@ public class SettingsProvider {
 	 * 
 	 */
 
-	/* KEYS */
-	public static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
-	public static final String PREF_SYNC_ENABLED = "PREF_SYNC_ENABLED";
-	public static final String PREF_SYNC_INTERVAL = "PREF_SYNC_INTERVAL";
-	
-	
+
+
 	private static final String PREF_FILE_NAME = "NextPreferences";
 		
 	private Context mContext;

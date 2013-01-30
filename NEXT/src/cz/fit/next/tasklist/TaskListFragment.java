@@ -178,6 +178,18 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		}
 	}
 
+
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
+
+
 	/**
 	 * Set filter to the adapter and reload items; pass null for all items
 	 */

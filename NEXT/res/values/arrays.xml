@@ -13,7 +13,12 @@
    		<item>Holo Dark</item>
    </string-array>
 
-   <string-array name="preferenceDesignValues">
+   <string-array name="preferenceDesignValuesIndex">
+   		<item>1</item>
+   		<item>2</item>
+   </string-array>
+   
+   <string-array name="preferenceDesignValuesForAndroid">
    		<item>holo_light</item>
    		<item>holo_dark</item>
    </string-array>
@@ -32,7 +37,20 @@
    		<item>24 hours</item>
    </string-array>
 
-   <string-array name="preferenceIntervalValues">
+   <string-array name="preferenceIntervalValuesIndex">
+   		<item>1</item>
+   		<item>2</item>
+   		<item>3</item>
+   		<item>4</item>
+   		<item>5</item>
+   		<item>6</item>
+   		<item>7</item>
+   		<item>8</item>
+   		<item>9</item>
+   		<item>10</item>
+   </string-array>
+   
+   <string-array name="preferenceIntervalValuesForAndroid">
    		<item>30</item>
    		<item>60</item>
    		<item>300</item>
@@ -44,5 +62,6 @@
    		<item>43200</item>
    		<item>86400</item>
    </string-array>
+   
    
 </resources>

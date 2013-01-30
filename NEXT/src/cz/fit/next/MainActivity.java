@@ -28,6 +28,8 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.preferences.SettingsFragment;
+import cz.fit.next.preferences.SettingsUtil;
 import cz.fit.next.sidebar.SidebarFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
@@ -66,8 +68,10 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.test);
 
 
@@ -107,11 +111,16 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onStart();
-
+		
 		// restore singleton service reference
-		if (mModelService == null && TasksModelService.getInstance() != null)
+		if (mModelService == null && TasksModelService.getInstance() != null) {
 			mModelService = TasksModelService.getInstance();
+			mIsServiceReady = true;
+		}
 
 		// restore service if needed
 		bindModelService();
@@ -122,6 +131,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		SettingsUtil appSettingsManager = new SettingsUtil(this);
+		appSettingsManager.setTheme(this);
+		
 		super.onResume();
 
 		// notify the current fragment if the service is already ready
@@ -155,6 +167,19 @@ public class MainActivity extends Activity {
 		IntentFilter filter3 = new IntentFilter();
 		filter3.addAction(SyncService.BROADCAST_SYNC_END);
 		registerReceiver(mSyncStopReceiver, filter3);
+
+		// re-notify fragments about service being ready if so
+		if (mIsServiceReady) {
+			Log.d(LOG_TAG, "onResume: notifying fragments onServiceReady");
+
+			Fragment side = getSidebarFragment();
+			if (side instanceof ServiceReadyListener)
+				((ServiceReadyListener) side).onServiceReady(mModelService);
+
+			Fragment curr = getCurrentFragment();
+			if (curr instanceof ServiceReadyListener)
+				((ServiceReadyListener) curr).onServiceReady(mModelService);
+		}
 	}
 
 

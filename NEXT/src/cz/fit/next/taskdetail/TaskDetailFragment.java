@@ -123,6 +123,15 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 	}
 
 
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
+
 	private void setTitleLayout(LinearLayout titleLayout, TextView textData, String itemType) {
 		if (textData != null && titleLayout != null) {
 			String text = null;

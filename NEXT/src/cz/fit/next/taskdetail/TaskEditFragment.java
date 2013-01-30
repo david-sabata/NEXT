@@ -383,6 +383,17 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		((MainActivity) getActivity()).attachGestureDetector(v);
 	}
 
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
+
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);

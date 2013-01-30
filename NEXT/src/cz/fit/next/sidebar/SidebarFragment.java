@@ -172,6 +172,16 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 	}
 
 
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		// assume the service will get disconnected
+		mIsServiceReady = false;
+	}
+
+
 	/**
 	 * ActivitySelector
 	 * 

@@ -15,7 +15,7 @@
         android:paddingLeft="@dimen/FanItemPaddingLeft"
         android:paddingTop="@dimen/SideBarItemPaddingTopBottom"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/FanItemsText"
+        android:textColor="@color/FanItemsTextLight"
         android:textSize="@dimen/FanItemTextSize" />
 
 </LinearLayout>

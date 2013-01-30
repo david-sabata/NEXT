@@ -1,9 +1,11 @@
 package cz.fit.next.backend.sync;
 
 
+
 import com.google.android.gms.common.AccountPicker;
 
 import cz.fit.next.backend.SettingsProvider;
+import cz.fit.next.preferences.SettingsFragment;
 
 
 import android.accounts.AccountManager;
@@ -65,7 +67,7 @@ public class LoginActivity extends Activity {
     		//auth.execute((Void)null); 
 			
 			SettingsProvider sp = new SettingsProvider(getApplicationContext());
-			sp.storeString(SettingsProvider.PREF_ACCOUNT_NAME, mAccountName);
+			sp.storeString(SettingsFragment.PREF_ACCOUNT_NAME, mAccountName);
 			
 			Intent i = new Intent(LoginActivity.this, SyncService.class);
 			Bundle b = new Bundle();

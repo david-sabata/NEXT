@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import org.json.JSONException;
 
 
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -44,6 +45,7 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
+import cz.fit.next.preferences.SettingsFragment;
 
 public class SyncService extends Service {
 
@@ -81,7 +83,7 @@ public class SyncService extends Service {
 		Log.i(TAG, "onStart");
 
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
-		mAccountName = sp.getString(SettingsProvider.PREF_ACCOUNT_NAME, null);
+		mAccountName = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
 
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
