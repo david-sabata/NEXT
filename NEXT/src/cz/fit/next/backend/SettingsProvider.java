@@ -2,6 +2,7 @@ package cz.fit.next.backend;
 
 import android.content.SharedPreferences;
 import android.content.Context;
+import android.preference.PreferenceManager;
 
 public class SettingsProvider {
 	
@@ -21,8 +22,6 @@ public class SettingsProvider {
 
 
 
-	private static final String PREF_FILE_NAME = "NextPreferences";
-		
 	private Context mContext;
 	
 	public SettingsProvider(Context context) {
@@ -35,7 +34,7 @@ public class SettingsProvider {
 	 * @param content
 	 */
 	private void storePreference(String key, String content) {
-		SharedPreferences preferences = mContext.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 		SharedPreferences.Editor editor = preferences.edit();
 		editor.putString(key, content);
 		editor.commit();
@@ -47,8 +46,7 @@ public class SettingsProvider {
 	 * @return
 	 */
 	private String getPreference(String key) {
-		SharedPreferences settings = mContext.getSharedPreferences(PREF_FILE_NAME,
-				Context.MODE_PRIVATE);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
 		return settings.getString(key, null);
 	}
 	

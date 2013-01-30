@@ -5,6 +5,8 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.sync.SyncService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
