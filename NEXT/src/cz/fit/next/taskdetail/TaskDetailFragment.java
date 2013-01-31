@@ -47,7 +47,6 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 	 */
 	private Task mTask;
 
-	private boolean mIsServiceReady = false;
 
 
 
@@ -112,23 +111,16 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 	public void onResume() {
 		super.onResume();
 
-		if (mTaskId != null && mIsServiceReady) {
+		MainActivity activity = (MainActivity) getActivity();
+
+		if (mTaskId != null && activity.isServiceReady()) {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			setDetailTask();
 		}
 
 		// register for gestures
 		View v = getView().findViewById(R.id.scrollView);
-		((MainActivity) getActivity()).attachGestureDetector(v);
-	}
-
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
+		activity.attachGestureDetector(v);
 	}
 
 
@@ -246,8 +238,6 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
-
 		if (mTask == null && mTaskId != null) {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			setDetailTask();

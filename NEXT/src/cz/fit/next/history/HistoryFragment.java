@@ -31,7 +31,6 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 	private int mType = PROJECT;
 	private String mId;
 	private String mTitle;
-	private boolean mIsServiceReady = false;
 	private boolean mIsResumeDone = false;
 
 
@@ -78,35 +77,25 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 	public void onResume() {
 		super.onResume();
 
-		getActivity().getActionBar().setTitle(mTitle);
+		MainActivity activity = (MainActivity) getActivity();
 
-		if (mIsServiceReady)
+		activity.getActionBar().setTitle(mTitle);
+
+		if (activity.isServiceReady())
 			loadData();
 
 		// register long click events
 		registerForContextMenu(getListView());
 
 		// register for gestures
-		((MainActivity) getActivity()).attachGestureDetector(getListView());
-
-		mIsResumeDone = true;
+		activity.attachGestureDetector(getListView());
 	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		mIsResumeDone = false;
-		mIsServiceReady = false;
-	}
 
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
-
-		// did we miss the onResume?
-		if (mIsResumeDone)
+		if (getActivity() != null)
 			loadData();
 	}
 

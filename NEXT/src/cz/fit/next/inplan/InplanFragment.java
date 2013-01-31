@@ -15,9 +15,6 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 
 	private static final String LOG_TAG = "InplanFragment";
 
-	protected boolean mIsServiceReady = false;
-
-
 
 	/**
 	 * Use ONLY this method to create a new instance!
@@ -35,8 +32,10 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 	public void onResume() {
 		super.onResume();
 
+		MainActivity activity = (MainActivity) getActivity();
+
 		// re-apply filter if service is ready (else wait for event)
-		if (mIsServiceReady) {
+		if (activity.isServiceReady()) {
 			reload();
 		}
 
@@ -44,21 +43,12 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 		registerForContextMenu(getListView());
 
 		// register for gestures
-		((MainActivity) getActivity()).attachGestureDetector(getListView());
+		activity.attachGestureDetector(getListView());
 
 		// set title
-		getActivity().getActionBar().setTitle(R.string.TitleByTime_InPlan);
+		activity.getActionBar().setTitle(R.string.TitleByTime_InPlan);
 	}
 
-
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
-	}
 
 
 
@@ -67,13 +57,7 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 	 * Reloads tasklist according to current filter
 	 */
 	public void reload() {
-		if (!mIsServiceReady || getActivity() == null) {
-			Log.w(LOG_TAG, "cannot reload items, " + (!mIsServiceReady ? "service, " : "") + (getActivity() == null ? "activity" : "") + " is not ready");
-			return;
-		}
-
 		Log.d(LOG_TAG, "reloading items");
-
 
 		Cursor cursor = TasksModelService.getInstance().getTasksInplanCursor();
 		setListAdapter(new InplanAdapter(getActivity(), cursor, 0));
@@ -84,7 +68,8 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
+		if (getActivity() != null)
+			reload();
 	}
 
 }

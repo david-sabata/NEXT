@@ -45,7 +45,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	protected static final int DIALOG_EDIT_TIME = 2;
 
 
-	private boolean mIsServiceReady = false;
 
 	/**
 	 * In case we are editing a task, but service is not ready yet,
@@ -107,11 +106,13 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 		setHasOptionsMenu(true);
 
+		MainActivity activity = (MainActivity) getActivity();
 		Bundle args = getArguments();
+
 		if (args != null) {
 			mTaskId = args.getString(ARG_TASK_ID);
 
-			if (mIsServiceReady && mTaskId != null)
+			if (mTaskId != null && activity.isServiceReady())
 				mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 		}
 
@@ -373,23 +374,16 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	public void onResume() {
 		super.onResume();
 
-		if (mIsServiceReady && mTaskId != null) {
+		MainActivity activity = (MainActivity) getActivity();
+
+		if (mTaskId != null && activity.isServiceReady()) {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			loadTaskToView(mTask);
 		}
 
 		// Register for gestures
 		View v = getView().findViewById(R.id.scrollView);
-		((MainActivity) getActivity()).attachGestureDetector(v);
-	}
-
-
-	@Override
-	public void onPause() {
-		super.onPause();
-
-		// assume the service will get disconnected
-		mIsServiceReady = false;
+		activity.attachGestureDetector(v);
 	}
 
 
@@ -400,6 +394,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 		inflater.inflate(R.menu.taskedit_actions, menu);
 	}
+
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -509,8 +504,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 	@Override
 	public void onServiceReady(TasksModelService s) {
-		mIsServiceReady = true;
-
 		if (mTaskId != null) {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			loadTaskToView(mTask);
