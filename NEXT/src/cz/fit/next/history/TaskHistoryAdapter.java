@@ -2,8 +2,10 @@ package cz.fit.next.history;
 
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +65,10 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		title.setText(new DateTime(Long.parseLong(mData.get(position)
 				.getTimeStamp())).toLocaleDateTimeString());
 
-		if (SyncService.getInstance().isUserLoggedIn())
+		SettingsProvider sp = new SettingsProvider(getContext().getApplicationContext());
+		String aname = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+		
+		if (aname != null)
 			author.setText(mData.get(position).getAuthor());
 		else
 			author.setVisibility(0);

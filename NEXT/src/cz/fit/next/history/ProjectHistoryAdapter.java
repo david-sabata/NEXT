@@ -2,10 +2,12 @@ package cz.fit.next.history;
 
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
+import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,7 +104,10 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		// Author + timestamp
 		String sub = "";
-		if (SyncService.getInstance().isUserLoggedIn())
+		SettingsProvider sp = new SettingsProvider(getContext().getApplicationContext());
+		String aname = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+		
+		if (aname != null)
 			sub = mData.get(position).getAuthor();
 		
 		sub = sub
