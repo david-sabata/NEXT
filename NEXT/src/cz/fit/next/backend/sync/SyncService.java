@@ -127,11 +127,11 @@ public class SyncService extends Service {
 				//	synchronize();
 				//}
 				
-				if (b.getInt("Share") == 1) {
-					String sid = b.getString("ShareID");
-					String gmail = b.getString("ShareGmail");
-					share(sid,gmail);
-				}
+				//if (b.getInt("Share") == 1) {
+				//	String sid = b.getString("ShareID");
+				//	String gmail = b.getString("ShareGmail");
+				//	share(sid,gmail);
+				//}
 			}
 
 		}
@@ -634,7 +634,7 @@ public class SyncService extends Service {
 	/**
 	 * Shares a file
 	 */
-	private void share(String id, String user) {
+	public void share(String id, String user) {
 		ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
 		pds.open();
 		Project proj = pds.getProjectById(id);
