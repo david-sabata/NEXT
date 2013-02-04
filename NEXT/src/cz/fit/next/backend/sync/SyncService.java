@@ -604,6 +604,7 @@ public class SyncService extends Service {
 				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
 				alarm.run();
 				Log.i(TAG, "Alarm set by pref to " + it + "-->" + t);
+				stopSelf();
 			}
 		}
 		else
@@ -613,9 +614,6 @@ public class SyncService extends Service {
 			broadcast.setAction(BROADCAST_SYNC_START);
 			sendBroadcast(broadcast);
 			
-			SynchronizeClass cls = new SynchronizeClass();
-			cls.execute();
-			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
 				Log.i(TAG, "Alarm set by pref.");
 				int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
@@ -624,6 +622,9 @@ public class SyncService extends Service {
 				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
 				alarm.run();
 			}
+			
+			SynchronizeClass cls = new SynchronizeClass();
+			cls.execute();
 		}
 	}
 	
