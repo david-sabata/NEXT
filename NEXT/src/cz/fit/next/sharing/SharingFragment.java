@@ -7,20 +7,28 @@ import com.deaux.fan.FanView;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
+import cz.fit.next.ServiceReadyListener;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.backend.sync.SyncService.ServiceBinder;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
 import cz.fit.next.history.HistoryFragment;
 import cz.fit.next.history.ProjectHistoryAdapter;
 import cz.fit.next.projectlist.ProjectEditDialog;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ListFragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.sqlite.SQLiteCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -40,6 +48,9 @@ public class SharingFragment extends ListFragment {
 	private static final String ARG_TITLE = "bundle_title";
 	private String mProjId;
 	private String mProjTitle;
+	
+	private boolean mSyncServiceBound = false;
+	private SyncService mSyncService = null;
 	
 	public static SharingFragment newInstance(String id, String title) {
 		SharingFragment frag = new SharingFragment();
@@ -67,44 +78,23 @@ public class SharingFragment extends ListFragment {
 		
 		setHasOptionsMenu(true);
 		
-		class ExecTask extends AsyncTask<Void, Void, Void> {
-
-			ArrayList<UserPerm> list;
-			
-			@Override
-			protected Void doInBackground(Void... arg0) {
-				try {
-					list = SyncService.getInstance().getSharingList(mProjId,mProjTitle);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void result) {
-				super.onPostExecute(result);
-				
-				setListAdapter(new SharingAdapter(getActivity(), 0, list));
-			}
-
-			@Override
-			protected void onProgressUpdate(Void... values) {
-				super.onProgressUpdate(values);
-				
-				
-			}
-			
-		}
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		
-		ExecTask exe = new ExecTask();
-		exe.execute();
-		//Log.i("SH","executed");
+		getActivity().bindService(new Intent(this.getActivity(), SyncService.class), syncServiceConnection,
+		            Context.BIND_AUTO_CREATE);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
 		
-		
-		
-
+		if (mSyncServiceBound) {
+            getActivity().unbindService(syncServiceConnection);
+        }
 	}
 	
 	@Override
@@ -200,5 +190,57 @@ public class SharingFragment extends ListFragment {
 
 		return true;
 	}
+	
+	private class ExecTask extends AsyncTask<Void, Void, Void> {
+
+		ArrayList<UserPerm> list;
+		
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			try {
+				list = mSyncService.getSharingList(mProjId,mProjTitle);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			
+			setListAdapter(new SharingAdapter(getActivity(), 0, list));
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values) {
+			super.onProgressUpdate(values);
+			
+			
+		}
+		
+	}
+	
+	private ServiceConnection syncServiceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			final ServiceBinder binder = (ServiceBinder) service;
+
+			mSyncService = binder.getService();
+			
+			ExecTask exe = new ExecTask();
+			exe.execute();
+			//Log.i("SH","executed");
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mSyncServiceBound = false;	
+			mSyncService = null;
+		}
+	};
+
 
 }

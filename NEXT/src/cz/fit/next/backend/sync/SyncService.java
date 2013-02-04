@@ -83,6 +83,9 @@ public class SyncService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		mAccountName = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+		
 		return mBinder;
 	}
 
@@ -94,6 +97,7 @@ public class SyncService extends Service {
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
 		mAccountName = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
 
+		// TODO: DEPRECATED - TO BE DELETED
 		if (mAccountName != null) {
 			Log.e(TAG, "Connected as " + mAccountName);
 			if (sInstanceOld == null) {
@@ -134,8 +138,8 @@ public class SyncService extends Service {
 		
 		//Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
 
-		return START_STICKY;
-		// return START_NOT_STICKY;
+		//return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 	@Override
@@ -519,8 +523,8 @@ public class SyncService extends Service {
 			broadcast.setAction(BROADCAST_SYNC_END);
 			sendBroadcast(broadcast);
 
-			// Log.i(TAG, "Killing SyncService.");
-			// stopSelf();
+			Log.i(TAG, "Killing SyncService.");
+			stopSelf();
 		}
 	}
 
@@ -657,8 +661,17 @@ public class SyncService extends Service {
 			String filename = title + "-" + id + ".nextproj.html";
 			Boolean res = false;
 			try {
+				boolean retval = drive.initSync(getApplicationContext(),
+						getInstance(), mAccountName);
+
+				if (!retval) {
+					return null;
+				}				
+				
 				res = drive.share(filename, user, GDrive.WRITE );
 			} catch (IOException e) {
+				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			} catch (GoogleAuthException e) {
 				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			}
 			Log.i(TAG, "Sharing res" + res.toString());
@@ -704,8 +717,16 @@ public class SyncService extends Service {
 			String filename = title + "-" + id + ".nextproj.html";
 			Boolean res = false;
 			try {
+				boolean retval = drive.initSync(getApplicationContext(),
+						getInstance(), mAccountName);
+
+				if (!retval) {
+					return null;
+				}				
 				res = drive.unshare(filename, permId);
 			} catch (IOException e) {
+				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+			} catch (GoogleAuthException e) {
 				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			}
 			Log.i(TAG, "Sharing res" + res.toString());
@@ -783,9 +804,19 @@ public class SyncService extends Service {
 			String filename = title + "-" + id + ".nextproj.html";
 			
 			try {
+				boolean retval = drive.initSync(getApplicationContext(),
+						getInstance(), mAccountName);
+
+				if (!retval) {
+					return null;
+				}				
+				
 				drive.delete(filename);
 			} catch (IOException e) {
 				//displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				return false;
+			} catch (GoogleAuthException e) {
+				e.printStackTrace();
 				return false;
 			}
 			return true;
