@@ -123,9 +123,9 @@ public class SyncService extends Service {
 
 				}
 
-				if (b.getInt("SyncAlarm") == 1) {
-					synchronize();
-				}
+				//if (b.getInt("SyncAlarm") == 1) {
+				//	synchronize();
+				//}
 				
 				if (b.getInt("Share") == 1) {
 					String sid = b.getString("ShareID");
@@ -135,6 +135,8 @@ public class SyncService extends Service {
 			}
 
 		}
+		
+		synchronize();
 		
 		//Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
 
@@ -604,8 +606,9 @@ public class SyncService extends Service {
 				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
 				alarm.run();
 				Log.i(TAG, "Alarm set by pref to " + it + "-->" + t);
-				stopSelf();
+				
 			}
+			stopSelf();
 		}
 		else
 		{

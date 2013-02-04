@@ -1,6 +1,8 @@
 package cz.fit.next.preferences;
 
 import cz.fit.next.R;
+import cz.fit.next.backend.sync.SyncService;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
@@ -91,7 +93,14 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
         } else if (key.equals(PREF_SYNC_ENABLED)) {
-        	// TODO TURN ON SYNC
+        	if (sharedPreferences.getBoolean(key, false)) {
+        		// run synchronization and set alarm for next one
+        		Intent i = new Intent(getActivity().getApplicationContext(),SyncService.class);
+        		getActivity().getApplicationContext().startService(i);
+        	}
+        	if (!sharedPreferences.getBoolean(key, false)) {
+        		// TODO: Remove alarm timer
+        	}
         } else if (key.equals(PREF_SYNC_INTERVAL)) {
     		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
             idOfStringArray = R.array.preferenceIntervalEntries;
