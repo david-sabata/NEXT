@@ -84,7 +84,7 @@ public class SharingFragment extends ListFragment {
 	public void onStart() {
 		super.onStart();
 		
-		getActivity().bindService(new Intent(this.getActivity(), SyncService.class), syncServiceConnection,
+		getActivity().getApplicationContext().bindService(new Intent(this.getActivity(), SyncService.class), syncServiceConnection,
 		            Context.BIND_AUTO_CREATE);
 	}
 	
@@ -94,6 +94,8 @@ public class SharingFragment extends ListFragment {
 		
 		if (mSyncServiceBound) {
             getActivity().unbindService(syncServiceConnection);
+            mSyncService = null;
+            mSyncServiceBound = false;
         }
 	}
 	
