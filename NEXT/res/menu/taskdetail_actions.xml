@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_edit" android:showAsAction="always" android:title="@string/action_edit_task" android:icon="@drawable/action_edit"></item>
+    <item android:id="@+id/action_edit" android:showAsAction="always" android:title="@string/action_edit_task" android:icon="@drawable/action_edit_light"></item>
     
 
 </menu>
