@@ -153,6 +153,14 @@ public class MainActivity extends Activity {
 		mTouchListener = new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+
+				// if the sidebar is open, close it on every touch to content
+				FanView fan = getFanView();
+				if (fan.isOpen()) {
+					fan.showMenu(); // atually means 'toggle'
+					return true;
+				}
+
 				return mGestureDetector.onTouchEvent(event);
 			}
 		};
