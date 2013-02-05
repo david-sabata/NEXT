@@ -13,7 +13,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="5dp"
-        android:button="@drawable/checkbox_star"
+        android:button="?checkboxStar"
         android:focusable="false" />
 
     <TextView
