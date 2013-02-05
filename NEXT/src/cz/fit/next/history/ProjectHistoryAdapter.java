@@ -6,7 +6,6 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;

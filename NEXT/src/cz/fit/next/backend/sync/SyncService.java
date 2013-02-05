@@ -29,8 +29,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.api.services.drive.model.File;
 
@@ -41,7 +39,6 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;

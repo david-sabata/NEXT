@@ -5,9 +5,6 @@ import java.util.ArrayList;
 
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.ServiceReadyListener;

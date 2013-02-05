@@ -104,6 +104,16 @@
 
     
     <string name="SettingsDesignTitle">Design</string>
+
+    
+    <string name="task_history_authorTitle">"Author: "</string>
+
+    
+    <string name="task_history_changes_title">"Changes: "</string>
+    <string name="task_history_context">context</string>
+    <string name="task_history_priority">priority</string>
+    <string name="task_history_title">title</string>
+    <string name="task_history_date">date</string>
  
 
 </resources>

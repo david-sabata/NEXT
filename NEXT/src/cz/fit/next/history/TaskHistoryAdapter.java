@@ -4,7 +4,6 @@ import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.TaskHistory;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;
@@ -81,79 +80,106 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		boolean isDeleted = false;
 
 		String sub = "";
+		String subMainAction = ""; // CREATED, COMPLETED, UNCOMPLETED, DELETED
+		String subOtherAction = ""; // DESCRIPTION, CONTEXT, DATE, PROJECT, PRIORITY
 
 		for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
-
+			// Created
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.TITLE))
 					&& (mData.get(position).getChanges().get(i).getOldValue()
 							.isEmpty())) {
-				sub = sub + getContext().getResources().getString(R.string.task_created) + "\n";
-
+				subMainAction = "Task has been created";
 				isCreated = true;
-
-				//break;
+				break;
 			}
 
+			// Completed
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("true"))) {
-				sub = sub + getContext().getResources().getString(R.string.task_completed) + "\n";
-
+				subMainAction = "Task has been marked as completed";
 				isCompleted = true;
 			}
 
+			// Uncompleted
 			if ((mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.COMPLETED))
 					&& (mData.get(position).getChanges().get(i).getNewValue()
 							.equals("false"))) {
-				sub = sub + getContext().getResources().getString(R.string.task_uncompleted) + "\n";
-
+				subMainAction = "Task has been marked as uncompleted";
 				isUncompleted = true;
 			}
 
 			if (mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.DATE)) {
-				sub = sub
-						+ fieldnames.get(mData.get(position).getChanges()
-								.get(i).getName())
-						+ " -> "
-						+ new DateTime(Long.parseLong(mData.get(position)
-								.getChanges().get(i).getNewValue()))
-								.toLocaleDateTimeString() + "\n";
+				subOtherAction +=  getContext().getResources().getString(R.string.task_history_date);
+				
 			}
 
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.CONTEXT))
-					|| (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.PRIORITY))
-					|| (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.TITLE))) {
-
-				sub = sub
-						+ fieldnames.get(mData.get(position).getChanges()
-								.get(i).getName()) + " -> "
-						+ mData.get(position).getChanges().get(i).getNewValue()
-						+ "\n";
+			if (mData.get(position).getChanges().get(i).getName()
+					.equals(TaskHistory.CONTEXT)) {
+				subOtherAction +=  getContext().getResources().getString(R.string.task_history_context);
 			}
+			
+			if (mData.get(position).getChanges().get(i).getName()
+							.equals(TaskHistory.PRIORITY)) {
+				subOtherAction =  getContext().getResources().getString(R.string.task_history_priority);
+			}
+			
+			if (mData.get(position).getChanges().get(i).getName()
+							.equals(TaskHistory.TITLE)) {
+
+				subOtherAction += getContext().getResources().getString(R.string.task_history_title);
+			}
+			
+			if (!isCreated && 
+				!isCompleted && 
+				!isUncompleted && 
+				!isDeleted && 
+				i != mData.get(position).getChanges().size() -1 ){
+				subOtherAction += ", ";
+			}
+			
+			
+						
 		}
-
+		
+		// Special texts for special events (if they are unique)
+		if(subOtherAction.equals("")) {
+			if(isCreated) {
+				subMainAction = "Task has been created"; // TODO change to variable string
+			} else if(isCompleted) {
+				subMainAction = "Task has been marked as completed"; // TODO change to variable string
+			} else if(isUncompleted) {
+				subMainAction = "Task has been marked as uncompleted"; // TODO change to variable string
+			} else if(isDeleted) {
+				subMainAction = "Task has been deleted"; // TODO change to variable string
+			}	
+		} else if (!isCreated && !isCompleted && !isUncompleted && !isDeleted){
+			sub = "Changed in ";
+		} else {
+			subMainAction += " and changed in ";
+		}
+		
+		sub = sub + subMainAction + subOtherAction  +  ".";
+		
 		subtitle.setText(sub);
 
 		// Image
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
 
 		if (isCreated)
-			img.setImageResource(R.attr.actionAddIcon);
+			img.setImageResource(R.drawable.action_add_light);
 		else if (isDeleted)
 			img.setImageResource(R.drawable.action_discard_light);
 		else if (isCompleted)
-			img.setImageResource(R.attr.actionAcceptIcon);
+			img.setImageResource(R.drawable.action_accept_light);
 		else if (isUncompleted)
-			img.setImageResource(R.attr.actionCancelIcon);
+			img.setImageResource(R.drawable.action_cancel_light);
 		else
-			img.setImageResource(R.attr.actionEditIcon);
+			img.setImageResource(R.drawable.action_edit_light);
 
 		return vi;
 	}
