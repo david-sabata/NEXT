@@ -134,7 +134,6 @@ public class JavaParser {
 			parseJsonData(reader);
 
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -231,22 +230,20 @@ public class JavaParser {
 	/**
 	 * getHistory
 	 * @return History
+	 * @throws JSONException 
 	 */
-	public ArrayList<TaskHistory> getHistory() {
+	public ArrayList<TaskHistory> getHistory() throws JSONException {
 		JSONArray jsonArrayHistory = null;
 		ArrayList<TaskHistory> historyList = null;
 
-		try {
-			jsonArrayHistory = projectData.getJSONArray("history");
-			historyList = createHistoryList(jsonArrayHistory);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		jsonArrayHistory = projectData.getJSONArray("history");
+		historyList = createHistoryList(jsonArrayHistory);
+		
 		return historyList;
 
 	}
 
-	public ArrayList<TaskHistory> parseHistory(String histstr) {
+	public ArrayList<TaskHistory> parseHistory(String histstr) throws JSONException  {
 
 		JSONArray json;
 		ArrayList<TaskHistory> historyList = null;
@@ -256,13 +253,9 @@ public class JavaParser {
 		if (histstr.equals(""))
 			return new ArrayList<TaskHistory>();
 
-		try {
-			json = new JSONArray(histstr);
-			historyList = createHistoryList(json);
-		} catch (JSONException e1) {
-			e1.printStackTrace();
-		}
-
+		json = new JSONArray(histstr);
+		historyList = createHistoryList(json);
+		
 
 		return historyList;
 
