@@ -259,13 +259,19 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 
 			case android.R.id.home:
-				getFanView().showMenu();
+				// prevent opening sidebar while on settings fragment
+				if (!(getCurrentFragment() instanceof SettingsFragment))
+					getFanView().showMenu();
 				break;
 
 			// Switch to settings fragment
 			case R.id.menu_settings:
 				SettingsFragment prefFragment = new SettingsFragment();
-				getFanView().replaceMainFragment(prefFragment);
+				FanView fan = getFanView();
+				if (fan.isOpen()) {
+					fan.showMenu(); // actually toggle
+				}
+				fan.replaceMainFragment(prefFragment);
 				break;
 
 			case R.id.setting_connect_drive:
