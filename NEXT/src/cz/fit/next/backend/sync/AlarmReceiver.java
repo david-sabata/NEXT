@@ -22,6 +22,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
     
     public void run() {
+    	if (mTimeout == 0) {
+    		return;
+    	}
+    	
     	AlarmManager alarmMgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(mContext, AlarmReceiver.class);
         PendingIntent pendingIntent =
@@ -33,6 +37,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
                      pendingIntent);
         Log.i("AlarmManager", "Alarm set.");
+    }
+    
+    public void reset() {
+    	AlarmManager alarmMgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(mContext, AlarmReceiver.class);
+        PendingIntent pendingIntent =
+            PendingIntent.getBroadcast(mContext, 0, intent, 
+            PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmMgr.cancel(pendingIntent);
+        Log.i("AlarmManager","reset");
     }
 
      @Override

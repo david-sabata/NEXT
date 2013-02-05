@@ -1,18 +1,29 @@
 package cz.fit.next.preferences;
 
+
+import cz.fit.next.R;
+import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.backend.sync.SyncService.ServiceBinder;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import cz.fit.next.R;
-import cz.fit.next.backend.sync.SyncService;
+import android.util.Log;
+
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
+	private boolean mSyncServiceBound = false;
+	private SyncService mSyncService = null;
+	
 	/* KEYS */
 	public static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
 	public static final String PREF_SYNC_ENABLED = "PREF_SYNC_ENABLED";
@@ -61,7 +72,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	@Override
 	public void onStart() {
 		super.onStart();
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		
+		getActivity().getApplicationContext().bindService(new Intent(this.getActivity(), SyncService.class), syncServiceConnection,
+	            Context.BIND_AUTO_CREATE);
+		
+	    getPreferenceScreen().getSharedPreferences()
+        .registerOnSharedPreferenceChangeListener(this);
+
 	}
 
 	@Override
@@ -79,7 +96,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Preference pref = null;
-
 		pref = findPreference(key);
 		if (pref == null) {
 			return;
@@ -88,33 +104,44 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		// Account name changed
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
-		} else if (key.equals(PREF_SYNC_ENABLED)) {
-			if (sharedPreferences.getBoolean(key, false)) {
-				// run synchronization and set alarm for next one
-				Intent i = new Intent(getActivity().getApplicationContext(), SyncService.class);
-				getActivity().getApplicationContext().startService(i);
-			}
-			if (!sharedPreferences.getBoolean(key, false)) {
-				// TODO: Remove alarm timer
-			}
-		} else if (key.equals(PREF_SYNC_INTERVAL)) {
-			// reload summary
-			int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-			int idOfStringArray = R.array.preferenceIntervalEntries;
-			refreshSummary(pref, indexToStringArray, idOfStringArray);
+        } else if (key.equals(PREF_SYNC_ENABLED)) {
+        	if (sharedPreferences.getBoolean(key, false)) {
+        		if (mSyncServiceBound) {
+        			mSyncService.setAlarmFromPreferences();
+        		} else {
+        			Log.i("Settings", "Service is not bound !");
+        		}
+        	}
+        	if (!sharedPreferences.getBoolean(key, false)) {
+        		if (mSyncServiceBound) {
+                	mSyncService.resetAlarm();
+        		} else {
+        			Log.i("Settings", "Service is not bound !");
+        		}
+        	}
+        } else if (key.equals(PREF_SYNC_INTERVAL)) {
+    		int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+            int idOfStringArray = R.array.preferenceIntervalEntries;
+            
+            // Reload summary
+    		refreshSummary(pref, indexToStringArray, idOfStringArray);
+           
+            if (mSyncServiceBound) {
+            	mSyncService.resetAlarm();
+    			mSyncService.setAlarmFromPreferences();
+    		} else {
+    			Log.i("Settings", "Service is not bound !");
+    		}
+            
+        } else if (key.equals(PREF_DESIGN)) {
+    		int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+            int idOfStringArray = R.array.preferenceDesignEntries;
+            // Reload summary
+    		refreshSummary(pref, indexToStringArray, idOfStringArray);
+            getActivity().recreate();               
+        }
 
-			// run synchronization and set alarm for next one
-			Intent i = new Intent(getActivity().getApplicationContext(), SyncService.class);
-			getActivity().getApplicationContext().startService(i);
-
-		} else if (key.equals(PREF_DESIGN)) {
-			// reload summary
-			int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-			int idOfStringArray = R.array.preferenceDesignEntries;
-			refreshSummary(pref, indexToStringArray, idOfStringArray);
-
-			getActivity().recreate();
-		}
+		
 	}
 
 	/**
@@ -133,5 +160,24 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 			pref.setSummary(summary);
 		}
 	}
+
+	
+	private ServiceConnection syncServiceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			final ServiceBinder binder = (ServiceBinder) service;
+
+			mSyncService = binder.getService();
+			mSyncServiceBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mSyncServiceBound = false;	
+			mSyncService = null;
+		}
+	};
+
 
 }
