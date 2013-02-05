@@ -258,7 +258,12 @@ public class SyncService extends Service {
 					projdatasource.close();
 				}
 				
-				proj.setHistory(parser.getHistory());
+				try {
+					proj.setHistory(parser.getHistory());
+				} catch (JSONException e) {
+					Log.i(TAG, "Skipping file " + lf.get(i).getTitle() + " due to error in JSON.");
+					continue;
+				}
 
 
 				// Determine sharing status
