@@ -24,6 +24,7 @@ import android.view.View.OnTouchListener;
 
 import com.deaux.fan.FanView;
 
+import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
@@ -98,12 +99,15 @@ public class MainActivity extends Activity {
 
 		bindModelService();
 
-		// start synchronization service
-		Intent i = new Intent(this, SyncService.class);
-		Bundle b = new Bundle();
-		b.putInt("buttonPressed", 0);
-		i.putExtras(b);
-		this.startService(i);
+		// start synchronization, if sync is enabled
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+			Intent i = new Intent(this, SyncService.class);
+			//Bundle b = new Bundle();
+			//b.putInt("buttonPressed", 0);
+			//i.putExtras(b);
+			this.startService(i);
+		}
 	}
 
 
