@@ -66,12 +66,12 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 			mTitle = getResources().getString(R.string.task_history);
 	}
 
-	@Override
+	/*@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
 		return inflater.inflate(R.layout.history_list, container, false);
-	}
+	}*/
 
 	@Override
 	public void onResume() {

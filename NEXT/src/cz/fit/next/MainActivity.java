@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -68,9 +69,13 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// load default pref values from xml to pref object
+		// (this will not override user settings)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test);
 
@@ -113,9 +118,9 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onStart();
-		
+
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null) {
 			mModelService = TasksModelService.getInstance();
@@ -133,7 +138,7 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onResume();
 
 		// notify the current fragment if the service is already ready
@@ -148,6 +153,14 @@ public class MainActivity extends Activity {
 		mTouchListener = new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+
+				// if the sidebar is open, close it on every touch to content
+				FanView fan = getFanView();
+				if (fan.isOpen()) {
+					fan.showMenu(); // atually means 'toggle'
+					return true;
+				}
+
 				return mGestureDetector.onTouchEvent(event);
 			}
 		};
@@ -246,13 +259,19 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 
 			case android.R.id.home:
-				getFanView().showMenu();
+				// prevent opening sidebar while on settings fragment
+				if (!(getCurrentFragment() instanceof SettingsFragment))
+					getFanView().showMenu();
 				break;
 
 			// Switch to settings fragment
 			case R.id.menu_settings:
 				SettingsFragment prefFragment = new SettingsFragment();
-				getFanView().replaceMainFragment(prefFragment);
+				FanView fan = getFanView();
+				if (fan.isOpen()) {
+					fan.showMenu(); // actually toggle
+				}
+				fan.replaceMainFragment(prefFragment);
 				break;
 
 			case R.id.setting_connect_drive:

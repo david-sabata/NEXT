@@ -23,15 +23,21 @@ public class DateTime implements Serializable {
 
 	/**
 	 * Timestamp (in milis) used for 'someday'
+	 * 
+	 * DO NOT CHANGE IF YOU DON'T UNDERSTAND THE IMPACTS
+	 * the msecs value is used in TasksDataSource for ordering
 	 */
-	public static final long SOMEDAY_MILISECONDS = 333;
+	public static final long SOMEDAY_MILISECONDS = 666;
 
 	/**
 	 * Amount of miliseconds to represent 'all day' date. We do not 
 	 * use miliseconds anywhere else, so it's safe to encode some 
 	 * data in them, in this case 'all day' flag
+	 * 
+	 * DO NOT CHANGE IF YOU DON'T UNDERSTAND THE IMPACTS
+	 * the msecs value is used in TasksDataSource for ordering
 	 */
-	public static final int ALLDAY_MILISECONDS = 666;
+	public static final int ALLDAY_MILISECONDS = 333;
 
 
 	/**
@@ -188,11 +194,12 @@ public class DateTime implements Serializable {
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleDateTimeString() {
-		if (isSomeday()) return TasksModelService.getInstance().getLocalizedSomedayTime();
-		else if (isAllday()) return TasksModelService.getInstance().getLocalizedDate(
-				new Date(mTimestamp));
-		else return TasksModelService.getInstance().getLocalizedDateTime(
-				new Date(mTimestamp));
+		if (isSomeday())
+			return TasksModelService.getInstance().getLocalizedSomedayTime();
+		else if (isAllday())
+			return TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
+		else
+			return TasksModelService.getInstance().getLocalizedDateTime(new Date(mTimestamp));
 	}
 
 	/**

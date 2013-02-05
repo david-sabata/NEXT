@@ -89,8 +89,9 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 		contextsLayout.removeAllViews();
 
 		// Adding new items to contexts layout
-		final Context c = sideBarView.getContext();
 		if (cursor != null && cursor.getCount() > 0) {
+			sideBarView.findViewById(R.id.contextsFrame).setVisibility(View.VISIBLE);
+
 			while (!cursor.isAfterLast()) {
 				final String contextTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
 
@@ -108,6 +109,11 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 				cursor.moveToNext();
 			}
 		}
+		// hide 'contexts' header if there are no contexts
+		else {
+			sideBarView.findViewById(R.id.contextsFrame).setVisibility(View.GONE);
+		}
+
 
 		// Load starred projects from database
 		Cursor starredProjects = TasksModelService.getInstance().getStarredProjectsCursor();
@@ -144,7 +150,6 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 			}
 		}
 	}
-
 
 
 	@Override

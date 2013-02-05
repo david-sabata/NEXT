@@ -8,7 +8,7 @@
             android:key="PREF_SYNC_ENABLED"
             android:title="@string/SettingsSynchronizationActiveTitle"
             android:summary="@string/SettingsSynchronizationActiveSummary"
-            android:defaultValue="on"
+            android:defaultValue="false"
             android:switchTextOff="0"
             android:switchTextOn="I"
             />
@@ -27,7 +27,7 @@
             android:key="PREF_DESIGN"
             android:title="@string/SettingsDesignTitle"
             android:entries="@array/preferenceDesignEntries"
-            android:entryValues="@array/preferenceIntervalValuesIndex"
+            android:entryValues="@array/preferenceDesignValuesIndex"
             android:defaultValue="1"
             />
     </PreferenceCategory>
