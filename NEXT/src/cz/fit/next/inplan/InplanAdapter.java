@@ -70,12 +70,17 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 
 		// show/hide section header
 		View secHeader = view.findViewById(R.id.sectionHeader);
+		View secHeaderLine = view.findViewById(R.id.sectionHeaderLine);
 		if (showHeader) {
 			secHeader.setVisibility(View.VISIBLE);
 			TextView text = (TextView) secHeader;
 			text.setText(currDatetime.toLocaleDateString());
+			
+			// Separator line
+			secHeaderLine.setVisibility(View.VISIBLE);
 		} else {
 			secHeader.setVisibility(View.GONE);
+			secHeaderLine.setVisibility(View.GONE);
 		}
 
 		return view;

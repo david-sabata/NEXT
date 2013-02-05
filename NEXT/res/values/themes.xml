@@ -28,8 +28,14 @@
    		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
    		<item name="taskCategoriesText">@style/Next.Task.CategoriesText</item>
    		
+   		<!-- InPlan references to styles -->
+   		<item name="inPlanSectionHeader">@style/Next.InPlan.SecHeader.Light</item>
+   		<item name="inPlanSectionHeaderLine">@style/Next.InPlan.SecHeaderLine.Light</item>
+   		
    		<!-- Preference screen references to style -->
    		<item name="preferenceScreen">@style/Next.PreferenceScreen.Light</item>
+   		
+   		
 	  </style>
 	  
     <!-- Theme NEXT Dark -->
@@ -56,6 +62,10 @@
    		<item name="taskCompleted">@style/Next.Task.CheckboxCompleted</item>
    		<item name="taskCategoriesText">@style/Next.Task.CategoriesText</item>
    		
+   		<!-- InPlan references to styles -->
+   		<item name="inPlanSectionHeader">@style/Next.InPlan.SecHeader.Dark</item>
+   		<item name="inPlanSectionHeaderLine">@style/Next.InPlan.SecHeaderLine.Dark</item>
+   			
    		<!-- Preference screen references to style -->
    		<item name="preferenceScreen">@style/Next.PreferenceScreen.Light</item>
 	  </style>

@@ -24,7 +24,9 @@
     <color name="priority_1">#93BF00</color>
     <color name="priority_2">#BF9600</color>
     
-
+	<color name="InPlanSecHeaderLineLightColor">@android:color/darker_gray</color> 
+    <color name="InPlanSecHeaderLineDarkColor">@android:color/darker_gray</color>    
+    
 	<style name="Next" parent="@style/Theme.Holo.Light.Hack">    
 	</style>
 	<!-- ***********************************************************-->
@@ -341,9 +343,33 @@
         <item name="android:textColorPrimaryInverse">@android:color/primary_text_dark</item>
     </style>
 
-	
-
     <!--  ************************************************************ -->
+    <!--  ****************** Preferences Screen ********************** -->
+    <!--  ************************************************************ -->  
+    <style name="Next.InPlan">
+    </style>	
+
+	    <style name="Next.InPlan.SecHeader">
+	    	<item name="android:layout_width">wrap_content</item>
+            <item name="android:layout_height">wrap_content</item>
+            <item name="android:layout_marginTop">20dp</item>
+	    </style>
+			<style name="Next.InPlan.SecHeader.Light">
+			</style>
+			<style name="Next.InPlan.SecHeader.Dark">
+			</style>
+
+		<style name="Next.InPlan.SecHeaderLine">
+		    <item name="android:layout_height">1dp</item>
+		</style>
+			<style name="Next.InPlan.SecHeaderLine.Light">
+			    <item name="android:background">@color/InPlanSecHeaderLineLightColor</item>               
+			</style>			
+			<style name="Next.InPlan.SecHeaderLine.Dark">
+			    <item name="android:background">@color/InPlanSecHeaderLineDarkColor</item>               
+			</style>		
+											
+	<!--  ************************************************************ -->
     <!--  ********************** Loading Screen ********************** -->
     <!--  ************************************************************ -->
     <style name="GenericProgressBackground" parent="android:Theme">

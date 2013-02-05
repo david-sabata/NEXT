@@ -21,6 +21,10 @@
     <attr name="taskCompleted" format="reference" /> 
     <attr name="taskCategoriesText" format="reference" />
     
+    <!-- In plan list view -->
+    <attr name="inPlanSectionHeader" format="reference" />
+    <attr name="inPlanSectionHeaderLine" format="reference" />
+    
     <!-- Preference screen reference to style -->
     <attr name="preferenceScreen" format="reference" />
      
