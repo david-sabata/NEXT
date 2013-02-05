@@ -124,12 +124,14 @@ public class SharingFragment extends ListFragment {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	/*
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
 		return inflater.inflate(R.layout.sharing_list, container, false);
 	}
+	*/
 	
 	@Override
 	public void onResume() {

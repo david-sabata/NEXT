@@ -12,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -22,9 +24,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 import com.deaux.fan.FanView;
 
+import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
@@ -103,12 +107,15 @@ public class MainActivity extends Activity {
 
 		bindModelService();
 
-		// start synchronization service
-		Intent i = new Intent(this, SyncService.class);
-		Bundle b = new Bundle();
-		b.putInt("buttonPressed", 0);
-		i.putExtras(b);
-		this.startService(i);
+		// start synchronization, if sync is enabled
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+			Intent i = new Intent(this, SyncService.class);
+			//Bundle b = new Bundle();
+			//b.putInt("buttonPressed", 0);
+			//i.putExtras(b);
+			this.startService(i);
+		}
 	}
 
 
@@ -226,8 +233,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-		//if (!SyncService.getInstance().isUserLoggedIn())
-		//	menu.removeItem(R.id.menu_sync_now);
+		
 		return true;
 	}
 
@@ -256,6 +262,9 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
+		Intent i;
+		Bundle b;
+		
 		switch (item.getItemId()) {
 
 			case android.R.id.home:
@@ -275,11 +284,9 @@ public class MainActivity extends Activity {
 				break;
 
 			case R.id.setting_connect_drive:
-				// Log.i("Setting", "Google Login");
-
-				// tell synchronization service to choose user account
-				Intent i = new Intent(this, LoginActivity.class);
-				Bundle b = new Bundle();
+				
+				i = new Intent(this, LoginActivity.class);
+				b = new Bundle();
 				b.putInt("login", 1);
 				i.putExtras(b);
 				//this.startService(i);
@@ -290,11 +297,27 @@ public class MainActivity extends Activity {
 
 
 			case R.id.menu_sync_now:
-				// tell synchronization service to start sync
-				Intent in = new Intent(this, SyncService.class);
-				in.putExtra("SyncAlarm", 1);
-				this.startService(in);
-
+				
+				SettingsProvider sp = new SettingsProvider(getApplicationContext());
+				
+				if (!isNetworkAvailable()) {
+					Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
+				
+				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null){
+					// run login activity
+					i = new Intent(this, LoginActivity.class);
+					b = new Bundle();
+					b.putInt("login", 1);
+					i.putExtras(b);
+					//this.startService(i);
+					startActivity(i);
+				} else {
+					// tell synchronization service to start sync			
+					Intent in = new Intent(this, SyncService.class);
+					in.putExtra("SyncAlarm", 1);
+					this.startService(in);
+				}
+				
 				break;
 
 			case R.id.menu_wipe_db:
@@ -428,6 +451,17 @@ public class MainActivity extends Activity {
 			isSyncInProgress = false;
 			invalidateOptionsMenu();
 		}
+	}
+	
+	/**
+	 * Determines, if there is functional network connection
+	 * @return boolean state
+	 */
+	public boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
 	}
 
 

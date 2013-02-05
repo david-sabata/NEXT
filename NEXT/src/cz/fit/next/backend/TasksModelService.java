@@ -16,6 +16,7 @@ import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.preferences.SettingsFragment;
 
 /**
  * @author David Sabata
@@ -178,6 +179,7 @@ public class TasksModelService extends Service {
 	 */
 	public void saveTask(Task task) {
 
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
 
 		Project proj = mProjectsDataSource.getProjectById(task.getProject().getId());
 
@@ -187,7 +189,7 @@ public class TasksModelService extends Service {
 
 		// generate history record
 		TaskHistory hist = new TaskHistory();
-		hist.setAuthor(SyncService.getInstance().getAccountName());
+		hist.setAuthor(sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null));
 		if (hist.getAuthor() == null)
 			hist.setAuthor(getResources().getString(R.string.me));
 		hist.setTaskId(task.getId());

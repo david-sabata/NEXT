@@ -19,9 +19,9 @@ public class PermissionActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST) {
-        	 Intent i = new Intent(SyncService.getInstance().getApplicationContext(), SyncService.class);
+        	 Intent i = new Intent(getApplicationContext(), SyncService.class);
              i.putExtra("SyncAlarm", 1);
-             SyncService.getInstance().getApplicationContext().startService(i);
+             getApplicationContext().startService(i);
              finish();
         } 
     }
