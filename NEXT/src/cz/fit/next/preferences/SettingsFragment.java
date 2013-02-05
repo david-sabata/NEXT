@@ -79,8 +79,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Preference pref = null;
-		Integer idOfStringArray = null;
-		Integer indexToStringArray = -1;
 
 		pref = findPreference(key);
 		if (pref == null) {
@@ -100,26 +98,29 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 				// TODO: Remove alarm timer
 			}
 		} else if (key.equals(PREF_SYNC_INTERVAL)) {
-			indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-			idOfStringArray = R.array.preferenceIntervalEntries;
+			// reload summary
+			int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+			int idOfStringArray = R.array.preferenceIntervalEntries;
+			refreshSummary(pref, indexToStringArray, idOfStringArray);
 
 			// run synchronization and set alarm for next one
 			Intent i = new Intent(getActivity().getApplicationContext(), SyncService.class);
 			getActivity().getApplicationContext().startService(i);
 
 		} else if (key.equals(PREF_DESIGN)) {
-			indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-			idOfStringArray = R.array.preferenceDesignEntries;
+			// reload summary
+			int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+			int idOfStringArray = R.array.preferenceDesignEntries;
+			refreshSummary(pref, indexToStringArray, idOfStringArray);
+
 			getActivity().recreate();
 		}
-		// Reload summary
-		refreshSummary(pref, indexToStringArray, idOfStringArray);
 	}
 
 	/**
 	 * This method load summary on preference fragment created
 	 */
-	private void refreshSummary(Preference pref, Integer index, Integer id) {
+	private void refreshSummary(Preference pref, int index, int id) {
 		Resources res = getResources();
 
 		// Set new summary to settings
