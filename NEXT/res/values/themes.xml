@@ -6,9 +6,20 @@
     
     <!-- Theme NEXT Light -->
     <style name="ThemeNext.Light" parent="android:Theme.Holo.Light">
+        <!-- Action bar icons -->
+        <item name="actionSyncIcon">@drawable/action_sync_light</item>
+        <item name="actionAddIcon">@drawable/action_add_light</item>
+        <item name="actionEditIcon">@drawable/action_edit_light</item>
+        <item name="actionAcceptIcon">@drawable/action_accept_light</item>
+        <item name="actionCancelIcon">@drawable/action_cancel_light</item>     
+        
+        <!-- Other icons -->
+        <item name="checkboxStar">@drawable/checkbox_star_light</item>
+        
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Light</item>
 	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Light</item>
+        
         <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Light</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Light</item>
@@ -40,9 +51,20 @@
 	  
     <!-- Theme NEXT Dark -->
       <style name="ThemeNext.Dark" parent="android:Theme.Holo">
+        <!-- Action bar icons -->
+        <item name="actionSyncIcon">@drawable/action_sync_dark</item>
+        <item name="actionAddIcon">@drawable/action_add_dark</item>
+        <item name="actionEditIcon">@drawable/action_edit_dark</item>
+        <item name="actionAcceptIcon">@drawable/action_accept_dark</item>
+        <item name="actionCancelIcon">@drawable/action_cancel_dark</item>
+
+        <!-- Other icons -->
+        <item name="checkboxStar">@drawable/checkbox_star_dark</item>
+        
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Dark</item>
 	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Dark</item>
+        
         <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Dark</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Dark</item>
