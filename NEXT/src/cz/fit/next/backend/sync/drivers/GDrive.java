@@ -96,6 +96,15 @@ public class GDrive {
 		//mCallback = cb;
 		
 		List<File> res = getFileList(mAppFolder);
+		
+		for (int i = 0; i < res.size(); i++) {
+			if (!res.get(i).getTitle().contains(".nextproj.html")) {
+				Log.i(TAG,"REMOVED " + res.get(i).getTitle());
+				res.remove(i);
+				i--;
+			}
+		}
+		
 		return res;		
 		
 	}
