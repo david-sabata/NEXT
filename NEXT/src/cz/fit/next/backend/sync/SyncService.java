@@ -573,7 +573,7 @@ public class SyncService extends Service {
 	/**
 	 * Get last value in history
 	 */
-	private String getLastValInHistory(ArrayList<TaskHistory> history,
+	public static String getLastValInHistory(ArrayList<TaskHistory> history,
 			String taskid, String field) {
 		long timestamp = 0;
 		String res = null;
