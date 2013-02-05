@@ -145,15 +145,15 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
 
 		if (isCreated)
-			img.setImageResource(R.drawable.action_add_light);
+			img.setImageResource(R.attr.actionAddIcon);
 		else if (isDeleted)
 			img.setImageResource(R.drawable.action_discard_light);
 		else if (isCompleted)
-			img.setImageResource(R.drawable.action_accept_light);
+			img.setImageResource(R.attr.actionAcceptIcon);
 		else if (isUncompleted)
-			img.setImageResource(R.drawable.action_cancel_light);
+			img.setImageResource(R.attr.actionCancelIcon);
 		else
-			img.setImageResource(R.drawable.action_edit_light);
+			img.setImageResource(R.attr.actionEditIcon);
 
 		return vi;
 	}
