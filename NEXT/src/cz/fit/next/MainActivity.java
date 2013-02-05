@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.FrameLayout;
 
 import com.deaux.fan.FanView;
 
@@ -153,7 +154,6 @@ public class MainActivity extends Activity {
 		mTouchListener = new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
 				if (fan.isOpen()) {
@@ -161,7 +161,13 @@ public class MainActivity extends Activity {
 					return true;
 				}
 
-				return mGestureDetector.onTouchEvent(event);
+				// for some weird reason framelayout needs to always return true
+				if (v instanceof FrameLayout) {
+					mGestureDetector.onTouchEvent(event);
+					return true;
+				} else {
+					return mGestureDetector.onTouchEvent(event);
+				}
 			}
 		};
 
