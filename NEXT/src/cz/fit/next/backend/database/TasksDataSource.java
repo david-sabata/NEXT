@@ -78,7 +78,12 @@ public class TasksDataSource {
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
 
-		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null);
+		// crazy ordering - modulo 1000 to get miliseconds and then modulo SOMEDAY_MSECS to set
+		// 1 for someday and 0 for allday or exact time
+		String order = "(" + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000) % " + DateTime.SOMEDAY_MILISECONDS + " ASC,"
+				+ Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
+
+		Cursor cursor = q.query(database, selectColumns, null, null, null, null, order);
 
 		return cursor;
 	}
@@ -98,7 +103,9 @@ public class TasksDataSource {
 
 		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 != " + DateTime.SOMEDAY_MILISECONDS;
 
-		String order = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
+		// order by exact time first, allday at the end of the day; someday events are ruled out by WHERE
+		String order = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 ASC," + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME
+				+ " ASC";
 
 		Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 
@@ -128,7 +135,12 @@ public class TasksDataSource {
 
 		String where = Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID + " = '" + projectId + "'";
 
-		Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
+		// crazy ordering - modulo 1000 to get miliseconds and then modulo SOMEDAY_MSECS to set
+		// 1 for someday and 0 for allday or exact time
+		String order = "(" + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000) % " + DateTime.SOMEDAY_MILISECONDS + " ASC,"
+				+ Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
+
+		Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 		return cursor;
 	}
 
@@ -248,6 +260,11 @@ public class TasksDataSource {
 
 				String where = "";
 
+				// crazy ordering - modulo 1000 to get miliseconds and then divide by SOMEDAY_MSECS to set
+				// 1 for someday and 0 for allday or exact time
+				String msecs = "(" + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000)";
+				String order = msecs + " / " + DateTime.SOMEDAY_MILISECONDS + " ASC," + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
+
 				// datetime				
 				if (filter != null && filter.getDateFrom() != null && filter.getDateUntil() != null) {
 
@@ -277,7 +294,7 @@ public class TasksDataSource {
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT + " = '" + filter.getContext() + "'";
 				}
 
-				Cursor cursor = q.query(database, selectColumns, where, null, null, null, null);
+				Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 				Log.i(LOG_TAG, "after filter: " + cursor.getCount() + " items");
 				return cursor;
 			}
