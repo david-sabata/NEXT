@@ -18,9 +18,6 @@ import android.util.Log;
 public class LoginActivity extends Activity {
 	
 	
-	private static final String PREF_FILE_NAME = "SyncServicePref";
-	private static final String PREF_ACCOUNT_NAME = "PREF_ACCOUNT_NAME";
-	
 	SyncService mSyncService;
 	String mAccountName;
 	
