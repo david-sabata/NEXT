@@ -380,10 +380,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 			loadTaskToView(mTask);
 		}
-
-		// Register for gestures
-		View v = getView().findViewById(R.id.scrollView);
-		activity.attachGestureDetector(v);
 	}
 
 

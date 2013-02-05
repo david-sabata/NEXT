@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <!-- Action bar -->
+    <attr name="actionSyncIcon" format="reference" />
+    <attr name="actionAddIcon" format="reference" />
+    <attr name="actionEditIcon" format="reference" />
+    <attr name="actionAcceptIcon" format="reference" />
+    <attr name="actionCancelIcon" format="reference" />
+
+    <!-- Icons -->
+    <attr name="checkboxStar" format="reference" />
+   
+    
     <!-- Global  -->
     <attr name="capsText" format="reference" />
     

@@ -15,7 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Filter.FilterListener;
 import android.widget.FilterQueryProvider;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -141,8 +143,10 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		// register long click events
 		registerForContextMenu(getListView());
 
-		// register for gestures
+		// register for gestures		
 		activity.attachGestureDetector(getListView());
+
+		setEmptyText(getResources().getString(R.string.all_done));
 	}
 
 
@@ -187,8 +191,23 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 			adapter = (TaskListAdapter) getListAdapter();
 		}
 
+		// filter is asynchronous, we need to set callback to get the right item count
+		FilterListener filterCb = new FilterListener() {
+			@Override
+			public void onFilterComplete(int count) {
+				// enable touch detection for 'empty' screen; it cannot be
+				// attached all the time, because it is blocking clicks on items
+				if (count == 0) {
+					MainActivity activity = (MainActivity) getActivity();
+					FrameLayout frm = (FrameLayout) getListView().getParent();
+					frm.setFocusableInTouchMode(true);
+					activity.attachGestureDetector(frm);
+				}
+			}
+		};
+
 		adapter.setFilterQueryProvider(provider);
-		adapter.getFilter().filter(mFilter != null ? mFilter.toString() : null);
+		adapter.getFilter().filter(mFilter != null ? mFilter.toString() : null, filterCb);
 	}
 
 
