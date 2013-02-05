@@ -104,7 +104,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         } else if (key.equals(PREF_SYNC_INTERVAL)) {
     		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
             idOfStringArray = R.array.preferenceIntervalEntries;
-            // TODO SET INTERVAL OF SYNC
+           
+            // run synchronization and set alarm for next one
+    		Intent i = new Intent(getActivity().getApplicationContext(),SyncService.class);
+    		getActivity().getApplicationContext().startService(i);
+            
         } else if (key.equals(PREF_DESIGN)) {
     		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
             idOfStringArray = R.array.preferenceDesignEntries;
