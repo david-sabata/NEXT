@@ -98,12 +98,12 @@ public class SyncService extends Service {
 		mAccountName = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
 
 		// TODO: DEPRECATED - TO BE DELETED
-		if (mAccountName != null) {
-			Log.e(TAG, "Connected as " + mAccountName);
-			if (sInstanceOld == null) {
-				synchronize();
-			}
-		}
+		//if (mAccountName != null) {
+		//	Log.e(TAG, "Connected as " + mAccountName);
+		//	if (sInstanceOld == null) {
+		//		synchronize();
+		//	}
+		//}
 
 		sInstanceOld = sInstance;
 
@@ -178,7 +178,7 @@ public class SyncService extends Service {
 			Toast toast = Toast.makeText(context, text, duration);
 			toast.show();
 			*/
-			synchronize();
+			//synchronize();
 		}
 
 	}
@@ -595,18 +595,16 @@ public class SyncService extends Service {
 
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
 		
+		if (mAccountName == null) {
+			Log.i(TAG,"Aborting sync due to null username.");
+			return;
+		}
+		
 		if (!isNetworkAvailable()) {
 			// Plan next synchronization only
 			// TODO: Variable interval
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
-				
-				int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
-				String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it-1];
-				int t = Integer.parseInt(ts);
-				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
-				alarm.run();
-				Log.i(TAG, "Alarm set by pref to " + it + "-->" + t);
-				
+				setAlarmFromPreferences();								
 			}
 			stopSelf();
 		}
@@ -618,17 +616,33 @@ public class SyncService extends Service {
 			sendBroadcast(broadcast);
 			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
-				Log.i(TAG, "Alarm set by pref.");
-				int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
-				String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it];
-				int t = Integer.parseInt(ts);
-				AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
-				alarm.run();
+				setAlarmFromPreferences();				
 			}
 			
 			SynchronizeClass cls = new SynchronizeClass();
 			cls.execute();
 		}
+	}
+	
+	/**
+	 * Sets synchronization alarm
+	 */
+	public void setAlarmFromPreferences() {
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		
+		int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
+		String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it];
+		int t = Integer.parseInt(ts);
+		AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), t);
+		alarm.run();
+	}
+	
+	/**
+	 * Resets alarm
+	 */
+	public void resetAlarm() {
+		AlarmReceiver alarm = new AlarmReceiver(getApplicationContext(), 0);
+		alarm.reset();
 	}
 	
 	/**
