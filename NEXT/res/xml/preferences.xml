@@ -27,7 +27,7 @@
             android:key="PREF_DESIGN"
             android:title="@string/SettingsDesignTitle"
             android:entries="@array/preferenceDesignEntries"
-            android:entryValues="@array/preferenceIntervalValuesIndex"
+            android:entryValues="@array/preferenceDesignValuesIndex"
             android:defaultValue="1"
             />
     </PreferenceCategory>

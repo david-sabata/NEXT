@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -69,9 +70,13 @@ public class MainActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// load default pref values from xml to pref object
+		// (this will not override user settings)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test);
 
@@ -117,9 +122,9 @@ public class MainActivity extends Activity {
 	protected void onStart() {
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onStart();
-		
+
 		// restore singleton service reference
 		if (mModelService == null && TasksModelService.getInstance() != null) {
 			mModelService = TasksModelService.getInstance();
@@ -137,7 +142,7 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		SettingsUtil appSettingsManager = new SettingsUtil(this);
 		appSettingsManager.setTheme(this);
-		
+
 		super.onResume();
 
 		// notify the current fragment if the service is already ready
