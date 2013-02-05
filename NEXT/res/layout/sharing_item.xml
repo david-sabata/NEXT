@@ -14,7 +14,7 @@
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/status_image"
-        android:src="@drawable/action_edit" />
+        android:src="@drawable/action_edit_light" />
 
     <LinearLayout
         android:id="@+id/taskListTextsLayout"
