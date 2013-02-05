@@ -24,8 +24,8 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.history.HistoryFragment;
-import cz.fit.next.sharing.ShareDialog;
 import cz.fit.next.sharing.SharingFragment;
+import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
 
 
@@ -63,7 +63,17 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Log.v(LOG_TAG, "item click");
+		SQLiteCursor cursor = (SQLiteCursor) getListAdapter().getItem(position);
+		String projectId = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		String projectTitle = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
+
+		Filter f = new Filter();
+		f.setProjectId(projectId);
+
+		// switch to new fragment
+		TaskListFragment frag = TaskListFragment.newInstance(f, projectTitle);
+		MainActivity activity = ((MainActivity) getActivity());
+		activity.replaceMainFragment(frag);
 	}
 
 
@@ -173,25 +183,23 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 				newFragment.setProjId(projId);
 				newFragment.show(getActivity().getFragmentManager(), "nextshare");
 				break;
-		*/		
-		case R.id.action_sharing:
+		*/
+			case R.id.action_sharing:
 
-			if ((SyncService.getInstance().isNetworkAvailable())
-					&& (SyncService.getInstance().isUserLoggedIn())) {
-				MainActivity activity = (MainActivity) getActivity();
-				SharingFragment fragshare = SharingFragment.newInstance(projId,projTitle);
-				activity.replaceMainFragment(fragshare);
-			} else {
-				Context context = SyncService.getInstance()
-						.getApplicationContext();
-				CharSequence text = getResources().getString(R.string.sharing_no_conection);
-				int duration = Toast.LENGTH_SHORT;
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-			}
+				if ((SyncService.getInstance().isNetworkAvailable()) && (SyncService.getInstance().isUserLoggedIn())) {
+					MainActivity activity = (MainActivity) getActivity();
+					SharingFragment fragshare = SharingFragment.newInstance(projId, projTitle);
+					activity.replaceMainFragment(fragshare);
+				} else {
+					Context context = SyncService.getInstance().getApplicationContext();
+					CharSequence text = getResources().getString(R.string.sharing_no_conection);
+					int duration = Toast.LENGTH_SHORT;
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+				}
 
-			break;
-				
+				break;
+
 
 			case R.id.action_showhistory:
 				MainActivity activity = (MainActivity) getActivity();
