@@ -96,7 +96,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Preference pref = null;
-		
 		pref = findPreference(key);
 		if (pref == null) {
 			return;
@@ -105,7 +104,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		// Account name changed
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
-
         } else if (key.equals(PREF_SYNC_ENABLED)) {
         	if (sharedPreferences.getBoolean(key, false)) {
         		if (mSyncServiceBound) {
@@ -149,7 +147,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	/**
 	 * This method load summary on preference fragment created
 	 */
-	private void refreshSummary(Preference pref, Integer index, Integer id) {
+	private void refreshSummary(Preference pref, int index, int id) {
 		Resources res = getResources();
 
 		// Set new summary to settings

@@ -10,7 +10,7 @@
     <dimen name="TaskSubtitleSize">15dp</dimen>
     <dimen name="TaskTitlePaddingTop">5dp</dimen>
     <dimen name="TaskTittlePadding">5dp</dimen>
-    <dimen name="TaskBodySubLayout">10dp</dimen>
+    <dimen name="TaskBodySubLayout">20dp</dimen>
     <dimen name="TaskBodyPadding">10dp</dimen>
     <dimen name="TaskSubTitlePaddingLeft">15dp</dimen>
     <dimen name="TaskSubBodyTitlePaddingLeft">5dp</dimen>

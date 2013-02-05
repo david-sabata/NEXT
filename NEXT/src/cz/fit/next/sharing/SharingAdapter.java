@@ -49,23 +49,18 @@ public class SharingAdapter extends ArrayAdapter<UserPerm> {
 		
 		if (mData.get(position).mode == GDrive.OWNER) {
 			permissions.setText("OWNER");
-			img.setImageResource(R.drawable.action_edit);
+			img.setImageResource(R.drawable.action_edit_light);
 		}
 		else if (mData.get(position).mode == GDrive.WRITE) {
 			permissions.setText("WRITE");
-			img.setImageResource(R.drawable.action_edit);
+			img.setImageResource(R.drawable.action_edit_light);
 		}
 		else if (mData.get(position).mode == GDrive.READ) {
 			permissions.setText("READ");
-			img.setImageResource(R.drawable.action_cancel);
+			img.setImageResource(R.drawable.action_cancel_light);
 		}
 		else permissions.setText("UNKNOWN");
 		
-		
-		
-	
-		
-
 		return vi;
 	}
 	
