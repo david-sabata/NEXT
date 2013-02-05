@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,10 +130,13 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		DateTime datetime = new DateTime(date);
-
+				
 		if (!datetime.isAllday()) {
 			dt.setText(datetime.toLocaleTimeString());
 		}
+			
+		
+
 
 		// priority
 		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
@@ -158,7 +162,7 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+				
 		return inflater.inflate(R.layout.task_list_inplan_item, null, true);
 	}
 
