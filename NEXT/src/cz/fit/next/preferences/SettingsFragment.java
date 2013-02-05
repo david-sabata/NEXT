@@ -1,7 +1,5 @@
 package cz.fit.next.preferences;
 
-import cz.fit.next.R;
-import cz.fit.next.backend.sync.SyncService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -10,6 +8,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import cz.fit.next.R;
+import cz.fit.next.backend.sync.SyncService;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
@@ -18,61 +18,59 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	public static final String PREF_SYNC_ENABLED = "PREF_SYNC_ENABLED";
 	public static final String PREF_SYNC_INTERVAL = "PREF_SYNC_INTERVAL";
 	public static final String PREF_DESIGN = "PREF_DESIGN";
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-				
-	
+
+
 		addPreferencesFromResource(R.xml.preferences);
 
 		// Initialize prefference
-		SharedPreferences sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(getActivity());	
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		Preference pref = null;
-		
+
 		// Array of settings, we would like to initialize
-		String[] summaryPref = {PREF_DESIGN,PREF_SYNC_INTERVAL};
+		String[] summaryPref = { PREF_DESIGN, PREF_SYNC_INTERVAL };
 		Integer indexToStringArray = null;
 		Integer idOfStringArray = -1;
-		for(int i = 0; i < summaryPref.length; i++) {
+		for (int i = 0; i < summaryPref.length; i++) {
 			pref = findPreference(summaryPref[i]);
-			
+
 			// If preference wasnt found, than go to next
-			if(pref == null) {
+			if (pref == null) {
 				continue;
-			}	
-			
+			}
+
 			// Settings to initialize 
 			if (summaryPref[i].equals(PREF_ACCOUNT_NAME)) {
-	        } else if (summaryPref[i].equals(PREF_SYNC_ENABLED)) {
-	        } else if (summaryPref[i].equals(PREF_SYNC_INTERVAL)) {
-	    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
-	            idOfStringArray = R.array.preferenceIntervalEntries;
-	        } else if (summaryPref[i].equals(PREF_DESIGN)) {
-	    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
-	            idOfStringArray = R.array.preferenceDesignEntries;             
-	        }
-			refreshSummary(pref,indexToStringArray, idOfStringArray );	
+			} else if (summaryPref[i].equals(PREF_SYNC_ENABLED)) {
+			} else if (summaryPref[i].equals(PREF_SYNC_INTERVAL)) {
+				indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
+				idOfStringArray = R.array.preferenceIntervalEntries;
+			} else if (summaryPref[i].equals(PREF_DESIGN)) {
+				indexToStringArray = Integer.parseInt(sharedPreferences.getString(summaryPref[i], "-1"));
+				idOfStringArray = R.array.preferenceDesignEntries;
+			}
+			refreshSummary(pref, indexToStringArray, idOfStringArray);
 		}
 	}
-	
+
 
 	@Override
 	public void onStart() {
 		super.onStart();
-	    getPreferenceScreen().getSharedPreferences()
-        .registerOnSharedPreferenceChangeListener(this);
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-	    getPreferenceScreen().getSharedPreferences()
-        .unregisterOnSharedPreferenceChangeListener(this);
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
 
-	
+
 	/*
 	 * Catch event if sth changed in preferences
 	 * (non-Javadoc)
@@ -83,37 +81,37 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		Preference pref = null;
 		Integer idOfStringArray = null;
 		Integer indexToStringArray = -1;
-		
+
 		pref = findPreference(key);
-		if(pref == null) {
+		if (pref == null) {
 			return;
 		}
-		
+
 		// Account name changed
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
-        } else if (key.equals(PREF_SYNC_ENABLED)) {
-        	if (sharedPreferences.getBoolean(key, false)) {
-        		// run synchronization and set alarm for next one
-        		Intent i = new Intent(getActivity().getApplicationContext(),SyncService.class);
-        		getActivity().getApplicationContext().startService(i);
-        	}
-        	if (!sharedPreferences.getBoolean(key, false)) {
-        		// TODO: Remove alarm timer
-        	}
-        } else if (key.equals(PREF_SYNC_INTERVAL)) {
-    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-            idOfStringArray = R.array.preferenceIntervalEntries;
-           
-            // run synchronization and set alarm for next one
-    		Intent i = new Intent(getActivity().getApplicationContext(),SyncService.class);
-    		getActivity().getApplicationContext().startService(i);
-            
-        } else if (key.equals(PREF_DESIGN)) {
-    		indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
-            idOfStringArray = R.array.preferenceDesignEntries;
-            getActivity().recreate();               
-        }
+		} else if (key.equals(PREF_SYNC_ENABLED)) {
+			if (sharedPreferences.getBoolean(key, false)) {
+				// run synchronization and set alarm for next one
+				Intent i = new Intent(getActivity().getApplicationContext(), SyncService.class);
+				getActivity().getApplicationContext().startService(i);
+			}
+			if (!sharedPreferences.getBoolean(key, false)) {
+				// TODO: Remove alarm timer
+			}
+		} else if (key.equals(PREF_SYNC_INTERVAL)) {
+			indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+			idOfStringArray = R.array.preferenceIntervalEntries;
+
+			// run synchronization and set alarm for next one
+			Intent i = new Intent(getActivity().getApplicationContext(), SyncService.class);
+			getActivity().getApplicationContext().startService(i);
+
+		} else if (key.equals(PREF_DESIGN)) {
+			indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));
+			idOfStringArray = R.array.preferenceDesignEntries;
+			getActivity().recreate();
+		}
 		// Reload summary
 		refreshSummary(pref, indexToStringArray, idOfStringArray);
 	}
@@ -123,16 +121,16 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	 */
 	private void refreshSummary(Preference pref, Integer index, Integer id) {
 		Resources res = getResources();
-		
+
 		// Set new summary to settings
-		if(pref != null && index!= -1) {
-            // Get String from array from resources
-            String[] entries = res.getStringArray(id);
-            // Find String in resources for selected item
-            String summary = entries[index - 1];
-            // Set new summary for setting
+		if (pref != null && index != 0) {
+			// Get String from array from resources
+			String[] entries = res.getStringArray(id);
+			// Find String in resources for selected item
+			String summary = entries[index - 1];
+			// Set new summary for setting
 			pref.setSummary(summary);
 		}
 	}
-	
+
 }
