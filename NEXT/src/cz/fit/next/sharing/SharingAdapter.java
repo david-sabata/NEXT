@@ -61,11 +61,6 @@ public class SharingAdapter extends ArrayAdapter<UserPerm> {
 		}
 		else permissions.setText("UNKNOWN");
 		
-		
-		
-	
-		
-
 		return vi;
 	}
 	
