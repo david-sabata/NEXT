@@ -3,6 +3,8 @@ package cz.fit.next.backend;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.json.JSONException;
+
 import android.database.Cursor;
 
 import cz.fit.next.backend.database.Constants;
@@ -21,8 +23,7 @@ public class Project {
 	protected ArrayList<TaskHistory> mHistory = null;
 	
 	
-	// TODO: Seznam sdileni
-
+	
 
 
 	/**
@@ -40,7 +41,11 @@ public class Project {
 		if (projIdCol > -1 && projTitleCol > -1) {
 			this.mId = cursor.getString(projIdCol);
 			this.mTitle = cursor.getString(projTitleCol);
-			this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
+			try {
+				this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		// from PROJECTS row
 		else {
@@ -50,7 +55,11 @@ public class Project {
 			if (projIdCol > -1 && projTitleCol > -1) {
 				this.mId = cursor.getString(projIdCol);
 				this.mTitle = cursor.getString(projTitleCol);
-				this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
+				try { 
+					this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 			else {
 				throw new RuntimeException("Instantiating Project from invalid Cursor");

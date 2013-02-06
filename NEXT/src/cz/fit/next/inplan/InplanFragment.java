@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -52,6 +53,8 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 
 		// set title
 		activity.getActionBar().setTitle(R.string.TitleByTime_InPlan);
+
+		setEmptyText(getResources().getString(R.string.all_done));
 	}
 
 
@@ -66,6 +69,15 @@ public class InplanFragment extends ListFragment implements ServiceReadyListener
 
 		Cursor cursor = TasksModelService.getInstance().getTasksInplanCursor();
 		setListAdapter(new InplanAdapter(getActivity(), cursor, 0));
+
+		// enable touch detection for 'empty' screen; it cannot be
+		// attached all the time, because it is blocking clicks on items
+		if (getListAdapter().isEmpty()) {
+			MainActivity activity = (MainActivity) getActivity();
+			FrameLayout frm = (FrameLayout) getListView().getParent();
+			frm.setFocusableInTouchMode(true);
+			activity.attachGestureDetector(frm);
+		}
 	}
 
 

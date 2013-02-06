@@ -126,12 +126,11 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
             // Reload summary
     		refreshSummary(pref, indexToStringArray, idOfStringArray);
            
-            if (mSyncServiceBound) {
+            if ((mSyncServiceBound) && 
+            	(sharedPreferences.getBoolean(PREF_SYNC_ENABLED, false))) {
             	mSyncService.resetAlarm();
     			mSyncService.setAlarmFromPreferences();
-    		} else {
-    			Log.i("Settings", "Service is not bound !");
-    		}
+    		} 
             
         } else if (key.equals(PREF_DESIGN)) {
     		int indexToStringArray = Integer.parseInt(sharedPreferences.getString(key, "-1"));

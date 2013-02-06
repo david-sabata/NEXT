@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.deaux.fan.FanView;
@@ -160,7 +161,6 @@ public class MainActivity extends Activity {
 		mTouchListener = new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
 				if (fan.isOpen()) {
@@ -168,7 +168,13 @@ public class MainActivity extends Activity {
 					return true;
 				}
 
-				return mGestureDetector.onTouchEvent(event);
+				// for some weird reason framelayout needs to always return true
+				if (v instanceof FrameLayout) {
+					mGestureDetector.onTouchEvent(event);
+					return true;
+				} else {
+					return mGestureDetector.onTouchEvent(event);
+				}
 			}
 		};
 
@@ -233,7 +239,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-		
+
 		return true;
 	}
 
@@ -264,7 +270,7 @@ public class MainActivity extends Activity {
 
 		Intent i;
 		Bundle b;
-		
+
 		switch (item.getItemId()) {
 
 			case android.R.id.home:
@@ -284,7 +290,7 @@ public class MainActivity extends Activity {
 				break;
 
 			case R.id.setting_connect_drive:
-				
+
 				i = new Intent(this, LoginActivity.class);
 				b = new Bundle();
 				b.putInt("login", 1);
@@ -297,13 +303,13 @@ public class MainActivity extends Activity {
 
 
 			case R.id.menu_sync_now:
-				
+
 				SettingsProvider sp = new SettingsProvider(getApplicationContext());
-				
+
 				if (!isNetworkAvailable()) {
 					Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
-				
-				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null){
+
+				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null) {
 					// run login activity
 					i = new Intent(this, LoginActivity.class);
 					b = new Bundle();
@@ -317,7 +323,7 @@ public class MainActivity extends Activity {
 					in.putExtra("SyncAlarm", 1);
 					this.startService(in);
 				}
-				
+
 				break;
 
 			case R.id.menu_wipe_db:
@@ -452,16 +458,15 @@ public class MainActivity extends Activity {
 			invalidateOptionsMenu();
 		}
 	}
-	
+
 	/**
 	 * Determines, if there is functional network connection
 	 * @return boolean state
 	 */
 	public boolean isNetworkAvailable() {
-	    ConnectivityManager connectivityManager 
-	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null;
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null;
 	}
 
 
