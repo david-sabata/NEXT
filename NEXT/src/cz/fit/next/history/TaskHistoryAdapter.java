@@ -4,12 +4,14 @@ import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.TaskHistory;
+import cz.fit.next.backend.TaskHistory.HistoryTaskChange;
 import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,34 +19,33 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import android.graphics.drawable.Drawable;
+
 public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 	ArrayList<TaskHistory> mData;
 	Context mContext;
-
-	private HashMap<String, String> fieldnames;
-
+	HashMap<Integer, Drawable> drawables;
 	public TaskHistoryAdapter(Context context, int textViewResourceId,
 			ArrayList<TaskHistory> history) {
 		super(context, textViewResourceId, history);
-
 		mData = history;
 		mContext = context;
-
-		// fill in field names translator
-		fieldnames = new HashMap<String, String>();
-
-		fieldnames.put(TaskHistory.TITLE, getContext().getResources()
-				.getString(R.string.history_title));
-		fieldnames.put(TaskHistory.CONTEXT, getContext().getResources()
-				.getString(R.string.history_context));
-		fieldnames.put(TaskHistory.DATE,
-				getContext().getResources().getString(R.string.history_date));
-		fieldnames.put(TaskHistory.DESCRIPTION, getContext().getResources()
-				.getString(R.string.history_description));
-		fieldnames.put(TaskHistory.PRIORITY, getContext().getResources()
-				.getString(R.string.history_priority));
-
+		
+		
+		int[] iconsAttrs = new int[]{R.attr.actionAcceptIcon,
+				R.attr.actionCancelIcon, R.attr.actionAddIcon, 
+				R.attr.actionEditIcon, R.attr.actionDeletedIcon};
+		
+		TypedArray iconResources = mContext.getTheme().obtainStyledAttributes(iconsAttrs);
+		
+	    drawables = new HashMap<Integer, Drawable>();
+		
+		
+		for (int i = 0; i < iconResources.length(); i++) {
+				drawables.put(iconsAttrs[i], iconResources.getDrawable(i));
+		}
 	}
 
 	@Override
@@ -84,76 +85,63 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		String subOtherAction = ""; // DESCRIPTION, CONTEXT, DATE, PROJECT, PRIORITY
 
 		for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
+			HistoryTaskChange changeItem = mData.get(position).getChanges().get(i); 
 			// Created
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.TITLE))
-					&& (mData.get(position).getChanges().get(i).getOldValue()
-							.isEmpty())) {
-				subMainAction = "Task has been created";
+			if ((changeItem.getName().equals(TaskHistory.TITLE)) 
+					&& (changeItem.getOldValue().isEmpty())) {
+				
+				subMainAction = getContext().getResources().getString(R.string.history_taskcreated);;
 				isCreated = true;
 				break;
 			}
 
 			// Completed
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.COMPLETED))
-					&& (mData.get(position).getChanges().get(i).getNewValue()
-							.equals("true"))) {
-				subMainAction = "Task has been marked as completed";
+			if ((changeItem.getName().equals(TaskHistory.COMPLETED))
+					&& (changeItem.getNewValue().equals("true"))) {
+				
+				subMainAction = getContext().getResources().getString(R.string.history_taskcompleted);
 				isCompleted = true;
 			}
 
 			// Uncompleted
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.COMPLETED))
-					&& (mData.get(position).getChanges().get(i).getNewValue()
-							.equals("false"))) {
-				subMainAction = "Task has been marked as uncompleted";
+			if (changeItem.getName().equals(TaskHistory.COMPLETED)
+					&& (changeItem.getNewValue().equals("false"))) {
+				
+				subMainAction = getContext().getResources().getString(R.string.history_taskuncompleted); 
 				isUncompleted = true;
 			}
 
-			
 			// Date
-			if (mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.DATE)) {
-				subOtherAction +=  getContext().getResources().getString(R.string.task_history_date);
-				
+			if (changeItem.getName().equals(TaskHistory.DATE)) {
+				subOtherAction +=  getContext().getResources().getString(R.string.history_date);
 			}
 
 			// Context
-			if (mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.CONTEXT)) {
-				subOtherAction +=  getContext().getResources().getString(R.string.task_history_context);
+			if (changeItem.getName().equals(TaskHistory.CONTEXT)) {
+				subOtherAction +=  getContext().getResources().getString(R.string.history_context);
 			}
 			
 			// Priority
-			if (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.PRIORITY)) {
-				subOtherAction +=  getContext().getResources().getString(R.string.task_history_priority);
+			if (changeItem.getName().equals(TaskHistory.PRIORITY)) {
+				subOtherAction +=  getContext().getResources().getString(R.string.history_priority);
 			}
 			
 			// Title
-			if (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.TITLE)) {
-
-				subOtherAction += getContext().getResources().getString(R.string.task_history_title);
+			if (changeItem.getName().equals(TaskHistory.TITLE)) {
+				subOtherAction += getContext().getResources().getString(R.string.history_title);
 			}
 			
 			// Project
-			if (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.PROJECT)) {
-
-				subOtherAction += getContext().getResources().getString(R.string.task_history_project);
+			if (changeItem.getName().equals(TaskHistory.PROJECT)) {
+				subOtherAction += getContext().getResources().getString(R.string.history_project);
 			}
 			
 			// Description
-			if (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.DESCRIPTION)) {
-
-				subOtherAction += getContext().getResources().getString(R.string.task_history_description);
+			if (changeItem.getName().equals(TaskHistory.DESCRIPTION)) {
+				subOtherAction += getContext().getResources().getString(R.string.history_description);
 			}
 			
-			
+			// If no one of main actions wasnt applicated, than add "," to text
 			if (!isCreated && 
 				!isCompleted && 
 				!isUncompleted && 
@@ -161,45 +149,42 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 				i != mData.get(position).getChanges().size() - 1 ){
 				subOtherAction += ", ";
 			}
-			
-			
-						
 		}
 		
 		// Special texts for special events (if they are unique)
 		if(subOtherAction.equals("")) {
 			if(isCreated) {
-				subMainAction = "Task has been created"; // TODO change to variable string
+				subMainAction = getContext().getResources().getString(R.string.history_taskcreated); 
 			} else if(isCompleted) {
-				subMainAction = "Task has been marked as completed"; // TODO change to variable string
+				subMainAction = getContext().getResources().getString(R.string.history_taskcompleted); 
 			} else if(isUncompleted) {
-				subMainAction = "Task has been marked as uncompleted"; // TODO change to variable string
+				subMainAction = getContext().getResources().getString(R.string.history_taskuncompleted); 
 			} else if(isDeleted) {
-				subMainAction = "Task has been deleted"; // TODO change to variable string
+				subMainAction = getContext().getResources().getString(R.string.history_taskdeleted); 
 			}	
 		} else if (!isCreated && !isCompleted && !isUncompleted && !isDeleted){
-			sub = "Changed in ";
+			sub = getContext().getResources().getString(R.string.history_prechanged);
 		} else {
-			subMainAction += " and changed in ";
+			subMainAction += getContext().getResources().getString(R.string.history_postchanged);
 		}
 		
 		sub = sub + subMainAction + subOtherAction  +  ".";
 		
 		subtitle.setText(sub);
 
-		// Image
+		// Images
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
 
 		if (isCreated)
-			img.setImageResource(R.drawable.action_add_light);
+			img.setImageDrawable(drawables.get(R.attr.actionAddIcon));
 		else if (isDeleted)
-			img.setImageResource(R.drawable.action_discard_light);
+			img.setImageDrawable(drawables.get(R.attr.actionDeletedIcon));
 		else if (isCompleted)
-			img.setImageResource(R.drawable.action_accept_light);
+			img.setImageDrawable(drawables.get(R.attr.actionAcceptIcon));
 		else if (isUncompleted)
-			img.setImageResource(R.drawable.action_cancel_light);
+			img.setImageDrawable(drawables.get(R.attr.actionCancelIcon));
 		else
-			img.setImageResource(R.drawable.action_edit_light);
+			img.setImageDrawable(drawables.get(R.attr.actionEditIcon));
 
 		return vi;
 	}
