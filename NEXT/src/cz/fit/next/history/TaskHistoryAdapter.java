@@ -112,33 +112,53 @@ public class TaskHistoryAdapter extends ArrayAdapter<TaskHistory> {
 				isUncompleted = true;
 			}
 
+			
+			// Date
 			if (mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.DATE)) {
 				subOtherAction +=  getContext().getResources().getString(R.string.task_history_date);
 				
 			}
 
+			// Context
 			if (mData.get(position).getChanges().get(i).getName()
 					.equals(TaskHistory.CONTEXT)) {
 				subOtherAction +=  getContext().getResources().getString(R.string.task_history_context);
 			}
 			
+			// Priority
 			if (mData.get(position).getChanges().get(i).getName()
 							.equals(TaskHistory.PRIORITY)) {
-				subOtherAction =  getContext().getResources().getString(R.string.task_history_priority);
+				subOtherAction +=  getContext().getResources().getString(R.string.task_history_priority);
 			}
 			
+			// Title
 			if (mData.get(position).getChanges().get(i).getName()
 							.equals(TaskHistory.TITLE)) {
 
 				subOtherAction += getContext().getResources().getString(R.string.task_history_title);
 			}
 			
+			// Project
+			if (mData.get(position).getChanges().get(i).getName()
+							.equals(TaskHistory.PROJECT)) {
+
+				subOtherAction += getContext().getResources().getString(R.string.task_history_project);
+			}
+			
+			// Description
+			if (mData.get(position).getChanges().get(i).getName()
+							.equals(TaskHistory.DESCRIPTION)) {
+
+				subOtherAction += getContext().getResources().getString(R.string.task_history_description);
+			}
+			
+			
 			if (!isCreated && 
 				!isCompleted && 
 				!isUncompleted && 
 				!isDeleted && 
-				i != mData.get(position).getChanges().size() -1 ){
+				i != mData.get(position).getChanges().size() - 1 ){
 				subOtherAction += ", ";
 			}
 			

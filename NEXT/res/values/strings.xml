@@ -114,6 +114,8 @@
     <string name="task_history_priority">priority</string>
     <string name="task_history_title">title</string>
     <string name="task_history_date">date</string>
+    <string name="task_history_project">project</string>
+    <string name="task_history_description">description</string>
  
 
 </resources>
