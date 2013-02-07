@@ -49,32 +49,32 @@ public class NotificationService extends Service {
 		Log.i(TAG, "onStart");
 
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
-		
+
 		Params p = searchForUpcomingTask();
-		setAlarm(p.upcoming.getDate().toMiliseconds());
-		
-		for (int i = 0; i < p.notifications.size(); i++) {
-			showNotification(p.notifications.get(i));
+		if ((p != null) && (p.upcoming != null)) {
+			// setAlarm(p.upcoming.getDate().toMiliseconds());
+
+			for (int i = 0; i < p.notifications.size(); i++) {
+				showNotification(p.notifications.get(i));
+			}
 		}
-		
+
 		stopSelf();
 
 		return START_NOT_STICKY;
 	}
 
 	private Params searchForUpcomingTask() {
-		
+
 		Params p = new Params();
 		p.notifications = new ArrayList<Task>();
-		
+
 		TasksDataSource ds = new TasksDataSource(getApplicationContext());
 		ds.open();
 
-		Cursor c = ds.getAllTasksCursor();
-		if (!c.moveToFirst()) Log.i(TAG,"E1");
-		if (c.moveToPrevious()) Log.i(TAG,"E2");;
+		Cursor c = ds.getFullAllTasksCursor();
 
-		DateTime upcomingTime = new DateTime(0);
+		DateTime upcomingTime = new DateTime(Long.MAX_VALUE);
 		String upcomingId = null;
 
 		DateTime current = new DateTime();
@@ -82,31 +82,42 @@ public class NotificationService extends Service {
 		while (c.moveToNext()) {
 			Task t = new Task(c);
 
-			if (t.getDate().isSomeday())
-				continue;
-			if (t.getDate().isAllday())
-				continue; // TODO: ????
-			if (t.getDate().toMiliseconds() < current.toMiliseconds())
-				continue;
-			if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds())
-				continue;
-
 			if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
 					.toCalendar().get(Calendar.HOUR))
 					&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
 							.toCalendar().get(Calendar.MINUTE)))) {
-				
+
 				p.notifications.add(t);
+				continue;
+			}
+
+			if (t.getDate().isSomeday()) {
+				continue;
+			}
+			if (t.getDate().isAllday()) {
+				continue;
+			}
+			if (t.getDate().toMiliseconds() < current.toMiliseconds()) {
+				continue;
+			}
+			if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds()) {
+				continue;
 			}
 
 			upcomingTime = t.getDate();
 			upcomingId = t.getId();
 		}
 
-		p.upcoming = ds.getTaskById(upcomingId);
-		ds.close();
+		if (upcomingId != null)
+			p.upcoming = ds.getTaskById(upcomingId);
 
-		Log.i(TAG, "Selected upcoming task: " + p.upcoming.getTitle());
+		if (p.upcoming == null) {
+			Log.i(TAG, "E3");
+		} else {
+
+			Log.i(TAG, "Selected upcoming task: " + p.upcoming.getTitle());
+		}
+		ds.close();
 
 		return p;
 
@@ -118,25 +129,26 @@ public class NotificationService extends Service {
 				getApplicationContext(), time);
 
 	}
-	
+
 	private void showNotification(Task t) {
-		
+
 		String title = getResources().getString(R.string.upcoming_notification);
 		String content = t.getTitle();
-		String ticker = getResources().getString(R.string.upcoming_notification);
-		
-		Notification.Builder mBuilder = new Notification.Builder(this).setSmallIcon(R.drawable.menu_next)
-				.setContentTitle(title).setContentText(content)
-				.setTicker(ticker).setAutoCancel(true);
+		String ticker = getResources()
+				.getString(R.string.upcoming_notification);
 
-		//		Intent resultIntent = new Intent(this, MainActivity.class);
-		
-		//		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		//		stackBuilder.addParentStack(MainActivity.class);
-		//		stackBuilder.addNextIntent(resultIntent);
-		//		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-		//		mBuilder.setContentIntent(resultPendingIntent);
+		Notification.Builder mBuilder = new Notification.Builder(this)
+				.setSmallIcon(R.drawable.menu_next).setContentTitle(title)
+				.setContentText(content).setTicker(ticker).setAutoCancel(true);
 
+		// Intent resultIntent = new Intent(this, MainActivity.class);
+
+		// TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		// stackBuilder.addParentStack(MainActivity.class);
+		// stackBuilder.addNextIntent(resultIntent);
+		// PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+		// PendingIntent.FLAG_UPDATE_CURRENT);
+		// mBuilder.setContentIntent(resultPendingIntent);
 
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
