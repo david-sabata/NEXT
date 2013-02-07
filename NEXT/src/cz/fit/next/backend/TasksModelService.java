@@ -16,6 +16,7 @@ import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
 /**
@@ -263,6 +264,10 @@ public class TasksModelService extends Service {
 
 		// save task
 		mTasksDataSource.saveTask(task);
+		
+		// prepare notifications
+		Intent i = new Intent(getApplicationContext(), NotificationService.class);
+		startService(i);
 	}
 
 	/**

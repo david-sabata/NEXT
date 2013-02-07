@@ -47,6 +47,7 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
 public class SyncService extends Service {
@@ -529,6 +530,10 @@ public class SyncService extends Service {
 			Intent broadcast = new Intent();
 			broadcast.setAction(BROADCAST_SYNC_END);
 			sendBroadcast(broadcast);
+			
+			// prepare notifications
+			Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
+			startService(notifier);
 
 			Log.i(TAG, "Killing SyncService.");
 			stopSelf();
