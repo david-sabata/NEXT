@@ -29,6 +29,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	public static final String PREF_SYNC_ENABLED = "PREF_SYNC_ENABLED";
 	public static final String PREF_SYNC_INTERVAL = "PREF_SYNC_INTERVAL";
 	public static final String PREF_DESIGN = "PREF_DESIGN";
+	public static final String PREF_SYNC_WIFI = "PREF_DESIGN";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		// Account name changed
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// TODO set ACCOUNT NAME to APP
+		} else if (key.equals(PREF_SYNC_WIFI)) {
         } else if (key.equals(PREF_SYNC_ENABLED)) {
         	if (sharedPreferences.getBoolean(key, false)) {
         		if (mSyncServiceBound) {

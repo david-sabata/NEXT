@@ -41,7 +41,6 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -621,11 +620,20 @@ public class SyncService extends Service {
 			sendBroadcast(broadcast);
 			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
-				setAlarmFromPreferences();				
+				setAlarmFromPreferences();
 			}
 			
-			SynchronizeClass cls = new SynchronizeClass();
-			cls.execute();
+			if (sp.getBoolean(SettingsFragment.PREF_SYNC_WIFI, false)) {
+				if (isWifiConnected()) {
+					SynchronizeClass cls = new SynchronizeClass();
+					cls.execute();
+				}
+			} else {
+				SynchronizeClass cls = new SynchronizeClass();
+				cls.execute();				
+			}
+			
+			
 		}
 	}
 	
@@ -926,6 +934,18 @@ public class SyncService extends Service {
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null;
 	}
+	
+	/**
+	 * Determines, if there is wifi connection active
+	 * @return boolean state
+	 */
+	public boolean isWifiConnected() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    return activeNetworkInfo.isConnected();
+	}
+	
 	
 	/**
 	 * Determines, if there is stored username in preferences

@@ -12,6 +12,14 @@
             android:switchTextOff="0"
             android:switchTextOn="I"
             />
+         <SwitchPreference 
+            android:key="PREF_SYNC_WIFI"
+            android:title="@string/SettingsSynchronizationWifiTitle"
+            android:summary="@string/SettingsSynchronizationWifiSummary"
+            android:defaultValue="false"
+            android:switchTextOff="0"
+            android:switchTextOn="I"
+            />
         <ListPreference
             android:key="PREF_SYNC_INTERVAL"
             android:title="@string/SettingsSynchronizationIntervalTitle"
