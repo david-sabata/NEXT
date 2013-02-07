@@ -1,5 +1,8 @@
 package cz.fit.next.notifications;
 
+import java.util.Calendar;
+
+import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.database.TasksDataSource;
@@ -51,12 +54,30 @@ public class NotificationService extends Service {
 		Cursor c = ds.getAllTasksCursor();
 		c.moveToFirst();
 
-		do {
+		Task t = new Task(c);
+		DateTime upcomingTime = t.getDate();
+		String upcomingId = t.getId();
+		
+		DateTime current = new DateTime();
+		
+		while (c.moveToNext()) {
+			t = new Task(c);
 			
-		} while (c.moveToNext());
+			if (t.getDate().isSomeday()) continue;
+			if (t.getDate().isAllday()) continue; // TODO: ????
+			if (t.getDate().toMiliseconds() < current.toMiliseconds()) continue;
+			if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds()) continue;
+						
+			upcomingTime = t.getDate();
+			upcomingId = t.getId();
+		}
 		
+		Task ret = ds.getTaskById(upcomingId);
+		ds.close();
 		
-		return null;
+		Log.i(TAG,"Selected upcoming task: " + ret.getTitle());
+		
+		return ret;
 		
 	}
 	
