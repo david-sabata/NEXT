@@ -71,16 +71,16 @@ public class NotificationService extends Service {
 		ds.open();
 
 		Cursor c = ds.getAllTasksCursor();
-		c.moveToFirst();
+		if (!c.moveToFirst()) Log.i(TAG,"E1");
+		if (c.moveToPrevious()) Log.i(TAG,"E2");;
 
-		Task t = new Task(c);
-		DateTime upcomingTime = t.getDate();
-		String upcomingId = t.getId();
+		DateTime upcomingTime = new DateTime(0);
+		String upcomingId = null;
 
 		DateTime current = new DateTime();
 
 		while (c.moveToNext()) {
-			t = new Task(c);
+			Task t = new Task(c);
 
 			if (t.getDate().isSomeday())
 				continue;
