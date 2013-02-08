@@ -614,25 +614,31 @@ public class SyncService extends Service {
 		}
 		else
 		{
-			// Send broadcast for indicate sync
-			Intent broadcast = new Intent();
-			broadcast.setAction(BROADCAST_SYNC_START);
-			sendBroadcast(broadcast);
-			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
 				setAlarmFromPreferences();
 			}
 			
 			if (sp.getBoolean(SettingsFragment.PREF_SYNC_WIFI, false)) {
 				if (isWifiConnected()) {
+					// Send broadcast for indicate sync
+					Intent broadcast = new Intent();
+					broadcast.setAction(BROADCAST_SYNC_START);
+					sendBroadcast(broadcast);
+					
 					SynchronizeClass cls = new SynchronizeClass();
 					cls.execute();
+				} else {
+					stopSelf();
 				}
 			} else {
+				// Send broadcast for indicate sync
+				Intent broadcast = new Intent();
+				broadcast.setAction(BROADCAST_SYNC_START);
+				sendBroadcast(broadcast);
+				
 				SynchronizeClass cls = new SynchronizeClass();
 				cls.execute();				
 			}
-			
 			
 		}
 	}

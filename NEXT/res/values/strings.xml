@@ -103,6 +103,8 @@
     <string name="sharing_unshare">Unshare</string>
     
     <string name="no_connection">No connection available.</string>
+    <string name="no_wifi">No Wi-Fi connection available.</string>
+    
 
     
     <string name="SettingsDesignTitle">Design</string>
