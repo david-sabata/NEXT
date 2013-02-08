@@ -38,7 +38,7 @@ public class NotificationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		//SettingsProvider sp = new SettingsProvider(getApplicationContext());
 
 		return mBinder;
 	}
@@ -48,7 +48,7 @@ public class NotificationService extends Service {
 
 		Log.i(TAG, "onStart");
 
-		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		//SettingsProvider sp = new SettingsProvider(getApplicationContext());
 
 		Params p = searchForUpcomingTask();
 		if (p != null) {
@@ -60,7 +60,7 @@ public class NotificationService extends Service {
 			}
 		}
 
-		stopSelf();
+		//stopSelf();
 
 		return START_NOT_STICKY;
 	}

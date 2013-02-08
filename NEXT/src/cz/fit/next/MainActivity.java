@@ -119,9 +119,14 @@ public class MainActivity extends Activity {
 			this.startService(i);
 		}
 		
+		Log.i("aa","aa");
 		// prepare notifications
-		Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
-		startService(notifier);
+		Intent notifier = new Intent(this, NotificationService.class);
+		ComponentName a = this.startService(notifier);
+		if (a == null) 
+			Log.i("aa","null");
+		else
+			Log.i("aa",a.flattenToShortString());
 	}
 
 
