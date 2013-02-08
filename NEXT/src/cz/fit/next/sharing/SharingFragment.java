@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.deaux.fan.FanView;
+import com.google.android.gms.auth.GoogleAuthException;
 
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
@@ -195,26 +196,36 @@ public class SharingFragment extends ListFragment {
 		return true;
 	}
 	
-	private class ExecTask extends AsyncTask<Void, Void, Void> {
+	private class ExecTask extends AsyncTask<Void, Void, Integer> {
 
 		ArrayList<UserPerm> list;
 		
 		@Override
-		protected Void doInBackground(Void... arg0) {
+		protected Integer doInBackground(Void... arg0) {
 			try {
 				list = mSyncService.getSharingList(mProjId,mProjTitle);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return null;
+			} catch (GoogleAuthException e) {
+				e.printStackTrace();
+				return null;
 			}
-			return null;
+			return 1;
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
 			
-			setListAdapter(new SharingAdapter(getActivity(), 0, list));
+			if (result != null) {
+			
+				setListAdapter(new SharingAdapter(getActivity(), 0, list));
+			} else {
+				Toast.makeText(getActivity().getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+				// TODO: go back in fragments stack
+			}
 		}
 
 		@Override

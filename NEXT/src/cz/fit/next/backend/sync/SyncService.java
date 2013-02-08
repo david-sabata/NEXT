@@ -189,7 +189,7 @@ public class SyncService extends Service {
 	/*
 	 * Asynctask provides synchronization.
 	 */
-	private class SynchronizeClass extends AsyncTask<Void, Void, Object> {
+	private class SynchronizeClass extends AsyncTask<Void, Integer, Object> {
 
 		class returnObject {
 			public int sharedCount;
@@ -499,11 +499,20 @@ public class SyncService extends Service {
 			
 			
 			} catch (IOException e) {
-				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
+				//publishProgress(new Integer[]{SHARING_ERROR});
 				return null;
 			} catch (GoogleAuthException e) {
-				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
+				//publishProgress(new Integer[]{SHARING_ERROR});
 				return null;	
+			}
+		}
+		
+		@Override
+		protected void onProgressUpdate(Integer ... progress) {
+			super.onProgressUpdate(progress);
+			
+			if (progress[0] == SYNC_ERROR) {
+				Toast.makeText(getApplicationContext(), R.string.sync_error, Toast.LENGTH_SHORT).show();
 			}
 		}
 
@@ -514,8 +523,8 @@ public class SyncService extends Service {
 			if (param == null) {
 				Log.i(TAG, "Sync error");
 				// TODO: Display notitfication after 10 errors, not for each one
-				displayStatusbarNotification(SyncService.SYNC_ERROR, 1);
-				return;
+				Toast.makeText(getApplicationContext(), R.string.sync_error, Toast.LENGTH_SHORT).show();
+				
 			}
 			if (param != null) {
 				if (((returnObject) param).sharedCount > 0) {
@@ -681,7 +690,7 @@ public class SyncService extends Service {
 		
 	}
 	
-	private class ShareClass extends AsyncTask<Object, Void, Void> {
+	private class ShareClass extends AsyncTask<Object, Void, Integer> {
 
 		private String id;
 		private String user;
@@ -694,7 +703,7 @@ public class SyncService extends Service {
 		}
 		
 		@Override
-		protected Void doInBackground(Object... param) {
+		protected Integer doInBackground(Object... param) {
 			String filename = title + "-" + id + ".nextproj.html";
 			Boolean res = false;
 			try {
@@ -707,14 +716,27 @@ public class SyncService extends Service {
 				
 				res = drive.share(filename, user, GDrive.WRITE );
 			} catch (IOException e) {
-				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				
+				//Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+				return null;
 			} catch (GoogleAuthException e) {
-				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				//Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+				return null;
+			}
+			
+			if (!res) { 
+				//Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+				return null;
 			}
 			Log.i(TAG, "Sharing res" + res.toString());
-			if (!res) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			
-			return null;
+			return 1;
+		}
+		
+		@Override
+		protected void onPostExecute(Integer param) {
+			if (param == null) 
+				Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
 		}
 		
 		
@@ -737,7 +759,7 @@ public class SyncService extends Service {
 		
 	}
 	
-	private class UnshareClass extends AsyncTask<Object, Void, Void> {
+	private class UnshareClass extends AsyncTask<Object, Void, Integer> {
 
 		private String id;
 		private String permId;
@@ -750,7 +772,7 @@ public class SyncService extends Service {
 		}
 		
 		@Override
-		protected Void doInBackground(Object... param) {
+		protected Integer doInBackground(Object... param) {
 			String filename = title + "-" + id + ".nextproj.html";
 			Boolean res = false;
 			try {
@@ -762,14 +784,21 @@ public class SyncService extends Service {
 				}				
 				res = drive.unshare(filename, permId);
 			} catch (IOException e) {
-				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				return null;
 			} catch (GoogleAuthException e) {
-				displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
+				return null;
 			}
-			Log.i(TAG, "Sharing res" + res.toString());
-			if (!res) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 			
-			return null;
+			if (!res) return null;
+			Log.i(TAG, "Sharing res" + res.toString());
+			
+			return 1;
+		}
+		
+		@Override
+		protected void onPostExecute(Integer param) {
+			if (param == null) 
+				Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
 		}
 		
 		
@@ -779,15 +808,13 @@ public class SyncService extends Service {
 	/**
 	 * Returns sharing list, be sure to run in asynctask
 	 * @throws IOException 
+	 * @throws GoogleAuthException 
 	 */
-	public ArrayList<UserPerm> getSharingList(String projId, String projTitle) throws IOException {
-		try {
-			boolean retval = drive.initSync(getApplicationContext(),
-					getInstance(), mAccountName);
-			if (!retval) displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
-		} catch (GoogleAuthException e) {
-			displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
-		}
+	public ArrayList<UserPerm> getSharingList(String projId, String projTitle) throws IOException, GoogleAuthException {
+
+		boolean retval = drive.initSync(getApplicationContext(),
+				getInstance(), mAccountName);
+		if (!retval) throw new IOException();
 		
 		String filename = projTitle + "-" + projId + ".nextproj.html";		
 		ArrayList<UserPerm> users = drive.getUserListByFilename(filename);
@@ -850,7 +877,6 @@ public class SyncService extends Service {
 				
 				drive.delete(filename);
 			} catch (IOException e) {
-				//displayStatusbarNotification(SyncService.SHARING_ERROR, 1);
 				return false;
 			} catch (GoogleAuthException e) {
 				e.printStackTrace();
@@ -888,28 +914,12 @@ public class SyncService extends Service {
 		String content = "";
 		String ticker = "";
 
-		// TODO: More languages, move strings to string.xml !
-
 		if (type == NOTIFICATION_NEW_SHARED) {
 			title = "NEXT Sharing";
 			content = "New shared files found on your Drive.";
 			ticker = "NEXT: New shared files found.";
 		}
 		
-		if (type == SHARING_ERROR) {
-			title = "NEXT Sharing Error";
-			content = "Tap here to resolve.";
-			ticker = "NEXT: Sharing Error.";
-		}
-		
-		if (type == SYNC_ERROR) {
-			title = "NEXT Synchronization Error";
-			content = "Tap here to sync again.";
-			ticker = "NEXT: Synchronization Error.";
-		}
-
-
-
 		Notification.Builder mBuilder = new Notification.Builder(this).setSmallIcon(R.drawable.menu_next)
 				.setContentTitle(title).setContentText(content)
 				.setNumber(count).setTicker(ticker).setAutoCancel(true);
