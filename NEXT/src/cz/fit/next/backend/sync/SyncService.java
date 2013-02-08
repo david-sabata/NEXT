@@ -531,9 +531,9 @@ public class SyncService extends Service {
 			broadcast.setAction(BROADCAST_SYNC_END);
 			sendBroadcast(broadcast);
 			
-			// prepare notifications
-			Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
-			startService(notifier);
+			// prepare notifications - NOT NEEDED
+			//Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
+			//startService(notifier);
 
 			Log.i(TAG, "Killing SyncService.");
 			stopSelf();

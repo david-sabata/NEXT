@@ -34,6 +34,7 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.preferences.SettingsUtil;
 import cz.fit.next.sidebar.SidebarFragment;
@@ -117,6 +118,10 @@ public class MainActivity extends Activity {
 			//i.putExtras(b);
 			this.startService(i);
 		}
+		
+		// prepare notifications
+		Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
+		startService(notifier);
 	}
 
 
