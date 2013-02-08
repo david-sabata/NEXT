@@ -52,9 +52,9 @@ public class NotificationService extends Service {
 
 		Params p = searchForUpcomingTask();
 		if (p != null) {
-			if (p.upcoming != null)
+			if (p.upcoming != null) {
 				setAlarm(p.upcoming.getDate().toMiliseconds());
-
+			}
 			for (int i = 0; i < p.notifications.size(); i++) {
 				showNotification(p.notifications.get(i));
 			}
@@ -128,6 +128,7 @@ public class NotificationService extends Service {
 
 		NotificationsAlarmReceiver ar = new NotificationsAlarmReceiver(
 				getApplicationContext(), time);
+		ar.run();
 		
 		Log.i(TAG, "Alarm set to: " + new DateTime(time).toLocaleDateTimeString());
 
