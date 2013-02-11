@@ -110,6 +110,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		if (key.equals(PREF_ACCOUNT_NAME)) {
 			// implemented custom onclick in DriveLoginPreference
 		} else if (key.equals(PREF_SYNC_WIFI)) {
+			// no action
 		} else if (key.equals(PREF_SYNC_ENABLED)) {
 			if (sharedPreferences.getBoolean(key, false)) {
 				if (mSyncServiceBound) {
@@ -144,8 +145,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 			refreshSummary(pref, indexToStringArray, idOfStringArray);
 			getActivity().recreate();
 		}
-
-
 	}
 
 	/**
