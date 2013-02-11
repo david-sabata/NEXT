@@ -153,7 +153,14 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 			project = new Project(projectId, projectTitle);
 		}
 
-		Task saveTask = new Task(mTask.getId(), ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
+		String taskId;
+		if (mTask == null) {
+			taskId = UUID.randomUUID().toString();
+		} else {
+			taskId = mTask.getId();
+		}
+		
+		Task saveTask = new Task(taskId, ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
 				((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString(), originalDateTime, priority, project,
 				((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString(),
 				((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked());
@@ -412,7 +419,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		// Set spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(0);
-
 	}
 
 
