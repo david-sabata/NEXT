@@ -79,15 +79,17 @@
     <string name="settings">Settings</string>
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
     <string name="SettingsSynchronizationActiveTitle">Google Drive</string>
+    <string name="SettingsSynchronizationWifiTitle">Sync only on Wi-Fi</string>
+    <string name="SettingsSynchronizationWifiSummary">Don´t sync on mobile data connection</string>
     <string name="TaskCompleted">Completed</string>
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
-    <string name="history_title">Title</string>
-    <string name="history_priority">Priority</string>
-    <string name="history_context">Context</string>
-    <string name="history_date">Date</string>
-    <string name="history_description">Description</string>
+    <string name="history_title">title</string>
+    <string name="history_priority">priority</string>
+    <string name="history_context">context</string>
+    <string name="history_date">date</string>
+    <string name="history_description">description</string>
     <string name="task_created">TASK CREATED</string>
     <string name="task_completed">TASK MARKED AS COMPLETE</string>
     <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
@@ -102,9 +104,25 @@
     
     <string name="no_connection">No connection available.</string>
     <string name="upcoming_notification">NEXT - upcoming task</string>
+    <string name="no_wifi">No Wi-Fi connection available.</string>
+    <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
+    <string name="sharing_error">NEXT: Something went wrong with sharing :(</string>
+    
+    
+
 
     
     <string name="SettingsDesignTitle">Design</string>
+    <string name="history_project">project</string>
+    <string name="history_taskcreated">Task has been created</string>
+    <string name="history_taskcompleted">Task has been marked as completed</string>
+    <string name="history_taskuncompleted">Task has been marked as uncompleted</string>
+    <string name="history_prechanged">Changed in&#160;</string>
+    <string name="history_postchanged">&#160;and changed in&#160;</string>
+    <string name="history_taskdeleted">Task has been deleted</string>
+    <string name="connect_account">Click to connect your Drive account</string>
+    <string name="no_account_connected">No account connected</string>
+    <string name="change_connected_account">Click to change connected account</string>
  
 
 </resources>

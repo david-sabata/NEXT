@@ -169,14 +169,31 @@ public class MainActivity extends Activity {
 		// prepare gesture listener for fragments
 		mGestureDetector = new GestureDetector(this, new MyGestureDetector(getFanView()));
 		mTouchListener = new OnTouchListener() {
+
+			// set to true when sidebar is open and ACTION_DOWN comes
+			// and then ignore all events until ACTION_UP to ignore whole gesture
+			private boolean ignoreGesture = false;
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
-				if (fan.isOpen()) {
+				if (fan.isOpen() && event.getAction() == MotionEvent.ACTION_DOWN) {
 					fan.showMenu(); // atually means 'toggle'
+					ignoreGesture = true;
 					return true;
 				}
+
+				// ignore gesture until ACTION_UP
+				if (ignoreGesture) {
+					if (event.getAction() == MotionEvent.ACTION_UP) {
+						ignoreGesture = false;
+					}
+
+					return true;
+				}
+
 
 				// for some weird reason framelayout needs to always return true
 				if (v instanceof FrameLayout) {
@@ -299,17 +316,16 @@ public class MainActivity extends Activity {
 				fan.replaceMainFragment(prefFragment);
 				break;
 
-			case R.id.setting_connect_drive:
-
-				i = new Intent(this, LoginActivity.class);
-				b = new Bundle();
-				b.putInt("login", 1);
-				i.putExtras(b);
-				//this.startService(i);
-				startActivity(i);
-
-
-				break;
+			//			case R.id.setting_connect_drive:
+			//
+			//				i = new Intent(this, LoginActivity.class);
+			//				b = new Bundle();
+			//				b.putInt("login", 1);
+			//				i.putExtras(b);
+			//				//this.startService(i);
+			//				startActivity(i);
+			//
+			//				break;
 
 
 			case R.id.menu_sync_now:
@@ -319,6 +335,8 @@ public class MainActivity extends Activity {
 				if (!isNetworkAvailable()) {
 					Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
 
+				} else if ((!isWifiConnected()) && (sp.getBoolean(SettingsFragment.PREF_SYNC_WIFI, false))) {
+					Toast.makeText(getApplicationContext(), R.string.no_wifi, Toast.LENGTH_SHORT).show();
 				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null) {
 					// run login activity
 					i = new Intent(this, LoginActivity.class);
@@ -330,7 +348,7 @@ public class MainActivity extends Activity {
 				} else {
 					// tell synchronization service to start sync			
 					Intent in = new Intent(this, SyncService.class);
-					in.putExtra("SyncAlarm", 1);
+					in.putExtra("SyncNow", 1);
 					this.startService(in);
 				}
 
@@ -477,6 +495,16 @@ public class MainActivity extends Activity {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null;
+	}
+
+	/**
+	 * Determines, if there is wifi connection active
+	 * @return boolean state
+	 */
+	public boolean isWifiConnected() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		return activeNetworkInfo.isConnected();
 	}
 
 

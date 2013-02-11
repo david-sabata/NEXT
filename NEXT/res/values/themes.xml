@@ -12,6 +12,7 @@
         <item name="actionEditIcon">@drawable/action_edit_light</item>
         <item name="actionAcceptIcon">@drawable/action_accept_light</item>
         <item name="actionCancelIcon">@drawable/action_cancel_light</item>     
+        <item name="actionDeletedIcon">@drawable/action_discard_light</item>    
         
         <!-- Other icons -->
         <item name="checkboxStar">@drawable/checkbox_star_light</item>
@@ -57,6 +58,7 @@
         <item name="actionEditIcon">@drawable/action_edit_dark</item>
         <item name="actionAcceptIcon">@drawable/action_accept_dark</item>
         <item name="actionCancelIcon">@drawable/action_cancel_dark</item>
+		<item name="actionDeletedIcon">@drawable/action_discard_dark</item>    
 
         <!-- Other icons -->
         <item name="checkboxStar">@drawable/checkbox_star_dark</item>

@@ -4,6 +4,10 @@
     <PreferenceCategory 
         android:title="@string/SettingsSynchronizationTitle"
         android:key="pref_key_synchro_setting">
+        <cz.fit.next.preferences.DriveLoginPreference
+            android:key="PREF_ACCOUNT_NAME" 
+            android:title="@string/no_account_connected" 
+            android:summary="@string/connect_account" />
         <SwitchPreference 
             android:key="PREF_SYNC_ENABLED"
             android:title="@string/SettingsSynchronizationActiveTitle"
@@ -11,6 +15,16 @@
             android:defaultValue="false"
             android:switchTextOff="0"
             android:switchTextOn="I"
+            android:dependency="PREF_ACCOUNT_NAME"
+            />
+         <SwitchPreference 
+            android:key="PREF_SYNC_WIFI"
+            android:title="@string/SettingsSynchronizationWifiTitle"
+            android:summary="@string/SettingsSynchronizationWifiSummary"
+            android:defaultValue="false"
+            android:switchTextOff="0"
+            android:switchTextOn="I"
+            android:dependency="PREF_ACCOUNT_NAME"
             />
         <ListPreference
             android:key="PREF_SYNC_INTERVAL"
@@ -18,6 +32,7 @@
             android:entries="@array/preferenceIntervalEntries"
             android:entryValues="@array/preferenceIntervalValuesIndex"
             android:defaultValue="3"
+            android:dependency="PREF_ACCOUNT_NAME"
             />
     </PreferenceCategory>
     <PreferenceCategory

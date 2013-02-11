@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="top"
+    android:orientation="vertical"
+    tools:context=".TaskDetailFragment" >
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        style="?taskScrollView" >
+
+        <LinearLayout
+            android:id="@+id/taskBody"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/titleLayout"
+                style="?taskTitleLayoutShowFragment">
+
+                <TextView
+                    android:id="@+id/datetime"
+                    style="?capsText" />
+
+                <TextView
+                    android:id="@+id/titleTask"
+                    style="?taskTitleShowFragment" />
+            </LinearLayout>
+
+            <LinearLayout style="?taskLineUnderTitle" />
+
+            <LinearLayout
+                android:id="@+id/taskIsCompletedLayout"
+                style="?taskSubLayout" >
+
+                <TextView
+                    android:id="@+id/TextView01"
+                    style="?capsText"
+                    android:text="@string/TaskIsCompletedTitle" />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+                <CheckBox 
+                    android:id="@+id/IsCompleted"
+                    style="?taskCompleted"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskDescriptionLayout"
+                style="?taskSubLayout">
+
+                <TextView
+                    android:id="@+id/taskDescriptionTitle"
+                    style="?capsText"
+                    android:text="@string/TaskDescriptionTitle"  />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+                <TextView
+                    android:id="@+id/textDescriptionShow"
+                    style="?taskCategoriesText"
+                    android:text="Fill description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskDateLayout"
+                style="?taskSubLayout" >
+
+                <TextView
+                    android:id="@+id/taskDateTitle"
+                    style="?capsText"
+                    android:text="@string/TaskDateTitle" />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+                <TextView
+                    android:id="@+id/textDateShow"
+                    style="?taskCategoriesText"
+                    android:text="Fill description"  />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskProjectLayout"
+                style="?taskSubLayout" >
+
+                <TextView
+                    android:id="@+id/taskProjectTitle"
+                    style="?capsText"
+                    android:text="@string/TaskProjectTitle"  />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+                <TextView
+                    android:id="@+id/textProjectShow"
+                    style="?taskCategoriesText"
+                    android:text="@string/TaskProjectTextAutoComplete"  />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskContextLayout"
+                style="?taskSubLayout" >
+
+                <TextView
+                    android:id="@+id/textContextTitle"
+                    style="?capsText"
+                    android:text="@string/TaskContextTitle"  />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+                <TextView
+                    android:id="@+id/textContextShow"
+                    style="?taskCategoriesText"
+                    android:text="@string/TaskContextTextAutoComplete" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/taskImportantLayout"
+                style="?taskSubLayout">
+
+                <TextView
+                    android:id="@+id/textImportantTitle"
+                    style="?capsText"
+                    android:text="@string/TaskPriorityTitle"  />
+
+                <LinearLayout style="?taskLineSeparatorCategories" />
+
+               <TextView
+                   android:id="@+id/showPriorityText"
+                   style="?taskCategoriesText"
+                   android:text="Medium Text"  />
+          
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

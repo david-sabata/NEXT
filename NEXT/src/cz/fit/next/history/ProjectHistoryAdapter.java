@@ -6,13 +6,15 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TasksModelService;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.preferences.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +26,9 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 	ArrayList<TaskHistory> mData;
 	Context mContext;
+	SparseArray<Drawable> drawables;
 
-	private HashMap<String, String> fieldnames;
+
 	private HashMap<String, String> titlecache;
 
 	public ProjectHistoryAdapter(Context context, int textViewResourceId,
@@ -35,22 +38,21 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		mData = history;
 		mContext = context;
 
-		// init titlecache
+		// Init titlecache
 		titlecache = new HashMap<String, String>();
 
-		// fill in field names translator
-		fieldnames = new HashMap<String, String>();
-
-		fieldnames.put(TaskHistory.TITLE, getContext().getResources()
-				.getString(R.string.history_title));
-		fieldnames.put(TaskHistory.CONTEXT, getContext().getResources()
-				.getString(R.string.history_context));
-		fieldnames.put(TaskHistory.DATE,
-				getContext().getResources().getString(R.string.history_date));
-		fieldnames.put(TaskHistory.DESCRIPTION, getContext().getResources()
-				.getString(R.string.history_description));
-		fieldnames.put(TaskHistory.PRIORITY, getContext().getResources()
-				.getString(R.string.history_priority));
+		// Get image resources only one 
+		int[] iconsAttrs = new int[]{R.attr.actionAcceptIcon,
+				R.attr.actionCancelIcon, R.attr.actionAddIcon, 
+				R.attr.actionEditIcon, R.attr.actionDeletedIcon};
+		
+		TypedArray iconResources = mContext.getTheme().obtainStyledAttributes(iconsAttrs);
+	    drawables = new SparseArray<Drawable>();
+		
+	    for (int i = 0; i < iconResources.length(); i++) {
+				drawables.put(iconsAttrs[i], iconResources.getDrawable(i));
+		}
+	    iconResources.recycle();
 	}
 
 	@Override
@@ -62,10 +64,18 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		if (convertView == null)
 			vi = inflater.inflate(R.layout.history_item, parent, false);
 
+		
+		TaskHistoryTranslator historyTranslator = new TaskHistoryTranslator(mContext, mData.get(position), drawables);
+		
 		TextView title = (TextView) vi.findViewById(R.id.title);
 		TextView author = (TextView) vi.findViewById(R.id.author);
 		TextView subtitle = (TextView) vi.findViewById(R.id.subtitle);
 
+		
+		/**
+		 * For Tomsa -> i would like to do it more effective, but i really 
+		 * dont't know how. Please try it. Tomas
+		 */
 		// Title --> name of task
 		Task t = TasksModelService.getInstance().getTaskById(
 				mData.get(position).getTaskId());
@@ -108,7 +118,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		String aname = sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
 		
 		if (aname != null)
-			sub = mData.get(position).getAuthor();
+			sub = historyTranslator.getAuthor();
 		
 		sub = sub
 				+ "\n"
@@ -117,114 +127,13 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 
 		author.setText(sub);
 
-		// Changes in tasks
-		sub = "";
+		
+		// Set report
+		subtitle.setText(historyTranslator.getReport());
 
-		boolean isCreated = false;
-		boolean isCompleted = false;
-		boolean isUncompleted = false;
-		boolean isDeleted = false;
-
-		for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
-
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.TITLE))
-					&& (mData.get(position).getChanges().get(i).getOldValue()
-							.isEmpty())) {
-				sub = sub
-						+ getContext().getResources().getString(
-								R.string.task_created) + "\n";
-
-				isCreated = true;
-
-			}
-			
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.TITLE))
-					&& (mData.get(position).getChanges().get(i).getNewValue()
-							.matches(TasksModelService.deletedTitlePrefix + ".*"))) {
-				sub = sub
-						+ getContext().getResources().getString(
-								R.string.task_deleted) + "\n";
-
-				isDeleted = true;
-				break;
-
-			}
-
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.COMPLETED))
-					&& (mData.get(position).getChanges().get(i).getNewValue()
-							.equals("true"))) {
-				sub = sub
-						+ getContext().getResources().getString(
-								R.string.task_completed) + "\n";
-
-				isCompleted = true;
-
-			}
-
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.COMPLETED))
-					&& (mData.get(position).getChanges().get(i).getNewValue()
-							.equals("false"))) {
-				sub = sub
-						+ getContext().getResources().getString(
-								R.string.task_uncompleted) + "\n";
-
-				isUncompleted = true;
-
-			}
-
-			if (mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.DATE)) {
-				sub = sub
-						+ fieldnames.get(mData.get(position).getChanges()
-								.get(i).getName())
-						+ " -> "
-						+ new DateTime(Long.parseLong(mData.get(position)
-								.getChanges().get(i).getNewValue()))
-								.toLocaleDateTimeString() + "\n";
-			}
-
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.CONTEXT))
-					|| (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.PRIORITY))
-					|| (mData.get(position).getChanges().get(i).getName()
-							.equals(TaskHistory.TITLE))) {
-
-				sub = sub
-						+ fieldnames.get(mData.get(position).getChanges()
-								.get(i).getName()) + " -> "
-						+ mData.get(position).getChanges().get(i).getNewValue()
-						+ "\n";
-			}
-
-			// fill in title in cache
-			if ((mData.get(position).getChanges().get(i).getName()
-					.equals(TaskHistory.TITLE))) {
-				titlecache.put(mData.get(position).getTaskId(),
-						mData.get(position).getChanges().get(i).getNewValue());
-			}
-
-		}
-
-		subtitle.setText(sub);
-
-		// Image
+		// Set image
 		ImageView img = (ImageView) vi.findViewById(R.id.history_image);
-
-		if (isCreated)
-			img.setImageResource(R.drawable.action_add_light);
-		else if (isDeleted)
-			img.setImageResource(R.drawable.action_discard_light);
-		else if (isCompleted)
-			img.setImageResource(R.drawable.action_accept_light);
-		else if (isUncompleted)
-			img.setImageResource(R.drawable.action_cancel_light);
-		else
-			img.setImageResource(R.drawable.action_edit_light);
+		img.setImageDrawable(historyTranslator.getDrawable());
 
 		return vi;
 	}
