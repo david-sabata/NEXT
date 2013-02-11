@@ -44,12 +44,12 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	private static final String ARG_TASK_ID = "taskID";
 	protected static final int DIALOG_EDIT_DATE = 1;
 	protected static final int DIALOG_EDIT_TIME = 2;
-	
+
 	/**
 	 * Used in Bundle to store Title, Description, Context (String values)
 	 */
 	private static final String ARG_TASK_SAVE = "taskTitle";
-	
+
 
 
 	/**
@@ -71,9 +71,11 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	private DateTime originalDateTime;
 
 	/**
-	 * Detect if task was restored from savedInstance
+	 * Detect if task was stored in the bundle, so we'll
+	 * know from where to load data when resuming/reloading
 	 */
-	private Boolean restoredTask;
+	private Boolean taskInBundle = false;
+
 	/**
 	 * Create an empty instance of TaskEditFragment with 
 	 * no prefilled values - use this to add a new task
@@ -99,7 +101,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 		frag.setArguments(b);
 
-		
 		return frag;
 	}
 
@@ -127,8 +128,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 				mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 		}
 
-		
-		
 		editFragment = this;
 	}
 
@@ -136,16 +135,15 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
-		
+
 		// Get actual prority
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		int priority = spinnerPriority.getSelectedItemPosition();
-				
+
 		// Get Actual info about project
 		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
-		.getTag().toString();
+				.getTag().toString();
 		String projectTitle = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
 				.getText().toString();
 		Project project = null;
@@ -154,19 +152,13 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		} else {
 			project = new Project(projectId, projectTitle);
 		}
-		
-		Task saveTask = new Task(mTask.getId(),
-				((TextView)taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
-				((TextView)taskDetailView.findViewById(R.id.editDescription)).getText().toString(),
-				originalDateTime,
-				priority,
-				project,
+
+		Task saveTask = new Task(mTask.getId(), ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
+				((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString(), originalDateTime, priority, project,
 				((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString(),
-				((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked()
-				);
-	
+				((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked());
+
 		outState.putSerializable(ARG_TASK_SAVE, (Serializable) saveTask);
-		
 	}
 
 
@@ -175,7 +167,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);		
+		super.onCreateView(inflater, container, savedInstanceState);
 		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_edit, container, false);
 
 		/**
@@ -185,13 +177,14 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		String[] priorityTexts = getResources().getStringArray(R.array.priorityArray);
 		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts);
 		spinnerPriority.setAdapter(spinnerAdapter);
-		
+
 		MainActivity activity = (MainActivity) getActivity();
-		
-		if(savedInstanceState != null && savedInstanceState.getSerializable(ARG_TASK_SAVE) != null) {		
+
+		if (savedInstanceState != null && savedInstanceState.getSerializable(ARG_TASK_SAVE) != null) {
 			// Restore original task if has been change
 			mTask = (Task) savedInstanceState.getSerializable(ARG_TASK_SAVE);
 			mTaskId = mTask.getId();
+			taskInBundle = true;
 			loadTaskToView(mTask);
 		} else if (mTaskId != null && activity.isServiceReady()) {
 			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
@@ -200,7 +193,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		} else {
 			loadDefaults();
 		}
-		
+
 
 
 
@@ -425,13 +418,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 
 	@Override
-	public void onResume() {
-		super.onResume();
-	}
-
-
-
-	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
@@ -548,7 +534,11 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	@Override
 	public void onServiceReady(TasksModelService s) {
 		if (mTaskId != null) {
-			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			// task data is not loaded/stored
+			if (!taskInBundle) {
+				mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			}
+
 			loadTaskToView(mTask);
 		}
 	}
