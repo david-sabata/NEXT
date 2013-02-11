@@ -2,6 +2,7 @@ package cz.fit.next.preferences;
 
 
 import cz.fit.next.R;
+import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.backend.sync.SyncService.ServiceBinder;
 import android.content.ComponentName;
@@ -108,6 +109,17 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		} else if (key.equals(PREF_SYNC_WIFI)) {
         } else if (key.equals(PREF_SYNC_ENABLED)) {
         	if (sharedPreferences.getBoolean(key, false)) {
+        		
+        		if (sharedPreferences.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null) {
+					// run login activity
+					Intent i = new Intent(getActivity(), LoginActivity.class);
+					Bundle b = new Bundle();
+					b.putInt("login", 1);
+					i.putExtras(b);
+					//this.startService(i);
+					startActivity(i);
+        		}
+        		
         		if (mSyncServiceBound) {
         			mSyncService.setAlarmFromPreferences();
         		} else {
