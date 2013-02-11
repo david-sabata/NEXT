@@ -118,6 +118,9 @@
     <string name="history_prechanged">Changed in&#160;</string>
     <string name="history_postchanged">&#160;and changed in&#160;</string>
     <string name="history_taskdeleted">Task has been deleted</string>
+    <string name="connect_account">Click to connect your Drive account</string>
+    <string name="no_account_connected">No account connected</string>
+    <string name="change_connected_account">Click to change connected account</string>
  
 
 </resources>

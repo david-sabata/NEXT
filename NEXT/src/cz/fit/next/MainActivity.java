@@ -306,17 +306,16 @@ public class MainActivity extends Activity {
 				fan.replaceMainFragment(prefFragment);
 				break;
 
-			case R.id.setting_connect_drive:
-
-				i = new Intent(this, LoginActivity.class);
-				b = new Bundle();
-				b.putInt("login", 1);
-				i.putExtras(b);
-				//this.startService(i);
-				startActivity(i);
-
-
-				break;
+			//			case R.id.setting_connect_drive:
+			//
+			//				i = new Intent(this, LoginActivity.class);
+			//				b = new Bundle();
+			//				b.putInt("login", 1);
+			//				i.putExtras(b);
+			//				//this.startService(i);
+			//				startActivity(i);
+			//
+			//				break;
 
 
 			case R.id.menu_sync_now:
@@ -325,7 +324,7 @@ public class MainActivity extends Activity {
 
 				if (!isNetworkAvailable()) {
 					Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
-					
+
 				} else if ((!isWifiConnected()) && (sp.getBoolean(SettingsFragment.PREF_SYNC_WIFI, false))) {
 					Toast.makeText(getApplicationContext(), R.string.no_wifi, Toast.LENGTH_SHORT).show();
 				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null) {
@@ -487,16 +486,15 @@ public class MainActivity extends Activity {
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null;
 	}
-	
+
 	/**
 	 * Determines, if there is wifi connection active
 	 * @return boolean state
 	 */
 	public boolean isWifiConnected() {
-	    ConnectivityManager connectivityManager 
-	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-	    return activeNetworkInfo.isConnected();
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		return activeNetworkInfo.isConnected();
 	}
 
 
