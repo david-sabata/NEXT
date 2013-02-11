@@ -122,9 +122,9 @@ public class SyncService extends Service {
 
 				}
 
-				//if (b.getInt("SyncAlarm") == 1) {
-				//	synchronize();
-				//}
+				if (b.getInt("SyncNow") == 1) {
+					synchronize();
+				}
 				
 				//if (b.getInt("Share") == 1) {
 				//	String sid = b.getString("ShareID");
@@ -135,7 +135,7 @@ public class SyncService extends Service {
 
 		}
 		
-		synchronize();
+		setAlarmFromPreferences();
 		
 		//Log.i(TAG, "SP: " + Boolean.toString(sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) + "    " + sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "nn"));
 
@@ -177,7 +177,7 @@ public class SyncService extends Service {
 			Toast toast = Toast.makeText(context, text, duration);
 			toast.show();
 			*/
-			//synchronize();
+			synchronize();
 		}
 
 	}

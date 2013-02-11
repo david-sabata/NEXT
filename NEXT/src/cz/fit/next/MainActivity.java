@@ -322,7 +322,7 @@ public class MainActivity extends Activity {
 				} else {
 					// tell synchronization service to start sync			
 					Intent in = new Intent(this, SyncService.class);
-					in.putExtra("SyncAlarm", 1);
+					in.putExtra("SyncNow", 1);
 					this.startService(in);
 				}
 
