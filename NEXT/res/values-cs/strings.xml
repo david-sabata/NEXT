@@ -1,0 +1,115 @@
+<resources>
+
+    <string name="app_name">NEXT</string>
+    <string name="title_activity_main">NEXT</string>
+    
+    <string name="me">Já</string>
+    
+    <string name="menu_settings">Nastavení</string>
+    <string name="menuSyncNow">Spustit synchronizaci</string>
+    <string name="WipeDatabase">Wipe database</string>
+    
+    <string name="TitleByTime">Time</string>    
+    <string name="TitleByTime_Next">Nejbližší</string>
+    <string name="TitleByTime_Today">Dnes</string>
+    <string name="TitleByTime_InPlan">Naplánováno</string>
+    <string name="TitleByTime_Someday">Někdy</string>
+    <string name="TityleByTime_Blocked">Blokováno</string>
+    <string name="TitleByContext">Kontext</string>    
+    <string name="TitleByProject">Projekty</string>
+    <string name="show_all_projects">Všechny projekty</string>    
+    
+    <string name="TaskDateTitle">DATUM</string>
+    <string name="TaskProjectTitle">PROJEKT</string>
+    <string name="TaskContextTitle">KONTEXT</string>
+    <string name="TaskPriorityTitle">PRIORITA</string>
+    <string name="TaskDescriptionTitle">POPIS</string>
+    <string name="TaskIsCompletedTitle">DOKONČENO</string>
+    <string name="TaskTimeTitle">ČAS</string>
+    <string name="TaskSomeDay">Někdy</string>
+    <string name="TaskWholeDay">Celý den</string>
+    <string name="TaskCompleted">Dokončeno</string>
+    
+    <string name="action_add_task">Přidat úkol</string>
+    <string name="action_edit_task">Upravit úkol</string>    
+    <string name="action_delete_task">Smazat úkol</string>    
+    <string name="action_save">Uložit</string>
+    <string name="action_cancel">Zrušit</string>
+        
+    <string name="frag_title_next">Nejbližší</string> 
+    <string name="frag_title_today">Dnes</string>
+    <string name="frag_title_someday">Někdy</string>
+    
+    <string name="someday">Někdy</string>
+    <string name="projects">Projekty</string>
+    <string name="implicit_project">&lt;Žádný&gt;</string>
+    
+    <string-array name="priorityArray">
+        <item>Žádná priorita</item>
+        <item>Nízká</item>
+        <item>Normální</item>
+        <item>Vysoká</item>
+    </string-array>
+    
+    <string name="ok">OK</string>
+    <string name="cancel">Zrušit</string>
+    
+    <string name="all_done">Vše je hotovo!</string>
+    
+    <string name="show_history">Zobrazit historii</string>
+    <string name="project_history">Historie projektu</string>
+    <string name="task_history">Historie úkolu</string>
+    
+    <string name="share_prompt">Zadejte Google mail se kterým chcete projekt sdílet</string>
+    
+    <string name="project_title">Název projektu</string>
+    <string name="project_delete">Smazat projekt</string>
+    <string name="project_delete_confirm_msg">Skutečně chcete tento projekt odstranit? Budou smazány i všechny jeho úkoly.</string>
+    
+    <string name="task_delete">Smazat úkol</string>
+    <string name="task_delete_confirm_msg">Skutečně chcete tento úkol odstranit?</string>
+    
+    <string name="no_actions">Pro tuto položku nejsou dostupné žádné akce</string>
+    
+    <string name="sync_in_progress">Probíhá synchronizace</string>
+    
+    
+    <string name="SettingsSynchronizationTitle">SYNCHRONIZACE</string>
+    <string name="SettingsSynchronizationActiveTitle">Google Drive</string>
+    <string name="SettingsSynchronizationWifiTitle">Pouze WiFi</string>
+    <string name="SettingsSynchronizationWifiSummary">Nevyužívat mobilní data</string>
+    <string name="SettingsSynchronizationActiveSummary">Stav synchronizace</string>
+    <string name="SettingsSynchronizationIntervalTitle">Interval</string>
+    <string name="SettingsAppTitle">Nastavení aplikace</string>
+    <string name="SettingsDesignTitle">Vzhled</string>
+    
+    <string name="history_title">název</string>
+    <string name="history_priority">prioritu</string>
+    <string name="history_context">kontext</string>
+    <string name="history_date">datum</string>
+    <string name="history_description">popis</string>
+    <string name="history_project">projekt</string>
+    <string name="history_taskcreated">vytvořil úkol</string>
+    <string name="history_taskcompleted">dokončil úkol</string>
+    <string name="history_taskuncompleted">označil úkol jako nedokončený</string>
+    <string name="history_prechanged">upravil&#160;</string>
+    <string name="history_postchanged">&#160;a&#160;</string>
+    <string name="history_taskdeleted">smazal úkol</string>
+    
+    <string name="deleted">smazáno</string>
+    
+    <string name="sharing">Sdílení</string>
+    <string name="sharing_no_shares">Načítání sdílení&#8230;</string>
+    <string name="sharing_no_conection">Není připojený účet Google Drive, a proto nelze sdílet</string>
+    <string name="sharing_unshare">Zrušit sdílení</string>
+    
+    <string name="no_connection">Není dostupné datové připojení</string>
+    <string name="no_wifi">Není dostupné WiFi připojení</string>
+    <string name="sync_error">NEXT: Nastal problém při synchronizaci</string>
+    <string name="sharing_error">NEXT: Nastal problém se sdílením</string>
+    
+    <string name="connect_account">Klikněte pro připojení Google Drive účtu</string>
+    <string name="no_account_connected">Není připojený žádný účet</string>
+    <string name="change_connected_account">Klikněte pro změnu připojeného účtu</string>
+
+</resources>

@@ -134,7 +134,7 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 			} else if (itemType.equals("date")) {
 				DateTime date = mTask.getDate();
 				if (date.isSomeday()) {
-					text = "Someday";
+					text = getActivity().getResources().getString(R.string.someday);
 				} else if (date.isAllday()) {
 					text = date.toLocaleDateString();
 				} else {
@@ -198,8 +198,12 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 
 		// set priority
 		TextView priority = (TextView) getView().findViewById(R.id.showPriorityText);
-		String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
-		priority.setText(priorityStrings[mTask.getPriority()]);
+		if (mTask.getPriority() != 0) {
+			String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
+			priority.setText(priorityStrings[mTask.getPriority()]);
+		} else {
+			getView().findViewById(R.id.taskImportantLayout).setVisibility(View.GONE);
+		}
 
 	}
 
