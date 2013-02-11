@@ -134,7 +134,7 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 			} else if (itemType.equals("date")) {
 				DateTime date = mTask.getDate();
 				if (date.isSomeday()) {
-					text = "Someday";
+					text = getActivity().getResources().getString(R.string.someday);
 				} else if (date.isAllday()) {
 					text = date.toLocaleDateString();
 				} else {

@@ -196,10 +196,9 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 					SharingFragment fragshare = SharingFragment.newInstance(projId, projTitle);
 					activity.replaceMainFragment(fragshare);
 				} else {
-					Context context = SyncService.getInstance().getApplicationContext();
 					CharSequence text = getResources().getString(R.string.sharing_no_conection);
 					int duration = Toast.LENGTH_SHORT;
-					Toast toast = Toast.makeText(context, text, duration);
+					Toast toast = Toast.makeText(getActivity(), text, duration);
 					toast.show();
 				}
 
