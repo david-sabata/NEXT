@@ -22,6 +22,9 @@ import android.util.Log;
 
 public class NotificationService extends Service {
 
+	private final String SP_LAST_TIME = "SP_LAST_TIME";
+	private final String SP_LAST_DATE = "SP_LAST_DATE";
+
 	private final String TAG = "NEXT Notification Service";
 
 	private class Params {
@@ -39,7 +42,7 @@ public class NotificationService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		//SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		// SettingsProvider sp = new SettingsProvider(getApplicationContext());
 
 		return mBinder;
 	}
@@ -49,8 +52,8 @@ public class NotificationService extends Service {
 
 		Log.i(TAG, "onStart");
 
-		//SettingsProvider sp = new SettingsProvider(getApplicationContext());
-		
+		// SettingsProvider sp = new SettingsProvider(getApplicationContext());
+
 		searchForUpcomingTask();
 
 		return START_NOT_STICKY;
@@ -58,15 +61,19 @@ public class NotificationService extends Service {
 
 	private void searchForUpcomingTask() {
 
-		class ExecClass extends AsyncTask<Void,Void,Params> {
+		class ExecClass extends AsyncTask<Void, Void, Params> {
 
 			@Override
 			protected Params doInBackground(Void... arg0) {
-				
+
 				Params p = new Params();
 				p.notifications = new ArrayList<Task>();
 
-				TasksDataSource ds = new TasksDataSource(getApplicationContext());
+				SettingsProvider sp = new SettingsProvider(
+						getApplicationContext());
+
+				TasksDataSource ds = new TasksDataSource(
+						getApplicationContext());
 				ds.open();
 
 				Cursor c = ds.getFullAllTasksCursor();
@@ -79,25 +86,38 @@ public class NotificationService extends Service {
 				while (c.moveToNext()) {
 					Task t = new Task(c);
 
-					if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
-							.toCalendar().get(Calendar.HOUR))
-							&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
-									.toCalendar().get(Calendar.MINUTE)))) {
-
-						p.notifications.add(t);
-						continue;
-					}
-
 					if (t.getDate().isSomeday()) {
 						continue;
 					}
 					if (t.getDate().isAllday()) {
+						
+						
+						
 						continue;
 					}
+										
+					if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
+							.toCalendar().get(Calendar.HOUR))
+							&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
+									.toCalendar().get(Calendar.MINUTE)))
+							&& ((t.getDate().toCalendar().get(Calendar.DATE)) == (current
+									.toCalendar().get(Calendar.DATE)))
+							&& ((t.getDate().toCalendar().get(Calendar.MONTH)) == (current
+									.toCalendar().get(Calendar.MONTH)))
+							&& ((t.getDate().toCalendar().get(Calendar.YEAR)) == (current
+									.toCalendar().get(Calendar.YEAR)))) {
+
+						if (!t.isCompleted()) {
+							p.notifications.add(t);
+						}
+						continue;
+					}
+
 					if (t.getDate().toMiliseconds() < current.toMiliseconds()) {
 						continue;
 					}
-					if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds()) {
+					if (t.getDate().toMiliseconds() > upcomingTime
+							.toMiliseconds()) {
 						continue;
 					}
 
@@ -109,10 +129,11 @@ public class NotificationService extends Service {
 					p.upcoming = ds.getTaskById(upcomingId);
 
 				if (p.upcoming == null) {
-					//Log.i(TAG, "E3");
+					// Log.i(TAG, "E3");
 				} else {
 
-					Log.i(TAG, "Selected upcoming task: " + p.upcoming.getTitle());
+					Log.i(TAG,
+							"Selected upcoming task: " + p.upcoming.getTitle());
 				}
 				ds.close();
 
@@ -122,8 +143,7 @@ public class NotificationService extends Service {
 			@Override
 			protected void onPostExecute(Params result) {
 				super.onPostExecute(result);
-				
-				
+
 				if (result != null) {
 					if (result.upcoming != null) {
 						setAlarm(result.upcoming.getDate().toMiliseconds());
@@ -134,12 +154,10 @@ public class NotificationService extends Service {
 				}
 
 				stopSelf();
-				
+
 			}
-			
+
 		}
-		
-		
 
 	}
 
@@ -148,8 +166,9 @@ public class NotificationService extends Service {
 		NotificationsAlarmReceiver ar = new NotificationsAlarmReceiver(
 				getApplicationContext(), time);
 		ar.run();
-		
-		Log.i(TAG, "Alarm set to: " + new DateTime(time).toLocaleDateTimeString());
+
+		Log.i(TAG,
+				"Alarm set to: " + new DateTime(time).toLocaleDateTimeString());
 
 	}
 
