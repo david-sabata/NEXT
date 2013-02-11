@@ -198,8 +198,12 @@ public class TaskDetailFragment extends Fragment implements ServiceReadyListener
 
 		// set priority
 		TextView priority = (TextView) getView().findViewById(R.id.showPriorityText);
-		String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
-		priority.setText(priorityStrings[mTask.getPriority()]);
+		if (mTask.getPriority() != 0) {
+			String[] priorityStrings = getResources().getStringArray(R.array.priorityArray);
+			priority.setText(priorityStrings[mTask.getPriority()]);
+		} else {
+			getView().findViewById(R.id.taskImportantLayout).setVisibility(View.GONE);
+		}
 
 	}
 
