@@ -81,6 +81,8 @@ public class NotificationService extends Service {
 
 				DateTime upcomingTime = new DateTime(Long.MAX_VALUE);
 				String upcomingId = null;
+				String lastDateS = sp.getString(SP_LAST_NOTIFIED, null);
+				DateTime lastDate = new DateTime(Long.parseLong(lastDateS));
 
 				DateTime current = new DateTime();
 
@@ -91,45 +93,27 @@ public class NotificationService extends Service {
 						continue;
 					}
 					if (t.getDate().isAllday()) {
-						String lastDateS = sp.getString(SP_LAST_NOTIFIED, null);
-						GregorianCalendar lastDate = (new DateTime(
-								Long.parseLong(lastDateS))).toCalendar();
+						
 
-						if (((t.getDate().toCalendar().get(Calendar.DATE)) == (current
-								.toCalendar().get(Calendar.DATE)))
-								&& ((t.getDate().toCalendar()
-										.get(Calendar.MONTH)) == (current
-										.toCalendar().get(Calendar.MONTH)))
-								&& ((t.getDate().toCalendar()
-										.get(Calendar.YEAR)) == (current
-										.toCalendar().get(Calendar.YEAR)))
+						if ((t.getDate().equalsToDay(current))
 								&& (!t.isCompleted())
-								&& ((t.getDate().toCalendar()
-										.get(Calendar.DATE)) != lastDate.get(Calendar.DATE))
-								&& ((t.getDate().toCalendar()
-										.get(Calendar.MONTH)) != lastDate.get(Calendar.MONTH))
-								&& ((t.getDate().toCalendar()
-										.get(Calendar.YEAR))!= lastDate.get(Calendar.YEAR))
+								&& (!t.getDate().equalsToMinute(lastDate))
 								&& (isTimeToAlldayNotifications())) {
 
 							p.notifications.add(t);
+							DateTime dt = new DateTime();
+							sp.storeString(SP_LAST_NOTIFIED, dt.toString());
+							
 						}
 						continue;
 					}
 
-					if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
-							.toCalendar().get(Calendar.HOUR))
-							&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
-									.toCalendar().get(Calendar.MINUTE)))
-							&& ((t.getDate().toCalendar().get(Calendar.DATE)) == (current
-									.toCalendar().get(Calendar.DATE)))
-							&& ((t.getDate().toCalendar().get(Calendar.MONTH)) == (current
-									.toCalendar().get(Calendar.MONTH)))
-							&& ((t.getDate().toCalendar().get(Calendar.YEAR)) == (current
-									.toCalendar().get(Calendar.YEAR)))) {
+					if (t.getDate().equalsToMinute(current) && (!t.getDate().equalsToMinute(lastDate))) {
 
 						if (!t.isCompleted()) {
 							p.notifications.add(t);
+							DateTime dt = new DateTime();
+							sp.storeString(SP_LAST_NOTIFIED, dt.toString());
 						}
 						continue;
 					}

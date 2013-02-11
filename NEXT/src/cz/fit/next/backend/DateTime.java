@@ -228,5 +228,37 @@ public class DateTime implements Serializable {
 		cal.setTimeInMillis(mTimestamp);
 		return cal;
 	}
+	
+	public boolean equalsToDay(DateTime second) {
+		if ((toCalendar().get(Calendar.YEAR) == second.toCalendar().get(
+				Calendar.YEAR))
+				&& (toCalendar().get(Calendar.MONTH) == second.toCalendar()
+						.get(Calendar.MONTH))
+				&& (toCalendar().get(Calendar.DATE) == second.toCalendar().get(
+						Calendar.DATE))) {
+			
+			return true;
+		} else
+			return false;
+
+	}
+	
+	public boolean equalsToMinute (DateTime second) {
+		if ((toCalendar().get(Calendar.YEAR) == second.toCalendar().get(
+				Calendar.YEAR))
+				&& (toCalendar().get(Calendar.MONTH) == second.toCalendar()
+						.get(Calendar.MONTH))
+				&& (toCalendar().get(Calendar.DATE) == second.toCalendar().get(
+						Calendar.DATE))
+				&& (toCalendar().get(Calendar.HOUR) == second.toCalendar().get(
+						Calendar.HOUR))
+				&& (toCalendar().get(Calendar.MINUTE) == second.toCalendar().get(
+						Calendar.MINUTE))) {
+			
+			return true;
+		} else
+			return false;
+
+	}
 
 }
