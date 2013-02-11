@@ -61,8 +61,9 @@
                 <EditText
                     android:id="@+id/editDescription"
                     style="?taskCategoriesText"
-                    android:inputType="text"
-                    android:hint="Fill some description" />
+                    android:hint="Fill some description"
+                    android:inputType="text|textMultiLine" />
+
             </LinearLayout>
 
             <LinearLayout

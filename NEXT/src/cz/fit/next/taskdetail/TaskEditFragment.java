@@ -1,6 +1,7 @@
 package cz.fit.next.taskdetail;
 
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -43,7 +44,12 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	private static final String ARG_TASK_ID = "taskID";
 	protected static final int DIALOG_EDIT_DATE = 1;
 	protected static final int DIALOG_EDIT_TIME = 2;
-
+	
+	/**
+	 * Used in Bundle to store Title, Description, Context (String values)
+	 */
+	private static final String ARG_TASK_SAVE = "taskTitle";
+	
 
 
 	/**
@@ -64,6 +70,10 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	 */
 	private DateTime originalDateTime;
 
+	/**
+	 * Detect if task was restored from savedInstance
+	 */
+	private Boolean restoredTask;
 	/**
 	 * Create an empty instance of TaskEditFragment with 
 	 * no prefilled values - use this to add a new task
@@ -89,6 +99,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 		frag.setArguments(b);
 
+		
 		return frag;
 	}
 
@@ -116,9 +127,47 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 				mTask = TasksModelService.getInstance().getTaskById(mTaskId);
 		}
 
+		
+		
 		editFragment = this;
 	}
 
+
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+		// Get actual prority
+		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
+		int priority = spinnerPriority.getSelectedItemPosition();
+				
+		// Get Actual info about project
+		String projectId = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
+		.getTag().toString();
+		String projectTitle = ((TextView) ((Spinner) taskDetailView.findViewById(R.id.spinnerProject)).getSelectedView().findViewById(R.id.taskSpinnerText))
+				.getText().toString();
+		Project project = null;
+		if (projectId == null || projectId.isEmpty()) {
+			project = new Project(projectTitle);
+		} else {
+			project = new Project(projectId, projectTitle);
+		}
+		
+		Task saveTask = new Task(mTask.getId(),
+				((TextView)taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
+				((TextView)taskDetailView.findViewById(R.id.editDescription)).getText().toString(),
+				originalDateTime,
+				priority,
+				project,
+				((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString(),
+				((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked()
+				);
+	
+		outState.putSerializable(ARG_TASK_SAVE, (Serializable) saveTask);
+		
+	}
 
 
 	/**
@@ -126,8 +175,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-
+		super.onCreateView(inflater, container, savedInstanceState);		
 		taskDetailView = inflater.inflate(R.layout.task_detail_fragment_edit, container, false);
 
 		/**
@@ -137,19 +185,25 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		String[] priorityTexts = getResources().getStringArray(R.array.priorityArray);
 		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts);
 		spinnerPriority.setAdapter(spinnerAdapter);
-
-
-		//		/**
-		//		 * Load the task data into view
-		//		 */
-		//		if (mTask != null)
-		//			loadTaskToView(mTask);
-		//		else
-		//			loadDefaults();
-
-		// load only defaults now
-		if (mTaskId == null)
+		
+		MainActivity activity = (MainActivity) getActivity();
+		
+		if(savedInstanceState != null && savedInstanceState.getSerializable(ARG_TASK_SAVE) != null) {		
+			// Restore original task if has been change
+			mTask = (Task) savedInstanceState.getSerializable(ARG_TASK_SAVE);
+			mTaskId = mTask.getId();
+			loadTaskToView(mTask);
+		} else if (mTaskId != null && activity.isServiceReady()) {
+			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
+			loadTaskToView(mTask);
+			mTaskId = mTask.getId();
+		} else {
 			loadDefaults();
+		}
+		
+
+
+
 
 		/**
 		 * Init editTime listener
@@ -373,13 +427,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		MainActivity activity = (MainActivity) getActivity();
-
-		if (mTaskId != null && activity.isServiceReady()) {
-			mTask = TasksModelService.getInstance().getTaskById(mTaskId);
-			loadTaskToView(mTask);
-		}
 	}
 
 
