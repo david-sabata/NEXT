@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -24,6 +26,7 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.history.HistoryFragment;
+import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.sharing.SharingFragment;
 import cz.fit.next.tasklist.Filter;
 import cz.fit.next.tasklist.TaskListFragment;
@@ -152,8 +155,10 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 			String tag = itemLayout.getTag() == null ? null : itemLayout.getTag().toString();
 
 			if (tag != Constants.IMPLICIT_PROJECT_NAME) {
-				if (SyncService.getInstance().isUserLoggedIn()) {
-					//menu.add(Menu.NONE, R.id.action_share, 0, R.string.project_share);
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				String account = prefs.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+
+				if (account != null) {
 					menu.add(Menu.NONE, R.id.action_sharing, 0, R.string.sharing);
 				}
 				menu.add(Menu.NONE, R.id.action_showhistory, 1, R.string.show_history);
