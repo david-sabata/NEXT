@@ -2,6 +2,7 @@ package cz.fit.next.notifications;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
@@ -9,6 +10,7 @@ import cz.fit.next.backend.SettingsProvider;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.notifications.NotificationsAlarmReceiver;
+import cz.fit.next.preferences.SettingsFragment;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -22,8 +24,7 @@ import android.util.Log;
 
 public class NotificationService extends Service {
 
-	private final String SP_LAST_TIME = "SP_LAST_TIME";
-	private final String SP_LAST_DATE = "SP_LAST_DATE";
+	private final String SP_LAST_NOTIFIED = "SP_LAST_TIME";
 
 	private final String TAG = "NEXT Notification Service";
 
@@ -90,12 +91,32 @@ public class NotificationService extends Service {
 						continue;
 					}
 					if (t.getDate().isAllday()) {
-						
-						
-						
+						String lastDateS = sp.getString(SP_LAST_NOTIFIED, null);
+						GregorianCalendar lastDate = (new DateTime(
+								Long.parseLong(lastDateS))).toCalendar();
+
+						if (((t.getDate().toCalendar().get(Calendar.DATE)) == (current
+								.toCalendar().get(Calendar.DATE)))
+								&& ((t.getDate().toCalendar()
+										.get(Calendar.MONTH)) == (current
+										.toCalendar().get(Calendar.MONTH)))
+								&& ((t.getDate().toCalendar()
+										.get(Calendar.YEAR)) == (current
+										.toCalendar().get(Calendar.YEAR)))
+								&& (!t.isCompleted())
+								&& ((t.getDate().toCalendar()
+										.get(Calendar.DATE)) != lastDate.get(Calendar.DATE))
+								&& ((t.getDate().toCalendar()
+										.get(Calendar.MONTH)) != lastDate.get(Calendar.MONTH))
+								&& ((t.getDate().toCalendar()
+										.get(Calendar.YEAR))!= lastDate.get(Calendar.YEAR))
+								&& (isTimeToAlldayNotifications())) {
+
+							p.notifications.add(t);
+						}
 						continue;
 					}
-										
+
 					if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
 							.toCalendar().get(Calendar.HOUR))
 							&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
@@ -196,6 +217,13 @@ public class NotificationService extends Service {
 
 		int notid = 0;
 		mNotificationManager.notify(notid, mBuilder.getNotification());
+	}
+	
+	private boolean isTimeToAlldayNotifications() {
+		//String h = sp.getString(SettingsFragment.PREF_ALLDAY_NOTIFICATIONS_HOUR, null);
+		//String m = sp.getString(SettingsFragment.PREF_ALLDAY_NOTIFICATIONS_MINUTE, null);
+		
+		return false;
 	}
 
 }

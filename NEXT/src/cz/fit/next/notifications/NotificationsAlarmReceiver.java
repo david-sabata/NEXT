@@ -35,7 +35,7 @@ public class NotificationsAlarmReceiver extends BroadcastReceiver {
         time.setTimeInMillis(mTime);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
                      pendingIntent);
-        Log.i("AlarmManager", "Alarm set.");
+       // Log.i("AlarmManager", "Alarm set.");
     }
     
     public void reset() {
@@ -45,12 +45,12 @@ public class NotificationsAlarmReceiver extends BroadcastReceiver {
             PendingIntent.getBroadcast(mContext, 0, intent, 
             PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.cancel(pendingIntent);
-        Log.i("AlarmManager","reset");
+       //Log.i("AlarmManager","reset");
     }
 
      @Override
      public void onReceive(Context context, Intent intent) {
-         Log.i("AlarmManager", "ALARM !!!!!!");
+        // Log.i("AlarmManager", "ALARM !!!!!!");
          Intent i = new Intent(context, NotificationService.class);
          //i.putExtra("SyncAlarm", 1);
          context.startService(i);
