@@ -325,7 +325,9 @@ public class MainActivity extends Activity {
 
 				if (!isNetworkAvailable()) {
 					Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
-
+					
+				} else if ((!isWifiConnected()) && (sp.getBoolean(SettingsFragment.PREF_SYNC_WIFI, false))) {
+					Toast.makeText(getApplicationContext(), R.string.no_wifi, Toast.LENGTH_SHORT).show();
 				} else if (sp.getString(SettingsFragment.PREF_ACCOUNT_NAME, null) == null) {
 					// run login activity
 					i = new Intent(this, LoginActivity.class);
@@ -484,6 +486,17 @@ public class MainActivity extends Activity {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null;
+	}
+	
+	/**
+	 * Determines, if there is wifi connection active
+	 * @return boolean state
+	 */
+	public boolean isWifiConnected() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    return activeNetworkInfo.isConnected();
 	}
 
 

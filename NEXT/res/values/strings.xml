@@ -79,6 +79,8 @@
     <string name="settings">Settings</string>
     <string name="SettingsSynchronizationTitle">SYNCHRONIZATION</string>
     <string name="SettingsSynchronizationActiveTitle">Google Drive</string>
+    <string name="SettingsSynchronizationWifiTitle">Sync only on Wi-Fi</string>
+    <string name="SettingsSynchronizationWifiSummary">Don´t sync on mobile data connection</string>
     <string name="TaskCompleted">Completed</string>
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
@@ -101,6 +103,11 @@
     <string name="sharing_unshare">Unshare</string>
     
     <string name="no_connection">No connection available.</string>
+    <string name="no_wifi">No Wi-Fi connection available.</string>
+    <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
+    <string name="sharing_error">NEXT: Something went wrong with sharing :(</string>
+    
+    
 
     
     <string name="SettingsDesignTitle">Design</string>
