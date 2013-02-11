@@ -191,8 +191,10 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 		*/
 			case R.id.action_sharing:
 
-				if ((SyncService.getInstance().isNetworkAvailable()) && (SyncService.getInstance().isUserLoggedIn())) {
-					MainActivity activity = (MainActivity) getActivity();
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				String account = prefs.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+				MainActivity activity = (MainActivity) getActivity();
+				if ((activity.isNetworkAvailable()) && (account != null)) {
 					SharingFragment fragshare = SharingFragment.newInstance(projId, projTitle);
 					activity.replaceMainFragment(fragshare);
 				} else {
@@ -207,7 +209,7 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 
 
 			case R.id.action_showhistory:
-				MainActivity activity = (MainActivity) getActivity();
+				activity = (MainActivity) getActivity();
 				HistoryFragment fraghist = HistoryFragment.newInstance(HistoryFragment.PROJECT, projId);
 				activity.replaceMainFragment(fraghist);
 				break;
