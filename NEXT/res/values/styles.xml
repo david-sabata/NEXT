@@ -1,32 +1,5 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-	<!-- Colors used in styles -->
-	<color name="BasicLightBackground">@android:color/background_light</color>
-	<color name="BasicDarkBackground">@android:color/background_dark</color>
-   	
-   	<color name="FanBackgroundLight">#2c2c2c</color>
-   	<color name="FanBackgroundDark">#0f0f0f</color>
-    
-    <color name="FanItemsTextLight">#FFFFFF</color>
-    <color name="FanItemsTextDark">#FFFFFF</color>
-    
-    <color name="FanTitleColorLight">#33b6ea</color>
-    <color name="FanTitleColorDark">#33b6ea</color>
-    
-    
-    <color name="FanItemsBackgroundColor">#8FB5D0</color>
-    <color name="TaskTitleColor">#FFFFFF</color>
-    <color name="TaskTitleBackground">#000000</color>
-    <color name="TaskCheckBoxBackground">#FFFFFF</color>
-	<color name="TaskSubtitleColor">#FFFFFF</color>
-    <color name="TaskSubtitleBackground">#33b6ea</color>
-    <color name="TaskRuller">#33b6ea</color>
-    <color name="priority_3">#BF3000</color>
-    <color name="priority_1">#93BF00</color>
-    <color name="priority_2">#BF9600</color>
-    
-	<color name="InPlanSecHeaderLineLightColor">@android:color/darker_gray</color> 
-    <color name="InPlanSecHeaderLineDarkColor">@android:color/darker_gray</color>    
-    
+<resources xmlns:android="http://schemas.android.com/apk/res/android">	<!-- Colors used in styles -->
+
 	<style name="Next" parent="@style/Theme.Holo.Light.Hack">    
 	</style>
 	<!-- ***********************************************************-->
@@ -40,7 +13,7 @@
 	</style>
 	
 	<!-- ListView -->
-	<style name="Next.Widget.ListView" parent="android:Widget.Holo.Light.ListView">
+	<style name="Next.Widget.ListView" parent="android:Widget.Holo.ListView">
 	</style>
 
 	<!--  LIGHT STYLE -->

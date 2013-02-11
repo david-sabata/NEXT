@@ -15,7 +15,8 @@
     
     <!-- Global  -->
     <attr name="capsText" format="reference" />
-    
+     <attr name="listViewBackground" format="reference" />
+     
     <!-- Sidebar references to styles -->
     <attr name="sidebarBackground" format="reference" />
     <attr name="sidebarTitle" format="reference" />
