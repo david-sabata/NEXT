@@ -119,14 +119,11 @@ public class MainActivity extends Activity {
 			this.startService(i);
 		}
 		
-		Log.i("aa","aa");
+		
 		// prepare notifications
 		Intent notifier = new Intent(this, NotificationService.class);
-		ComponentName a = this.startService(notifier);
-		if (a == null) 
-			Log.i("aa","null");
-		else
-			Log.i("aa",a.flattenToShortString());
+		this.startService(notifier);
+		
 	}
 
 
@@ -147,6 +144,14 @@ public class MainActivity extends Activity {
 
 		// restore service if needed
 		bindModelService();
+		
+		
+		// if activity were started by notification intent, change fragment to right one
+		Intent i = getIntent();
+		String taskId = i.getStringExtra(NotificationService.INTENT_TASK_ID);
+		if (taskId != null) {
+			Log.i("FUUUUUUUUUUU", taskId);
+		}
 	}
 
 

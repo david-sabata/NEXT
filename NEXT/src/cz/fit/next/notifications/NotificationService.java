@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.SettingsProvider;
@@ -13,6 +14,7 @@ import cz.fit.next.notifications.NotificationsAlarmReceiver;
 import cz.fit.next.preferences.SettingsFragment;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,8 @@ import android.util.Log;
 public class NotificationService extends Service {
 
 	private final String SP_LAST_NOTIFIED = "SP_LAST_TIME";
+	
+	public final static String INTENT_TASK_ID = "INTENT_TASK_ID";
 
 	private final String TAG = "NEXT Notification Service";
 
@@ -82,7 +86,11 @@ public class NotificationService extends Service {
 				DateTime upcomingTime = new DateTime(Long.MAX_VALUE);
 				String upcomingId = null;
 				String lastDateS = sp.getString(SP_LAST_NOTIFIED, null);
-				DateTime lastDate = new DateTime(Long.parseLong(lastDateS));
+				DateTime lastDate;
+				if (lastDateS != null)
+					lastDate = new DateTime(Long.parseLong(lastDateS));
+				else
+					lastDate = new DateTime(0);
 
 				DateTime current = new DateTime();
 
@@ -163,6 +171,9 @@ public class NotificationService extends Service {
 			}
 
 		}
+		
+		ExecClass e = new ExecClass();
+		e.execute();
 
 	}
 
@@ -180,7 +191,8 @@ public class NotificationService extends Service {
 	private void showNotification(Task t) {
 
 		String title = getResources().getString(R.string.upcoming_notification);
-		String content = t.getTitle();
+		// TODO: To strings.xml
+		String content = t.getTitle() + " at " + t.getDate().toLocaleDateTimeString();
 		String ticker = getResources()
 				.getString(R.string.upcoming_notification);
 
@@ -188,14 +200,11 @@ public class NotificationService extends Service {
 				.setSmallIcon(R.drawable.menu_next).setContentTitle(title)
 				.setContentText(content).setTicker(ticker).setAutoCancel(true);
 
-		// Intent resultIntent = new Intent(this, MainActivity.class);
-
-		// TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		// stackBuilder.addParentStack(MainActivity.class);
-		// stackBuilder.addNextIntent(resultIntent);
-		// PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-		// PendingIntent.FLAG_UPDATE_CURRENT);
-		// mBuilder.setContentIntent(resultPendingIntent);
+		Intent resultIntent = new Intent(this, MainActivity.class);
+		resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		resultIntent.putExtra(INTENT_TASK_ID, t.getId());
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
 
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
