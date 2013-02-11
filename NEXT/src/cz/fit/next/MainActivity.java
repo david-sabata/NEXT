@@ -159,14 +159,31 @@ public class MainActivity extends Activity {
 		// prepare gesture listener for fragments
 		mGestureDetector = new GestureDetector(this, new MyGestureDetector(getFanView()));
 		mTouchListener = new OnTouchListener() {
+
+			// set to true when sidebar is open and ACTION_DOWN comes
+			// and then ignore all events until ACTION_UP to ignore whole gesture
+			private boolean ignoreGesture = false;
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
-				if (fan.isOpen()) {
+				if (fan.isOpen() && event.getAction() == MotionEvent.ACTION_DOWN) {
 					fan.showMenu(); // atually means 'toggle'
+					ignoreGesture = true;
 					return true;
 				}
+
+				// ignore gesture until ACTION_UP
+				if (ignoreGesture) {
+					if (event.getAction() == MotionEvent.ACTION_UP) {
+						ignoreGesture = false;
+					}
+
+					return true;
+				}
+
 
 				// for some weird reason framelayout needs to always return true
 				if (v instanceof FrameLayout) {

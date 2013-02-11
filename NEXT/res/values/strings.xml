@@ -85,11 +85,11 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
-    <string name="history_title">Title</string>
-    <string name="history_priority">Priority</string>
-    <string name="history_context">Context</string>
-    <string name="history_date">Date</string>
-    <string name="history_description">Description</string>
+    <string name="history_title">title</string>
+    <string name="history_priority">priority</string>
+    <string name="history_context">context</string>
+    <string name="history_date">date</string>
+    <string name="history_description">description</string>
     <string name="task_created">TASK CREATED</string>
     <string name="task_completed">TASK MARKED AS COMPLETE</string>
     <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
@@ -111,6 +111,13 @@
 
     
     <string name="SettingsDesignTitle">Design</string>
+    <string name="history_project">project</string>
+    <string name="history_taskcreated">Task has been created</string>
+    <string name="history_taskcompleted">Task has been marked as completed</string>
+    <string name="history_taskuncompleted">Task has been marked as uncompleted</string>
+    <string name="history_prechanged">Changed in&#160;</string>
+    <string name="history_postchanged">&#160;and changed in&#160;</string>
+    <string name="history_taskdeleted">Task has been deleted</string>
  
 
 </resources>

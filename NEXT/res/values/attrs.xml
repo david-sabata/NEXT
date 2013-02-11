@@ -7,7 +7,8 @@
     <attr name="actionEditIcon" format="reference" />
     <attr name="actionAcceptIcon" format="reference" />
     <attr name="actionCancelIcon" format="reference" />
-
+    <attr name="actionDeletedIcon" format="reference" />
+    
     <!-- Icons -->
     <attr name="checkboxStar" format="reference" />
    
