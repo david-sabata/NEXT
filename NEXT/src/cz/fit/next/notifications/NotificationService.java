@@ -15,6 +15,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -49,78 +50,96 @@ public class NotificationService extends Service {
 		Log.i(TAG, "onStart");
 
 		//SettingsProvider sp = new SettingsProvider(getApplicationContext());
-
-		Params p = searchForUpcomingTask();
-		if (p != null) {
-			if (p.upcoming != null) {
-				setAlarm(p.upcoming.getDate().toMiliseconds());
-			}
-			for (int i = 0; i < p.notifications.size(); i++) {
-				showNotification(p.notifications.get(i));
-			}
-		}
-
-		//stopSelf();
+		
+		searchForUpcomingTask();
 
 		return START_NOT_STICKY;
 	}
 
-	private Params searchForUpcomingTask() {
+	private void searchForUpcomingTask() {
 
-		Params p = new Params();
-		p.notifications = new ArrayList<Task>();
+		class ExecClass extends AsyncTask<Void,Void,Params> {
 
-		TasksDataSource ds = new TasksDataSource(getApplicationContext());
-		ds.open();
+			@Override
+			protected Params doInBackground(Void... arg0) {
+				
+				Params p = new Params();
+				p.notifications = new ArrayList<Task>();
 
-		Cursor c = ds.getFullAllTasksCursor();
+				TasksDataSource ds = new TasksDataSource(getApplicationContext());
+				ds.open();
 
-		DateTime upcomingTime = new DateTime(Long.MAX_VALUE);
-		String upcomingId = null;
+				Cursor c = ds.getFullAllTasksCursor();
 
-		DateTime current = new DateTime();
+				DateTime upcomingTime = new DateTime(Long.MAX_VALUE);
+				String upcomingId = null;
 
-		while (c.moveToNext()) {
-			Task t = new Task(c);
+				DateTime current = new DateTime();
 
-			if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
-					.toCalendar().get(Calendar.HOUR))
-					&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
-							.toCalendar().get(Calendar.MINUTE)))) {
+				while (c.moveToNext()) {
+					Task t = new Task(c);
 
-				p.notifications.add(t);
-				continue;
+					if ((t.getDate().toCalendar().get(Calendar.HOUR)) == (current
+							.toCalendar().get(Calendar.HOUR))
+							&& ((t.getDate().toCalendar().get(Calendar.MINUTE)) == (current
+									.toCalendar().get(Calendar.MINUTE)))) {
+
+						p.notifications.add(t);
+						continue;
+					}
+
+					if (t.getDate().isSomeday()) {
+						continue;
+					}
+					if (t.getDate().isAllday()) {
+						continue;
+					}
+					if (t.getDate().toMiliseconds() < current.toMiliseconds()) {
+						continue;
+					}
+					if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds()) {
+						continue;
+					}
+
+					upcomingTime = t.getDate();
+					upcomingId = t.getId();
+				}
+
+				if (upcomingId != null)
+					p.upcoming = ds.getTaskById(upcomingId);
+
+				if (p.upcoming == null) {
+					//Log.i(TAG, "E3");
+				} else {
+
+					Log.i(TAG, "Selected upcoming task: " + p.upcoming.getTitle());
+				}
+				ds.close();
+
+				return p;
 			}
 
-			if (t.getDate().isSomeday()) {
-				continue;
-			}
-			if (t.getDate().isAllday()) {
-				continue;
-			}
-			if (t.getDate().toMiliseconds() < current.toMiliseconds()) {
-				continue;
-			}
-			if (t.getDate().toMiliseconds() > upcomingTime.toMiliseconds()) {
-				continue;
-			}
+			@Override
+			protected void onPostExecute(Params result) {
+				super.onPostExecute(result);
+				
+				
+				if (result != null) {
+					if (result.upcoming != null) {
+						setAlarm(result.upcoming.getDate().toMiliseconds());
+					}
+					for (int i = 0; i < result.notifications.size(); i++) {
+						showNotification(result.notifications.get(i));
+					}
+				}
 
-			upcomingTime = t.getDate();
-			upcomingId = t.getId();
+				stopSelf();
+				
+			}
+			
 		}
-
-		if (upcomingId != null)
-			p.upcoming = ds.getTaskById(upcomingId);
-
-		if (p.upcoming == null) {
-			Log.i(TAG, "E3");
-		} else {
-
-			Log.i(TAG, "Selected upcoming task: " + p.upcoming.getTitle());
-		}
-		ds.close();
-
-		return p;
+		
+		
 
 	}
 

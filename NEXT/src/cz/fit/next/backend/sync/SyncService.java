@@ -638,6 +638,12 @@ public class SyncService extends Service {
 	 * Sets synchronization alarm
 	 */
 	public void setAlarmFromPreferences() {
+		
+		if (mAccountName == null) {
+			Log.i(TAG,"Aborting sync due to null username.");
+			return;
+		}
+		
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
 		
 		int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
