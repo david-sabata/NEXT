@@ -1,16 +1,21 @@
 package cz.fit.next.backend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import org.json.JSONException;
 
 import android.database.Cursor;
-
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.JavaParser;
 
-public class Project {
+public class Project implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2781814844653584091L;
 
 
 	protected String mId;
@@ -21,9 +26,9 @@ public class Project {
 	protected boolean mIsShared;
 
 	protected ArrayList<TaskHistory> mHistory = null;
-	
-	
-	
+
+
+
 
 
 	/**
@@ -31,7 +36,7 @@ public class Project {
 	 */
 	public Project(Cursor cursor) {
 		JavaParser parser = new JavaParser();
-		
+
 		int projIdCol = cursor.getColumnIndex(Constants.COLUMN_PROJECTS_ID);
 		int projTitleCol = cursor.getColumnIndex(Constants.COLUMN_ALIAS_PROJECTS_TITLE);
 		int projHistoryCol = cursor.getColumnIndex(Constants.COLUMN_HISTORY);
@@ -55,20 +60,19 @@ public class Project {
 			if (projIdCol > -1 && projTitleCol > -1) {
 				this.mId = cursor.getString(projIdCol);
 				this.mTitle = cursor.getString(projTitleCol);
-				try { 
+				try {
 					this.mHistory = parser.parseHistory(cursor.getString(projHistoryCol));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-			}
-			else {
+			} else {
 				throw new RuntimeException("Instantiating Project from invalid Cursor");
 			}
 		}
 
 		int starredCol = cursor.getColumnIndex(Constants.COLUMN_STARRED);
 		this.mIsStarred = starredCol > -1 && cursor.getInt(starredCol) != 0;
-		
+
 		this.mIsShared = sharedCol > -1 && cursor.getInt(sharedCol) != 0;
 	}
 
@@ -86,7 +90,7 @@ public class Project {
 		this(id, title, false, null);
 	}
 
-	
+
 	/**
 	 * Create project by id and title and starred
 	 */
@@ -95,9 +99,9 @@ public class Project {
 		this.mTitle = title;
 		this.mIsStarred = starred;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Create project by id and title and starred and history
 	 */
@@ -123,23 +127,23 @@ public class Project {
 	public boolean isStarred() {
 		return mIsStarred;
 	}
-	
+
 	public boolean isShared() {
 		return mIsShared;
 	}
-	
+
 	public void setShared(boolean b) {
 		mIsShared = b;
 	}
-	
-	
+
+
 	/**
 	 * @return the mHistory
 	 */
 	public ArrayList<TaskHistory> getHistory() {
 		return mHistory;
 	}
-	
+
 	public String getSerializedHistory() {
 		JavaParser parser = new JavaParser();
 		parser.setHistory(mHistory);
@@ -195,7 +199,7 @@ public class Project {
 			return false;
 		return true;
 	}
-	
+
 
 
 }

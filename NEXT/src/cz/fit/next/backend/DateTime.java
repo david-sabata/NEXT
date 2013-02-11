@@ -8,18 +8,9 @@ import java.util.GregorianCalendar;
 public class DateTime implements Serializable {
 
 	/**
-	 * Format supported for parsing
+	 * 
 	 */
-	//	private static final String[] FORMATS = new String[] {
-	//			"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-	//			"yyyy-MM-dd HH:mm:ss.SSSZ",
-	//			"yyyy-MM-dd HH:mm:ss",
-	//			"yyyy-MM-dd HH:mmZ",
-	//			"yyyy-MM-dd HH:mm",
-	//			"yyyy-MM-dd",
-	//			"dd.MM.yyyy",
-	//			"dd. MM. yyyy"
-	//	};
+	private static final long serialVersionUID = 6021425039338598508L;
 
 	/**
 	 * Timestamp (in milis) used for 'someday'
