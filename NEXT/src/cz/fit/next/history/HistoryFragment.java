@@ -2,6 +2,7 @@ package cz.fit.next.history;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -115,6 +116,7 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 				}
 			}
 
+			Collections.reverse(adapterData);
 			setListAdapter(new ProjectHistoryAdapter(getActivity(), 0, adapterData));
 		} else {
 			Task t = TasksModelService.getInstance().getTaskById(mId);
@@ -125,7 +127,8 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 					if (proj.getHistory().get(i).getChanges().size() > 0)
 						adapterData.add(proj.getHistory().get(i));
 			}
-
+			
+			Collections.reverse(adapterData);
 			setListAdapter(new TaskHistoryAdapter(getActivity(), 0, adapterData));
 		}
 	}
