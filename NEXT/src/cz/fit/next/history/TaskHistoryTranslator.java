@@ -4,6 +4,7 @@ import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.TaskHistory;
 import cz.fit.next.backend.TaskHistory.HistoryTaskChange;
+import cz.fit.next.backend.TasksModelService;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.SparseArray;
@@ -51,6 +52,11 @@ public class TaskHistoryTranslator {
 				subMainAction = c.getResources().getString(R.string.history_taskcreated);;
 				isCreated = true;
 				break;
+			}
+			
+			if (changeItem.getName().equals(TaskHistory.TITLE) 
+					&& (changeItem.getNewValue().matches(TasksModelService.deletedTitlePrefix + ".*"))) {
+				isDeleted = true;				
 			}
 
 			// Completed
@@ -127,6 +133,8 @@ public class TaskHistoryTranslator {
 		}
 		
 		sub = sub + subMainAction + subOtherAction  +  ".";
+		
+		if (isDeleted) sub = c.getResources().getString(R.string.history_taskdeleted);
 		
 		report = sub;
 		

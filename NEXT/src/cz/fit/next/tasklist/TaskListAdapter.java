@@ -35,6 +35,7 @@ public class TaskListAdapter extends CursorAdapter {
 		// checkbox
 		CheckBox cb = (CheckBox) view.findViewById(R.id.checkBox);
 		int status = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
+		cb.setOnCheckedChangeListener(null); // prevent checking using old listener when reusing adapter
 		cb.setChecked(status != 0);
 		cb.setTag(id);
 
@@ -49,8 +50,8 @@ public class TaskListAdapter extends CursorAdapter {
 					@Override
 					public void run() {
 						Task task = TasksModelService.getInstance().getTaskById(taskId);
-						Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task
-								.getProject(), task.getContext(), isChecked);
+						Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task.getProject(),
+								task.getContext(), isChecked);
 
 						// save
 						TasksModelService.getInstance().saveTask(newTask);
@@ -73,11 +74,9 @@ public class TaskListAdapter extends CursorAdapter {
 		if (datetime.isSomeday()) {
 			//dt.setVisibility(View.GONE);
 			dt.setText(datetime.toLocaleDateTimeString());
-		}
-		else if (datetime.isAllday()) {
+		} else if (datetime.isAllday()) {
 			dt.setText(datetime.toLocaleDateString());
-		}
-		else {
+		} else {
 			dt.setText(datetime.toLocaleDateTimeString());
 		}
 

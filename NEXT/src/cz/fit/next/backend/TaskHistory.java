@@ -1,5 +1,6 @@
 package cz.fit.next.backend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -11,8 +12,13 @@ import org.json.JSONObject;
  * @author xsych_000
  *
  */
-public class TaskHistory {    
-	
+public class TaskHistory implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2760456834681452206L;
+
 	// String definitions for History object
 	public final static String TITLE = "next_hist_title";
 	public final static String DESCRIPTION = "next_hist_description";
@@ -21,28 +27,28 @@ public class TaskHistory {
 	public final static String PROJECT = "next_hist_project";
 	public final static String CONTEXT = "next_hist_context";
 	public final static String COMPLETED = "next_hist_completed";
-	
-	
+
+
 	protected String mTimeStamp;
 	protected String mAuthor;
 	protected String mTaskId;
 	protected ArrayList<HistoryTaskChange> mChanges;
-	
+
 	public TaskHistory(JSONObject jsonHistory) {
 		try {
 			mTimeStamp = jsonHistory.getString("timestamp");
 			mAuthor = jsonHistory.getString("author");
 			mTaskId = jsonHistory.getString("taskid");
-			
+
 			// Parse changes and store them
 			mChanges = parseChanges(jsonHistory.getJSONArray("changes"));
-			
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public TaskHistory() {
 		mTimeStamp = "";
 		mAuthor = "";
@@ -52,16 +58,16 @@ public class TaskHistory {
 
 	private ArrayList<HistoryTaskChange> parseChanges(JSONArray jsonArrayChanges) throws JSONException {
 		ArrayList<HistoryTaskChange> changes = new ArrayList<HistoryTaskChange>();
-		
-		for(int i = 0; i < jsonArrayChanges.length(); i++) {
+
+		for (int i = 0; i < jsonArrayChanges.length(); i++) {
 			JSONObject jsonOneChange = jsonArrayChanges.getJSONObject(i);
 			HistoryTaskChange oneChange = new HistoryTaskChange(jsonOneChange);
 			changes.add(oneChange);
-		}		
+		}
 		return changes;
 	}
-	
-	
+
+
 	/**
 	 * Getter and setters
 	 * @return
@@ -81,9 +87,9 @@ public class TaskHistory {
 	public ArrayList<HistoryTaskChange> getChanges() {
 		return mChanges;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * @param mTimeStamp the mTimeStamp to set
 	 */
@@ -117,31 +123,40 @@ public class TaskHistory {
 		hist.setName(name);
 		hist.setNewValue(newvalue);
 		hist.setOldValue(oldvalue);
-		
+
 		mChanges.add(hist);
 		return mChanges;
 	}
-	
+
 	public boolean headerequals(TaskHistory second) {
 		boolean res = true;
-		if (!mTimeStamp.equals(second.getTimeStamp())) res = false;
-		if (!mAuthor.equals(second.getAuthor())) res = false;
-		if (!mTaskId.equals(second.getTaskId())) res = false;
-		
+		if (!mTimeStamp.equals(second.getTimeStamp()))
+			res = false;
+		if (!mAuthor.equals(second.getAuthor()))
+			res = false;
+		if (!mTaskId.equals(second.getTaskId()))
+			res = false;
+
 		return res;
 	}
-	
+
 
 	/**
 	 * Private class for storage "change" information
 	 */
-	public class HistoryTaskChange {
+	public class HistoryTaskChange implements Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6077059675844836093L;
+
 		private String mName;
 		private String mOldValue;
 		private String mNewValue;
-		
+
 		private HistoryTaskChange(JSONObject change) throws JSONException {
-			mName = change.getString("name") ;
+			mName = change.getString("name");
 			mOldValue = change.getString("oldvalue");
 			mNewValue = change.getString("newvalue");
 		}
@@ -151,7 +166,7 @@ public class TaskHistory {
 			mOldValue = "";
 			mNewValue = "";
 		}
-		
+
 		/**
 		 * @return the mName
 		 */
@@ -184,13 +199,8 @@ public class TaskHistory {
 		public void setNewValue(String mNewValue) {
 			this.mNewValue = mNewValue;
 		}
-		
-		
-		
+
+
+
 	}
 }
-
-
-
-
-

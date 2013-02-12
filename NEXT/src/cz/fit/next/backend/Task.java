@@ -1,6 +1,8 @@
 package cz.fit.next.backend;
 
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +14,8 @@ import cz.fit.next.backend.database.Constants;
  * @author Tomas Sychra
  * @brief Class for storing data in one task
  */
-public class Task {
+public class Task implements Serializable{
+	private static final long serialVersionUID = 5256140779687085482L;
 	/**
 	 * Unique ID
 	 */

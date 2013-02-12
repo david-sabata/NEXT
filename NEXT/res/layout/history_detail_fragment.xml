@@ -96,8 +96,8 @@
 
                 <TextView
                     android:id="@+id/textProjectShow"
-                    style="?taskCategoriesText"
-                    android:text="@string/TaskProjectTextAutoComplete"  />
+                    style="?taskCategoriesText" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -113,8 +113,7 @@
 
                 <TextView
                     android:id="@+id/textContextShow"
-                    style="?taskCategoriesText"
-                    android:text="@string/TaskContextTextAutoComplete" />
+                    style="?taskCategoriesText" />
             </LinearLayout>
 
             <LinearLayout
