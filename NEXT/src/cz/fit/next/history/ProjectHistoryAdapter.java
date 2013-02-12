@@ -78,7 +78,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 			// deleted task - we cant find any info in DB - lets inspect history
 			// for some titles
 			if (titlecache.get(mData.get(position).getTaskId()) != null) {
-				title.setText(titlecache.get(mData.get(position).getTaskId()).substring(10) + " (" + getContext().getResources().getString(R.string.deleted) + ")");
+				title.setText(titlecache.get(mData.get(position).getTaskId()) + " (" + getContext().getResources().getString(R.string.deleted) + ")");
 			} else {
 				// can´t find it in title cache - search in current record
 				String tit = null;
