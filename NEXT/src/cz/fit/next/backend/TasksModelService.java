@@ -196,7 +196,7 @@ public class TasksModelService extends Service {
 		hist.setTimeStamp(new DateTime().toString());
 
 		Task old = getTaskById(task.getId());
-		if ((old == null) || !old.getProject().getId().equals(proj.getId())) {
+		if (old == null) {
 
 			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
 			hist.addChange(TaskHistory.COMPLETED, "", task.isCompleted() ? "true" : "false");
@@ -255,6 +255,15 @@ public class TasksModelService extends Service {
 			// MOVE TO ANOTHER PROJECT
 			if (old.getProject().getId() != task.getProject().getId()) {
 				hist.addChange(TaskHistory.PROJECT, old.getProject().getId(), task.getProject().getId());
+				
+				// add record about move into old project
+				Project oldproj = old.getProject();
+				ArrayList<TaskHistory> oldhist = oldproj.getHistory();
+				if (oldhist == null)
+					oldhist = new ArrayList<TaskHistory>();
+				oldhist.add(hist);
+				oldproj.setHistory(oldhist);
+				mProjectsDataSource.saveProject(oldproj);
 			}
 			
 
