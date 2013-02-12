@@ -204,6 +204,7 @@ public class TasksModelService extends Service {
 			hist.addChange(TaskHistory.DATE, "", task.getDate().toString());
 			hist.addChange(TaskHistory.DESCRIPTION, "", (task.getDescription() != null) ? task.getDescription() : "");
 			hist.addChange(TaskHistory.PRIORITY, "", Integer.toString(task.getPriority()));
+			hist.addChange(TaskHistory.PROJECT, "", task.getProject().getId());
 
 		} else {
 
@@ -250,6 +251,12 @@ public class TasksModelService extends Service {
 			if (old.isCompleted() != task.isCompleted()) {
 				hist.addChange(TaskHistory.COMPLETED, old.isCompleted() ? "true" : "false", task.isCompleted() ? "true" : "false");
 			}
+			
+			// MOVE TO ANOTHER PROJECT
+			if (old.getProject().getId() != task.getProject().getId()) {
+				hist.addChange(TaskHistory.PROJECT, old.getProject().getId(), task.getProject().getId());
+			}
+			
 
 		}
 
