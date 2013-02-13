@@ -5,7 +5,6 @@
     <string name="me">Me</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">NEXT</string>
-    <string name="TitleByTime">Time</string>
     <string name="TitleByTime_Today">Today</string>
     <string name="status_image">Status Image</string>
     
@@ -103,13 +102,11 @@
     <string name="sharing_unshare">Unshare</string>
     
     <string name="no_connection">No connection available.</string>
-    <string name="upcoming_notification">NEXT - upcoming task</string>
     <string name="no_wifi">No Wi-Fi connection available.</string>
     <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
     <string name="sharing_error">NEXT: Something went wrong with sharing :(</string>
     
     
-
 
     
     <string name="SettingsDesignTitle">Design</string>
@@ -123,6 +120,7 @@
     <string name="connect_account">Click to connect your Drive account</string>
     <string name="no_account_connected">No account connected</string>
     <string name="change_connected_account">Click to change connected account</string>
+    <string name="upcoming_notification">NEXT - Upcoming task</string>
  
 
 </resources>

@@ -184,7 +184,7 @@
 
                 <LinearLayout style="?taskLineSeparatorCategories" />
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/editContext"
                     style="?taskCategoriesText"
                     android:hint="Fill some context"

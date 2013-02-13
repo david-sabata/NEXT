@@ -8,8 +8,7 @@
     <string name="menu_settings">Nastavení</string>
     <string name="menuSyncNow">Spustit synchronizaci</string>
     <string name="WipeDatabase">Wipe database</string>
-    
-    <string name="TitleByTime">Time</string>    
+        
     <string name="TitleByTime_Next">Nejbližší</string>
     <string name="TitleByTime_Today">Dnes</string>
     <string name="TitleByTime_InPlan">Naplánováno</string>

@@ -25,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.deaux.fan.FanView;
@@ -118,12 +119,6 @@ public class MainActivity extends Activity {
 			//i.putExtras(b);
 			this.startService(i);
 		}
-		
-		
-		// prepare notifications
-		Intent notifier = new Intent(this, NotificationService.class);
-		this.startService(notifier);
-		
 	}
 
 
@@ -144,7 +139,6 @@ public class MainActivity extends Activity {
 
 		// restore service if needed
 		bindModelService();
-		
 		
 		// if activity were started by notification intent, change fragment to right one
 		Intent i = getIntent();
@@ -184,7 +178,7 @@ public class MainActivity extends Activity {
 
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
-				if (fan.isOpen() && event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (fan.isOpen()) {
 					fan.showMenu(); // atually means 'toggle'
 					ignoreGesture = true;
 					return true;
@@ -201,7 +195,7 @@ public class MainActivity extends Activity {
 
 
 				// for some weird reason framelayout needs to always return true
-				if (v instanceof FrameLayout) {
+				if (v instanceof FrameLayout && !(v instanceof ScrollView)) {
 					mGestureDetector.onTouchEvent(event);
 					return true;
 				} else {

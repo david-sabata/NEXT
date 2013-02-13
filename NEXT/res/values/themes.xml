@@ -20,7 +20,8 @@
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Light</item>
 	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Light</item>
-        
+        <item name="listViewBackground">@color/BasicLightBackground</item>
+	    
         <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Light</item>
 	    <item name="sidebarTitle">@style/Next.Sidebar.Title.Light</item>
@@ -66,6 +67,7 @@
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Dark</item>
 	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Dark</item>
+        <item name="listViewBackground">@color/BasicDarkBackground</item>
         
         <!-- Sidebar references to styles -->
 	    <item name="sidebarBackground">@style/Next.Sidebar.Dark</item>
