@@ -73,6 +73,7 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 		Task t = TasksModelService.getInstance().getTaskById(mData.get(position).getTaskId());
 		if (t != null) {
 			title.setText(t.getTitle());
+			titlecache.put(t.getId(), t.getTitle());
 		} else {
 			// deleted task - we cant find any info in DB - lets inspect history
 			// for some titles
@@ -82,8 +83,11 @@ public class ProjectHistoryAdapter extends ArrayAdapter<TaskHistory> {
 				// can´t find it in title cache - search in current record
 				String tit = null;
 				for (int i = 0; i < mData.get(position).getChanges().size(); i++) {
-					if (mData.get(position).getChanges().get(i).getName().equals(TaskHistory.TITLE))
+					if (mData.get(position).getChanges().get(i).getName().equals(TaskHistory.TITLE)) {
 						tit = mData.get(position).getChanges().get(i).getNewValue();
+						titlecache.put(mData.get(position).getTaskId(), 
+								mData.get(position).getChanges().get(i).getNewValue());
+					}
 				}
 
 				if (tit != null) {

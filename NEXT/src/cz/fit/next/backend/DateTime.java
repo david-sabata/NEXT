@@ -12,6 +12,8 @@ public class DateTime implements Serializable {
 	 */
 	private static final long serialVersionUID = 6021425039338598508L;
 
+	private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
+
 	/**
 	 * Timestamp (in milis) used for 'someday'
 	 * 
@@ -181,16 +183,44 @@ public class DateTime implements Serializable {
 
 
 	/**
-	 * Returns localized datetime string
+	 * Returns localized datetime string. Uses date and/or time as expected
 	 * (Uses service to get localized DateFormatter)
 	 */
 	public String toLocaleDateTimeString() {
 		if (isSomeday())
 			return TasksModelService.getInstance().getLocalizedSomedayTime();
-		else if (isAllday())
+
+		if (isAllday()) {
+			if (isToday()) {
+				return TasksModelService.getInstance().getLocalizedToday();
+			}
+
+			if (isTomorrow()) {
+				return TasksModelService.getInstance().getLocalizedTomorrow();
+			}
+
+			if (isYesterday()) {
+				return TasksModelService.getInstance().getLocalizedYesterday();
+			}
+
 			return TasksModelService.getInstance().getLocalizedDate(new Date(mTimestamp));
-		else
-			return TasksModelService.getInstance().getLocalizedDateTime(new Date(mTimestamp));
+		} else {
+			Date d = new Date(mTimestamp);
+
+			if (isToday()) {
+				return TasksModelService.getInstance().getLocalizedToday() + " " + TasksModelService.getInstance().getLocalizedTime(d);
+			}
+
+			if (isTomorrow()) {
+				return TasksModelService.getInstance().getLocalizedTomorrow() + " " + TasksModelService.getInstance().getLocalizedTime(d);
+			}
+
+			if (isYesterday()) {
+				return TasksModelService.getInstance().getLocalizedYesterday() + " " + TasksModelService.getInstance().getLocalizedTime(d);
+			}
+
+			return TasksModelService.getInstance().getLocalizedDateTime(d);
+		}
 	}
 
 	/**
@@ -209,6 +239,46 @@ public class DateTime implements Serializable {
 		return isSomeday() ? TasksModelService.getInstance().getLocalizedSomedayTime() : TasksModelService.getInstance().getLocalizedTime(new Date(mTimestamp));
 	}
 
+	/**
+	 * Returns number of days needed to be added to this object in order
+	 * to make it the same date as the object in parameter
+	 */
+	public int diffInDays(DateTime to) {
+		GregorianCalendar self = toCalendar();
+		self.set(Calendar.HOUR_OF_DAY, 0);
+		self.set(Calendar.MINUTE, 0);
+		self.set(Calendar.SECOND, 0);
+		self.set(Calendar.MILLISECOND, 0);
+		long selfMs = self.getTimeInMillis();
+
+		GregorianCalendar other = to.toCalendar();
+		other.set(Calendar.HOUR_OF_DAY, 0);
+		other.set(Calendar.MINUTE, 0);
+		other.set(Calendar.SECOND, 0);
+		other.set(Calendar.MILLISECOND, 0);
+		long otherMs = other.getTimeInMillis();
+
+		long diff = (selfMs - otherMs) / MILLISECS_PER_DAY;
+		return (int) diff;
+	}
+
+
+	public boolean isToday() {
+		DateTime today = new DateTime();
+		return (diffInDays(today) == 0);
+	}
+
+	public boolean isTomorrow() {
+		DateTime today = new DateTime();
+		return (diffInDays(today) == 1);
+	}
+
+	public boolean isYesterday() {
+		DateTime today = new DateTime();
+		return (diffInDays(today) == -1);
+	}
+
+
 
 	/**
 
@@ -218,6 +288,30 @@ public class DateTime implements Serializable {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTimeInMillis(mTimestamp);
 		return cal;
+	}
+
+	public boolean equalsToDay(DateTime second) {
+		if ((toCalendar().get(Calendar.YEAR) == second.toCalendar().get(Calendar.YEAR))
+				&& (toCalendar().get(Calendar.MONTH) == second.toCalendar().get(Calendar.MONTH))
+				&& (toCalendar().get(Calendar.DATE) == second.toCalendar().get(Calendar.DATE))) {
+
+			return true;
+		} else
+			return false;
+
+	}
+
+	public boolean equalsToMinute(DateTime second) {
+		if ((toCalendar().get(Calendar.YEAR) == second.toCalendar().get(Calendar.YEAR))
+				&& (toCalendar().get(Calendar.MONTH) == second.toCalendar().get(Calendar.MONTH))
+				&& (toCalendar().get(Calendar.DATE) == second.toCalendar().get(Calendar.DATE))
+				&& (toCalendar().get(Calendar.HOUR_OF_DAY) == second.toCalendar().get(Calendar.HOUR_OF_DAY))
+				&& (toCalendar().get(Calendar.MINUTE) == second.toCalendar().get(Calendar.MINUTE))) {
+
+			return true;
+		} else
+			return false;
+
 	}
 
 }

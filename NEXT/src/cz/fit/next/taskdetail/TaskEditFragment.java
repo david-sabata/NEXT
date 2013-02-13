@@ -24,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -164,7 +163,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		} else {
 			taskId = mTask.getId();
 		}
-		
+
 		Task saveTask = new Task(taskId, ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
 				((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString(), originalDateTime, priority, project,
 				((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString(),
@@ -294,14 +293,25 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		wholeDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (!isChecked) {
+				if (isChecked) {
+					originalDateTime.setIsAllday(true);
+
+					// Hide rest
+					taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
+				} else {
+					// Restore all date witch actual time
+					DateTime origDate = new DateTime();
+					Calendar c = originalDateTime.toCalendar();
+					origDate.setDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+					originalDateTime = origDate;
 					originalDateTime.setIsAllday(false);
-					originalDateTime = new DateTime();
+
+					// Show rest
+					taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
 				}
 
 				((TextView) taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).findViewById(R.id.editTime)).setText(originalDateTime
 						.toLocaleTimeString());
-				alldayChecked(isChecked);
 			}
 		});
 
@@ -330,28 +340,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		}
 	}
 
-	/**
-	 * Set content, if allday switch is checked
-	 * @param isChecked
-	 */
-	private void alldayChecked(Boolean isChecked) {
-		if (isChecked) {
-			originalDateTime.setIsAllday(true);
 
-			// Hide rest
-			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.GONE);
-		} else {
-			// Restore all date witch actual time
-			DateTime newDateTime = new DateTime();
-			Calendar c = originalDateTime.toCalendar();
-			newDateTime.setDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-			originalDateTime = newDateTime;
-			originalDateTime.setIsAllday(false);
-
-			// Show rest
-			taskDetailView.findViewById(R.id.TaskSubBodyEditTimeLayout).setVisibility(View.VISIBLE);
-		}
-	}
 
 	/**
 	 * Sets up the (sub)views according to the task
@@ -442,9 +431,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		// Set spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(0);
-		
 
-       			
 	}
 
 
@@ -574,7 +561,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 			loadTaskToView(mTask);
 		}
 	}
-	
+
 	private ArrayList<String> loadContexts() {
 		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
 		ArrayList<String> contexts = new ArrayList<String>();

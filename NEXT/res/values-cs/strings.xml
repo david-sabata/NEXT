@@ -8,8 +8,7 @@
     <string name="menu_settings">Nastavení</string>
     <string name="menuSyncNow">Spustit synchronizaci</string>
     <string name="WipeDatabase">Wipe database</string>
-    
-    <string name="TitleByTime">Time</string>    
+        
     <string name="TitleByTime_Next">Nejbližší</string>
     <string name="TitleByTime_Today">Dnes</string>
     <string name="TitleByTime_InPlan">Naplánováno</string>
@@ -40,6 +39,9 @@
     <string name="frag_title_today">Dnes</string>
     <string name="frag_title_someday">Někdy</string>
     
+    <string name="today">Dnes</string>
+    <string name="tomorrow">Zítra</string>
+    <string name="yesterday">Včera</string>
     <string name="someday">Někdy</string>
     <string name="projects">Projekty</string>
     <string name="implicit_project">&lt;Žádný&gt;</string>
@@ -56,6 +58,7 @@
     
     <string name="all_done">Vše je hotovo!</string>
     
+    <string name="empty_history">Historie je prázdná</string>
     <string name="show_history">Zobrazit historii</string>
     <string name="project_history">Historie projektu</string>
     <string name="task_history">Historie úkolu</string>
@@ -112,4 +115,16 @@
     <string name="no_account_connected">Není připojený žádný účet</string>
     <string name="change_connected_account">Klikněte pro změnu připojeného účtu</string>
 
+    
+    <string name="tutorial_project">Tutoriál</string>
+
+    <string name="tutorial_first_task">Vítejte, toto je Váš první úkol. Klikněte na něj!</string>
+    <string name="tutorial_first_description">Nejdůležitější na každém úkolu je jeho název - ten obvykle připomíná co byste měli dál dělat. Pokud Vám to nestačí, můžete doplnit delší popis, jako je například ten který právě čtete.\n\nVětšina úkolů bude obsahovat také informaci o času. Můžete použít konkrétní datum a čas anebo použít "někdy". To se hodí zjeména pro úkoly které hodláte plnit až někdy, až se Vám bude chtít.</string>
+    <string name="tutorial_categorize_tasks">Úkoly můžete přiřazovat do Projektů a Kontextů</string>
+    <string name="tutorial_share_project">Nasdílením projektu na něm můžete spolupracovat s kolegy a přáteli</string>
+    <string name="tutorial_share_description">Pokud jste povolili synchronizaci (na obrazovce Nastavení), všechny Vaše projekty se budou ukládat v HTML formátu do Vašeho Google Drive. Můžete je prohlížet, zálohovat, a dokonce je použít k přesunutí svých dat jinam, pokud nebudete s naší aplikací spokojení.\n\nNejsilnější zbraní je ovšem možnost sdílení projektů s Vašimi spolupracovníky a kamarády. Po nasdílení můžou všichni členové na projektu spolupracovat a provedené změny se budou automaticky synchronizovat!\nPro přehlednost je možné zobrazit i historii změn každého projektu (použijte kontextové menu na obrazovce projektů), kde můžete sledovat jaký pokrok Vaši kolegové udělali.</string>
+    <string name="tutorial_sidebar">Postranní panel otevřete vodorovným přejetím prstu nebo klikem na ikonu</string>
+    <string name="tutorial_rate_us">Ohodnoťte NEXT na Google Play</string>
+    <string name="tutorial_dark_skin">Také vyzkoušejte náš tmavý skin - najdete jej v Nastavení ;-)</string>
+    
 </resources>

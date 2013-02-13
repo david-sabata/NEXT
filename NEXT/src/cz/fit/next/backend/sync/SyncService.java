@@ -41,6 +41,7 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
 public class SyncService extends Service {
@@ -506,6 +507,10 @@ public class SyncService extends Service {
 			Intent broadcast = new Intent();
 			broadcast.setAction(BROADCAST_SYNC_END);
 			sendBroadcast(broadcast);
+			
+			// prepare notifications - NOT NEEDED
+			//Intent notifier = new Intent(getApplicationContext(), NotificationService.class);
+			//startService(notifier);
 
 			Log.i(TAG, "Killing SyncService.");
 			stopSelf();
@@ -620,7 +625,17 @@ public class SyncService extends Service {
 	 * Sets synchronization alarm
 	 */
 	public void setAlarmFromPreferences() {
+		
+		if (mAccountName == null) {
+			Log.i(TAG,"Aborting sync due to null username.");
+			return;
+		}
+		
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		
+		if (!sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+			return;
+		}
 
 		int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
 		String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it];

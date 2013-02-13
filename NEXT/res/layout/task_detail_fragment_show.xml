@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".TaskDetailFragment" >
 
-    <ScrollView
+    <cz.fit.next.MyScrollView
         android:id="@+id/scrollView"
         style="?taskScrollView" >
 
@@ -129,6 +129,6 @@
           
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </cz.fit.next.MyScrollView>
 
 </LinearLayout>

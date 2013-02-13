@@ -25,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.deaux.fan.FanView;
@@ -34,9 +35,11 @@ import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.TasksModelService.ModelServiceBinder;
 import cz.fit.next.backend.sync.LoginActivity;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.preferences.SettingsUtil;
 import cz.fit.next.sidebar.SidebarFragment;
+import cz.fit.next.taskdetail.TaskDetailFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
 
@@ -137,6 +140,15 @@ public class MainActivity extends Activity {
 
 		// restore service if needed
 		bindModelService();
+		
+		// if activity were started by notification intent, change fragment to right one
+		Intent i = getIntent();
+		String taskId = i.getStringExtra(NotificationService.INTENT_TASK_ID);
+		if (taskId != null) {
+			//Log.i("FUUUUUUUUUUU", taskId);
+			TaskDetailFragment tdf = TaskDetailFragment.newInstance(taskId);
+			this.replaceMainFragment(tdf);
+		}
 	}
 
 
@@ -169,7 +181,7 @@ public class MainActivity extends Activity {
 
 				// if the sidebar is open, close it on every touch to content
 				FanView fan = getFanView();
-				if (fan.isOpen() && event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (fan.isOpen()) {
 					fan.showMenu(); // atually means 'toggle'
 					ignoreGesture = true;
 					return true;
@@ -186,7 +198,7 @@ public class MainActivity extends Activity {
 
 
 				// for some weird reason framelayout needs to always return true
-				if (v instanceof FrameLayout) {
+				if (v instanceof FrameLayout && !(v instanceof ScrollView)) {
 					mGestureDetector.onTouchEvent(event);
 					return true;
 				} else {

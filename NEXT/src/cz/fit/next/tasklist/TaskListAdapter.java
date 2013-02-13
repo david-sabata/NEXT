@@ -70,20 +70,12 @@ public class TaskListAdapter extends CursorAdapter {
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
 		long date = cursor.getLong(cursor.getColumnIndex(Constants.COLUMN_DATETIME));
 		DateTime datetime = new DateTime(date);
-
-		if (datetime.isSomeday()) {
-			//dt.setVisibility(View.GONE);
-			dt.setText(datetime.toLocaleDateTimeString());
-		} else if (datetime.isAllday()) {
-			dt.setText(datetime.toLocaleDateString());
-		} else {
-			dt.setText(datetime.toLocaleDateTimeString());
-		}
+		dt.setText(datetime.toLocaleDateTimeString());
 
 		// priority
 		LinearLayout prl = (LinearLayout) view.findViewById(R.id.TasklistItemPriority);
 		if (cursor.getColumnIndex(Constants.COLUMN_PRIORITY) != -1) {
-			Integer priority = Integer.parseInt(cursor.getString(cursor.getColumnIndex(Constants.COLUMN_PRIORITY)));
+			int priority = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_PRIORITY));
 			switch (priority) {
 				case 1:
 					prl.setBackgroundColor(context.getResources().getColor(R.color.priority_1));

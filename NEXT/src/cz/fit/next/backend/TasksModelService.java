@@ -6,16 +6,18 @@ import java.util.Date;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
-import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
 /**
@@ -196,7 +198,7 @@ public class TasksModelService extends Service {
 		hist.setTimeStamp(new DateTime().toString());
 
 		Task old = getTaskById(task.getId());
-		if ((old == null) || !old.getProject().getId().equals(proj.getId())) {
+		if (old == null) {
 
 			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
 			hist.addChange(TaskHistory.COMPLETED, "", task.isCompleted() ? "true" : "false");
@@ -204,6 +206,7 @@ public class TasksModelService extends Service {
 			hist.addChange(TaskHistory.DATE, "", task.getDate().toString());
 			hist.addChange(TaskHistory.DESCRIPTION, "", (task.getDescription() != null) ? task.getDescription() : "");
 			hist.addChange(TaskHistory.PRIORITY, "", Integer.toString(task.getPriority()));
+			hist.addChange(TaskHistory.PROJECT, "", task.getProject().getId());
 
 		} else {
 
@@ -251,6 +254,21 @@ public class TasksModelService extends Service {
 				hist.addChange(TaskHistory.COMPLETED, old.isCompleted() ? "true" : "false", task.isCompleted() ? "true" : "false");
 			}
 
+			// MOVE TO ANOTHER PROJECT
+			if (!old.getProject().getId().equals(task.getProject().getId())) {
+				hist.addChange(TaskHistory.PROJECT, old.getProject().getId(), task.getProject().getId());
+
+				// add record about move into old project
+				Project oldproj = old.getProject();
+				ArrayList<TaskHistory> oldhist = oldproj.getHistory();
+				if (oldhist == null)
+					oldhist = new ArrayList<TaskHistory>();
+				oldhist.add(hist);
+				oldproj.setHistory(oldhist);
+				mProjectsDataSource.saveProject(oldproj);
+			}
+
+
 		}
 
 		if (history == null)
@@ -263,6 +281,10 @@ public class TasksModelService extends Service {
 
 		// save task
 		mTasksDataSource.saveTask(task);
+
+		// prepare notifications
+		Intent i = new Intent(getApplicationContext(), NotificationService.class);
+		startService(i);
 	}
 
 	/**
@@ -300,9 +322,9 @@ public class TasksModelService extends Service {
 
 		// generate history record
 		TaskHistory hist = new TaskHistory();
-		hist.setAuthor(SyncService.getInstance().getAccountName());
-		if (hist.getAuthor() == null)
-			hist.setAuthor("");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		String author = prefs.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+		hist.setAuthor(author == null ? "" : author);
 		hist.setTaskId(deleting.getId());
 		hist.setTimeStamp(new DateTime().toString());
 
@@ -352,6 +374,19 @@ public class TasksModelService extends Service {
 	public String getLocalizedSomedayTime() {
 		return mContext.getResources().getString(R.string.someday);
 	}
+
+	public String getLocalizedToday() {
+		return mContext.getResources().getString(R.string.today);
+	}
+
+	public String getLocalizedTomorrow() {
+		return mContext.getResources().getString(R.string.tomorrow);
+	}
+
+	public String getLocalizedYesterday() {
+		return mContext.getResources().getString(R.string.yesterday);
+	}
+
 
 	/**
 	 * Returns tasks filter query provider used to filter tasks
