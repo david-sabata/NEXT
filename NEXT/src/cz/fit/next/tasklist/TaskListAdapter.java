@@ -4,6 +4,7 @@ package cz.fit.next.tasklist;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
@@ -30,13 +32,14 @@ public class TaskListAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
+		final MainActivity activity = (MainActivity) context;
 		String id = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
 
 		// checkbox
 		CheckBox cb = (CheckBox) view.findViewById(R.id.checkBox);
-		int status = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
+		int isCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
 		cb.setOnCheckedChangeListener(null); // prevent checking using old listener when reusing adapter
-		cb.setChecked(status != 0);
+		cb.setChecked(isCompleted != 0);
 		cb.setTag(id);
 
 		// checkbox oncheck
@@ -45,18 +48,16 @@ public class TaskListAdapter extends CursorAdapter {
 			public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
 				final String taskId = buttonView.getTag().toString();
 
-				// update db on background
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						Task task = TasksModelService.getInstance().getTaskById(taskId);
-						Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task.getProject(),
-								task.getContext(), isChecked);
+				Task task = TasksModelService.getInstance().getTaskById(taskId);
+				Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task.getProject(), task
+						.getContext(), isChecked);
 
-						// save
-						TasksModelService.getInstance().saveTask(newTask);
-					}
-				}).start();
+				// save
+				TasksModelService.getInstance().saveTask(newTask);
+
+				// needed to move completed tasks to the bottom or to hide them
+				TaskListFragment frag = (TaskListFragment) activity.getCurrentFragment();
+				frag.reload();
 			}
 		});
 
@@ -65,6 +66,11 @@ public class TaskListAdapter extends CursorAdapter {
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 		ttl.setText(title);
+		if (isCompleted == 1) {
+			ttl.setPaintFlags(ttl.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+		} else {
+			ttl.setPaintFlags(ttl.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+		}
 
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);

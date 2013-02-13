@@ -88,9 +88,11 @@
     <string name="SettingsDesignTitle">Vzhled</string>
     <string name="SettingsNotificationsTitle">Upozornění</string>
     <string name="SettingsNotificationsEnable">Zapnuto</string>
-    <string name="SettingsNotificationsEnableSummary">Upozorňovat na aktuální úkoly</string>
+    <string name="SettingsNotificationsEnableSummary">Upozorňovat na úkoly</string>
     <string name="SettingsNotificationsAlldayTime">Čas celodenních úkolů</string>
     <string name="SettingsNotificationsAlldayTimeSummary">Kdy upozornit na celodenní úkoly</string>
+    <string name="SettingsShowCompletedTasks">Zobrazovat vše</string>
+    <string name="SettingsShowCompletedTasksSummary">Vždy zobrazovat dokončené úkoly</string>
     
     <string name="history_title">název</string>
     <string name="history_priority">prioritu</string>

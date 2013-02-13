@@ -88,6 +88,9 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
+    <string name="SettingsShowCompletedTasks">Show completed</string> 
+    <string name="SettingsShowCompletedTasksSummary">Always show completed tasks</string> 
+    
     <string name="history_title">title</string>
     <string name="history_priority">priority</string>
     <string name="history_context">context</string>

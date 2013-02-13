@@ -2,14 +2,17 @@ package cz.fit.next.backend.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
+import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.tasklist.Filter;
 
 public class TasksDataSource {
@@ -27,12 +30,18 @@ public class TasksDataSource {
 	 */
 	private SQLiteDatabase database;
 
+	/**
+	 * To get preferences later
+	 */
+	private SharedPreferences sharedPreferences;
+
 
 	/**
 	 * 
 	 */
 	public TasksDataSource(Context context) {
 		dbHelper = new DbOpenHelper(context);
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
 
@@ -107,6 +116,17 @@ public class TasksDataSource {
 		String order = Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 ASC," + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME
 				+ " ASC";
 
+		// completed?
+		boolean showCompleted = sharedPreferences.getBoolean(SettingsFragment.PREF_SHOW_COMPLETED_TASKS, true);
+		if (showCompleted) {
+			order = Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " ASC, " + order;
+		} else {
+			if (where.length() > 0)
+				where += " AND ";
+
+			where += Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " != 1";
+		}
+
 		Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 
 		return cursor;
@@ -140,6 +160,14 @@ public class TasksDataSource {
 		String order = "(" + Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000) % " + DateTime.SOMEDAY_MILISECONDS + " ASC,"
 				+ Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " ASC";
 
+		// completed?
+		boolean showCompleted = sharedPreferences.getBoolean(SettingsFragment.PREF_SHOW_COMPLETED_TASKS, true);
+		if (showCompleted) {
+			order = Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " ASC, " + order;
+		} else {
+			where += " AND " + Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " != 1";
+		}
+
 		Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 		return cursor;
 	}
@@ -172,34 +200,25 @@ public class TasksDataSource {
 			return null;
 		return cursor;
 	}
-	
+
 	/**
 	 * Fetches all tasks with full data
 	 */
 	public Cursor getFullAllTasksCursor() {
 		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
-		q.setTables(Constants.TABLE_TASKS + " INNER JOIN "
-				+ Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS
-				+ "." + Constants.COLUMN_PROJECTS_ID + " = "
-				+ Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN " + Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID
+				+ " = " + Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
 
-		String[] selectColumns = new String[] {
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS "
-						+ Constants.COLUMN_ALIAS_TASKS_TITLE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
-				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+		String[] selectColumns = new String[] { Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_TASKS_TITLE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION, Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE, Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY, Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
 				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
-				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE
-						+ " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE + " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
 				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
 
-		Cursor cursor = q.query(database, selectColumns, null, null, null,
-				null, null, null);
+		Cursor cursor = q.query(database, selectColumns, null, null, null, null, null, null);
 
 		if (cursor.getCount() == 0)
 			return null;
@@ -329,6 +348,17 @@ public class TasksDataSource {
 					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT + " = '" + filter.getContext() + "'";
 				}
 
+				// completed?
+				boolean showCompleted = sharedPreferences.getBoolean(SettingsFragment.PREF_SHOW_COMPLETED_TASKS, true);
+				if (showCompleted) {
+					order = Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " ASC, " + order;
+				} else {
+					if (where.length() > 0)
+						where += " AND ";
+
+					where += Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED + " != 1";
+				}
+
 				Cursor cursor = q.query(database, selectColumns, where, null, null, null, order);
 				Log.i(LOG_TAG, "after filter: " + cursor.getCount() + " items");
 				return cursor;
@@ -357,4 +387,3 @@ public class TasksDataSource {
 
 
 }
-

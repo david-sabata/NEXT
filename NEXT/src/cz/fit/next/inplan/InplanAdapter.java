@@ -5,6 +5,7 @@ import java.util.Calendar;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Task;
@@ -91,11 +93,12 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		String id = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_ID));
+		final MainActivity activity = (MainActivity) context;
 
 		// checkbox
 		CheckBox cb = (CheckBox) view.findViewById(R.id.checkBox);
-		int status = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
-		cb.setChecked(status != 0);
+		int isCompleted = cursor.getInt(cursor.getColumnIndex(Constants.COLUMN_COMPLETED));
+		cb.setChecked(isCompleted != 0);
 		cb.setTag(id);
 
 		// checkbox oncheck
@@ -103,19 +106,16 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
 				final String taskId = buttonView.getTag().toString();
+				Task task = TasksModelService.getInstance().getTaskById(taskId);
+				Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task.getProject(), task
+						.getContext(), isChecked);
 
-				// update db on background
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						Task task = TasksModelService.getInstance().getTaskById(taskId);
-						Task newTask = new Task(task.getId(), task.getTitle(), task.getDescription(), task.getDate(), task.getPriority(), task.getProject(),
-								task.getContext(), isChecked);
+				// save
+				TasksModelService.getInstance().saveTask(newTask);
 
-						// save
-						TasksModelService.getInstance().saveTask(newTask);
-					}
-				}).start();
+				// reload		
+				InplanFragment frag = (InplanFragment) activity.getCurrentFragment();
+				frag.reload();
 			}
 		});
 
@@ -124,6 +124,11 @@ public class InplanAdapter extends CursorAdapter implements ListAdapter {
 		TextView ttl = (TextView) view.findViewById(R.id.title);
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 		ttl.setText(title);
+		if (isCompleted == 1) {
+			ttl.setPaintFlags(ttl.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+		} else {
+			ttl.setPaintFlags(ttl.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+		}
 
 		// date
 		TextView dt = (TextView) view.findViewById(R.id.subtitle);
