@@ -6,11 +6,13 @@
 
     <TextView
         android:id="@+id/sidebarItem"
+        style="?sidebarSubtitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:gravity="center_vertical"
-        android:inputType="textMultiLine"
+        android:singleLine="true"
+        android:layout_marginRight="15dp"
         android:paddingBottom="@dimen/SideBarItemPaddingTopBottom"
         android:paddingLeft="@dimen/FanItemPaddingLeft"
         android:paddingTop="@dimen/SideBarItemPaddingTopBottom"

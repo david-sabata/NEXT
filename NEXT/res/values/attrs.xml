@@ -11,11 +11,11 @@
     
     <!-- Icons -->
     <attr name="checkboxStar" format="reference" />
-   
+    <attr name="shareIcon" format="reference"/> 
     
     <!-- Global  -->
     <attr name="capsText" format="reference" />
-     <attr name="listViewBackground" format="reference" />
+    <attr name="listViewBackground" format="reference" />
      
     <!-- Sidebar references to styles -->
     <attr name="sidebarBackground" format="reference" />
@@ -41,14 +41,5 @@
     
     <!-- Preference screen reference to style -->
     <attr name="preferenceScreen" format="reference" />
-     
-    <!--  <attr name="" format="reference" />
-     <attr name="" format="reference" />
-     <attr name="" format="reference" /> 
-     <attr name="" format="reference" />
-     <attr name="" format="reference" />
-     <attr name="" format="reference" />-->
-     
-
-     
+         
 </resources>
