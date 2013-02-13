@@ -110,7 +110,7 @@ public class SidebarFragment extends Fragment implements ServiceReadyListener {
 			}
 		}
 		// hide 'contexts' header if there are no contexts
-		else {
+		if (contextsLayout.getChildCount() == 0) {
 			sideBarView.findViewById(R.id.contextsFrame).setVisibility(View.GONE);
 		}
 
