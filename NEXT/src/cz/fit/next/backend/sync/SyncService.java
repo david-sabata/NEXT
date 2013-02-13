@@ -771,8 +771,10 @@ public class SyncService extends Service {
 				}
 				res = drive.unshare(filename, permId);
 			} catch (IOException e) {
+				e.printStackTrace();
 				return null;
 			} catch (GoogleAuthException e) {
+				e.printStackTrace();
 				return null;
 			}
 
@@ -787,6 +789,8 @@ public class SyncService extends Service {
 		protected void onPostExecute(Integer param) {
 			if (param == null)
 				Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(getApplicationContext(), R.string.unsharing_ok, Toast.LENGTH_SHORT).show();
 		}
 
 

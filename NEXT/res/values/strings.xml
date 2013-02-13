@@ -108,7 +108,7 @@
     <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
     <string name="sharing_error">NEXT: Something went wrong with sharing, are you synchronized?</string>
     <string name="sharing_ok">NEXT: Project will be shared.</string>
-    
+    <string name="unsharing_ok">NEXT: Project will be unshared.</string>
 
     <string name="SettingsNotificationsTitle">Notifications</string>
     <string name="SettingsNotificationsEnable">Enable</string>

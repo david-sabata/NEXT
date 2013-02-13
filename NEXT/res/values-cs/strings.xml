@@ -115,6 +115,7 @@
     <string name="sync_error">NEXT: Nastal problém při synchronizaci</string>
     <string name="sharing_error">NEXT: Nastal problém se sdílením, je vše synchronizováno?</string>
     <string name="sharing_ok">NEXT: Projekt bude nasdílen.</string>
+    <string name="unsharing_ok">NEXT: Sdílení bude smazáno.</string>
     
     <string name="connect_account">Klikněte pro připojení Google Drive účtu</string>
     <string name="no_account_connected">Není připojený žádný účet</string>
