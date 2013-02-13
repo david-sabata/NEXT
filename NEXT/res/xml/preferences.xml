@@ -46,4 +46,21 @@
             android:defaultValue="1"
             />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/SettingsNotificationsTitle"
+        android:key="pref_key_notifications">
+        <SwitchPreference 
+            android:key="PREF_NOTIFICATIONS_ENABLED"
+            android:title="@string/SettingsNotificationsEnable"
+            android:summary="@string/SettingsNotificationsEnableSummary"
+            android:defaultValue="false"
+            android:switchTextOff="0"
+            android:switchTextOn="I"
+            />
+        <cz.fit.next.preferences.AlldayTimePreference
+             android:key="PREF_NOTIFICATIONS_ALLDAYTIME"
+             android:title="@string/SettingsNotificationsAlldayTime"
+             android:defaultValue="1"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

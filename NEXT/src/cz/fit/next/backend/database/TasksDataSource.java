@@ -172,6 +172,39 @@ public class TasksDataSource {
 			return null;
 		return cursor;
 	}
+	
+	/**
+	 * Fetches all tasks with full data
+	 */
+	public Cursor getFullAllTasksCursor() {
+		SQLiteQueryBuilder q = new SQLiteQueryBuilder();
+		q.setTables(Constants.TABLE_TASKS + " INNER JOIN "
+				+ Constants.TABLE_PROJECTS + " ON (" + Constants.TABLE_TASKS
+				+ "." + Constants.COLUMN_PROJECTS_ID + " = "
+				+ Constants.TABLE_PROJECTS + "." + Constants.COLUMN_ID + ")");
+
+		String[] selectColumns = new String[] {
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_TITLE + " AS "
+						+ Constants.COLUMN_ALIAS_TASKS_TITLE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DESCRIPTION,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME_TYPE,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_CONTEXT,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PRIORITY,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_PROJECTS_ID,
+				Constants.TABLE_TASKS + "." + Constants.COLUMN_COMPLETED,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_TITLE
+						+ " AS " + Constants.COLUMN_ALIAS_PROJECTS_TITLE,
+				Constants.TABLE_PROJECTS + "." + Constants.COLUMN_HISTORY, };
+
+		Cursor cursor = q.query(database, selectColumns, null, null, null,
+				null, null, null);
+
+		if (cursor.getCount() == 0)
+			return null;
+		return cursor;
+	}
 
 
 	/**
@@ -324,3 +357,4 @@ public class TasksDataSource {
 
 
 }
+

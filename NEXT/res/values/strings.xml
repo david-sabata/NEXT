@@ -108,7 +108,11 @@
     
     
 
-    
+    <string name="SettingsNotificationsTitle">Notifications</string>
+    <string name="SettingsNotificationsEnable">Enable</string>
+    <string name="SettingsNotificationsEnableSummary">Notify about upcoming tasks</string>
+    <string name="SettingsNotificationsAlldayTime">All-day time</string>
+    <string name="SettingsNotificationsAlldayTimeSummary">Time for All-day notifications</string>
     <string name="SettingsDesignTitle">Design</string>
     <string name="history_project">project</string>
     <string name="history_taskcreated">Task has been created</string>
@@ -131,6 +135,5 @@
     <string name="tutorial_sidebar">There is a sidebar on the left - swipe to open it!</string>
     <string name="tutorial_rate_us">Rate NEXT on Google Play</string>
     <string name="tutorial_dark_skin">Also check out our Holo Dark theme in the Settings ;-)</string>
-    
     
 </resources>
