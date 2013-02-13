@@ -84,6 +84,11 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
+    <string name="SettingsNotificationsTitle">Notifications</string>
+    <string name="SettingsNotificationsEnable">Enable</string>
+    <string name="SettingsNotificationsEnableSummary">Notify about upcoming tasks</string>
+    <string name="SettingsNotificationsAlldayTime">All-day time</string>
+    <string name="SettingsNotificationsAlldayTimeSummary">Time for All-day notifications</string>
     <string name="history_title">title</string>
     <string name="history_priority">priority</string>
     <string name="history_context">context</string>

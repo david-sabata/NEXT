@@ -241,8 +241,8 @@ public class DateTime implements Serializable {
 						.get(Calendar.MONTH))
 				&& (toCalendar().get(Calendar.DATE) == second.toCalendar().get(
 						Calendar.DATE))
-				&& (toCalendar().get(Calendar.HOUR) == second.toCalendar().get(
-						Calendar.HOUR))
+				&& (toCalendar().get(Calendar.HOUR_OF_DAY) == second.toCalendar().get(
+						Calendar.HOUR_OF_DAY))
 				&& (toCalendar().get(Calendar.MINUTE) == second.toCalendar().get(
 						Calendar.MINUTE))) {
 			

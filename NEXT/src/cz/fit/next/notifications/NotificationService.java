@@ -189,6 +189,11 @@ public class NotificationService extends Service {
 	}
 
 	private void showNotification(Task t) {
+		
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		if (!sp.getBoolean(SettingsFragment.PREF_NOTIFICATIONS_ENABLED, false)) {
+			return;
+		}
 
 		String title = getResources().getString(R.string.upcoming_notification);
 		// TODO: To strings.xml
@@ -213,8 +218,19 @@ public class NotificationService extends Service {
 	}
 	
 	private boolean isTimeToAlldayNotifications() {
-		//String h = sp.getString(SettingsFragment.PREF_ALLDAY_NOTIFICATIONS_HOUR, null);
-		//String m = sp.getString(SettingsFragment.PREF_ALLDAY_NOTIFICATIONS_MINUTE, null);
+		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		
+		DateTime dNow = new DateTime();
+		DateTime dAllday = new DateTime(Long.parseLong(sp.getString(SettingsFragment.PREF_NOTIFICATIONS_ALLDAYTIME, "1")));
+		
+		GregorianCalendar now = dNow.toCalendar();
+		GregorianCalendar allday = dAllday.toCalendar();
+		
+		if ((now.get(Calendar.HOUR_OF_DAY) == allday.get(Calendar.HOUR_OF_DAY))
+			&& (now.get(Calendar.MINUTE) == allday.get(Calendar.MINUTE))) {
+			
+			return true;
+		}
 		
 		return false;
 	}

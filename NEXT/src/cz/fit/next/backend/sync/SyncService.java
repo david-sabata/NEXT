@@ -632,6 +632,10 @@ public class SyncService extends Service {
 		}
 		
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
+		
+		if (!sp.getBoolean(SettingsFragment.PREF_SYNC_ENABLED, false)) {
+			return;
+		}
 
 		int it = Integer.parseInt(sp.getString(SettingsFragment.PREF_SYNC_INTERVAL, "5"));
 		String ts = getResources().getStringArray(R.array.preferenceIntervalValuesForAndroid)[it];
