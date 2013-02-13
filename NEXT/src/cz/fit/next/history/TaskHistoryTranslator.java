@@ -127,8 +127,11 @@ public class TaskHistoryTranslator {
 
 		sub = sub + subMainAction + subOtherAction;
 
+		if (isCreated)
+			sub = c.getResources().getString(R.string.history_taskcreated);
 		if (isDeleted)
 			sub = c.getResources().getString(R.string.history_taskdeleted);
+		
 
 		report = sub;
 

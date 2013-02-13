@@ -262,9 +262,11 @@ public class SyncService extends Service {
 					// Determine sharing status
 					boolean shared = false;
 					List<UserPerm> users = drive.getUserList(lf.get(i).getId());
-					for (int j = 0; j < users.size(); j++) {
-						if ((users.get(j).mode == GDrive.READ) || (users.get(j).mode == GDrive.WRITE))
-							shared = true;
+					if (users != null) {
+						for (int j = 0; j < users.size(); j++) {
+							if ((users.get(j).mode == GDrive.READ) || (users.get(j).mode == GDrive.WRITE))
+								shared = true;
+						}
 					}
 					Log.i(TAG, "SH: " + Boolean.toString(shared));
 					proj.setShared(shared);
@@ -376,9 +378,13 @@ public class SyncService extends Service {
 
 					pTitle = getLastValInHistory(pair.getValue().getHistory(), pair.getKey(), TaskHistory.TITLE);
 
+					
 					// throw out deleted tasks
+					if (pTitle == null) continue;
 					if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*"))
 						continue;
+					
+					
 
 					pDescription = getLastValInHistory(pair.getValue().getHistory(), pair.getKey(), TaskHistory.DESCRIPTION);
 
@@ -660,12 +666,14 @@ public class SyncService extends Service {
 		pds.open();
 		Project proj = pds.getProjectById(id);
 		String title = proj.getTitle();
+		proj.setShared(true);
+		pds.saveProject(proj);
 		pds.close();
 
 		ShareClass cls = new ShareClass(id, title, user);
 		cls.execute();
 
-		Log.i(TAG, "Sharing after execute");
+		//Log.i(TAG, "Sharing after execute");
 
 	}
 
@@ -715,6 +723,8 @@ public class SyncService extends Service {
 		protected void onPostExecute(Integer param) {
 			if (param == null)
 				Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(getApplicationContext(), R.string.sharing_ok, Toast.LENGTH_SHORT).show();
 		}
 
 
@@ -818,15 +828,8 @@ public class SyncService extends Service {
 
 		DeleteProjectClass cls = new DeleteProjectClass(id, title);
 		cls.execute();
-		try {
-			return cls.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return false;
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			return false;
-		}
+		
+		return true;
 
 		//	Log.i(TAG,"Project deleting after execute");
 
@@ -867,7 +870,13 @@ public class SyncService extends Service {
 		@Override
 		protected void onPostExecute(Boolean status) {
 
-			//return status;
+			ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+			pds.open();
+			pds.deleteProject(id);
+			pds.close();
+			
+			Toast.makeText(getApplicationContext(), R.string.project_deleted, Toast.LENGTH_SHORT).show();
+			
 		}
 
 
