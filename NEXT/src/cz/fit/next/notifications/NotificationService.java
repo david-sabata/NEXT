@@ -100,6 +100,10 @@ public class NotificationService extends Service {
 					if (t.getDate().isSomeday()) {
 						continue;
 					}
+					
+					if (t.isCompleted()) {
+						continue;
+					}
 					if (t.getDate().isAllday()) {
 						
 
