@@ -2,6 +2,7 @@ package cz.fit.next.taskdetail;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -19,8 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ import cz.fit.next.backend.DateTime;
 import cz.fit.next.backend.Project;
 import cz.fit.next.backend.Task;
 import cz.fit.next.backend.TasksModelService;
+import cz.fit.next.backend.database.Constants;
 
 
 
@@ -153,7 +158,14 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 			project = new Project(projectId, projectTitle);
 		}
 
-		Task saveTask = new Task(mTask.getId(), ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
+		String taskId;
+		if (mTask == null) {
+			taskId = UUID.randomUUID().toString();
+		} else {
+			taskId = mTask.getId();
+		}
+		
+		Task saveTask = new Task(taskId, ((TextView) taskDetailView.findViewById(R.id.titleTask)).getText().toString(),
 				((TextView) taskDetailView.findViewById(R.id.editDescription)).getText().toString(), originalDateTime, priority, project,
 				((TextView) taskDetailView.findViewById(R.id.editContext)).getText().toString(),
 				((CheckBox) taskDetailView.findViewById(R.id.IsCompleted)).isChecked());
@@ -382,9 +394,20 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		}
 
 		// Set context
-		TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
-		context.setText(task.getContext());
+		/*TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
+		context.setText(task.getContext());*/
 
+		// AutocompleteContext
+		ArrayList<String> contexts = loadContexts();
+		final String[] contextsStrings =  contexts.toArray(new String [contexts.size()]);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                R.layout.spinner_item_new_solution, contextsStrings);
+        AutoCompleteTextView textView = (AutoCompleteTextView)
+        		taskDetailView.findViewById(R.id.editContext);
+        textView.setAdapter(adapter);
+		textView.setText(mTask.getContext());
+		
+		
 		// Set priority spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(task.getPriority());
@@ -412,7 +435,16 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		// Set spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(0);
-
+		
+		// AutocompleteContext
+		ArrayList<String> contexts = loadContexts();
+		final String[] contextsStrings =  contexts.toArray(new String [contexts.size()]);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+				 R.layout.spinner_item_new_solution, contextsStrings);
+        AutoCompleteTextView textView = (AutoCompleteTextView)
+        		taskDetailView.findViewById(R.id.editContext);
+        textView.setAdapter(adapter);
+       			
 	}
 
 
@@ -541,6 +573,22 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 
 			loadTaskToView(mTask);
 		}
+	}
+	
+	private ArrayList<String> loadContexts() {
+		Cursor cursor = TasksModelService.getInstance().getContextsCursor();
+		ArrayList<String> contexts = new ArrayList<String>();
+		// Adding new items to contexts layout
+		if (cursor != null && cursor.getCount() > 0) {
+			while (!cursor.isAfterLast()) {
+				final String context = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_CONTEXT));
+				if (context != null && !context.equals("")) {
+					contexts.add(context);
+				}
+				cursor.moveToNext();
+			}
+		}
+		return contexts;
 	}
 
 

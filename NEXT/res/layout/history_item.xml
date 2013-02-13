@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/action_edit_light" />
+        android:contentDescription="@string/status_image"
+        android:padding="15dp"/>
 
     <LinearLayout
         android:id="@+id/taskListTextsLayout"

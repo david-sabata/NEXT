@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  	<color name="BasicLightBackground">@android:color/background_light</color>
+	<color name="BasicDarkBackground">@android:color/background_dark</color>
+   	
+   	<color name="FanBackgroundLight">#2c2c2c</color>
+   	<color name="FanBackgroundDark">#0f0f0f</color>
+    
+    <color name="FanItemsTextLight">#FFFFFF</color>
+    <color name="FanItemsTextDark">#FFFFFF</color>
+    
+    <color name="FanTitleColorLight">#33b6ea</color>
+    <color name="FanTitleColorDark">#33b6ea</color>
+    
+    
+    <color name="FanItemsBackgroundColor">#8FB5D0</color>
+    <color name="TaskTitleColor">#FFFFFF</color>
+    <color name="TaskTitleBackground">#000000</color>
+    <color name="TaskCheckBoxBackground">#FFFFFF</color>
+	<color name="TaskSubtitleColor">#FFFFFF</color>
+    <color name="TaskSubtitleBackground">#33b6ea</color>
+    <color name="TaskRuller">#33b6ea</color>
+    <color name="priority_3">#BF3000</color>
+    <color name="priority_1">#93BF00</color>
+    <color name="priority_2">#BF9600</color>
+    
+	<color name="InPlanSecHeaderLineLightColor">@android:color/darker_gray</color> 
+    <color name="InPlanSecHeaderLineDarkColor">@android:color/darker_gray</color>    
+  	<!-- Colors used in styles -->
+	<color name="BasicLightBackground">@android:color/background_light</color>
+	<color name="BasicDarkBackground">@android:color/background_dark</color>
+   	
+   	<color name="FanBackgroundLight">#2c2c2c</color>
+   	<color name="FanBackgroundDark">#0f0f0f</color>
+    
+    <color name="FanItemsTextLight">#FFFFFF</color>
+    <color name="FanItemsTextDark">#FFFFFF</color>
+    
+    <color name="FanTitleColorLight">#33b6ea</color>
+    <color name="FanTitleColorDark">#33b6ea</color>
+    
+    
+    <color name="FanItemsBackgroundColor">#8FB5D0</color>
+    <color name="TaskTitleColor">#FFFFFF</color>
+    <color name="TaskTitleBackground">#000000</color>
+    <color name="TaskCheckBoxBackground">#FFFFFF</color>
+	<color name="TaskSubtitleColor">#FFFFFF</color>
+    <color name="TaskSubtitleBackground">#33b6ea</color>
+    <color name="TaskRuller">#33b6ea</color>
+    <color name="priority_3">#BF3000</color>
+    <color name="priority_1">#93BF00</color>
+    <color name="priority_2">#BF9600</color>
+    
+	<color name="InPlanSecHeaderLineLightColor">@android:color/darker_gray</color> 
+    <color name="InPlanSecHeaderLineDarkColor">@android:color/darker_gray</color>    
+      
+</resources>

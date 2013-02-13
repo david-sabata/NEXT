@@ -4,16 +4,20 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Filter.FilterListener;
 import android.widget.FilterQueryProvider;
@@ -326,6 +330,19 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		// onAttached might not be called yet
 		if (getActivity() != null)
 			reload();
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		View v =  super.onCreateView(inflater, container, savedInstanceState);
+		
+		TypedArray background = getActivity().getTheme().obtainStyledAttributes(new int[] {R.attr.listViewBackground});
+
+		v.setBackgroundColor(background.getColor(0, Color.WHITE));
+		
+		return v;
 	}
 
 
