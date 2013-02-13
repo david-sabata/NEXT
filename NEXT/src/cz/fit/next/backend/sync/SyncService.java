@@ -378,9 +378,13 @@ public class SyncService extends Service {
 
 					pTitle = getLastValInHistory(pair.getValue().getHistory(), pair.getKey(), TaskHistory.TITLE);
 
+					
 					// throw out deleted tasks
+					if (pTitle == null) continue;
 					if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*"))
 						continue;
+					
+					
 
 					pDescription = getLastValInHistory(pair.getValue().getHistory(), pair.getKey(), TaskHistory.DESCRIPTION);
 
