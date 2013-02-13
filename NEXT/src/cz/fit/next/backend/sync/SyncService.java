@@ -262,9 +262,11 @@ public class SyncService extends Service {
 					// Determine sharing status
 					boolean shared = false;
 					List<UserPerm> users = drive.getUserList(lf.get(i).getId());
-					for (int j = 0; j < users.size(); j++) {
-						if ((users.get(j).mode == GDrive.READ) || (users.get(j).mode == GDrive.WRITE))
-							shared = true;
+					if (users != null) {
+						for (int j = 0; j < users.size(); j++) {
+							if ((users.get(j).mode == GDrive.READ) || (users.get(j).mode == GDrive.WRITE))
+								shared = true;
+						}
 					}
 					Log.i(TAG, "SH: " + Boolean.toString(shared));
 					proj.setShared(shared);

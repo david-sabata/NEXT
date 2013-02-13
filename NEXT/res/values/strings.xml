@@ -106,7 +106,7 @@
     <string name="no_connection">No connection available.</string>
     <string name="no_wifi">No Wi-Fi connection available.</string>
     <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
-    <string name="sharing_error">NEXT: Something went wrong with sharing :(</string>
+    <string name="sharing_error">NEXT: Something went wrong with sharing, are you synchronized?</string>
     <string name="sharing_ok">NEXT: Project will be shared.</string>
     
 
