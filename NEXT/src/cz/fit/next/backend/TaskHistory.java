@@ -44,7 +44,6 @@ public class TaskHistory implements Serializable {
 			mChanges = parseChanges(jsonHistory.getJSONArray("changes"));
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

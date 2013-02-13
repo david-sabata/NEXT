@@ -60,6 +60,8 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 			reloadItems();
 		}
 
+		
+		
 		setHasOptionsMenu(true);
 
 		// register for gestures

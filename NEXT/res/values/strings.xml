@@ -65,6 +65,9 @@
     <string name="TaskTimeTitle">TIME</string>
     <string name="TaskSomeDay">Someday</string>
     <string name="TaskWholeDay">All day</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="yesterday">Yesterday</string>
 
     <string name="implicit_project">&lt;No project&gt;</string>
     <string name="project_title">Project title</string>

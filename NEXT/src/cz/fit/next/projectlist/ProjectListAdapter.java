@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import cz.fit.next.R;
 import cz.fit.next.backend.Project;
@@ -55,6 +56,10 @@ public class ProjectListAdapter extends CursorAdapter {
 				}).start();
 			}
 		});
+		
+		// Share icon
+		ImageView shIcon = (ImageView) view.findViewById(R.id.shareProjectIcon);
+		
 
 
 		// task title
@@ -62,9 +67,10 @@ public class ProjectListAdapter extends CursorAdapter {
 		String title = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_TITLE));
 
 		int sharedCol = cursor.getColumnIndex(Constants.COLUMN_SHARED);
-		String sharedStr = "";
-		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) sharedStr = " - shared"; 
-		title = title + sharedStr;
+		if (sharedCol > -1 && cursor.getInt(sharedCol) != 0) {
+			shIcon.setVisibility(View.VISIBLE); 
+		}
+		
 
 
 		if (title.equals(Constants.IMPLICIT_PROJECT_NAME)) {

@@ -27,7 +27,7 @@
                 #topBox {
                     height:50px;
                     background:#dddddd;
-					border-bottom:2px solid #d2d2d2;
+				          	border-bottom:2px solid #d2d2d2;
                 }
                     #nextLogo {
                         float:left;
@@ -126,6 +126,96 @@
              * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
              * //////////////////////////////////////////////////////////////////////////////////////////////////
              */
+            function DateTime(pTimeStamp) {
+            
+            	/**
+            	 * Timestamp (in milis) used for 'someday'
+            	 * 
+            	 * DO NOT CHANGE IF YOU DON'T UNDERSTAND THE IMPACTS
+            	 * the msecs value is used in TasksDataSource for ordering
+            	 */
+            	var SOMEDAY_MILISECONDS = 666;
+            
+            	/**
+            	 * Amount of miliseconds to represent 'all day' date. We do not 
+            	 * use miliseconds anywhere else, so it's safe to encode some 
+            	 * data in them, in this case 'all day' flag
+            	 * 
+            	 * DO NOT CHANGE IF YOU DON'T UNDERSTAND THE IMPACTS
+            	 * the msecs value is used in TasksDataSource for ordering
+            	 */
+            	var  ALLDAY_MILISECONDS = 333;
+  
+  
+              var dateTime = new Date(parseInt(pTimeStamp));
+              var timestamp = pTimeStamp;
+                    
+              this.toLocaleDateTimeString = toLocaleDateTimeString;
+              this.isSomeday = isSomeday;
+              this.isToday = isToday;
+              
+              /**
+            	 * Returns miliseconds part of the timestamp
+            	 */
+              function getMilis() {
+                   return timestamp % 1000;
+              }
+              
+              /**
+            	 * Is this date someday?
+            	 */
+            	function isSomeday() {
+            		return getMilis() == SOMEDAY_MILISECONDS;
+            	}
+            
+              /**
+               * Is this date today?
+               */
+              function isToday() {
+                return ((new Date()).toLocaleDateString() == toLocaleDateString());
+              }
+              
+                                           
+            	/**
+            	 * Is this date all day?
+            	 */
+            	function isAllday() {
+            		return getMilis() == ALLDAY_MILISECONDS;
+            	}
+              
+              /**
+               *  Return date in readable form
+               */                             
+              function  toLocaleDateString() {
+                return dateTime.toLocaleDateString() ;
+              }
+              
+              /**
+               * Return time in readable form
+               */                            
+              function toLocaleTimeString() {
+                return dateTime.toLocaleTimeString(); 
+              } 
+              
+              /**
+               * Return DateTimeString
+               */
+              function toLocaleDateTimeString() {
+                if(isSomeday()) {
+                  return  localedLang['sometimes'];
+                } else if(isAllday()) {
+                  return toLocaleDateString();
+                } else {      
+                  return toLocaleTimeString() + " " + toLocaleDateString();
+                }
+              }                
+            }
+            
+            /**
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             * ///////////////////////////////// NEW OBJECT DEFINITION///////////////////////////////////////////
+             * //////////////////////////////////////////////////////////////////////////////////////////////////
+             */
             function TopPanelCreator() {
 
                 this.init = init;
@@ -149,17 +239,15 @@
                 var images = null;
                 var menu = null;
                 var settings = null;
-                var lang = 'czech';
+               
 
                 var commonMethods = new CommonWorker();
-                // Parse languages texts
-                var languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(document.getElementById('languages')) + ')');
-
+               
                 // Public handlers to private method
                 this.init = init;
                 this.setMenuSettings = setMenuSettings;
                 this.regenerate = regenerate;
-                this.setLanguage = setLanguage;
+       
 
                 /**
                 * Initialize menu element and images
@@ -176,28 +264,40 @@
                     settings = pSettings;
                 }
 
-                function setLanguage(pLang) {
-                    lang = pLang;
-                }
-
                 function createLi(img, liData) {
                     var li = document.createElement('li');
                     var span = document.createElement('span');
 
+                    // Hack with image
                     if (img != null) {
                         // Prepare text of item                        
-                        span.innerHTML = languagesTexts[lang][liData];
+                        span.innerHTML = localedLang[liData];
 
                         var image = images.getImage(img);
                         image.setAttribute("class", "sideBarImage");
 
                         // Add image to item
                         li.appendChild(image);
+                         
+                        // Add listener to sort by time
+                        // liData van by "next" or "sometimes" or "today"
+                        li.addEventListener("click", function () {
+                            console.log(liData);
+                            
+                            //Reset contexts to all
+                            editor.setContexts(globalMethods.findAllContexts(data));
+                            
+                            // Set time filtering
+                            editor.setTimeFilter(liData);
+                            
+                            editor.cleanTaskList();
+                            editor.generateTaskList();
+                        });
                     } else {
                         span.innerHTML = liData; // Contexts are unique -> they cant be translated
                         span.setAttribute("class", "sideBarContextItem");
 
-                        // Add event listener to context
+                        // Add event listener to sort by context
                         li.addEventListener("click", function () {
                             editor.setContexts([liData]);
                             editor.cleanTaskList();
@@ -217,7 +317,7 @@
                     ul.setAttribute("class", "sideBarUl");
 
                     // Create description of UL block
-                    var titleUl = createLi(null, languagesTexts[lang][s]);
+                    var titleUl = createLi(null, localedLang[s]);
                     titleUl.setAttribute("class", "sideBarTitleUl");
                     ul.appendChild(titleUl);
 
@@ -343,7 +443,8 @@
                 var tasksData = null;
                 var table = null;
                 var contexts = null;
-
+                var filter = null;
+                
                 var commonMethods = new CommonWorker();
 
                 // Public handlers to private method
@@ -372,18 +473,16 @@
                 /**
                 * Generate table header in language you want
                 */
-                function generateTableHeader(lang) {
-                    // Parse languages texts
-                    languagesTexts = eval('(' + commonMethods.getContentOfScriptTag(languageElement) + ')');
-                    headers = languagesTexts[lang];
+                function generateTableHeader() {               
                     // Create new row element
                     var newTR = document.createElement('tr');
-
+                    
+                    headers = localedLang;
+                    
                     for (item in headers) {
                         if (item == "title" ||
                               item == "description" ||
                               item == "date" ||
-                              item == "partProject" ||
                               item == "partContexts" ||
                               item == "important" ||
                               item == "important" ||
@@ -409,7 +508,6 @@
                         if (item == "title" ||
                             item == "description" ||
                             item == "date" ||
-                            item == "partProject" ||
                             item == "partContexts" ||
                             item == "important" ||
                             item == "important" ||
@@ -435,11 +533,8 @@
                                     break;
 
                                 case 'date':
-                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
-                                    break;
-
-                                case 'partProject':
-                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    var date = new DateTime(task[item]);
+                                    newTD = createCell(date.toLocaleDateTimeString(), 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
                                     break;
 
                                 case 'partContexts':
@@ -497,16 +592,34 @@
                     }
                     return false;
                 }
+                
+                /**
+                 * Is item i nactual time filter ?
+                 */                                 
+                function isInTimeFilter(taskDate) {
+                    console.log("Filter:" + filter);
+                    if (filter == "next")   {
+                      return true;
+                    } if (filter == "today" && taskDate.isToday()) {
+                      return true;
+                    } else if(filter == "sometimes" && taskDate.isSomeday()) {
+                      return true;
+                    }
+                    return false;
+                }
 
                 /**
                  * Genre content of the table
                  */
                 function generateTable() {
-                    table.appendChild(generateTableHeader('czech'));
+                    table.appendChild(generateTableHeader());
 
                     // Create new divs and add them to parent div
                     for (task in tasksData) {
-                        if (isInContext(tasksData[task].partContexts)) {
+                        // Get date of task
+                        var date = new DateTime(parseInt(tasksData[task]['date']));
+                        
+                        if (isInContext(tasksData[task].partContexts) && isInTimeFilter(date)) {                       
                             // Generate new element
                             var newRow = createRow(tasksData[task]);
                             table.appendChild(newRow);
@@ -517,11 +630,12 @@
                 /**
                 * Initialize data
                 */
-                function createContent(pTable, pData, pContexts) {
+                function createContent(pTable, pData, pContexts, pFilter) {
                     tasksData = pData;
                     table = pTable;
                     contexts = pContexts;
-
+                    filter = pFilter;
+                    
                     // Table content generation
                     generateTable();
                 }
@@ -541,6 +655,10 @@
                 // constants
                 var taskListId = "taskList";
                 var contexts = null;
+                
+                // default is next -> we want to see everything on start
+                var filter = "next"; 
+                
                 // variables
                 var tasksData = null;
 
@@ -549,6 +667,7 @@
                 this.setContexts = setContexts;
                 this.cleanTaskList = cleanTaskList;
                 this.generateTaskList = generateTaskList;
+                this.setTimeFilter = setTimeFilter;
 
                 var generatorTaskList = new TaskListGenerator();
                 var commonMethods = new CommonWorker();
@@ -563,6 +682,13 @@
                     generateTaskList();
                 }
 
+                /**
+                 *Set time filtering
+                 */
+                function setTimeFilter(pFilter) {
+                   filter = pFilter;
+                }
+                                                 
                 /**
                 * Set Contexts, that we want to see
                 */
@@ -581,8 +707,7 @@
                 * Fill Task with data
                 */
                 function generateTaskList() {
-                    console.log(contexts);
-                    generatorTaskList.createContent(document.getElementById(taskListId), tasksData.data, contexts);
+                    generatorTaskList.createContent(document.getElementById(taskListId), tasksData.data, contexts, filter);
                 }
 
             }
@@ -602,9 +727,7 @@
                         status: "Hotovo",
                         next: "Další",
                         today: "Dnes",
-                        inplan: "V plánu",
                         sometimes: "Někdy",
-                        blocked: "Blokované",
                         time: "Podle času",
                         context: "Kontexty"
                      } ,
@@ -619,9 +742,7 @@
                         status: "Done",
                         next: "Next",
                         today: "Today",
-                        inplan: "In plan",
                         sometimes: "Sometimes",
-                        blocked: "Blocked",
                         time: "Time",
                         context: "Contexts"
              }
@@ -632,10 +753,8 @@
         <!-- Here we will store our data for tasks -->
         <script id="data" type="text/javascript">
             var data =
-  //begin_of_data 
-            {"history":[],"data":[{"id":"97ea5399-6543-461c-b97c-2bc9a4327ce7","title":"Dummy task","status":false,"important":1,"description":"Prevelice dlouhy popis projektu. Budeme se modlit aby se nam do vypisu vesel a nevylezl nam z okraju nebo nedelal nejake jine neplechy.","date":"2013-01-21 00:00:00.000+0100","partContexts":"Škola","partProject":"Projekt 1"},{"id":"0346cdfd-72f0-472f-b500-23300308b9bd","title":"Dummy task with veeery long title that will surely go out of the screen","status":false,"important":0,"description":"<Some description would be here>","date":"2012-11-10 00:00:00.000+0100","partContexts":"Doma","partProject":"Projekt 1"},{"id":"7dd7b2d1-ff52-43eb-990b-574e5e9c9d39","title":"Completed task with no description","date":"2013-03-03 00:00:00.000+0100","status":true,"partContexts":"Doma","partProject":"Projekt 1","important":2}],"id":"0659c345-7f17-4caa-8525-015ea3317d3a","projectname":"Projekt 1"}﻿            //end_of_data
-
-            //end_of_data
+//begin_of_data          
+{"history":[{"timestamp":"1360768122000","author":"xsychr03@gmail.com","changes":[{"newvalue":"Test na HTML sablonu","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"Android","oldvalue":"","name":"next_hist_context"},{"newvalue":"1358089500000","oldvalue":"","name":"next_hist_date"},{"newvalue":"Toto je testovací tak do HTML ctecky","oldvalue":"","name":"next_hist_description"},{"newvalue":"3","oldvalue":"","name":"next_hist_priority"}],"taskid":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026"}],"data":[{"id":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026","title":"Test na HTML sablonu","status":false,"important":3,"description":"Toto je testovací tak do HTML ctecky","date":"1358089500000","partContexts":"Android","partProject":"Projekt sloučí pro testování historie "}],"id":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","projectname":"Projekt sloučí pro testování historie "}﻿            //end_of_data
         </script>
 
 
@@ -695,35 +814,7 @@
                  JlALtkAbeM/yOyURBTPgvJAWcQR0WHRelU8QAvNpdeWggTNYmY8ZUKO/D6pA4i//wc9VUAdGQDXrXzkzu+DMK4FhsMbO5/KwWhdlXCtJPpuqU2G2CTa8yEJBPpfI8TnV6Y9f6uJsb44i226tARU6Y6DfRucNi9lKMJ
                  PNgmY3ZmAKTFPCzEiZuopqs4Z7yrpOgQizSCrXu/kiSe3cvVwb3zoWcSdjMmAzbHJOKuz4BTgCe1azbTUDozwuvHl0NktlpgEwCHrAQrYzldUibvRo5DMlotwkJziItrNQzMhfSfJzyInAtcYjt12JCicCh+CBu2U+
                  Sim4ciJwD5YZSiEuML9HhBkBBzrOQn3cD9o5Kl6EjrrRLYFbXYc5dePq4lHY5+KGptp+AqeMANduZPJWQgREQAREQAREQAREQASclR8BBgC5mXcq9ghS2AAAAABJRU5ErkJggg==" />
-
-             <!-- Img at menu - Calendar-->
-             <img id="calendarImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZ
-                 G9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCB
-                 Db3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gP
-                 HJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM
-                 6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJR
-                 D0ieG1wLmlpZDpFNjUyMTJGODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFNkI0MTIwMDVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJ
-                 vbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkU2NTIxMkY2NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkU2NTIxMkY3NUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxI
-                 i8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+RSw4EgAAAf1JREFUeNrsWeFKwzAQTm1x4jZ14ivsjQaKf/zpM/nTH4KCb7R3GFa76aQlXuACx5G
-                 11y5LGCbwseXWS/Itd1+ubaa1VsfcTtSRt0QgEUgEEoG4rdjD9wzwDrjEfglYAH4O5DeYwClgBOAn3gRwRRaSYb/qGE/qZ+xbwG/bYJngJH4GzAGNY4IRfiokuHUQVQP9csAS8LBvDpjFT8mEIVqGc859hFBD4rRio
-                 eCKZUkIdfnZa7SvJNY40Tex1YAPMkmJ/a5klPg1ksX3VaGc9U3c3jliuatJ/PIQMqoF4eLTLx1kEuUYs9BY4/c+dh2LwDng1aEuqof9lpCLsgNmMTNmUwPsKQeGqlJJ+iXajKavSClS4lmQ77g+GoENxjbXd5Ooj8w
-                 +wlhfDDhH9iaQ9VCPMSbqBP91O2eFh1kdI4Ta1IbWOCv8583ibxgBW+88Aa5Dq5BUbWq01wSK/XaRVMij2ihm/0R7weaxfY3XFKFVyKU2thTm9oIUbjyJDe5JFGgcO5qMutoa1WbCiFW+KtKhKvQmUCFrN9r+4qh5o
-                 uVA35qnQKmckZsVbzufVKhFhST2KAQ2Lfe0Uvsm9g7sUpC+9qA50AQM7cb3DljlyQMRsOeGlwdbZtFT6ZMyz7enXz5CaIkDhXwfq3HOZSfT9J44EUgEEoFE4F8T+BNgAI4AvJW6qkmzAAAAAElFTkSuQmCC" />
-            
-             <!-- Img at menu - Lock-->
-             <img id="lockImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZ
-                 S54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3J
-                 lIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZ
-                 jpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3R
-                 SZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ie
-                 G1wLmlpZDpENEUyMTU5MDVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpENTVEOTM3ODVCMEYxMUUxOTQxOUU0QkNBRjUxNzRCMSI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-                 zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkQ0RTIxNThFNUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkQ0RTIxNThGNUIwRjExRTE5NDE5RTRCQ0FGNTE3NEIxIi8+I
-                 DwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+6uBu2gAAAetJREFUeNrsmMtKw0AUhpNerBfwRtEqoggqPoELQcSFuNGlbrwsfAdXgqC48x1EdOe2bsS
-                 VCIIPUHAjohRU8IKorb3Y+A/8hVBsSbRDUnsGPjJNZibzzWTmJDUtyzJqOQWMGk8iIAIiIALeppCmNgfAIGjhuQ9wDW5A3s8CPWABTDBfnOECuANn4JD5qiSzipF4BqyBfpD5YaTVYEXALdgBx34SmAPbHHHV+SBo5
-                 FGlL/DJY4Qzsg6O/CAwBPZAKzvfDB7BKUfb4KxMgihIUeIFrIIrr9fAIjv2DprABdgAyZJyfWALjHE2YmAJbHo5A1Euyk7VFnjgqCbLlFcSu6AbqBs/g3nw5FUcGAEdfKYbQLxC5w1ei7OsqtMOhr0MZF0gzLx6/hM
-                 O6iRY1qBIzA+R2OQOk3JQNsWyph9fJcwqlZGXuboRsEgxX3BQp1BS50/7uNtAtgxGQRrkGIXzto6roDZVoV1Vttcmon7Pss0wA+ElONAVyPbBNHjlYszatkSDHQhVGFWTnU7bzkW4nao6beAErOiaAXXjN742lLvuN
-                 mVsgxBw24bsQiIgAiIgAiIgAiJQzwKhXwirOkGN/QnoFMjyozytSSDMezj/CHf5PTDOv0FyGgXuwbkuAVnEIiACIiAC/0vgW4ABAPzVePVeng+uAAAAAElFTkSuQmCC" />
-            
+          
              <!-- Img at menu - Desk-->
              <img id="deskImg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZ
                  S54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3J
@@ -766,6 +857,11 @@
         
         <!-- Start our APPLICATION ! YES :-) -->
         <script>
+          
+
+            var  localedLang ;
+            var contexts;
+             
             var topPanel = new TopPanelCreator();
             var editor = new EditorWorker();
             var images = new ImageCreator();
@@ -776,14 +872,18 @@
                 ////////////////////////////////////////////
                 ////////////// PREPARE DATA ////////////////
                 ////////////////////////////////////////////
+              
+                var common = new CommonWorker();
+                // Parse languages texts
+                var languagesTexts = eval('(' + common.getContentOfScriptTag(document.getElementById('languages')) + ')');
+
+                localedLang = languagesTexts['czech'];
 
                 // Load images
                 var imagesIds = ["nextLogo",
                                  "arrowImg",
                                  "cloudImg",
-                                 "calendarImg",
-                                 "deskImg",
-                                 "lockImg"];
+                                 "deskImg"];
                 images.init(imagesIds);
 
 
@@ -793,7 +893,7 @@
                 //data = eval('(' + content + ')');
 
                 // Find all contexts
-                var contexts = globalMethods.findAllContexts(data);
+                contexts = globalMethods.findAllContexts(data);
 
                 ////////////////////////////////////////////
                 //////////////////// TOP ///////////////////
@@ -816,9 +916,7 @@
                 menuSet['time'] = {
                     'next': 'arrowImg', // text : img
                     'today': 'deskImg',
-                    'inplan': 'calendarImg',
-                    'sometimes': 'cloudImg',
-                    //'blocked': 'lockImg'
+                    'sometimes': 'cloudImg'
                 };
                 menuSet['context'] = contexts;
 

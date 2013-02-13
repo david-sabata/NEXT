@@ -16,6 +16,7 @@
         
         <!-- Other icons -->
         <item name="checkboxStar">@drawable/checkbox_star_light</item>
+        <item name="shareIcon">@drawable/share_light</item> 
         
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Light</item>
@@ -63,7 +64,8 @@
 
         <!-- Other icons -->
         <item name="checkboxStar">@drawable/checkbox_star_dark</item>
-        
+        <item name="shareIcon">@drawable/share_dark</item> 
+         
         <!-- Basic preferences for light style -->
         <item name="android:scrollViewStyle">@style/Next.Widget.ScrollView.Dark</item>
 	    <item name="android:listViewStyle">@style/Next.Widget.ListView.Dark</item>
