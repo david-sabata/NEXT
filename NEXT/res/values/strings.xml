@@ -56,7 +56,7 @@
     <string name="all_done">All tasks completed!</string>
     <string name="show_all_projects">Show all projects</string>
     
-    <string name="empty_history">History is empty.</string>
+    <string name="empty_history">History is empty</string>
     <string name="project_history">Project history</string>
     <string name="task_history">Task history</string>
 

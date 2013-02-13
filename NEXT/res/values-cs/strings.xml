@@ -55,6 +55,7 @@
     
     <string name="all_done">Vše je hotovo!</string>
     
+    <string name="empty_history">Historie je prázdná</string>
     <string name="show_history">Zobrazit historii</string>
     <string name="project_history">Historie projektu</string>
     <string name="task_history">Historie úkolu</string>

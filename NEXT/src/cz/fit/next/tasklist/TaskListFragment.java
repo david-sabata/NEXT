@@ -131,6 +131,17 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 	}
 
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View v = super.onCreateView(inflater, container, savedInstanceState);
+
+		TypedArray background = getActivity().getTheme().obtainStyledAttributes(new int[] { R.attr.listViewBackground });
+		v.setBackgroundColor(background.getColor(0, Color.WHITE));
+
+		return v;
+	}
+
+
 
 
 	@Override
@@ -330,19 +341,6 @@ public class TaskListFragment extends ListFragment implements ServiceReadyListen
 		// onAttached might not be called yet
 		if (getActivity() != null)
 			reload();
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		View v =  super.onCreateView(inflater, container, savedInstanceState);
-		
-		TypedArray background = getActivity().getTheme().obtainStyledAttributes(new int[] {R.attr.listViewBackground});
-
-		v.setBackgroundColor(background.getColor(0, Color.WHITE));
-		
-		return v;
 	}
 
 
