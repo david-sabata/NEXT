@@ -6,16 +6,17 @@ import java.util.Date;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.preferences.SettingsFragment;
 
 /**
@@ -251,11 +252,11 @@ public class TasksModelService extends Service {
 			if (old.isCompleted() != task.isCompleted()) {
 				hist.addChange(TaskHistory.COMPLETED, old.isCompleted() ? "true" : "false", task.isCompleted() ? "true" : "false");
 			}
-			
+
 			// MOVE TO ANOTHER PROJECT
 			if (old.getProject().getId() != task.getProject().getId()) {
 				hist.addChange(TaskHistory.PROJECT, old.getProject().getId(), task.getProject().getId());
-				
+
 				// add record about move into old project
 				Project oldproj = old.getProject();
 				ArrayList<TaskHistory> oldhist = oldproj.getHistory();
@@ -265,7 +266,7 @@ public class TasksModelService extends Service {
 				oldproj.setHistory(oldhist);
 				mProjectsDataSource.saveProject(oldproj);
 			}
-			
+
 
 		}
 
@@ -316,9 +317,9 @@ public class TasksModelService extends Service {
 
 		// generate history record
 		TaskHistory hist = new TaskHistory();
-		hist.setAuthor(SyncService.getInstance().getAccountName());
-		if (hist.getAuthor() == null)
-			hist.setAuthor("");
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		String author = prefs.getString(SettingsFragment.PREF_ACCOUNT_NAME, null);
+		hist.setAuthor(author == null ? "" : author);
 		hist.setTaskId(deleting.getId());
 		hist.setTimeStamp(new DateTime().toString());
 
