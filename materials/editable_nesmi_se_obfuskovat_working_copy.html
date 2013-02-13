@@ -268,45 +268,48 @@
                     settings = pSettings;
                 }
 
-                function createLi(img, liData) {
+                function createLi(clickable, liData, img) {
                     var li = document.createElement('li');
                     var span = document.createElement('span');
 
                     // Hack with image
-                    if (img != null) {
-                        // Prepare text of item                        
-                        span.innerHTML = localedLang[liData];
-
-                        var image = images.getImage(img);
-                        image.setAttribute("class", "sideBarImage");
-
-                        // Add image to item
-                        li.appendChild(image);
-                         
-                        // Add listener to sort by time
-                        // liData van by "next" or "sometimes" or "today"
-                        li.addEventListener("click", function () {
-                            console.log(liData);
-                            
-                            //Reset contexts to all
-                            editor.setContexts(globalMethods.findAllContexts(data));
-                            
-                            // Set time filtering
-                            editor.setTimeFilter(liData);
-                            
-                            editor.cleanTaskList();
-                            editor.generateTaskList();
-                        });
-                    } else {
-                        span.innerHTML = liData; // Contexts are unique -> they cant be translated
-                        span.setAttribute("class", "sideBarContextItem");
-
-                        // Add event listener to sort by context
-                        li.addEventListener("click", function () {
-                            editor.setContexts([liData]);
-                            editor.cleanTaskList();
-                            editor.generateTaskList();
-                        });
+                    if(clickable == "notClickAble") {                  
+                        span.innerHTML = localedLang[liData]
+                    } else if (clickable == "clickAble") {
+                        if (img != null) {
+                            // Prepare text of item                        
+                            span.innerHTML = localedLang[liData];
+    
+                            var image = images.getImage(img);
+                            image.setAttribute("class", "sideBarImage");
+    
+                            // Add image to item
+                            li.appendChild(image);
+                             
+                            // Add listener to sort by time
+                            // liData van by "next" or "sometimes" or "today"
+                            li.addEventListener("click", function () {
+    
+                                //Reset contexts to all
+                                editor.setContexts(globalMethods.findAllContexts(data));
+                                
+                                // Set time filtering
+                                editor.setTimeFilter(liData);
+                                
+                                editor.cleanTaskList();
+                                editor.generateTaskList();
+                            });
+                        } else {
+                            span.innerHTML = liData; // Contexts are unique -> they cant be translated
+                            span.setAttribute("class", "sideBarContextItem");
+    
+                            // Add event listener to sort by context
+                            li.addEventListener("click", function () {
+                                editor.setContexts([liData]);
+                                editor.cleanTaskList();
+                                editor.generateTaskList();
+                            });
+                        }
                     }
 
 
@@ -320,19 +323,19 @@
 
                     ul.setAttribute("class", "sideBarUl");
 
+                   
                     // Create description of UL block
-                    var titleUl = createLi(null, localedLang[s]);
+                    var titleUl = createLi("notClickAble", s);
                     titleUl.setAttribute("class", "sideBarTitleUl");
                     ul.appendChild(titleUl);
 
                     for (item in ulData) {
-
                         // Fixed part of menu
                         if (s == 'time') {
-                            var li = createLi(ulData[item], item);
+                            var li = createLi("clickAble", item, ulData[item]);
                         } else {
                             // variable part of menu
-                            var li = createLi(null, ulData[item]);
+                            var li = createLi("clickAble", ulData[item]);
                         }
                         ul.appendChild(li);
                     }
@@ -380,9 +383,7 @@
                 * return concrete image
                 */
                 function getImage(key) {
-                    console.log(images[key]);
                     return images[key];
-
                 }
             }
             /**
@@ -591,7 +592,6 @@
                  * Is item i nactual time filter ?
                  */                                 
                 function isInTimeFilter(taskDate) {
-                    console.log("Filter:" + filter);
                     if (filter == "next")   {
                       return true;
                     } if (filter == "today" && taskDate.isToday()) {
@@ -748,7 +748,7 @@
         <script id="data" type="text/javascript">
             var data =
 //begin_of_data          
-{"history":[{"timestamp":"1360768122000","author":"xsychr03@gmail.com","changes":[{"newvalue":"Test na HTML sablonu","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"Android","oldvalue":"","name":"next_hist_context"},{"newvalue":"1358089500000","oldvalue":"","name":"next_hist_date"},{"newvalue":"Toto je testovací tak do HTML ctecky","oldvalue":"","name":"next_hist_description"},{"newvalue":"3","oldvalue":"","name":"next_hist_priority"}],"taskid":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026"}],"data":[{"id":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026","title":"Test na HTML sablonu","status":false,"important":3,"description":"Toto je testovací tak do HTML ctecky","date":"1358089500000","partContexts":"Android","partProject":"Projekt sloučí pro testování historie "}],"id":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","projectname":"Projekt sloučí pro testování historie "}﻿            //end_of_data
+{"history":[{"timestamp":"1360768122000","author":"xsychr03@gmail.com","changes":[{"newvalue":"Test na HTML sablonu","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"Android","oldvalue":"","name":"next_hist_context"},{"newvalue":"1358089500000","oldvalue":"","name":"next_hist_date"},{"newvalue":"Toto je testovací tak do HTML ctecky","oldvalue":"","name":"next_hist_description"},{"newvalue":"3","oldvalue":"","name":"next_hist_priority"}],"taskid":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026"},{"timestamp":"1360768971000","author":"xsychr03@gmail.com","changes":[{"newvalue":"1360776900000","oldvalue":"1358058900000","name":"next_hist_date"},{"newvalue":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","oldvalue":"752eb0b4-7ac8-430b-9753-1f9ae15db24c","name":"next_hist_project"}],"taskid":"6a0c72a8-1f95-41d0-b5b8-7c6eed882f64"},{"timestamp":"1360769138000","author":"xsychr03@gmail.com","changes":[{"newvalue":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","oldvalue":"752eb0b4-7ac8-430b-9753-1f9ae15db24c","name":"next_hist_project"}],"taskid":"6a0c72a8-1f95-41d0-b5b8-7c6eed882f64"},{"timestamp":"1360769223000","author":"xsychr03@gmail.com","changes":[{"newvalue":"Nový task","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"Work","oldvalue":"","name":"next_hist_context"},{"newvalue":"1360769194000","oldvalue":"","name":"next_hist_date"},{"newvalue":"","oldvalue":"","name":"next_hist_description"},{"newvalue":"1","oldvalue":"","name":"next_hist_priority"},{"newvalue":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","oldvalue":"","name":"next_hist_project"}],"taskid":"ad855b91-7af2-40bd-acee-e0c91a5657b5"},{"timestamp":"1360772041000","author":"xsychr03@gmail.com","changes":[{"newvalue":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","oldvalue":"","name":"next_hist_project"},{"newvalue":"Ahoj nový peojekt","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"workout","oldvalue":"","name":"next_hist_context"},{"newvalue":"1360141812000","oldvalue":"","name":"next_hist_date"},{"newvalue":"testovací komentář ahoj","oldvalue":"","name":"next_hist_description"},{"newvalue":"1","oldvalue":"","name":"next_hist_priority"}],"taskid":"41656b50-0a41-41ca-8035-38b85d95cabd"},{"timestamp":"1360772354000","author":"xsychr03@gmail.com","changes":[{"newvalue":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","oldvalue":"","name":"next_hist_project"},{"newvalue":"Ahoj svete","oldvalue":"","name":"next_hist_title"},{"newvalue":"false","oldvalue":"","name":"next_hist_completed"},{"newvalue":"Android","oldvalue":"","name":"next_hist_context"},{"newvalue":"1360776900000","oldvalue":"","name":"next_hist_date"},{"newvalue":"Toto je test otáčení nového ukolu","oldvalue":"","name":"next_hist_description"},{"newvalue":"3","oldvalue":"","name":"next_hist_priority"}],"taskid":"6a0c72a8-1f95-41d0-b5b8-7c6eed882f64"}],"data":[{"id":"26e9d40d-93ed-4f9f-b6ce-c0fc43e1a026","title":"Test na HTML sablonu","status":false,"important":3,"description":"Toto je testovací tak do HTML ctecky","date":"1358089500000","partContexts":"Android","partProject":"Projekt sloučí pro testování historie "},{"id":"ad855b91-7af2-40bd-acee-e0c91a5657b5","title":"Nový task","status":false,"important":1,"description":"","date":"1360769194000","partContexts":"Work","partProject":"Projekt sloučí pro testování historie "},{"id":"6a0c72a8-1f95-41d0-b5b8-7c6eed882f64","title":"Ahoj svete","status":false,"important":3,"description":"Toto je test otáčení nového ukolu","date":"1360776900000","partContexts":"Android","partProject":"Projekt sloučí pro testování historie "}],"id":"999cf2f8-b0cb-48a5-95a4-880f9201a99a","projectname":"Projekt sloučí pro testování historie "}﻿            //end_of_data
         </script>
 
 
