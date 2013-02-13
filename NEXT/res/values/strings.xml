@@ -121,5 +121,16 @@
     <string name="no_account_connected">No account connected</string>
     <string name="change_connected_account">Click to change connected account</string>
  
+    <string name="tutorial_project">Tutorial</string>
 
+    <string name="tutorial_first_task">Hello! I am your first task. Click me!</string>
+    <string name="tutorial_first_description">The most important information of every task is its title. It usually reminds you what to do. If that\'s not enough for you, you can always use additional description like the one you are reading now.\n\nMost of your tasks will also include some time information. You can use exact date and/or time, but you can also use "someday", which is useful for tasks you are going to do whenever you feel like it.</string>
+    <string name="tutorial_categorize_tasks">Tasks can be assigned to Projects and Contexts</string>
+    <string name="tutorial_share_project">You can share projects to cooperate with your friends and co-workers</string>
+    <string name="tutorial_share_description">When synchronization is allowed (you can change that in Settings), all your projects are stored as HTML files on your Google Drive. You can view them, backup them or even take them with you when you think NEXT isn\'t good enough for you.\n\nBut the most powerful option is to share projects with your friends and co-workers. That way you can cooperate on the same tasks and all changes will be automatically synchronized!\nThere is also a history of changes for each project (use long touch in Projects screen) so you can keep up with the latest news.</string>
+    <string name="tutorial_sidebar">There is a sidebar on the left - swipe to open it!</string>
+    <string name="tutorial_rate_us">Rate NEXT on Google Play</string>
+    <string name="tutorial_dark_skin">Also check out our Holo Dark theme in the Settings ;-)</string>
+    
+    
 </resources>
