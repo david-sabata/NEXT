@@ -880,10 +880,21 @@
                 ////////////////////////////////////////////
               
                 var common = new CommonWorker();
-                // Parse languages texts
-                var languagesTexts = eval('(' + common.getContentOfScriptTag(document.getElementById('languages')) + ')');
 
-                localedLang = languagesTexts['czech'];
+                /**
+                 * Set local language
+                 */                                 
+                var languagesTexts = eval('(' + common.getContentOfScriptTag(document.getElementById('languages')) + ')');
+                var language = window.navigator.userLanguage || window.navigator.language;
+
+                if(language == "cs" || language == "cs-CZ" ) {
+                   language = "czech";
+                }  else {
+                  language = "english";
+                }
+                localedLang = languagesTexts[language];
+
+
 
                 // Set order of header
                 headersOfTable = ['status', 'title', 'description', 'date', 'partContexts', 'important'];  
