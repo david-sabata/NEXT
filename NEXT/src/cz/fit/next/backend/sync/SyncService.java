@@ -660,12 +660,14 @@ public class SyncService extends Service {
 		pds.open();
 		Project proj = pds.getProjectById(id);
 		String title = proj.getTitle();
+		proj.setShared(true);
+		pds.saveProject(proj);
 		pds.close();
 
 		ShareClass cls = new ShareClass(id, title, user);
 		cls.execute();
 
-		Log.i(TAG, "Sharing after execute");
+		//Log.i(TAG, "Sharing after execute");
 
 	}
 
@@ -715,6 +717,8 @@ public class SyncService extends Service {
 		protected void onPostExecute(Integer param) {
 			if (param == null)
 				Toast.makeText(getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(getApplicationContext(), R.string.sharing_ok, Toast.LENGTH_SHORT).show();
 		}
 
 

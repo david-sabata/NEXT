@@ -2,11 +2,15 @@ package cz.fit.next.projectlist;
 
 import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteCursor;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -25,6 +29,7 @@ import cz.fit.next.backend.Project;
 import cz.fit.next.backend.TasksModelService;
 import cz.fit.next.backend.database.Constants;
 import cz.fit.next.backend.sync.SyncService;
+import cz.fit.next.backend.sync.SyncService.ServiceBinder;
 import cz.fit.next.history.HistoryFragment;
 import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.sharing.SharingFragment;
@@ -35,6 +40,9 @@ import cz.fit.next.tasklist.TaskListFragment;
 public class ProjectListFragment extends ListFragment implements ServiceReadyListener {
 
 	private final static String LOG_TAG = "ProjectListFragment";
+	
+	private boolean mSyncServiceBound = false;
+	private SyncService mSyncService = null;
 
 
 
@@ -42,6 +50,9 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 	public void onResume() {
 		super.onResume();
 		Log.d(LOG_TAG, "onResume");
+		
+		// bind syncservice
+		getActivity().getApplicationContext().bindService(new Intent(this.getActivity(), SyncService.class), syncServiceConnection, Context.BIND_AUTO_CREATE);
 
 		MainActivity activity = (MainActivity) getActivity();
 
@@ -219,12 +230,14 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 						.setMessage(R.string.project_delete_confirm_msg).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								boolean ret = SyncService.getInstance().deleteProject(projId);
+								boolean ret = false;
+								if (mSyncServiceBound)
+										mSyncService.deleteProject(projId);
 								if (ret) {
 									TasksModelService.getInstance().deleteProject(projId);
 								} else {
 									Context context = SyncService.getInstance().getApplicationContext();
-									CharSequence text = "Error while project deleting, check your connection.";
+									CharSequence text = getResources().getString(R.string.delete_error);
 									int duration = Toast.LENGTH_SHORT;
 									Toast toast = Toast.makeText(context, text, duration);
 									toast.show();
@@ -250,6 +263,23 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 		if (getActivity() != null)
 			reloadItems();
 	}
+	
+	private ServiceConnection syncServiceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			final ServiceBinder binder = (ServiceBinder) service;
+
+			mSyncService = binder.getService();
+			mSyncServiceBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mSyncServiceBound = false;
+			mSyncService = null;
+		}
+	};
 
 
 
