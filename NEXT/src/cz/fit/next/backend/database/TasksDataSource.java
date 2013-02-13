@@ -274,7 +274,7 @@ public class TasksDataSource {
 					} else {
 						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " >= " + filter.getDateFrom().toMiliseconds();
 						where += " AND ";
-						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 = 0";
+						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " % 1000 != " + DateTime.SOMEDAY_MILISECONDS;
 						where += " AND ";
 						where += Constants.TABLE_TASKS + "." + Constants.COLUMN_DATETIME + " < " + filter.getDateUntil().toMiliseconds();
 					}
