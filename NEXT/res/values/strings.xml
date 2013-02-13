@@ -88,6 +88,9 @@
     <string name="SettingsSynchronizationActiveSummary">Synchronization status</string>
     <string name="SettingsSynchronizationIntervalTitle">Interval</string>
     <string name="SettingsAppTitle">Application Settings</string>
+    <string name="SettingsShowCompletedTasks">Show completed</string> 
+    <string name="SettingsShowCompletedTasksSummary">Always show completed tasks</string> 
+    
     <string name="history_title">title</string>
     <string name="history_priority">priority</string>
     <string name="history_context">context</string>
@@ -111,7 +114,7 @@
     <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
     <string name="sharing_error">NEXT: Something went wrong with sharing, are you synchronized?</string>
     <string name="sharing_ok">NEXT: Project will be shared.</string>
-    
+    <string name="unsharing_ok">NEXT: Project will be unshared.</string>
 
     <string name="SettingsNotificationsTitle">Notifications</string>
     <string name="SettingsNotificationsEnable">Enable</string>

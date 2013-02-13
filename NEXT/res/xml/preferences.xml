@@ -45,6 +45,14 @@
             android:entryValues="@array/preferenceDesignValuesIndex"
             android:defaultValue="1"
             />
+        <SwitchPreference 
+            android:key="PREF_SHOW_COMPLETED_TASKS"
+            android:title="@string/SettingsShowCompletedTasks"
+            android:summary="@string/SettingsShowCompletedTasksSummary"
+            android:defaultValue="true"
+            android:switchTextOff="0"
+            android:switchTextOn="I"
+            />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/SettingsNotificationsTitle"

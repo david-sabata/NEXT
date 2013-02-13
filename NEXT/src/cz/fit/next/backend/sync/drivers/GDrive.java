@@ -177,7 +177,7 @@ public class GDrive {
 		if (fileid == null)
 			return false;
 		
-		mService.permissions().delete(file, id);
+		mService.permissions().delete(fileid, id).execute();
 
 		return true;
 				

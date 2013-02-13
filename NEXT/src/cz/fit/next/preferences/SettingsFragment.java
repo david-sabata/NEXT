@@ -32,7 +32,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 	public static final String PREF_SYNC_WIFI = "PREF_SYNC_WIFI";
 	public static final String PREF_NOTIFICATIONS_ENABLED = "PREF_NOTIFICATIONS_ENABLED";
 	public static final String PREF_NOTIFICATIONS_ALLDAYTIME = "PREF_NOTIFICATIONS_ALLDAYTIME";
-	
+	public static final String PREF_SHOW_COMPLETED_TASKS = "PREF_SHOW_COMPLETED_TASKS";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
