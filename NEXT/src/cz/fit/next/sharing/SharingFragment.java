@@ -80,11 +80,6 @@ public class SharingFragment extends ListFragment {
 	public void onStop() {
 		super.onStop();
 
-		if (mSyncServiceBound) {
-			getActivity().unbindService(syncServiceConnection);
-			mSyncService = null;
-			mSyncServiceBound = false;
-		}
 	}
 
 	@Override
@@ -163,8 +158,8 @@ public class SharingFragment extends ListFragment {
 
 			case R.id.action_unshare:
 
-				if ((SyncService.getInstance().isNetworkAvailable()) && (SyncService.getInstance().isUserLoggedIn())) {
-					SyncService.getInstance().unshare(mProjId, up.id);
+				if ((mSyncServiceBound) && (mSyncService.isNetworkAvailable()) && (mSyncService.isUserLoggedIn())) {
+					mSyncService.unshare(mProjId, up.id);
 				} else {
 					Context context = SyncService.getInstance().getApplicationContext();
 					CharSequence text = getResources().getString(R.string.sharing_no_conection);
@@ -229,6 +224,7 @@ public class SharingFragment extends ListFragment {
 			final ServiceBinder binder = (ServiceBinder) service;
 
 			mSyncService = binder.getService();
+			mSyncServiceBound = true;
 
 			ExecTask exe = new ExecTask();
 			exe.execute();
