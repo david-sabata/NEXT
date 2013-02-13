@@ -185,13 +185,30 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		/**
 		 * Init Spinner for priority
 		 */
-		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		String[] priorityTexts = getResources().getStringArray(R.array.priorityArray);
-		PrioritySpinnerAdapter spinnerAdapter = new PrioritySpinnerAdapter(getActivity(), 0, priorityTexts);
-		spinnerPriority.setAdapter(spinnerAdapter);
-
+		ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(),
+				 R.layout.spinner_item_new_solution, priorityTexts);
+		Spinner spinnerView = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);	
+		spinnerView.setAdapter(spinnerAdapter);
+        
+		/**
+		 * Init Autocompleteview for context
+		 */
+		ArrayList<String> contexts = loadContexts();
+		final String[] contextsStrings =  contexts.toArray(new String [contexts.size()]);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+				 R.layout.spinner_item_new_solution, contextsStrings);
+        AutoCompleteTextView textView = (AutoCompleteTextView)
+        		taskDetailView.findViewById(R.id.editContext);
+        textView.setAdapter(adapter);
+        
+        
+        
 		MainActivity activity = (MainActivity) getActivity();
 
+		/**
+		 * If screen was rotated (activity recreated) restore the state
+		 */
 		if (savedInstanceState != null && savedInstanceState.getSerializable(ARG_TASK_SAVE) != null) {
 			// Restore original task if has been change
 			mTask = (Task) savedInstanceState.getSerializable(ARG_TASK_SAVE);
@@ -393,20 +410,10 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 			// Default value
 		}
 
-		// Set context
-		/*TextView context = (TextView) taskDetailView.findViewById(R.id.editContext);
-		context.setText(task.getContext());*/
-
-		// AutocompleteContext
-		ArrayList<String> contexts = loadContexts();
-		final String[] contextsStrings =  contexts.toArray(new String [contexts.size()]);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                R.layout.spinner_item_new_solution, contextsStrings);
-        AutoCompleteTextView textView = (AutoCompleteTextView)
+		// Set context to autocompleteview
+		AutoCompleteTextView textView = (AutoCompleteTextView)
         		taskDetailView.findViewById(R.id.editContext);
-        textView.setAdapter(adapter);
-		textView.setText(mTask.getContext());
-		
+		textView.setText(mTask.getContext());		
 		
 		// Set priority spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
@@ -436,14 +443,7 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
 		spinnerPriority.setSelection(0);
 		
-		// AutocompleteContext
-		ArrayList<String> contexts = loadContexts();
-		final String[] contextsStrings =  contexts.toArray(new String [contexts.size()]);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-				 R.layout.spinner_item_new_solution, contextsStrings);
-        AutoCompleteTextView textView = (AutoCompleteTextView)
-        		taskDetailView.findViewById(R.id.editContext);
-        textView.setAdapter(adapter);
+
        			
 	}
 
