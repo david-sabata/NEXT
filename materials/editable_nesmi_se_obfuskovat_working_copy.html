@@ -107,6 +107,10 @@
 
                             .tableCell {
                                 padding:3px;
+                                padding-top:10px;
+                                padding-bottom:10px;
+                                padding-left:5px;
+                                border-bottom: 2px solid black;
                             }
 
                             .statusCell {
@@ -476,23 +480,18 @@
                 function generateTableHeader() {               
                     // Create new row element
                     var newTR = document.createElement('tr');
-                    
-                    headers = localedLang;
-                    
-                    for (item in headers) {
-                        if (item == "title" ||
-                              item == "description" ||
-                              item == "date" ||
-                              item == "partContexts" ||
-                              item == "important" ||
-                              item == "important" ||
-                              item == "status") {
+             
+                       for (item in headersOfTable) {
+                            var text = localedLang[headersOfTable[item]];
                             // Create a new TD element
-                            var newTD = createCell(headers[item], '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
+                            if(headersOfTable[item] == "important") {
+                              text = "";
+                            }
+                            var newTD = createCell(text, '#2c2c2c', '33b6ea', [1, 1, 1, 1], 'bold', "tableHeader", 'solid black'); // left, right, bottom, top
                             newTR.appendChild(newTD);
                         }
 
-                    }
+                    
                     return newTR;
                 }
                 /**
@@ -501,49 +500,44 @@
                 function createRow(task) {
                     // Create new row element
                     var newTR = document.createElement('tr');
+                    //  var headers = 'status', 'title', 'description', 'date', 'partContexts', 'important'};    
 
-
+                    var borders = [1, 1, 2, 1];
                     // Generate cells of the new row
-                    for (item in headers) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
-                        if (item == "title" ||
-                            item == "description" ||
-                            item == "date" ||
-                            item == "partContexts" ||
-                            item == "important" ||
-                            item == "important" ||
-                            item == "status") {
+                    for (item in headersOfTable) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
+                            var properties = headersOfTable[item];
                             // Create a new TD element
                             var newTD = null;
                             var borderColor = "solid grey";
                             var classCells = "tableCell";
 
-                            if (task[item] === undefined) {
-                                task[item] = "";
+                            if (task[properties] === undefined) {
+                                task[properties] = "";
                             }
 
-                            switch (item) {
+                            switch (properties) {
                                 case 'title':
                                     // text,    bgColor, textColor, borderOn, fontWeight
-                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor); // left, right, bottom, top
+                                    newTD = createCell(task[properties], 'white', 'black', borders, 'normal', classCells, borderColor); // left, right, bottom, top
                                     break;
 
                                 case 'description':
                                     
-                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    newTD = createCell(task[properties], 'white', 'black', borders, 'normal', classCells, borderColor);
                                     break;
 
                                 case 'date':
-                                    var date = new DateTime(task[item]);
-                                    newTD = createCell(date.toLocaleDateTimeString(), 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    var date = new DateTime(task[properties]);
+                                    newTD = createCell(date.toLocaleDateTimeString(), 'white', 'black', borders, 'normal', classCells, borderColor);
                                     break;
 
                                 case 'partContexts':
-                                    newTD = createCell(task[item], 'white', 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    newTD = createCell(task[properties], 'white', 'black', borders, 'normal', classCells, borderColor);
                                     break;
 
                                 case 'important':
                                     var bgColor;
-                                    var value = task[item];
+                                    var value = task[properties];
                                     if (value == 1) {
                                         bgColor = '#2f9b3e';
                                     } else if (value == 2) {
@@ -552,10 +546,10 @@
                                         bgColor = '#ff3333';
                                     }
 
-                                    newTD = createCell("", bgColor, 'black', [1, 1, 1, 1], 'normal', classCells, borderColor);
+                                    newTD = createCell("", bgColor, 'black', borders, 'normal', classCells, borderColor);
                                     break;
                                 case 'status':
-                                    var value = task[item];
+                                    var value = task[properties];
                                     var el;
                                     /**
                                     * I know, that it is not ideal, but it is quick and easy solution
@@ -565,14 +559,14 @@
                                     } else {
                                         el = '<input type="checkbox" disabled="disabled" />';
                                     }
-                                    newTD = createCell(el, 'white', 'black', [1, 1, 1, 1], 'normal', "statusCell", borderColor);
+                                    newTD = createCell(el, 'white', 'black', borders, 'normal', "statusCell", borderColor);
                                     break;
 
                                 default:
                                     console.log("Unknown properties of object");
                                     break;
-                            }
-                        }
+                            
+                          }
                         if (newTD != null) {
                             newTR.appendChild(newTD);
                         }
@@ -859,9 +853,10 @@
         <script>
           
 
-            var  localedLang ;
+            var localedLang ;
             var contexts;
-             
+            var headersOfTable; 
+            
             var topPanel = new TopPanelCreator();
             var editor = new EditorWorker();
             var images = new ImageCreator();
@@ -879,6 +874,9 @@
 
                 localedLang = languagesTexts['czech'];
 
+                // Set order of header
+                headersOfTable = ['status', 'title', 'description', 'date', 'partContexts', 'important'];  
+               
                 // Load images
                 var imagesIds = ["nextLogo",
                                  "arrowImg",
