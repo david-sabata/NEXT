@@ -39,6 +39,9 @@
     <string name="frag_title_today">Dnes</string>
     <string name="frag_title_someday">Někdy</string>
     
+    <string name="today">Dnes</string>
+    <string name="tomorrow">Zítra</string>
+    <string name="yesterday">Včera</string>
     <string name="someday">Někdy</string>
     <string name="projects">Projekty</string>
     <string name="implicit_project">&lt;Žádný&gt;</string>

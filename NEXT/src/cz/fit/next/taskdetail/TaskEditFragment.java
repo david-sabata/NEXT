@@ -276,11 +276,6 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
 		wholeDayButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				//				if (!isChecked) {
-				//					originalDateTime.setIsAllday(false);
-				//					originalDateTime = new DateTime();
-				//				}
-
 				if (isChecked) {
 					originalDateTime.setIsAllday(true);
 

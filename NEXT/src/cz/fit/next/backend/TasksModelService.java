@@ -17,7 +17,6 @@ import android.widget.FilterQueryProvider;
 import cz.fit.next.R;
 import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
-import cz.fit.next.backend.sync.SyncService;
 import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
@@ -256,7 +255,7 @@ public class TasksModelService extends Service {
 			}
 
 			// MOVE TO ANOTHER PROJECT
-			if (old.getProject().getId() != task.getProject().getId()) {
+			if (!old.getProject().getId().equals(task.getProject().getId())) {
 				hist.addChange(TaskHistory.PROJECT, old.getProject().getId(), task.getProject().getId());
 
 				// add record about move into old project
@@ -282,7 +281,7 @@ public class TasksModelService extends Service {
 
 		// save task
 		mTasksDataSource.saveTask(task);
-		
+
 		// prepare notifications
 		Intent i = new Intent(getApplicationContext(), NotificationService.class);
 		startService(i);
@@ -375,6 +374,19 @@ public class TasksModelService extends Service {
 	public String getLocalizedSomedayTime() {
 		return mContext.getResources().getString(R.string.someday);
 	}
+
+	public String getLocalizedToday() {
+		return mContext.getResources().getString(R.string.today);
+	}
+
+	public String getLocalizedTomorrow() {
+		return mContext.getResources().getString(R.string.tomorrow);
+	}
+
+	public String getLocalizedYesterday() {
+		return mContext.getResources().getString(R.string.yesterday);
+	}
+
 
 	/**
 	 * Returns tasks filter query provider used to filter tasks
