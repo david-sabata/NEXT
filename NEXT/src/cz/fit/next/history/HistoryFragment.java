@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import android.app.ListFragment;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import cz.fit.next.MainActivity;
 import cz.fit.next.R;
 import cz.fit.next.ServiceReadyListener;
@@ -64,12 +69,18 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 			mTitle = getResources().getString(R.string.task_history);
 	}
 
-	/*@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
 
-		return inflater.inflate(R.layout.history_list, container, false);
-	}*/
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View v = super.onCreateView(inflater, container, savedInstanceState);
+
+		TypedArray background = getActivity().getTheme().obtainStyledAttributes(new int[] { R.attr.listViewBackground });
+		v.setBackgroundColor(background.getColor(0, Color.WHITE));
+
+		return v;
+	}
+
+
 
 	@Override
 	public void onResume() {
@@ -87,6 +98,8 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 
 		// register for gestures
 		activity.attachGestureDetector(getListView());
+
+		setEmptyText(getActivity().getResources().getString(R.string.empty_history));
 	}
 
 
@@ -127,7 +140,7 @@ public class HistoryFragment extends ListFragment implements ServiceReadyListene
 					if (proj.getHistory().get(i).getChanges().size() > 0)
 						adapterData.add(proj.getHistory().get(i));
 			}
-			
+
 			Collections.reverse(adapterData);
 			setListAdapter(new TaskHistoryAdapter(getActivity(), 0, adapterData));
 		}

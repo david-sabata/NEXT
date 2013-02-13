@@ -203,8 +203,7 @@ public class NotificationService extends Service {
 
 		String title = t.getTitle();
 		String content = getLocalizedDateTime(t.getDate());
-		String ticker = getResources()
-				.getString(R.string.upcoming_notification);
+		String ticker = t.getTitle();
 
 		Notification.Builder mBuilder = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.menu_next).setContentTitle(title)
