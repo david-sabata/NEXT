@@ -39,6 +39,7 @@ import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 import cz.fit.next.preferences.SettingsUtil;
 import cz.fit.next.sidebar.SidebarFragment;
+import cz.fit.next.taskdetail.TaskDetailFragment;
 import cz.fit.next.tasklist.TaskListFragment;
 
 
@@ -144,7 +145,9 @@ public class MainActivity extends Activity {
 		Intent i = getIntent();
 		String taskId = i.getStringExtra(NotificationService.INTENT_TASK_ID);
 		if (taskId != null) {
-			Log.i("FUUUUUUUUUUU", taskId);
+			//Log.i("FUUUUUUUUUUU", taskId);
+			TaskDetailFragment tdf = TaskDetailFragment.newInstance(taskId);
+			this.replaceMainFragment(tdf);
 		}
 	}
 

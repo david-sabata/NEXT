@@ -2,6 +2,7 @@ package cz.fit.next.notifications;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import cz.fit.next.MainActivity;
@@ -22,6 +23,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 public class NotificationService extends Service {
@@ -199,9 +201,8 @@ public class NotificationService extends Service {
 			return;
 		}
 
-		String title = getResources().getString(R.string.upcoming_notification);
-		// TODO: To strings.xml
-		String content = t.getTitle() + " at " + t.getDate().toLocaleDateTimeString();
+		String title = t.getTitle();
+		String content = getLocalizedDateTime(t.getDate());
 		String ticker = getResources()
 				.getString(R.string.upcoming_notification);
 
@@ -237,6 +238,15 @@ public class NotificationService extends Service {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Returns localized date and time string
+	 */
+	public String getLocalizedDateTime(DateTime dt) {
+		
+		Date d = new Date (dt.toMiliseconds()); 
+		return DateUtils.formatDateTime(getApplicationContext(), d.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 	}
 
 }
