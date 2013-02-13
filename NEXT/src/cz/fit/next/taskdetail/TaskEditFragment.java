@@ -405,6 +405,8 @@ public class TaskEditFragment extends Fragment implements ServiceReadyListener {
         AutoCompleteTextView textView = (AutoCompleteTextView)
         		taskDetailView.findViewById(R.id.editContext);
         textView.setAdapter(adapter);
+		textView.setText(mTask.getContext());
+		
 		
 		// Set priority spinner default value from database
 		Spinner spinnerPriority = (Spinner) taskDetailView.findViewById(R.id.spinnerPriority);
