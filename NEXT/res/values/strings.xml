@@ -69,6 +69,7 @@
     <string name="implicit_project">&lt;No project&gt;</string>
     <string name="project_title">Project title</string>
     <string name="project_delete">Delete project</string>
+    <string name="project_deleted">Project will been deleted from database in a minute</string>
     <string name="show_history">Show history</string>
     <string name="project_delete_confirm_msg">Do you really want to delete this project? All its tasks will be lost.</string>
     <string name="task_delete">Delete task</string>

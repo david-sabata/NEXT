@@ -233,9 +233,7 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 								boolean ret = false;
 								if (mSyncServiceBound)
 										mSyncService.deleteProject(projId);
-								if (ret) {
-									TasksModelService.getInstance().deleteProject(projId);
-								} else {
+								if (!ret) {
 									Context context = SyncService.getInstance().getApplicationContext();
 									CharSequence text = getResources().getString(R.string.delete_error);
 									int duration = Toast.LENGTH_SHORT;

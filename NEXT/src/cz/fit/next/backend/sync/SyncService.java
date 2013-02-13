@@ -822,15 +822,8 @@ public class SyncService extends Service {
 
 		DeleteProjectClass cls = new DeleteProjectClass(id, title);
 		cls.execute();
-		try {
-			return cls.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return false;
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			return false;
-		}
+		
+		return true;
 
 		//	Log.i(TAG,"Project deleting after execute");
 
@@ -871,7 +864,13 @@ public class SyncService extends Service {
 		@Override
 		protected void onPostExecute(Boolean status) {
 
-			//return status;
+			ProjectsDataSource pds = new ProjectsDataSource(getApplicationContext());
+			pds.open();
+			pds.deleteProject(id);
+			pds.close();
+			
+			Toast.makeText(getApplicationContext(), R.string.project_deleted, Toast.LENGTH_SHORT).show();
+			
 		}
 
 

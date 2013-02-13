@@ -64,6 +64,7 @@
     
     <string name="project_title">Název projektu</string>
     <string name="project_delete">Smazat projekt</string>
+    <string name="project_deleted">Projekt bude během chvíle vymazán</string>
     <string name="project_delete_confirm_msg">Skutečně chcete tento projekt odstranit? Budou smazány i všechny jeho úkoly.</string>
     
     <string name="task_delete">Smazat úkol</string>
