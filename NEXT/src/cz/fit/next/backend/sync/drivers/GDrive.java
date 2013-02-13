@@ -200,6 +200,8 @@ public class GDrive {
 		List<UserPerm> result = new ArrayList<UserPerm>();
 		List<Permission> perms = getPermissions(fileid);
 		
+		if (perms == null) return null;
+		
 		for (int i = 0; i < perms.size(); i++) {
 			UserPerm up = new UserPerm();
 			up.id = perms.get(i).getId();
@@ -225,8 +227,11 @@ public class GDrive {
 	 */
 	public ArrayList<UserPerm> getUserListByFilename(String filename) throws IOException {
 		String fileId = getFileIdByName(filename, mAppFolder);
-				
-		return new ArrayList<UserPerm> (getUserList(fileId));
+		List<UserPerm> up = getUserList(fileId);
+		if (up != null)
+			return new ArrayList<UserPerm> (up);
+		else
+			return null;
 	}
 	
 	
@@ -652,7 +657,7 @@ public class GDrive {
 	List<Permission> getPermissions(String fileid) throws IOException {
 		PermissionList permissions = null;
 		
-		
+		if (fileid == null) return null;
 		permissions = mService.permissions().list(fileid).execute();
 		return permissions.getItems();
 		

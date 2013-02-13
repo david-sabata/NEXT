@@ -72,6 +72,7 @@
     <string name="implicit_project">&lt;No project&gt;</string>
     <string name="project_title">Project title</string>
     <string name="project_delete">Delete project</string>
+    <string name="project_deleted">Project will been deleted from database in a minute</string>
     <string name="show_history">Show history</string>
     <string name="project_delete_confirm_msg">Do you really want to delete this project? All its tasks will be lost.</string>
     <string name="task_delete">Delete task</string>
@@ -97,6 +98,7 @@
     <string name="task_uncompleted">TASK MARKED AS UNCOMPLETE</string>
     <string name="task_deleted">TASK DELETED</string>
     <string name="deleted">deleted</string>
+    <string name="delete_error">Error in project deletion, check your connection</string>
 
     
    	<string name="sharing">Sharing</string>
@@ -107,8 +109,8 @@
     <string name="no_connection">No connection available.</string>
     <string name="no_wifi">No Wi-Fi connection available.</string>
     <string name="sync_error">NEXT: Something went wrong with synchronization :(</string>
-    <string name="sharing_error">NEXT: Something went wrong with sharing :(</string>
-    
+    <string name="sharing_error">NEXT: Something went wrong with sharing, are you synchronized?</string>
+    <string name="sharing_ok">NEXT: Project will be shared.</string>
     
 
     <string name="SettingsNotificationsTitle">Notifications</string>

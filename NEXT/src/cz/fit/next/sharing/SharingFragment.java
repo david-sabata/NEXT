@@ -3,6 +3,8 @@ package cz.fit.next.sharing;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -202,12 +204,12 @@ public class SharingFragment extends ListFragment {
 		protected void onPostExecute(Integer result) {
 			super.onPostExecute(result);
 
-			if (result != null) {
+			if ((result != null) && (list != null)) {
 
 				setListAdapter(new SharingAdapter(getActivity(), 0, list));
 			} else {
 				Toast.makeText(getActivity().getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
-				// TODO: go back in fragments stack
+				getActivity().getFragmentManager().popBackStack();
 			}
 		}
 
