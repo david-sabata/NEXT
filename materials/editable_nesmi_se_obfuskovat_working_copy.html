@@ -274,7 +274,8 @@
 
                     // Hack with image
                     if(clickable == "notClickAble") {                  
-                        span.innerHTML = localedLang[liData]
+                        span.innerHTML = localedLang[liData];
+                        console.log(localedLang[liData]);
                     } else if (clickable == "clickAble") {
                         if (img != null) {
                             // Prepare text of item                        
@@ -328,17 +329,27 @@
                     var titleUl = createLi("notClickAble", s);
                     titleUl.setAttribute("class", "sideBarTitleUl");
                     ul.appendChild(titleUl);
-
-                    for (item in ulData) {
-                        // Fixed part of menu
-                        if (s == 'time') {
-                            var li = createLi("clickAble", item, ulData[item]);
-                        } else {
-                            // variable part of menu
-                            var li = createLi("clickAble", ulData[item]);
-                        }
+                    
+                    var li;
+                    
+                    // FIX PART OF MENU IS OBJEECT CONTAINT ANOTHER SETTINGS
+                    if (s == 'time') {
+                      for (var i in ulData) {
+                        console.log(i);
+                        li = createLi("clickAble", i, ulData[i]);
                         ul.appendChild(li);
-                    }
+                      }
+                    }                    
+                    
+                    // CONTEXT IS ARRAY
+                    if (s == 'context') {    
+                      for (var i=0; i < ulData.length; i++) {
+                        li = createLi("clickAble", ulData[i]);
+                        ul.appendChild(li);
+                      }
+                    }   
+                    
+          
 
                     return ul;
                 }
@@ -347,7 +358,7 @@
                 * Regenerate Menu
                 */
                 function regenerate() {
-                    for (s in settings) {
+                    for (var s in settings) {
                         var ul = createUl(s, settings[s]);
                         menu.appendChild(ul);
                     }
@@ -372,7 +383,7 @@
                 function init(ids) {
 
                     images = new Object();
-                    for (id in ids) {
+                    for (var id in ids) {
                         var imgTag = document.getElementById(ids[id]);
                         images[ids[id]] = imgTag;
                     }
@@ -422,7 +433,7 @@
                 function findAllContexts(pData) {
                     var contexts = [];
                     var taskData = pData.data;
-                    for (task in taskData) {
+                    for (var task in taskData) {
                         var taskContext = (taskData[task]).partContexts;
                         if (contexts.indexOf(taskContext) == -1) {
                             contexts.push(taskContext);
@@ -482,7 +493,7 @@
                     // Create new row element
                     var newTR = document.createElement('tr');
              
-                       for (item in headersOfTable) {
+                       for (var item in headersOfTable) {
                             var text = localedLang[headersOfTable[item]];
                             // Create a new TD element
                             if(headersOfTable[item] == "important") {
@@ -505,7 +516,7 @@
 
                     var borders = [1, 1, 2, 1];
                     // Generate cells of the new row
-                    for (item in headersOfTable) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
+                    for (var item in headersOfTable) { //brutal HACK :-/ Bleee...neew refactor for self-editable version
                             var properties = headersOfTable[item];
                             // Create a new TD element
                             var newTD = null;
@@ -580,7 +591,7 @@
                 * Is item in actual context?
                 */
                 function isInContext(taskContext) {
-                    for (c in contexts) {
+                    for (var c in contexts) {
                         if (taskContext == contexts[c]) {
                             return true;
                         }
@@ -609,7 +620,7 @@
                     table.appendChild(generateTableHeader());
 
                     // Create new divs and add them to parent div
-                    for (task in tasksData) {
+                    for (var task in tasksData) {
                         // Get date of task
                         var date = new DateTime(parseInt(tasksData[task]['date']));
                         
@@ -916,6 +927,7 @@
                     'today': 'deskImg',
                     'sometimes': 'cloudImg'
                 };
+                
                 menuSet['context'] = contexts;
 
                 // Create menu
