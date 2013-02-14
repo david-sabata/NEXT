@@ -75,4 +75,16 @@ public class SettingsProvider {
 		return val;
 	}
 	
+	/**
+	 * Gets long from given key, if not exists, returns default
+	 * @param key
+	 * @param def Default value
+	 * @return
+	 */
+	public long getLong(String key, int def) {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+		long val = settings.getLong(key, def);
+		return val;
+	}
+	
 }

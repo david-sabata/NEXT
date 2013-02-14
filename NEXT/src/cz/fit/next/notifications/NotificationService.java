@@ -207,7 +207,8 @@ public class NotificationService extends Service {
 
 		Notification.Builder mBuilder = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.menu_next).setContentTitle(title)
-				.setContentText(content).setTicker(ticker).setAutoCancel(true);
+				.setContentText(content).setTicker(ticker).setAutoCancel(true)
+				.setLights(0xff00ff00, 200, 1000);
 
 		Intent resultIntent = new Intent(this, MainActivity.class);
 		resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -225,7 +226,7 @@ public class NotificationService extends Service {
 		SettingsProvider sp = new SettingsProvider(getApplicationContext());
 		
 		DateTime dNow = new DateTime();
-		DateTime dAllday = new DateTime(Long.parseLong(sp.getString(SettingsFragment.PREF_NOTIFICATIONS_ALLDAYTIME, "1")));
+		DateTime dAllday = new DateTime(sp.getLong(SettingsFragment.PREF_NOTIFICATIONS_ALLDAYTIME, 1));
 		
 		GregorianCalendar now = dNow.toCalendar();
 		GregorianCalendar allday = dAllday.toCalendar();
