@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 
@@ -41,7 +40,6 @@ import cz.fit.next.backend.database.ProjectsDataSource;
 import cz.fit.next.backend.database.TasksDataSource;
 import cz.fit.next.backend.sync.drivers.GDrive;
 import cz.fit.next.backend.sync.drivers.GDrive.UserPerm;
-import cz.fit.next.notifications.NotificationService;
 import cz.fit.next.preferences.SettingsFragment;
 
 public class SyncService extends Service {
@@ -54,13 +52,12 @@ public class SyncService extends Service {
 
 	// Notification types
 	private static final int NOTIFICATION_NEW_SHARED = 100;
-	private static final int SHARING_ERROR = 101;
 	private static final int SYNC_ERROR = 102;
 
 
 	// Self
 	private static SyncService sInstance = null;
-	private static SyncService sInstanceOld = null;
+	
 
 	// GDrive Driver
 	private GDrive drive;
@@ -100,7 +97,7 @@ public class SyncService extends Service {
 		//	}
 		//}
 
-		sInstanceOld = sInstance;
+		//sInstanceOld = sInstance;
 
 		// if button pressed ask for username
 		if (intent != null) {
@@ -384,7 +381,7 @@ public class SyncService extends Service {
 					if (pTitle.matches(TasksModelService.deletedTitlePrefix + ".*"))
 						continue;
 					
-					
+										
 
 					pDescription = getLastValInHistory(pair.getValue().getHistory(), pair.getKey(), TaskHistory.DESCRIPTION);
 
