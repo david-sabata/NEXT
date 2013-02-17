@@ -203,7 +203,7 @@ public class TasksModelService extends Service {
 			// MOVE TO ANOTHER PROJECT
 			hist.addChange(TaskHistory.PROJECT, "", task.getProject().getId());
 			
-			if (!old.getProject().getId().equals(task.getProject().getId())) {
+			if ((old != null) && (!old.getProject().getId().equals(task.getProject().getId()))) {
 				
 				// add record about move into old project
 				Project oldproj = old.getProject();
