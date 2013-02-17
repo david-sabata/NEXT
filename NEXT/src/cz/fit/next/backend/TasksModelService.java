@@ -198,23 +198,9 @@ public class TasksModelService extends Service {
 		hist.setTimeStamp(new DateTime().toString());
 
 		Task old = getTaskById(task.getId());
-		if ((old == null) || !old.getProject().getId().equals(proj.getId())) {
+		if (old == null) {
 
-			// MOVE TO ANOTHER PROJECT
 			hist.addChange(TaskHistory.PROJECT, "", task.getProject().getId());
-			
-			if ((old != null) && (!old.getProject().getId().equals(task.getProject().getId()))) {
-				
-				// add record about move into old project
-				Project oldproj = old.getProject();
-				ArrayList<TaskHistory> oldhist = oldproj.getHistory();
-				if (oldhist == null)
-					oldhist = new ArrayList<TaskHistory>();
-				oldhist.add(hist);
-				oldproj.setHistory(oldhist);
-				mProjectsDataSource.saveProject(oldproj);
-			}
-			
 			hist.addChange(TaskHistory.TITLE, "", task.getTitle());
 			hist.addChange(TaskHistory.COMPLETED, "", task.isCompleted() ? "true" : "false");
 			hist.addChange(TaskHistory.CONTEXT, "", (task.getContext() != null) ? task.getContext() : "");
@@ -222,14 +208,41 @@ public class TasksModelService extends Service {
 			hist.addChange(TaskHistory.DESCRIPTION, "", (task.getDescription() != null) ? task.getDescription() : "");
 			hist.addChange(TaskHistory.PRIORITY, "", Integer.toString(task.getPriority()));
 			
-
-			
-			
 		} else {
-
+			
 			// Task exists - use differential history
 
-			// TITLE
+			if (!old.getProject().getId().equals(proj.getId())) {
+				// TASK HAS BEEN MOVED INTO OTHER PROJECT
+				
+				// read complete task history from old project and delete it
+				Project oldproj = old.getProject();
+				ArrayList<TaskHistory> oldhist = oldproj.getHistory();
+				ArrayList<TaskHistory> transfer = new ArrayList<TaskHistory>();
+				if (oldhist != null)
+					for (int i = 0; i < oldhist.size(); i++) {
+						if (oldhist.get(i).getTaskId().equals(task.getId())) {
+							//Log.i("TRANSFER",(new DateTime(Long.parseLong(oldhist.get(i).getTimeStamp()))).toLocaleDateTimeString());
+							transfer.add(oldhist.get(i));
+							oldhist.remove(i);
+							i--;
+						}
+					}
+				
+				oldproj.setHistory(oldhist);
+				mProjectsDataSource.saveProject(oldproj);
+				
+				// write old history into new project
+				for (int i = 0; i < transfer.size(); i++) {
+					history.add(transfer.get(i));
+				}				
+				
+				// add record about project change
+				hist.addChange(TaskHistory.PROJECT, oldproj.getId(), task.getProject().getId());
+			}
+			
+			
+			// TITLE CHANGED
 			if (task.getTitle() != null) {
 				if (old.getTitle() == null && task.getTitle() != null) {
 					hist.addChange(TaskHistory.TITLE, "", task.getTitle());
