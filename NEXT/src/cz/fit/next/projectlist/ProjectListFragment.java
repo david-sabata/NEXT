@@ -234,7 +234,7 @@ public class ProjectListFragment extends ListFragment implements ServiceReadyLis
 							public void onClick(DialogInterface dialog, int which) {
 								boolean ret = false;
 								if (mSyncServiceBound)
-										mSyncService.deleteProject(projId);
+										ret = mSyncService.deleteProject(projId);
 								if (!ret) {
 									Context context = SyncService.getInstance().getApplicationContext();
 									CharSequence text = getResources().getString(R.string.delete_error);
