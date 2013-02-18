@@ -40,6 +40,7 @@ public class SharingFragment extends ListFragment {
 
 	private boolean mSyncServiceBound = false;
 	private SyncService mSyncService = null;
+	private Context mAdapterContext = null;
 
 	public static SharingFragment newInstance(String id, String title) {
 		SharingFragment frag = new SharingFragment();
@@ -67,6 +68,7 @@ public class SharingFragment extends ListFragment {
 
 		setHasOptionsMenu(true);
 
+		mAdapterContext = getActivity();
 	}
 
 	@Override
@@ -201,7 +203,7 @@ public class SharingFragment extends ListFragment {
 
 			if ((result != null) && (list != null)) {
 
-				setListAdapter(new SharingAdapter(getActivity(), 0, list));
+				setListAdapter(new SharingAdapter(mAdapterContext, 0, list));
 			} else {
 				Toast.makeText(getActivity().getApplicationContext(), R.string.sharing_error, Toast.LENGTH_SHORT).show();
 				getActivity().getFragmentManager().popBackStack();
