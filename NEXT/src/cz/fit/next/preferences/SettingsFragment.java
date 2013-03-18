@@ -93,7 +93,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 		int designValueIndex = Integer.parseInt(sharedPreferences.getString(PREF_DESIGN, "-1"));
 		Preference designPref = findPreference(PREF_DESIGN);
 		refreshSummary(designPref, designValueIndex, R.array.preferenceDesignEntries);
-		designPref.setEnabled(accName != null);
 	}
 
 	/*
